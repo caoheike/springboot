@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+ <meta content="width=device-width,user-scalable=no" name="viewport" />
+ <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/sweetalert.css}" />
+<link rel="stylesheet" th:href="@{/css/reset.css}" />
+<link rel="stylesheet" th:href="@{/css/supersized.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+<script src="http://static.runoob.com/assets/vue/1.0.11/vue.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script th:src="@{/js/security.js}"></script>
+
+<script th:src="@{/js/sweetalert.min.js}"></script>
+<link rel="stylesheet" th:href="@{/css/sweetalert.css}" />
+    <title th:text="${title}"></title>
+		<script  type="text/javascript" > 
+		 function changeImage(){  
+			 $.ajax({
+				 url:"UpdateCodeImg",
+				 success:function (data, textStatus) {
+				 
+					console.log(data);
+						$("#authCode").attr("src","http://"+window.location.host+"/"+data); 
+				 }
+			 });
+    	}   
+		 
+		 
+		 function func(){
+			 swal("提示","正在为您认证，请稍等", "warning");
+			 $.ajax({
+				 url:"QueryInfo",
+				 success:function (data, textStatus) {
+				    if(data.length>0){
+						 swal("提示","认证成功", "warning");
+						 var html;
+							html='<table>'+
+							'<tr>'+
+								'<td>asdasd</td>'+
+							'</tr>'+
+						'</table>'
+						 $("#test").append(html)
+				    }
+					console.log(data[0].CallAddress);
+					console.log(data);
+						//$("#authCode").attr("src","http://"+window.location.host+"/"+data); 
+				 }
+			 });
+			 
+		   		//
+		  	//	location.href="QueryInfo";
+		 }
+		
+		 
+    	</script> 
+
+<style>
+html,body {
+    margin:0;
+    height:100%;
+}
+#test {
+    width:100%;
+    height:100%;
+    background-color:#000;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:2;
+    
+    opacity:0.3;
+    /*兼容IE8及以下版本浏览器*/
+    filter: alpha(opacity=30);
+    display:none;
+}
+
+#log_window {
+    width:200px;
+    height:200px;
+  	 background-image:url("../image/test4.gif") ;
+  	 background-repeat:no-repeat;
+    margin: auto;
+    position: absolute;
+    z-index:3;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display:none;
+}
+</style>
+<script>
+function shield(){
+	$("#test").show();
+    
+  $("#log_window").show();
+}
+
+function cancel_shield(){
+    var s = document.getElementById("test");
+    s.style.display = "none";
+    
+    var l = document.getElementById("log_window");
+    l.style.display = "none";
+}
+</script>
+</head>
+<body>
+     <!-- 
+         <input th:type="text" />
+          <input th:type="text" />
+      -->
+          
+     <div class="page-container" style="margin-top:200px">	           
+		<div class="wrapper" id="submit">	
+			<div class="container">
+				<strong><span style="font-weight: bold;font-size: 25px;">中国移动</span></strong> 
+				<form class="form" action="TelecomLogin" method="post">
+					<input th:type="text" v-model="input2" id="UserIphone" name="UserIphone" placeholder="手机号"/>
+					<input th:type="password"  id="UserPassword" name="UserPassword" placeholder="密码"/>
+					<div id="showcode" ><input th:type="text" id="UserCode" placeholder="验证码"/>  <img src="GetCode" alt="验证码" id="authCode"  /><label  onclick="changeImage()">看不清，换一张！</label></div> 
+				<button th:type="button"  v-on:click="sayHi">登陆</button>
+				<div id="test">
+			
+				
+				
+				</div>
+        <script type="text/javascript">
+            var myVue = new Vue({
+                el: '#submit',
+                methods: {      
+                    sayHi: function () {
+                    	shield();
+                    	var publicKey="009f8709656328cd8f93d6b862bde481ea0a52b17e7fa3e1875054095f1525715058b7398dc8e6696082de5412bf04576979e2534e89466a2c3ca4d8a6a82edd31860b3ad508664dc7367fe57b4cef6720adeadf64e8dc82f57295aa2bad50b19b7ca348568f4d7af79cd659afb79cf6a0fa63409c1f4f88e10c0b93a388292665";
+                    	var sign="010001";
+                    	var key = RSAUtils.getKeyPair(sign, '',publicKey);//modulus 是解密钥匙
+                    	var updPwd=RSAUtils.encryptedString(key,$("#UserPassword").val());//password 你要加密的密码
+                  
+                    	$.ajax({
+                    	    url:'Login',
+                    	    type:'POST', //GET
+                    	    data:{
+                    	    	UserIphone:$("#UserIphone").val(),UserPassword:updPwd,UserCode:$("#UserCode").val()
+                    	    },
+               
+                    	    success:function(data,textStatus){
+                    	    	if(data.msg=="0000"){
+                    	      		swal("提示","登陆成功", "warning");
+                    	      		setTimeout(func,"3000");
+                    	    	}else{
+                    	    	
+                    	    		swal("提示",data.msg, "warning");
+                    	    	
+                    	    		
+                    	    	}
+                    	  
+                    	    
+                    	     
+                    	    },
+                    	    error:function(xhr,textStatus){
+                    	     
+                    	    }
+                    	})
+                    }
+                }
+            })
+        </script>
+				</form>
+			</div>
+	  </div>
+        </div>
+<div id="test">
+
+</div>
+<div id="log_window"></div>
+<script th:src="@{/js/jquery-1.8.2.min.js}"></script>
+<script th:src="@{/js/supersized.3.2.7.min.js}"></script>
+<script th:src="@{/js/supersized-init.js}"></script>  
+<script th:src="@{/js/scripts.js}"></script> 
+</body>
+</html>

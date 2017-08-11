@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="width=device-width,user-scalable=no" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title th:text="${title}"></title>
+    <script src="http://static.runoob.com/assets/vue/1.0.11/vue.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+var wait=120;  
+function time(o) {  
+        if (wait == 0) {  
+            o.removeAttribute("disabled");            
+            o.value="免费获取验证码";  
+            wait = 120;  
+        } else {  
+            o.setAttribute("disabled", true);  
+            o.value="重新发送(" + wait + ")";  
+            wait--;  
+            setTimeout(function() {  
+                time(o)  
+            },  
+            1000)  
+        }  
+    }  
+    $(function (){
+    	var id=document.getElementById("btn");
+    	time(id);
+    })
+</script>
+</head>
+<body>
+     <!-- 
+         <input th:type="text" />
+          <input th:type="text" />
+      -->
+          
+     <div class="page-container" style="margin-top:200px">	           
+		<div class="wrapper">	
+			<div class="container" id="submit">
+				<strong><span style="font-weight: bold;font-size: 25px;">登  录</span></strong> 
+				<form class="form" action="TelecomLogin" method="post">
+					<input th:type="password"  id="CallCode" name="CallCode" placeholder="验证码"/><input th:type="button"  id="btn"  value="发送验证码"/>
+				
+					<input th:type="button" v-on:click='sayHi'  value="查询"/>  
+					<!-- <input type="submit" value="查询数据"> -->
+				</form>
+			</div>
+	  </div>
+        </div>
+        
+
+ <script type="text/javascript">
+ $(function (){
+$("#btn").click(function (){
+	time(this);
+ 	$.ajax({
+	    url:'UpdatePhoneCode',
+	    type:'POST', //GET
+	    data:{
+	    	CallCode:$("#CallCode").val(),UserIphone:$("#UserIphone").val()
+	    },
+
+	    success:function(data,textStatus){
+	
+	    
+	    
+	     
+	    },
+	    error:function(xhr,textStatus){
+	     
+	    }
+	})
+	
+})
+	 
+ })   
+        var myVue = new Vue({
+                el: '#submit',
+                methods: {      
+                    sayHi: function () {
+                    	$.ajax({
+                    	    url:'QueryInfo',
+                    	    type:'POST', //GET
+                    	    data:{
+                    	    	CallCode:$("#CallCode").val(),UserIphone:$("#UserIphone").val()
+                    	    },
+               
+                    	    success:function(data,textStatus){
+                    	
+                    	    
+                    	    
+                    	     
+                    	    },
+                    	    error:function(xhr,textStatus){
+                    	     
+                    	    }
+                    	})
+                    }
+                }
+            })
+        </script>
+</body>
+</html>

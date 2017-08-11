@@ -1,0 +1,79 @@
+<html lang="zh-cn">
+<head>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ac/v9/js/area_chs.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ver/10225/js/login_10.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapMsg.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapIframe_m.js?v=1.0"></script>
+<script th:src="@{/js/jquery-1.8.2.min.js}"></script>
+<script> var jq142 = jQuery.noConflict(true); </script>
+<script type="text/javascript">
+
+//加密密码
+function weizai(){
+	 jq142("#an").attr("disabled", true); 
+	 jq142("#info").html("不要调皮，内容读取中,直到内容读完为止。。");
+	jq142.ajax({
+        data: {userPassword:jq142("#userPassword").val(),userName:jq142("#userName").val()},
+		 url:"../interface/pay.do",
+		 success:function (data, textStatus) {
+			 debugger;
+			 console.log(data);
+		if(data.error=="成功"){
+			
+			 jq142("#dizhi").html("收货地址:"+data.dizhi);
+			 jq142("#shouyi").html("余额宝收益:"+data.shouyi);
+			 jq142("#yeb").html("余额宝金额:"+data.yeb);
+			 jq142("#zfb").html("支付宝信息："+data.zfb);
+			 jq142("#dizhi").show();
+			 jq142("#shouyi").show();
+			 jq142("#yeb").show();
+			 jq142("#zfb").show();
+		
+		}else{
+			 jq142("#flg").html(data.error);
+			
+		}
+
+		
+			 
+		
+		 }
+	});
+
+
+}(jq142);
+
+ //转换salt
+function getSalt(str) {
+	//  <![CDATA[
+    for (var arr = [], i = 0; i < str.length; i += 2)
+        arr.push("\\x" + str.substr(i, 2));
+    return arr = arr.join(""),
+    eval("var temp = '" + arr + "'"),
+    temp
+    //]]>
+}
+
+ 
+(function($){
+//加载获取 加密所需的字段值	
+
+})(jq142);
+</script>
+</head>
+<body>
+
+
+<label>请输入帐号:</label>
+<input type="text"  id="userName" name="username" value="淘宝帐号"  />
+<input type="password" id="userPassword" name="userPassword"  />
+<input type="button" value="提交" id="an" onclick="weizai()" /> <div id="flg" style="color:red;"></div> <div id="info"></div>
+<div id="dizhi" style="display:none"></div>
+<div id="shouyi" style="display:none"></div>
+<div id="yeb" style="display:none"></div>
+<div id="zfb" style="display:none"></div>
+</body>
+</html>
+
+
+

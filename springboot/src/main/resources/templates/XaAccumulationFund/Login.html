@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="width=device-width,user-scalable=no" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}"  />
+    <title th:text="${title}"></title>
+</head>
+<body>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <div class="panel-title" th:text="${title}"></div>
+    </div>
+    <div class="panel-body" data-ng-app="loginApp" data-ng-controller="loginController">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            身份证号码:
+                        </label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" data-ng-model="formData.userId" maxlength="18"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            职工姓名:
+                        </label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" data-ng-model="formData.userName" maxlength="8"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            查询密码:
+                        </label>
+                        <div class="col-md-10">
+                            <input type="password" class="form-control" data-ng-model="formData.userPass"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            验证码:
+                        </label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" data-ng-model="formData.verifyCode"/>
+                        </div>
+                        <div class="col-md-4">
+                            <img data-ng-src="{{verifyCodeImageUrl}}" data-ng-click="updateVerifyCodeImageUrl()"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="button" th:value="提交" class="btn btn-primary btn-lg btn-block" data-ng-click="loginSubmit()"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>{{thead.createTime}}</th>
+                <th>{{thead.desc}}</th>
+                <th>{{thead.income}}</th>
+                <th>{{thead.expenditure}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="obj in details">
+                <td>{{obj.createTime}}</td>
+                <td>{{obj.desc}}</td>
+                <td>{{obj.income}}</td>
+                <td>{{obj.expenditure}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+<script th:src="@{/js/sweetalert.min.js}"></script>
+<script th:src="@{/js/angular.min.js}"></script>
+<script type="text/javascript">
+var app = angular.module("loginApp",[]);
+app.controller("loginController",function($scope,$http){
+    $scope.verifyCodeImageUrl="/accumulationFund/getVerifyImage.jpg?"+Math.random();
+    $scope.formData={};
+    $scope.updateVerifyCodeImageUrl=function(){
+        $scope.verifyCodeImageUrl="/accumulationFund/getVerifyImage.jpg?"+Math.random();
+    }
+    $scope.loginSubmit=function(){
+        $scope.details={};
+        $scope.thead={};
+        $http({
+            method: 'POST',
+            url: '/accumulationFund/Login.html',
+            data:JSON.stringify($scope.formData)
+        }).then(function successCallback(data) {
+            $scope.updateVerifyCodeImageUrl();
+            if(data.data.flag){
+                swal("操作成功","OK", "success");
+                $scope.thead=data.data.thead;
+                $scope.details=data.data.detailsList;
+            }else{
+                swal("操作失败",data.data.msg, "error");
+            }
+        }, function errorCallback(data) {
+            swal("操作失败!", "网络连接错误！", "error");
+        });
+    }
+});
+</script>
+</body>
+</html>

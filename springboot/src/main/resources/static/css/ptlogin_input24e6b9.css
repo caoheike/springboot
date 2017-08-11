@@ -1,0 +1,517 @@
+body {
+	font: 12px "lucida Grande", Verdana, "Microsoft YaHei";
+}
+
+input, textarea, select, button {
+	font-size: inherit;
+	font-family: inherit;
+}
+
+.uncheck, .checked, .loginTips 
+.error_tips 
+.error_logo, .qlogin .face .vip_logo, .qlogin .nextRow, .qlogin .preRow
+	{
+	background: url(/zh_CN/htmledition/images/icon_ptloginpage1e9c5d.png)
+		no-repeat;
+	_background:
+		url(/zh_CN/htmledition/images/icon_ptloginpage_ie61e9c5d.png)
+		no-repeat;
+	outline: none;
+}
+
+.web_login .low_login .checked, .web_login .low_login .uncheck {
+	height: 16px;
+	width: 16px;
+	border: 1px solid #96a5b4;
+}
+
+.web_login .low_login .checked:focus, .web_login .low_login .uncheck:focus,
+	.bottom .low_login .checked:focus, .bottom .low_login .uncheck:focus {
+	border: 1px solid #4892e7;
+}
+
+.uncheck {
+	background-position: -38px -16px;
+}
+
+.checked {
+	background-position: -59px -17px;
+}
+
+.web_login .low_login .low_login_wording {
+	height: 18px;
+	line-height: 18px;
+}
+
+.bottom .low_login .uncheck, .bottom .low_login .checked {
+	height: 16px;
+	width: 16px;
+	border: 1px solid #96a5b4;
+}
+
+.bottom .low_login .low_login_wording {
+	height: 18px;
+	line-height: 18px;
+}
+
+.loginTips .error_tips .error_logo {
+	background-position: -16px -16px;
+}
+
+.qlogin .face .vip_logo {
+	background-position: -160px -16px;
+}
+
+.qlogin .nextRow {
+	width: 10px;
+	height: 26px;
+	background-position: -27px -48px;
+}
+
+.qlogin .nextPage:hover .nextRow {
+	background-position: -59px -48px;
+}
+
+.qlogin .preRow {
+	width: 10px;
+	height: 26px;
+	background-position: -16px -48px;
+}
+
+.qlogin .prePage:hover .preRow {
+	background-position: -48px -48px;
+}
+
+.login, .login_no_qlogin {
+	width: 334px;
+}
+
+.qlogin {
+	height: 317px;
+	_height: 317px;
+	width: 304px;
+}
+
+.qlogin .nextPage {
+	right: -10px;
+	width: 18px;
+	height: 83px;
+	top: 105px;
+}
+
+.qlogin .prePage {
+	left: -10px;
+	width: 18px;
+	height: 83px;
+	top: 105px;
+}
+
+.qlogin .nextRow, .qlogin .preRow {
+	margin-top: 30px;
+}
+
+.qlogin .qlogin_show {
+	left: 12px;
+	width: 280px;
+	margin-top: 10px;
+}
+
+.qlogin .qlogin_tips {
+	padding-top: 55px;
+	height: 35px;
+}
+
+.qlogin .face {
+	width: 93px;
+}
+
+.qlogin .face .img_out {
+	background: none;
+	border: 1px solid #eee;
+	border-radius: 3px;
+	overflow: hidden;
+	width: 82px;
+	height: 82px;
+}
+
+.qlogin .face .img_out_focus {
+	background: none;
+	border: 1px solid #a7d1fb;
+	box-shadow: 0 0 6px rgba(167, 209, 251, 1);
+	top: 4px;
+	left: 4px;
+	width: 82px;
+	height: 82px;
+}
+
+.qlogin .face img {
+	top: 9px;
+	width: 74px;
+	height: 74px;
+}
+
+.qlogin .face:hover .uin_menban {
+	border-radius: 0px;
+	left: 4px;
+	width: 84px;
+	top: 68px;
+}
+
+.qlogin .face:hover .uin {
+	left: 4px;
+	width: 84px;
+	top: 68px;
+}
+
+.qlogin .face .face_mengban {
+	width: 74px;
+	height: 74px;
+	top: 9px;
+	left: 9px;
+}
+
+.qlogin .face .vip_logo {
+	top: 9px;
+	left: 9px;
+}
+
+.bottom {
+	margin-bottom: 15px;
+	width: 284px;
+	right: 25px;
+	bottom: 2px;
+}
+
+.web_qr_login .bottom {
+	width: 282px;
+	right: 12px;
+}
+
+.bottom .low_login {
+	left: 0px;
+}
+
+.bottom .link {
+	color: #225592;
+}
+
+.bottom .vip_link {
+	display: none;
+}
+
+.bottom #vip_dot {
+	display: none;
+}
+
+.bottom .low_login {
+	bottom: -1px;
+}
+
+.loginTips {
+	margin-bottom: -26px;
+	position: relative;
+	min-height: 28px;
+	height: auto;
+	_height: 28px;
+	padding-top: 4px;
+}
+
+.loginTips .error_tips {
+	width: auto;
+	border: none;
+	background: none;
+	position: static;
+	color: #c00;
+	border: none;
+	background: none;
+	position: static;
+}
+
+.loginTips .error_tips .err_m {
+	color: red;
+	padding-right: 15px;
+}
+
+.loginTips .error_tips .err_m a {
+	color: #225592;
+}
+
+.loginTips .error_tips .error_logo {
+	display: none;
+}
+
+.loginTips .loading_tips {
+	width: 350px;
+}
+
+.loginTips .loading_tips #loading_wording {
+	display: none;
+}
+
+.loginTips .loading_tips img {
+	display: none;
+}
+
+.web_login .tips {
+	height: 30px;
+	width: 280px;
+}
+
+.login_no_qlogin .header, .login .header {
+	height: 50px;
+	font-family: "lucida Grande", Verdana, "Microsoft YaHei";
+	border-bottom: 1px solid #c0cdd9;
+	background-color: #f9fbfe;
+}
+
+.header .switch {
+	left: 53px;
+	height: 46px;
+}
+
+.header .switch #switcher_qlogin {
+	margin-right: 60px;
+}
+
+.login_no_qlogin .header .switch {
+	font-size: 20px;
+	top: 24px;
+	height: auto;
+	left: 114px;
+}
+
+.header .switch .switch_bottom {
+	bottom: 0px;
+	_bottom: -2px;
+	border-bottom: 1px solid #465767;
+}
+
+.web_login {
+	width: 306px;
+	padding-bottom: 0;
+	min-height: 289px;
+}
+
+.web_login .low_login {
+	left: 0px;
+	top: -9px;
+}
+
+.web_login .login_form {
+	width: 284px;
+}
+
+.web_login .submit {
+	margin-top: 23px;
+	height: 177px;
+}
+
+.web_login .email_list {
+	width: 280px;
+	left: 0px;
+}
+
+.web_login .input_tips, .web_login .input_tips_focus {
+	top: 12px;
+	*top: 13px;
+	_top: 14px;
+}
+
+.web_qr_login {
+	height: 289px;
+	width: 304px;
+	margin: 0 auto;
+}
+
+.web_login .verifyinputArea {
+	height: 53px;
+	vertical-align: middle;
+	float: left;
+}
+
+.web_login .inputOuter {
+	background: none;
+	border: 1px solid #96a5b4;
+	border-radius: 0px;
+	height: 38px;
+	width: 282px;
+	border-radius: 2px;
+}
+
+.web_login .inputOuter_focus {
+	background: none;
+	border: 1px solid #4892e7;
+	border-radius: 0px;
+	height: 38px;
+	width: 282px;
+	border-radius: 2px;
+}
+
+.web_login .verifyinputArea .inputOuter, .web_login .verifyinputArea .inputOuter_focus
+	{
+	width: 147px;
+	height: 51px;
+}
+
+.web_login .inputstyle {
+	top: 0px;
+	padding: 10px 40px 10px 10px;
+	left: 0px;
+	border-radius: 3px;
+	width: 232px;
+}
+
+.web_login .verifyinputArea .inputstyle {
+	width: 97px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+}
+
+.web_login .verifyinputArea .input_tips, .web_login .verifyinputArea .input_tips_focus
+	{
+	top: 18px;
+}
+
+.web_login .inputstyle.password {
+	width: 260px;
+	padding: 10px 12px 10px 10px;
+}
+
+.web_login .uin_del {
+	right: 10px;
+	height: 22px;
+	width: 22px;
+	background: url(/zh_CN/htmledition/images/ptlogin_delete1e9c5d.png) 0 0
+		no-repeat;
+	_background: url(/zh_CN/htmledition/images/ptlogin_delete_ie61e9c5d.png)
+		0 0 no-repeat;
+}
+
+.web_login .uin_del:hover {
+	background-position: 0 -22px;
+}
+
+.web_login .low_login .checked:focus {
+	box-shadow: 0 0 3px rgba(154, 202, 249, 0.4);
+}
+
+.web_login .login_button .btn {
+	background: none;
+	height: 40px;
+	line-height: 39px;
+	width: 100%;
+	outline: none;
+	font-weight: normal;
+}
+
+.web_login .login_button {
+	right: 0px;
+	top: 25px;
+	border-radius: 0px;
+	background-color: #5a98de;
+	outline: none;
+	border-radius: 3px;
+}
+
+.web_login .login_button:hover {
+	border-radius: 0px;
+	background-color: #6aa2e0;
+	border-radius: 3px;
+}
+
+.web_login .login_button:active {
+	border-radius: 0px;
+	background-color: #5a98de;
+	border-radius: 3px;
+}
+
+.web_login .login_button .btn:active {
+	outline: none;
+}
+
+.web_login .uinArea {
+	height: 50px;
+}
+
+.web_login .pwdArea {
+	height: 50px;
+}
+
+.web_login .verifyArea {
+	height: 70px;
+}
+
+.web_login .verifyimgArea .verifyimg_tips {
+	top: 21px;
+	color: #225592;
+	top: 59px;
+	left: 44px;
+}
+
+.web_login .verifyimgArea {
+	vertical-align: middle;
+	width: 130px;
+	float: right;
+}
+
+.web_login .verifyimgArea .verifyimg {
+	width: 130px;
+	height: 53px;
+}
+
+.qlogin .qr_1 {
+	width: 86px;
+}
+
+.qlogin .qr_1 .qrImg, .qlogin .qr_1 .qr_mengban, .qlogin .qr_1 .qrlogin_img_out
+	{
+	top: 4px;
+	left: 1px;
+}
+
+.qlogin .qr_1 .qr_invalid_tips {
+	left: 2px;
+	top: 26px;
+}
+
+.qr_tips {
+	left: 178px;
+	top: 100px;
+}
+
+.qrlogin_step2 {
+	min-height: 390px;
+}
+
+.qrlogin_step2 .step2_outer {
+	margin: 70px 0 0 22px;
+	padding: 80px 10px 0 115px;
+}
+
+.qlogin .qr_0 {
+	width: 156px;
+	left: -14px;
+}
+
+.qlogin .qr_1 .qr_app_name {
+	width: 88px;
+}
+
+.qlogin .face .nick {
+	font-family: "lucida Grande", Verdana, "Microsoft YaHei";
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio:2) , only screen
+	and (min-device-pixel-ratio:2) {
+	.loginTips .error_tips .error_logo, .checked, .uncheck, .qlogin .face .vip_logo,
+		.qlogin .nextRow, .qlogin .preRow {
+		background-image:
+			url(/zh_CN/htmledition/images/icon_ptloginpage_2x1e9c5d.png);
+		background-size: 274px 355px;
+	}
+	.web_login .uin_del {
+		background-image:
+			url(/zh_CN/htmledition/images/ptlogin_delete_2x1e9c5d.png);
+		background-size: 22px 44px;
+	}
+}

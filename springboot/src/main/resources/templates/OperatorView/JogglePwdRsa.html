@@ -1,0 +1,54 @@
+<html lang="zh-cn">
+<head>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ac/v9/js/area_chs.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ver/10225/js/login_10.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapMsg.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapIframe_m.js?v=1.0"></script>
+<script th:src="@{/js/jquery-1.8.2.min.js}"></script>
+<script> var jq142 = jQuery.noConflict(true); </script>
+<script type="text/javascript">
+
+//加密密码
+function weizai(){
+debugger;
+ var qqpwd=document.getElementById('qqpwd').value;
+ 
+	//接收全局变量值 然后用值进行加密
+	//进行salt转换
+	var salts=document.getElementById('salt').value;
+// 	var  salt=getSalt(salts.replace(/\\x/g, ""));
+	var code=document.getElementById('code').value;
+// 	alert(qqpwd+"--"+salt+"---"+code);
+	 var encryptionPassword = $.Encryption.getEncryption('caoheike','\x00\x00\x00\x00\x5f\x90\x75\x45',code);
+
+	 alert(encryptionPassword);
+
+}(jq142);
+
+ //转换salt
+function getSalt(str) {
+	//  <![CDATA[
+    for (var arr = [], i = 0; i < str.length; i += 2)
+        arr.push("\\x" + str.substr(i, 2));
+    return arr = arr.join(""),
+    eval("var temp = '" + arr + "'"),
+    temp
+    //]]>
+}
+
+ 
+
+</script>
+</head>
+<body>
+
+<input type="text" name="salt" id="salt"/>
+<input type="text" name="code" id="code"/>
+<input type="button" name="subrsa" onclick="weizai()" id="subrsa"/>
+<input type="text" name="qqpwd" id="qqpwd"/>
+
+</body>
+</html>
+
+
+

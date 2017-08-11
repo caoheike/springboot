@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="width=device-width,user-scalable=no" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet" th:href="@{/css/sweetalert.css}" />
+<link rel="stylesheet" th:href="@{/css/reset.css}" />
+<link rel="stylesheet" th:href="@{/css/supersized.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+<script src="http://static.runoob.com/assets/vue/1.0.11/vue.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script th:src="@{/js/sweetalert.min.js}"></script>
+<link rel="stylesheet" th:href="@{/css/sweetalert.css}" />
+    <title th:text="${title}"></title>
+		<script  type="text/javascript" > 
+		 function changeImage(){  
+			 $.ajax({
+				 url:"UpdateCodeImg",
+				 success:function (data, textStatus) {
+					
+						$("#authCode").attr("src","http://"+window.location.host+"/"+data); 
+				 }
+			 });
+    	}   
+		 
+		 function func(){
+			 
+			 location.reload();
+		 }
+    	</script> 
+
+</head>
+<body>
+     <!-- 
+         <input th:type="text" />
+          <input th:type="text" />
+      -->
+          
+     <div class="page-container" style="margin-top:200px">	           
+		<div class="wrapper" id="submit">	
+			<div class="container">
+				<strong><span style="font-weight: bold;font-size: 25px;">中国联通</span></strong> 
+				<form class="form" method="post">
+					<input th:type="text" v-model="input2" id="Useriphone" name="UserIphone" placeholder="手机号"/>
+					<input th:type="password"  id="UserPassword" name="UserPassword" placeholder="密码"/>
+						<div id="showcode"><input th:type="text" id="UserCode" placeholder="验证码"/>  <img src="GetCode" alt="验证码" id="authCode"  /></div>
+				<button th:type="button"  v-on:click="sayHi">登陆</button>
+
+	
+	
+        <script type="text/javascript">
+            var myVue = new Vue({
+                el: '#submit',
+                methods: {      
+                    sayHi: function () {
+                    	$.ajax({
+                    	    url:'UnicomLogin',
+                    	    type:'POST', //GET
+                    	    data:{
+                    	    	Useriphone:$("#Useriphone").val(),UserPassword:$("#UserPassword").val(),UserCode:$("#UserCode").val()
+                    	    },
+               
+                    	    success:function(data,textStatus){
+                    	    	console.log(data.msg);
+                    	    	if(data.msg=="0000"){
+                    	    		swal("提示","登陆成功，首次发送短信", "warning");
+                    	    		location.href="UnicomSend";
+                    	    	
+                    	    	}else{
+                    	   
+                    	    		swal("提示",data.msg, "warning");
+                    	     		setTimeout(func,"3000");
+                    	    	
+                    	    	}
+                    	    	/* if(data.msg=="手机验证码首次发送成功"){
+                    	    		swal("提示","验证码发送成功", "warning");
+                    	    		location.href="skip";
+                    	    	}
+                    	    	swal("提示",data.msg, "warning");
+                    	     */
+                    	     
+                    	    },
+                    	    error:function(xhr,textStatus){
+                    	     
+                    	    }
+                    	})
+                    }
+                }
+            })
+        </script>
+	
+				</form>
+			</div>
+	  </div>
+        </div>
+        
+<script th:src="@{/js/jquery-1.8.2.min.js}"></script>
+<script th:src="@{/js/supersized.3.2.7.min.js}"></script>
+<script th:src="@{/js/supersized-init.js}"></script>  
+<script th:src="@{/js/scripts.js}"></script> 
+</body>
+</html>

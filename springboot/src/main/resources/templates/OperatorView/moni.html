@@ -1,0 +1,37 @@
+<html lang="zh-cn">
+<head>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ac/v9/js/area_chs.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://imgcache.qq.com/ptlogin/ver/10225/js/login_10.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapMsg.js"></script>
+<script type="text/javascript" async="" src="https://captcha.gtimg.com/1/TCapIframe_m.js?v=1.0"></script>
+<script th:src="@{/js/jquery-1.8.2.min.js}"></script>
+<script> var jq142 = jQuery.noConflict(true); </script>
+<script type="text/javascript">
+
+//鍔犲瘑瀵嗙爜
+function weizai(){
+debugger;
+var code=document.getElementById('code').value;
+	 var encryptionPassword = $.Encryption.getEncryption('caoheike','\x00\x00\x00\x00\x5f\x90\x75\x45',code);
+	 alert(encryptionPassword);
+
+}(jq142);
+
+
+ 
+
+</script>
+</head>
+<body>
+
+<input type="text" name="salt" id="salt"/>
+<input type="text" name="code" id="code"/>
+<input type="text" name="qqpwd" id="qqpwd"/>
+<input type="button" name="subrsa" id="subrsa" onclick="weizai()" />
+
+
+</body>
+</html>
+
+
+

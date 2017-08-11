@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta content="width=device-width,user-scalable=no" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/sweetalert.css}"  />
+    <title th:text="${title}"></title>
+</head>
+<body>
+<div class="panel panel-primary container">
+    <div class="panel-heading">
+        <div class="panel-title text-center" th:text="${title}"></div>
+    </div>
+    <div class="panel-body" data-ng-app="loginApp" data-ng-controller="loginController">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            身份证号:
+                        </label>
+                        <div class="col-md-10">
+                            <input th:type="text" class="form-control" data-ng-model="formData.userId"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            姓名:
+                        </label>
+                        <div class="col-md-10">
+                            <input th:type="text" class="form-control" data-ng-model="formData.userName"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input th:type="button" th:value="提交" class="btn btn-primary btn-lg btn-block" data-ng-click="loginSubmit()"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-condensed" data-ng-show="flag">
+            <tbody>
+            <tr>
+                <th>姓名:</th>
+                <td>{{data.userName}}</td>
+                <th>人员状态:</th>
+                <td>{{data.personStatus}}</td>
+                <th>缴费状态:</th>
+                <td>{{data.payStatus}}</td>
+            </tr>
+            <tr>
+                <th>参保日期:</th>
+                <td>{{data.createTime}}</td>
+                <th>当前个人账户累计储存额:</th>
+                <td>{{data.amount}}</td>
+                <th>经办机构名称:</th>
+                <td>{{data.agencyName}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <table class="table table-condensed" data-ng-show="flag">
+            <thead>
+            <tr>
+                <th>{{thead.year}}</th>
+                <th>{{thead.payMonthNumber}}</th>
+                <th>{{thead.payBaseNumber}}</th>
+                <th>{{thead.personPayAmount}}</th>
+                <th>{{thead.companyPayAmount}}</th>
+                <th>{{thead.lastYearPayMonthNumber}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="obj in data.accountList">
+                <td>{{obj.year}}</td>
+                <td>{{obj.payMonthNumber}}</td>
+                <td>{{obj.payBaseNumber}}</td>
+                <td>{{obj.personPayAmount}}</td>
+                <td>{{obj.companyPayAmount}}</td>
+                <td>{{obj.lastYearPayMonthNumber}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script th:src="@{/js/sweetalert.min.js}"></script>
+<script th:src="@{/js/angular.min.js}"></script>
+<script type="text/javascript">
+var app=angular.module("loginApp",[]);
+app.controller("loginController",function($scope,$http){
+    $scope.formData={};
+    $scope.flag=false;
+    $scope.loginSubmit=function(){
+        $http({
+            url:"/socialSecurity/Login.html",
+            method:"POST",
+            data:JSON.stringify($scope.formData)
+        }).then(function successCallback(response){
+            if(response.data.flag){
+                swal("操作成功","OK", "success");
+                $scope.thead=response.data.thead;
+                $scope.data=response.data.data;
+                $scope.flag=true;
+                console.log(response.data.data);
+            }else{
+                swal("操作失败",response.data.msg, "error");
+            }
+        },function errorCallback(response){
+            swal("操作失败","网络连接错误!", "error");
+        });
+    }
+});
+</script>
+</body>
+</html>
