@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
@@ -256,8 +257,9 @@ public class InterfaceController  {
 	 */
 
 	@RequestMapping("encrypt")
-	public String encrypt(HttpServletRequest request) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		
+	public String encrypt(HttpServletRequest request,@RequestParam("IdCard") String IdCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		HttpSession session=request.getSession();
+		session.setAttribute("IdCard", IdCard);
 		return "OperatorView/encrypt";
 	}
 	/**
@@ -271,8 +273,9 @@ public class InterfaceController  {
 	@ResponseBody
 	@RequestMapping("test")
 	public Map<String,Object> test(HttpServletRequest request,@RequestParam( "qqnumber") String qqnumber,@RequestParam("sess") String sess,@RequestParam("password")String password,@RequestParam("code")String code,@RequestParam("card") String card,@RequestParam("showpwd") String showpwd ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-
-	    return mobileService.test(request, qqnumber, sess, password, code,card,showpwd);
+		HttpSession session=request.getSession();
+		
+	    return mobileService.test(request, qqnumber, sess, password, code,session.getAttribute("IdCard").toString(),showpwd);
  
 	}
 		
@@ -387,7 +390,7 @@ public class InterfaceController  {
 //   	return map;
 //   		
 //   	}
-   	@ApiOperation(value="淘宝认证", notes="淘宝")//设置标题描述
+
 	@ResponseBody
 	@RequestMapping(value="pay",method=RequestMethod.POST)
    	public Map<String,Object> pay(HttpServletRequest request,@RequestParam("userName") String userName,@RequestParam("userPassword") String userPassword,@RequestParam("userCard") String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
@@ -401,7 +404,10 @@ public class InterfaceController  {
   
    		
    	}
-//   	
+   	
+
+
+
    	
    	
 }
