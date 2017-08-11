@@ -25,7 +25,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.Jsoup;
@@ -37,6 +36,8 @@ import org.jsoup.select.Elements;
  *
  */
 public class CrawlerUtil {
+	public static final String port="8080";
+	public static final String ip="192.168.3.37";
 	public final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 	private static Logger logger=Logger.getLogger(CrawlerUtil.class);
 	
