@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.Option;
 import com.reptile.model.Question;
+import com.reptile.util.HttpUtils;
 import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONArray;
@@ -18,7 +19,8 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpUtils;
+
+
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -471,10 +473,10 @@ public class CreditService {
                         resMap.put("ResultCode","0000");
                         resMap.put("userId",userId);
                         resMap.put("data",resData);
-//                        HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion", JSONObject.fromObject(resMap).toString());
+                        HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion", JSONObject.fromObject(resMap).toString());
                        
                         //ludangwei 2017-08-11
-                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
+//                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
                     }
                 } catch (Exception e) {
                     System.out.println("征信问题及答案-推送失败!"+e.getMessage());
