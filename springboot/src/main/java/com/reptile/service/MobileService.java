@@ -387,10 +387,10 @@ public class MobileService {
 		System.out.println(fileName);
 		ImageIO.write(ioim,"png",new File(path,fileName));
 	//InetAddress.getLocalHost().getHostAddress()
-		maps.put("ip",InetAddress.getLocalHost().getHostAddress());
+		maps.put("ip",crawlerUtil.ip);
 		maps.put("FileName",fileName);
 		maps.put("FilePath","/upload");
-		maps.put("Port","8080");
+		maps.put("Port",crawlerUtil.port);
 		map.put("data",maps);
 		map.put("errorCode", "0000");
 		map.put("errorInfo", "查询成功");
@@ -523,10 +523,10 @@ public class MobileService {
 				System.out.println(fileName);
 				ImageIO.write(io,"png",new File(path,fileName));
 			
-				data.put("ip",InetAddress.getLocalHost().getHostAddress());
+				data.put("ip",crawlerUtil.ip);
 				data.put("FileName",fileName);
 				data.put("FilePath","/upload");
-				data.put("Port","8080");
+				data.put("Port",crawlerUtil.port);
 				map.put("data",data);
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "查询成功");
@@ -598,10 +598,10 @@ public class MobileService {
 				System.out.println(fileName);
 				ImageIO.write(io,"png",new File(path,fileName));
 			
-				data.put("ip",InetAddress.getLocalHost().getHostAddress());
+				data.put("ip",crawlerUtil.ip);
 				data.put("FileName",fileName);
 				data.put("FilePath","/upload");
-				data.put("Port","8080");
+				data.put("Port",crawlerUtil.port);
 				map.put("data",data);
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "查询成功");
@@ -642,10 +642,10 @@ public class MobileService {
 			
 			
 			
-			data.put("ip",InetAddress.getLocalHost().getHostAddress());
+			data.put("ip",crawlerUtil.ip);
 			data.put("FileName",fileName);
 			data.put("FilePath","/upload");
-			data.put("Port","8080");
+			data.put("Port",crawlerUtil.port);
 			map.put("data",data);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");

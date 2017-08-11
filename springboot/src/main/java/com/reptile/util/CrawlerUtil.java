@@ -36,8 +36,8 @@ import org.jsoup.select.Elements;
  *
  */
 public class CrawlerUtil {
-	public static final String port="8080";
-	public static final String ip="192.168.3.37";
+	public static final String port="8079";
+	public static final String ip="124.89.33.70";
 	public final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 	private static Logger logger=Logger.getLogger(CrawlerUtil.class);
 	
