@@ -1,4 +1,4 @@
-<html lang="zh-cn">
+	<html lang="zh-cn">
 <head>
  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -124,7 +124,7 @@
         {
             border:none;
             outline:none;
-            height:2rem;
+            height:3rem;
              padding-left:2%;
             width:70%;
         }
@@ -137,9 +137,9 @@
              border:none;
             outline:none;
             padding-left:2%;
-            height:2rem;
+            height:3rem;
             width:60%;
-        }
+        }	
         .input_block span
         {
              font-size:0.8rem;
@@ -165,6 +165,7 @@
             height:2.5rem;
             background-color:#ecebf1;
              border:none;
+             outline:none;
             color:#d0cfd4;
             border-radius:0.25rem;
             font-size:1.3rem;
@@ -231,6 +232,8 @@ jq142(function (){
 //加密密码
 function weizai(){
 
+	    jq142("#vvv").css('background','#46b1ff')
+
 	jq142.ajax({
         data: {qqnumber:jq142("#qqnumber").val()},
 		 url:"../interface/encryptrsa.do",
@@ -265,6 +268,8 @@ function weizai(){
 
 
 }(jq142);
+
+
 
  //转换salt
 function getSalt(str) {

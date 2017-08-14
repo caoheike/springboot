@@ -743,30 +743,35 @@ public class MobileService {
 	 * @throws InterruptedException 
 	  */
 	 public Map<String, Object> TelecomLogin(HttpServletRequest request,HttpServletResponse response,TelecomBean TelecomBean) throws IOException, InterruptedException{
-		 	Map<String,Object> map=new HashMap<String, Object>();
+		 
+		 Map<String,Object> map=new HashMap<String, Object>();
 		 	Map<String,Object> data=new HashMap<String, Object>();
 		 	try {
-				
-		
-		 	CrawlerUtil craw=new CrawlerUtil();
-			WebClient client=craw.setWebClient();
-		    WebRequest requests=new WebRequest(new URL("http://login.189.cn/login"));
-		    List<NameValuePair> reqParam = new ArrayList<NameValuePair>();  
-		    reqParam.add(new NameValuePair("Account",TelecomBean.getUserPhone()));
-		    reqParam.add(new NameValuePair("UType","201"));
-		    reqParam.add(new NameValuePair("ProvinceID","27"));
-		    reqParam.add(new NameValuePair("AreaCode",""));
-		    reqParam.add(new NameValuePair("CityNo",""));
-		    reqParam.add(new NameValuePair("RandomFlag","0"));
-		    reqParam.add(new NameValuePair("Password",TelecomBean.getUserPassword()));
-		    reqParam.add(new NameValuePair("Captcha",""));
-		    requests.setHttpMethod(HttpMethod.POST);
-		    requests.setRequestParameters(reqParam);
-		    HtmlPage  pages=client.getPage(requests);
-		    HtmlForm htmlform=  (HtmlForm) pages.getElementById("loginForm");
+		 		 WebClient webClient = new WebClient();
+				 webClient.getOptions().setUseInsecureSSL(true);
+				 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+				 webClient.getOptions().setTimeout(100000);
+				 webClient.getOptions().setCssEnabled(false);
+				 webClient.getOptions().setJavaScriptEnabled(true);
+				 webClient.setJavaScriptTimeout(100000); 
+				 webClient.getOptions().setRedirectEnabled(true);
+				 webClient.getOptions().setThrowExceptionOnScriptError(false);
+				 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+				 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+//		
+		 		HtmlPage page= webClient.getPage("http://login.189.cn/login");
+				HtmlTextInput txe=(HtmlTextInput) page.getElementById("txtAccount");
+				HtmlPasswordInput txepasswprd=(HtmlPasswordInput) page.getElementById("txtPassword");
+				txe.setValueAttribute(TelecomBean.getUserPhone());
+				txepasswprd.setValueAttribute(TelecomBean.getUserPassword());
+				HtmlPage loginpage=(HtmlPage) page.executeJavaScript("$('#loginbtn').click();").getNewPage();
+				Thread.sleep(7000);
+	
+		    HtmlForm htmlform=  (HtmlForm) loginpage.getElementById("loginForm");
+		 		
 		    if(htmlform==null||htmlform.equals("")){
 		    	//开始授权 
-		     HtmlPage logi=client.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
+		     HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
 		  
 		    			 	WebRequest webRequest=new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
 		    			 	 List<NameValuePair> reqParamsinfo = new ArrayList<NameValuePair>();  
@@ -782,7 +787,7 @@ public class MobileService {
 		    	 		    webRequest.setRequestParameters(reqParamsinfo);
 		    	 		    List list=new ArrayList();
 		    	 		    
-		    	 		    HtmlPage  Infopage=client.getPage(webRequest);
+		    	 		    HtmlPage  Infopage=webClient.getPage(webRequest);
 		    	 		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
 		    	 		   Document doc = Jsoup.parse(htmlTable.asXml());
 //		    	 	        Elements trs = doc.select("table").select("tr");
@@ -1069,8 +1074,8 @@ public class MobileService {
 
 			String filename = System.currentTimeMillis() + "renxin.png";
 			ImageIO.write(bufferedImage, "png", new File(path, filename));
-			data.put("port", "8080");
-			data.put("host", InetAddress.getLocalHost().getHostAddress());
+			data.put("port", crawlerUtil.port);
+			data.put("host", crawlerUtil.ip);
 			data.put("PathName", "/upload/" + filename);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");

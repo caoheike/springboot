@@ -270,13 +270,21 @@ public class InterfaceController  {
 	public Map<String,Object> encryptrsa(HttpServletRequest request,@RequestParam("qqnumber") String qqnumber) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
     return mobileService.encryptrsa(request,qqnumber);
 	}
-	@ResponseBody
+
 	@RequestMapping("test")
-	public Map<String,Object> test(HttpServletRequest request,@RequestParam( "qqnumber") String qqnumber,@RequestParam("sess") String sess,@RequestParam("password")String password,@RequestParam("code")String code,@RequestParam("card") String card,@RequestParam("showpwd") String showpwd ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+	public String test(HttpServletRequest request,@RequestParam( "qqnumber") String qqnumber,@RequestParam("sess") String sess,@RequestParam("password")String password,@RequestParam("code")String code,@RequestParam("card") String card,@RequestParam("showpwd") String showpwd ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		HttpSession session=request.getSession();
+		Map<String,Object> map=new HashMap<String, Object>();
+		String page="";
 		
-	    return mobileService.test(request, qqnumber, sess, password, code,session.getAttribute("IdCard").toString(),showpwd);
- 
+		map= mobileService.test(request, qqnumber, sess, password, code,session.getAttribute("IdCard").toString(),showpwd);
+		if(map.toString().contains("0000")){
+			page="OperatorView/success";
+		}else{
+			page="OperatorView/error";
+		}
+		return page;
+		
 	}
 		
 
@@ -397,15 +405,12 @@ public class InterfaceController  {
 
 		
    		return mobileService.Taobao(request, userName, userPassword,userCard);
-	
- 		
-   	
-   		
-  
-   		
+
    	}
    	
 
+
+	
 
 
    	

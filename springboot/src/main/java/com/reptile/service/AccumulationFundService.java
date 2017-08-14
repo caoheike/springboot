@@ -34,6 +34,7 @@ import com.reptile.model.AccumulationFund;
 import com.reptile.model.AccumulationFundInfo;
 import com.reptile.model.FormBean;
 import com.reptile.springboot.Scheduler;
+import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Resttemplate;
 
 /**
@@ -46,6 +47,8 @@ public class AccumulationFundService {
     private final static String loginUrl="http://query.xazfgjj.gov.cn/index.jsp?urltype=tree.TreeTempUrl&wbtreeid=1172";
     private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
     private Resttemplate resttemplate = new Resttemplate();
+    private static CrawlerUtil crawlerutil=new CrawlerUtil();
+    
     public Map<String,Object> login(FormBean bean, HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
@@ -166,7 +169,7 @@ public class AccumulationFundService {
                 BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
                 ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
             }else{
-                final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
+                final WebClient webClient = new WebClient(BrowserVersion.CHROME);
                 webClient.getOptions().setCssEnabled(false);// 禁用css支持
                 webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
                 webClient.getOptions().setTimeout(8000); // 设置连接超时时间
