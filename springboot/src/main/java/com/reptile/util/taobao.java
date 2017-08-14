@@ -81,78 +81,13 @@ public class taobao {
 // 
 //}
  
-// public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-//		
-//	 Resttemplate resttemplate=new Resttemplate();
-//	 	CrawlerUtil craw=new CrawlerUtil();
-//	 	Map<String,Object> map=new HashMap<String, Object>();
-//	 	Map<String,Object> data=new HashMap<String, Object>();
-//	 	WebClient webClient = new WebClient();
-//		 webClient.getOptions().setUseInsecureSSL(true);
-//		 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
-//		 webClient.getOptions().setTimeout(100000);
-//		 webClient.getOptions().setCssEnabled(false);
-//		 webClient.getOptions().setJavaScriptEnabled(true);
-//		 webClient.setJavaScriptTimeout(100000); 
-//		 webClient.getOptions().setRedirectEnabled(true);
-//		 webClient.getOptions().setThrowExceptionOnScriptError(false);
-//		 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-//		 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-//		HtmlPage page= webClient.getPage("http://login.189.cn/login");
-//		HtmlTextInput txe=(HtmlTextInput) page.getElementById("txtAccount");
-//		HtmlPasswordInput txepasswprd=(HtmlPasswordInput) page.getElementById("txtPassword");
-//		txe.setValueAttribute("15388657853");
-//		txepasswprd.setValueAttribute("45278311");
-//		HtmlPage loginpage=(HtmlPage) page.executeJavaScript("$('#loginbtn').click();").getNewPage();
-//		Thread.sleep(7000);
-//		   HtmlForm htmlform=  (HtmlForm) loginpage.getElementById("loginForm");
-//		System.out.println(htmlform.asXml());
-//		
-//		
-//		   HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
-//			  
-//		 	WebRequest webRequest=new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
-//		 	 List<NameValuePair> reqParamsinfo = new ArrayList<NameValuePair>();  
-//		 	reqParamsinfo.add(new NameValuePair("currentPage","1"));
-//		 	reqParamsinfo.add(new NameValuePair("pageSize","10"));
-//		 	reqParamsinfo.add(new NameValuePair("effDate","2017-05-01"));
-//		 	reqParamsinfo.add(new NameValuePair("expDate","2017-07-07"));
-//		 	reqParamsinfo.add(new NameValuePair("serviceNbr","15388657853"));
-//		 	reqParamsinfo.add(new NameValuePair("operListID","1"));
-//		 	reqParamsinfo.add(new NameValuePair("isPrepay","0"));
-//		 	reqParamsinfo.add(new NameValuePair("pOffrType","481"));
-//		    webRequest.setHttpMethod(HttpMethod.POST);
-//		    webRequest.setRequestParameters(reqParamsinfo);
-//		    List<String> list=new ArrayList<String>();
-//		    
-//		    HtmlPage  Infopage=webClient.getPage(webRequest);
-//		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
-//		   Document doc = Jsoup.parse(htmlTable.asXml());
-////	        Elements trs = doc.select("table").select("tr");
-////	        for(int i = 0;i<trs.size();i++){
-////	            Elements tds = trs.get(i).select("td");
-////	            for(int j = 0;j<tds.size();j++){
-////	                String text = tds.get(j).text();
-////	                System.out.println(text);
-////	               list.add(text);
-////	         
-////	            }
-////	        }
-//	    
-//	        // data.put("info", htmlTable.asXml().replace("100%","50%").replace("mt10 transact_tab","testv"));
-//		   data.put("info", htmlTable.asXml());
-//	        map.put("data", data);
-////		   	map.put("errorCode","0000");
-////	    	map.put("errorInfo","成功");
-//	       	map.put("UserIphone","15388657853");
-//	    	map.put("UserPassword","452783");
-//	    	map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/callRecordTelecom");
-//	    	System.out.println(map.toString());
-//		
-//}
- 
  public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		WebClient webClient = new WebClient();
+		
+	 Resttemplate resttemplate=new Resttemplate();
+	 	CrawlerUtil craw=new CrawlerUtil();
+	 	Map<String,Object> map=new HashMap<String, Object>();
+	 	Map<String,Object> data=new HashMap<String, Object>();
+	 	WebClient webClient = new WebClient();
 		 webClient.getOptions().setUseInsecureSSL(true);
 		 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
 		 webClient.getOptions().setTimeout(100000);
@@ -163,13 +98,78 @@ public class taobao {
 		 webClient.getOptions().setThrowExceptionOnScriptError(false);
 		 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 		 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-		 HtmlPage page= webClient.getPage("http://www.gsxt.gov.cn/index.html");
-		 HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("keyword");
-		 htmlTextInput.setValueAttribute("asd");
-		 HtmlButton button=(HtmlButton) page.getElementById("btn_query");
-		 HtmlPage pageinfo= button.click();
-		 Thread.sleep(4000);
-		 System.out.println(pageinfo.asText());
-		 
+		HtmlPage page= webClient.getPage("http://login.189.cn/login");
+		HtmlTextInput txe=(HtmlTextInput) page.getElementById("txtAccount");
+		HtmlPasswordInput txepasswprd=(HtmlPasswordInput) page.getElementById("txtPassword");
+		txe.setValueAttribute("17791309689");
+		txepasswprd.setValueAttribute("585819");
+		HtmlPage loginpage=(HtmlPage) page.executeJavaScript("$('#loginbtn').click();").getNewPage();
+		Thread.sleep(7000);
+		System.out.println(loginpage.asXml());
+
+		
+		
+		   HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
+			  
+		 	WebRequest webRequest=new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
+		 	 List<NameValuePair> reqParamsinfo = new ArrayList<NameValuePair>();  
+		 	reqParamsinfo.add(new NameValuePair("currentPage","1"));
+		 	reqParamsinfo.add(new NameValuePair("pageSize","10"));
+		 	reqParamsinfo.add(new NameValuePair("effDate","2017-05-01"));
+		 	reqParamsinfo.add(new NameValuePair("expDate","2017-07-07"));
+		 	reqParamsinfo.add(new NameValuePair("serviceNbr","17791309689"));
+		 	reqParamsinfo.add(new NameValuePair("operListID","1"));
+		 	reqParamsinfo.add(new NameValuePair("isPrepay","0"));
+		 	reqParamsinfo.add(new NameValuePair("pOffrType","481"));
+		    webRequest.setHttpMethod(HttpMethod.POST);
+		    webRequest.setRequestParameters(reqParamsinfo);
+		    List<String> list=new ArrayList<String>();
+		    
+		    HtmlPage  Infopage=webClient.getPage(webRequest);
+		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
+		   Document doc = Jsoup.parse(htmlTable.asXml());
+//	        Elements trs = doc.select("table").select("tr");
+//	        for(int i = 0;i<trs.size();i++){
+//	            Elements tds = trs.get(i).select("td");
+//	            for(int j = 0;j<tds.size();j++){
+//	                String text = tds.get(j).text();
+//	                System.out.println(text);
+//	               list.add(text);
+//	         
+//	            }
+//	        }
+	    
+	        // data.put("info", htmlTable.asXml().replace("100%","50%").replace("mt10 transact_tab","testv"));
+		   data.put("info", htmlTable.asXml());
+	        map.put("data", data);
+//		   	map.put("errorCode","0000");
+//	    	map.put("errorInfo","成功");
+	       	map.put("UserIphone","17791309689");
+	    	map.put("UserPassword","585819");
+	    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecordTelecom");
+	    	System.out.println(map.toString());
+		
 }
+ 
+// public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+//		WebClient webClient = new WebClient();
+//		 webClient.getOptions().setUseInsecureSSL(true);
+//		 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+//		 webClient.getOptions().setTimeout(100000);
+//		 webClient.getOptions().setCssEnabled(false);
+//		 webClient.getOptions().setJavaScriptEnabled(true);
+//		 webClient.setJavaScriptTimeout(100000); 
+//		 webClient.getOptions().setRedirectEnabled(true);
+//		 webClient.getOptions().setThrowExceptionOnScriptError(false);
+//		 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+//		 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+//		 HtmlPage page= webClient.getPage("http://www.gsxt.gov.cn/index.html");
+//		 HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("keyword");
+//		 htmlTextInput.setValueAttribute("asd");
+//		 HtmlButton button=(HtmlButton) page.getElementById("btn_query");
+//		 HtmlPage pageinfo= button.click();
+//		 Thread.sleep(4000);
+//		 System.out.println(pageinfo.asText());
+//		 
+//}
 }

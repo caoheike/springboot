@@ -478,7 +478,7 @@ public class MobileService {
 			    	info.put("UserPassword",mobileBean.getUserPassword());
 			    	map.put("accountMessage",info);
 			    	//推送数据
-			    	map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/callRecord");
+			    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecord");
 			    	
 			    	
 			  
@@ -716,7 +716,7 @@ public class MobileService {
 						JSONObject jsonObject=JSONObject.fromObject(info);
 						jsonObject.put("UserIphone", unicombean.getUseriphone());
 						jsonObject.put("UserPassword", unicombean.getUserPassword());
-						map=resttemplate.SendMessage(jsonObject,"http://192.168.3.4:8081/HSDC/authcode/callRecordLink",true);
+						map=resttemplate.SendMessage(jsonObject,"http://124.89.33.70:8082/HSDC/authcode/callRecordLink",true);
 			 }
 				}else{
 					map.put("errorCode", "0001");
@@ -808,7 +808,7 @@ public class MobileService {
 //					    	map.put("errorInfo","成功");
 					       	map.put("UserIphone",TelecomBean.getUserPhone());
 					    	map.put("UserPassword",TelecomBean.getUserPassword());
-					    	map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/callRecordTelecom");
+					    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecordTelecom");
 					    	
 					         
 
@@ -983,7 +983,7 @@ public class MobileService {
 						map.put("password", showpwd);
 						map.put("card", card);
 						
-				 	  map= resttemplate.SendMessage(map,"http://192.168.3.4:8081/HSDC/authcode/mailBill");
+				 	  map= resttemplate.SendMessage(map,"http://124.89.33.70:8082/HSDC/authcode/mailBill");
 				 
 				 	 //	map.put("errorCode", "0004");
 				    	//map.put("errorInfo", "请取消独立密码后认证！！！");
@@ -1033,7 +1033,7 @@ public class MobileService {
 						//推送数据
 			
 					map.put("pCardNum", pCardNum);
-				  map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/grade/humanLaw");
+				  map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/grade/humanLaw");
 				  
 				  
 					
@@ -1111,7 +1111,7 @@ public class MobileService {
 	 	         map.put("Usernumber",Usernumber); 
 	 	         map.put("UserPwd",UserPwd);
 	 	         map.put("Usercard",Usercard); 
-	 	         map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/hireright");
+	 	         map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/hireright");
 	        }else{
 	    		map.put("errorCode","0002");
     			map.put("errorInfo","信息有误");
@@ -1186,7 +1186,7 @@ public class MobileService {
 							map.put("userPwd", UserPwd);
 							map.put("userCard", userCard);
 							
-							map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/taobaoPush");
+							map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/taobaoPush");
 					 }else{
 							data.put("info","网络错误");
 							map.put("data", data);
