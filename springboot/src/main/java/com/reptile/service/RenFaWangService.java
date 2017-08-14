@@ -35,8 +35,6 @@ import com.reptile.util.Resttemplate;
 
 @Service
 public class RenFaWangService {
-	private Resttemplate resttemplate = new Resttemplate();
-
 	/**
 	 * 
 	 * 获取验证码
@@ -220,6 +218,7 @@ public class RenFaWangService {
 			}
 			infoMap.put("data", listData);
 			infoMap.put("cardNumber", idCard);
+			Resttemplate resttemplate=new Resttemplate();
 			dataMap = resttemplate.SendMessage(infoMap,
 					"http://192.168.3.4:8081/HSDC/grade/humanLawTwo");
 		} catch (Exception e) {

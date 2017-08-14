@@ -25,7 +25,7 @@ public class SocialSecurityService {
     private final static String loginUrl="http://117.36.52.39/sxlssLogin.jsp";
     private final static String infoUrl="http://117.36.52.39/personInfoQuery.do";
     private final static String detailsUrl="http://117.36.52.39/personAccountQuery.do";
-    private Resttemplate resttemplate = new Resttemplate();
+
     public Map<String,Object> login(FormBean bean){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
@@ -89,7 +89,8 @@ public class SocialSecurityService {
             map.put("data",data);
 //            HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/socialSecurity", JSONObject.fromObject(map).toString());
             //ludangwei 2017-08-11
-            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/socialSecurity");
+            Resttemplate resttemplate = new Resttemplate();
+            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.4:8081/HSDC/person/socialSecurity");
         }catch (NullPointerException e) {
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");

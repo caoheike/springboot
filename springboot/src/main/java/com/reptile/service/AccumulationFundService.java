@@ -46,7 +46,6 @@ public class AccumulationFundService {
     private final static String infoUrl="http://query.xazfgjj.gov.cn/gjjcx_gjjxxcx.jsp?urltype=tree.TreeTempUrl&wbtreeid=1178";
     private final static String loginUrl="http://query.xazfgjj.gov.cn/index.jsp?urltype=tree.TreeTempUrl&wbtreeid=1172";
     private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
-    private Resttemplate resttemplate = new Resttemplate();
     private static CrawlerUtil crawlerutil=new CrawlerUtil();
     
     public Map<String,Object> login(FormBean bean, HttpServletRequest request){
@@ -132,7 +131,8 @@ public class AccumulationFundService {
 //                HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/accumulationFund", JSONObject.fromObject(map).toString());
                 
                 //ludangwei 2017-08-11
-                resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/accumulationFund");
+                Resttemplate resttemplate = new Resttemplate();
+                map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.4:8081/HSDC/person/accumulationFund");
                 //ludangwei 2017/08/10
                 session.removeAttribute("sessionWebClient");
                 session.removeAttribute("sessionLoginPage");

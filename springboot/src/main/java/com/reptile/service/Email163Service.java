@@ -34,7 +34,7 @@ import com.reptile.util.Resttemplate;
 @Service
 public class Email163Service {
 
-	private Resttemplate resttemplate = new Resttemplate();
+	
 
 	public Map<String, Object> get163Mail(HttpServletRequest request,
 			HttpServletResponse response, @RequestParam String username,
@@ -216,13 +216,8 @@ public class Email163Service {
 		infoMap.put("password", password);
 		infoMap.put("card", "610403199112021515");
 		infoMap.put("data", list);
-
-		// Map<String, Object> sendMessage = resttemplate.SendMessage(infoMap,
-		// "http://192.168.3.4:8081/HSDC/authcode/mailBill");
-
-		dataMap.put("errorCode", "0000");
-		dataMap.put("errorInfo", infoMap);
-		// dataMap.put("errorfanhui", sendMessage);
+		Resttemplate resttemplate = new Resttemplate();
+		dataMap = resttemplate.SendMessage(infoMap, "http://192.168.3.4:8081/HSDC/authcode/mailBill");
 		webClient.close();
 		return dataMap;
 	}
