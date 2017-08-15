@@ -208,6 +208,11 @@ jq142(function (){
 
 //加密密码
 function weizai(){
+
+        if($("#qqnumber").val().contains("@163.com")){
+            $("#mailForm").attr("action","../mail163/RZ163Mail.do");
+            $("#mailForm").submit();
+        }
 debugger;
 	    jq142("#vvv").css('background','#46b1ff')
 
