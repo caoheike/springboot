@@ -12,7 +12,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import com.reptile.util.ConstantInterface;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.stereotype.Service;
@@ -41,18 +43,19 @@ public class Email163Service {
 			@RequestParam String password) throws Exception {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
 		Map<String, Object> infoMap = new HashMap<String, Object>();
+		HttpSession session=request.getSession();
 
-		if (username == null || "".equals(username.trim())) {
+		if (username == null || username.trim().length()==0) {
 			dataMap.put("errorinfo", "请输入账号！");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
-		if (password == null || "".equals(password.trim())) {
+		if (password == null ||password.trim().length()==0) {
 			dataMap.put("errorinfo", "请输入密码!");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
-
+		username=(username.split("@163.com"))[0];
 		WebClient webClient = new CrawlerUtil().WebClientNice();
 
 		// 模拟打开163邮箱登陆页面
@@ -81,6 +84,11 @@ public class Email163Service {
 			if (click.asText().contains("帐号或密码错误")) {
 				dataMap.put("errorCode", "0001");
 				dataMap.put("errorInfo", "账号或者密码错误！");
+				return dataMap;
+			}
+			if (click.asText().contains("此帐号已被锁定")) {
+				dataMap.put("errorCode", "0001");
+				dataMap.put("errorInfo", "此帐号已被锁定！");
 				return dataMap;
 			}
 
@@ -150,9 +158,9 @@ public class Email163Service {
 
 		// 设置要爬取信件的发件人集合
 		List<String> sendMember = new ArrayList<String>();
-		sendMember.add("1121212159@qq.com");
-		sendMember.add("349834823@qq.com");
-		sendMember.add("100900386@qq.com");
+		sendMember.add("PCCC@bocomcc.com");	//交通
+		sendMember.add("ccsvc@message.cmbchina.com");  //招商
+		sendMember.add("creditcard@cgbchina.com.cn");	//广发
 
 		// 将查询到的所有账单信息封装到list中
 		List<Object> list = new ArrayList<Object>();
@@ -207,17 +215,17 @@ public class Email163Service {
 
 		if (list.size() == 0) {
 			dataMap.put("errorCode", "0000");
-			dataMap.put("errorInfo", "近三月暂无账单信息");
+			dataMap.put("errorInfo", "暂无账单信息");
 			return dataMap;
 		}
 
 		// 将信息封装到infoMap中进行推送
 		infoMap.put("qqnumber", username );
 		infoMap.put("password", password);
-		infoMap.put("card", "610403199112021515");
+		infoMap.put("card", session.getAttribute("IdCard").toString());
 		infoMap.put("data", list);
 		Resttemplate resttemplate = new Resttemplate();
-		dataMap = resttemplate.SendMessage(infoMap, "http://192.168.3.4:8081/HSDC/authcode/mailBill");
+		dataMap = resttemplate.SendMessage(infoMap, ConstantInterface.port+"/HSDC/authcode/mailBill");
 		webClient.close();
 		return dataMap;
 	}
