@@ -23,20 +23,45 @@ public class Email163Controller {
     @Resource
     private Email163Service service;
 
+    /**
+     * 获取邮箱账单信息
+     * @param request
+     * @param response
+     * @param username
+     * @param password
+     * @return
+     * @throws Exception
+     */
     @ApiOperation(value = "163邮箱", notes = "参数：账号，密码")
     // 设置标题描述
     @ResponseBody
     @RequestMapping(value = "get163Mail", method = RequestMethod.POST)
     public Map<String, Object> get163Mail(HttpServletRequest request,
-                                          HttpServletResponse response, @RequestParam() String username, @RequestParam String password) throws Exception {
+                                          HttpServletResponse response, @RequestParam String username, @RequestParam String password) throws Exception {
 
         return service.get163Mail(request, response, username, password);
     }
 
+    /**
+     * 认证163电子邮箱
+     * @param request
+     * @param response
+     * @param username
+     * @param password
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "RZ163Mail", method = RequestMethod.POST)
     public String RZ163Mail(HttpServletRequest request,
                                           HttpServletResponse response, @RequestParam("qqnumber") String username, @RequestParam("password") String password) throws Exception {
-        System.out.println(username+"   "+password);
-        return null;
+        String page="";
+
+        Map<String, Object> mail = service.get163Mail(request, response, username, password);
+        if(mail.toString().contains("0000")){
+            page="OperatorView/success";
+        }else{
+            page="OperatorView/error";
+        }
+        return page;
     }
 }
