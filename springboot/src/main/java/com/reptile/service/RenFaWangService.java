@@ -150,8 +150,6 @@ public class RenFaWangService {
 		// 提交
 		HtmlButton button = (HtmlButton) page.getElementById("button");
 		HtmlPage click = (HtmlPage) button.click();
-		System.out.println(click.asXml());
-		
 		
 		// 获取页面中所有的信息的id存储在list中
 		List<String> idList = new ArrayList();
