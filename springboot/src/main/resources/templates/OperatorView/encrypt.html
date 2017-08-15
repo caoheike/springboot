@@ -14,186 +14,163 @@
 <script th:src="@{/js/jquery-1.8.2.min.js}"></script>
 <script> var jq142 = jQuery.noConflict(true); </script>
 
-<style>
-        body
-        {
+   <style>
+         body{
              margin:0;
             padding:0;
             background-color:#f7f8fd;
         }
-        .content
-        {
-            width:100%;
-            background-color:#fff;
-            margin:0 auto;
-        }
-        header{
-            width:90%;
-            overflow: auto;
-            zoom:1;
-            margin:0 auto;
-            padding-bottom:0.5rem;
-        }
-        .leftGo
-        {
-            /* background:url(img/pre.png) no-repeat; */
-            width:2rem;
-            height: 2rem;
-            left: 1.25rem;
-            overflow: auto;
-            zoom:1;
-            text-decoration: none;
-            color:#333;
-            cursor: pointer;
+    header
+    {
+        width:100%;
+        margin:0;
+        background-color: #fff;
+    }
+    .title
+    {
+        text-align: center;
 
-        }
-         .leftGo img
-         {
-             float:left;
-             margin-top:0.8rem;
-         }
-        .leftGo  span
-        {
-           display: block;
-           padding-top:0.8rem;
-           float: left;
-           font-size:0.8rem;
-           color:#1c8bdc;
-        }
-        .header-text
-        {
-            display: block;
-            float: left;
-            width:67%;
-            overflow: hidden;
-            text-align: center;
-            padding-top:0.5rem;
-        }
-        .head-word
-        {
+    }
+    .leftGo
+    {
+        background:url(../image/mail/pre.png) no-repeat;
+        background-size:contain;
+        width:2rem;
+        height: 2rem;
+        display: block;
+        position:absolute;
+        left: 1.25rem;
+        top:0.5rem;
+    }
+    a{
+        text-decoration: none;
+        color:#333;
+        cursor: pointer;
+    }
 
-            display: block;
-            padding-top:0.8rem;
-            float: right;
-            font-size:0.8rem;
-            color:#1d8cde;
-        }
-        .content-word
-        {
-            margin-top:0.1rem;
-            width:100%;
-            background-color:#fff;
-        }
-        .p-content div
-        {
-            width:9rem;
-            height:8rem;
-            margin:0 auto;
-        }
-        .p-content img
-        {
-            width:100%;
-            height:100%;
-            text-align:center;
-        }
-        .p-content p
-        {
-            margin:0;
-            font-size:0.8rem;
-            padding:0.2rem 0;
-            color:#666;
-            text-align: center;
-        }
-        .p-email
-        {
-            margin-top:1rem;
-            background-color: #fff;
-        }
-        .p-adresss
-        {
-            width:95%;
-            margin-left:5%;
-            border-bottom: 1px solid #ccc;
-        }
-        .p-adresss span
-        {
-            font-size:0.8rem;
-            color:#ccc;
-        }
-        .p-adresss input
-        {
-            border:none;
-            outline:none;
-            height:3rem;
-             padding-left:2%;
-            width:70%;
-        }
-         .input_block
-         {
-             margin-left:5%;
-         }
-        .input_block input
-        {
-             border:none;
-            outline:none;
-            padding-left:2%;
-            height:3rem;
-            width:60%;
-        }	
-        .input_block span
-        {
-             font-size:0.8rem;
-             color:#ccc;
-        }
-         .p-more
-         {
-            float: right;
-            margin-right:3%;
-            margin-top:0.5rem;
-            overflow: auto;
-            zoom:1;
-         }
-        .p-button
-         {
-             width:90%;
-             margin:1rem auto 0 auto;
+    .header-text
+    {
+        text-align: center;
+        line-height: 3rem;
+    }
+    .title p{
+    padding:5%;
+    margin:0;
+    }
+    .title img
+    {
+        float: left;
+        margin-top:3%;
+        margin-left:8%;
+    }
+    .login-login
+    {
+        width:100%;
+        margin-top:0.5rem ;
+        text-align: center;
+        color: #fff;
+    
 
-         }
-         .p-button input
-        {
-             width:100%;
-            height:2.5rem;
-            background-color:#ecebf1;
-             border:none;
-             outline:none;
-            color:#d0cfd4;
-            border-radius:0.25rem;
-            font-size:1.3rem;
-            padding:0.5rem;
-         }
-        .p-word
-        {
-            font-size:0.6rem;
-            margin-top:0.5rem;
-            color:#333;
-        }
-        .p-word a{
-             text-decoration: none;
-            color:#29a3cc;
-        }
-        .p-image1
-         {
-             float:right;
-            margin-top:0.5rem;
-             margin-right:3%;
-            /* visibility: hidden; */
-        }
-        .p-image2
-        {
-           
-           /* visibility: hidden; */
-        }
-    </style>
+    }
+    .login-content
+    {
+    width:100%;
+    margin:0 auto;
+    overflow: auto;
+    zoom:1;
+    background-color:#fff;
+    }
+    .login-login h1
+    {
+        font-size:3rem;
+        font-weight:lighter;
+    }
+    .login-num
+    {
+        
+        color:#666;
+        width:100%;
+        height:2.5rem;
+        border-bottom: 1px solid  #f7f8fd;
+    }
+    .login-num img
+    {
+        float:left;
+        margin-top:0.5rem;
+        margin-left:5%;
+    }
+    .login-num span
+    {
+        display: block;
+        float: left;
+        margin-left:10%;
+        margin-top:0.9rem;
+        font-size:0.8rem;
+        color:#ccc;
+    }
+    .login-num input
+    {
+        width:75%;
+        height:2rem;
+        margin-top:0.2rem;
+        margin-left:5%;
+        display:block;
+        margin-bottom:0rem;
+        float:left;
+        background-color:transparent;
+        border:none;
+        outline:none;
+        
+    }
+    ::-webkit-input-placeholder { /* WebKit browsers */
+    color:#ccc;
+        
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color:#ccc;
+        
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color:#ccc;
+
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#ccc;
+        
+    }
+    .login-num .check
+    {
+        width:70%;
+        float: left;
+    }
+    .login-dl
+    {
+        width:90%;
+        margin-top:4rem;
+        height: 2.5rem;
+        border-radius:0.25rem;
+        background:url(../image/mail/1.png) no-repeat;
+        color:#fff;
+        border:none;
+        outline: none;
+        font-size:1.1rem;
+        text-align: center;
+        
+    }
+        .last-word
+    {
+        color:#808080;
+        font-size:0.6rem;
+        float: left;
+        margin-left:5%;
+
+    }
+    .last-word a{
+
+        color:#ff682c;
+        text-decoration: none;
+    }
+     </style>
 <script type="text/javascript">
 jq142(function (){
 	jq142("#input_invisible").blur(function (){
@@ -231,14 +208,14 @@ jq142(function (){
 
 //加密密码
 function weizai(){
-
+debugger;
 	    jq142("#vvv").css('background','#46b1ff')
 
 	jq142.ajax({
         data: {qqnumber:jq142("#qqnumber").val()},
 		 url:"../interface/encryptrsa.do",
 		 success:function (data, textStatus) {
-			debugger;
+		
 			//给 全局变量赋值。用于提交加密
 		
 			
@@ -248,12 +225,10 @@ function weizai(){
 // 			$("#testimg").attr('src',"http://localhost:8080/upload/"+data.fileName);
 				document.write("暂不支持异地登录"+Date());
 			}
-			
+			debugger;
 			var  salt=getSalt(data.xx.replace(/\\x/g, ""));
 			 var qqpwd=document.getElementById('input_visible').value;
-			 if(qqpwd==null||qqpwd==''){
-				 qqpwd=document.getElementById('input_invisible').value;	 
-			 }
+		
 				document.getElementById('showpwd').value=qqpwd;
 			var encryptionPassword = $.Encryption.getEncryption(qqpwd,salt,data.code);
 			document.getElementById('input_visible').value=encryptionPassword;
@@ -289,96 +264,32 @@ function getSalt(str) {
 })(jq142);
 </script>
 </head>
-<body>
-<form action="../interface/test.do" method="POST" id="mailForm">
- <div class="content">
-            <header class="header clearfix">
-<!--                 <a class="leftGo" href="javascript:history.go(-1);"><img src="../image/pre.png"/><span>返回</span></a> -->
-                <span class="header-text">获取邮箱账单</span>
-<!--                 <span class="head-word">服务大厅</span> -->
-            </header> 
-        </div>
-        <div class="content-word">
-             <div class="p-content">
-                    <div>
-                        <img src="../image/2.png" />
-                    </div>
-                    <p>亿级用户信息保障，无隐私风险</p>
-<!--                   <p style="padding-bottom:0.3rem;">已通过PCI-DSS,CNITSEC国家级安全认证</p> -->
-             </div>
-        </div>
-        <div class="p-email">
-            <div class="p-adresss">
-                 <span>邮箱地址</span>
-                <input type="text" id="qqnumber" name="qqnumber" placeholder="&nbsp;&nbsp;&nbsp;请输入邮件地址"/>
-                <img src="../image/error.png"  class="p-image1" id="p-image1"/>
-            </div>
-            <div class="p-password">
-               <div id="page_container">
-                <!--暗文密码输入框-->
-                    <div class="input_block"  id="psw_invisible" >
-                        <span>邮箱密码</span>
-                        <input type="password" id="input_invisible" placeholder="&nbsp;&nbsp;&nbsp;请输入邮箱密码"/>
-                        <div class="p-more">
-                            <img src="../image/error.png"  class="p-image2" id="p-image2"/>
-                            <img id="visible" onclick="showPsw()" src="../image/invisible.png"  style="display:none"/>
-                        </div>
-                        
-                    </div>
-                <!--明文密码输入框-->
-                    <div class="input_block" id="psw_visible" style="display: none;">
-                        <span>邮箱密码</span>
-                        <input type="text" id="input_visible" name="password" placeholder="&nbsp;&nbsp;&nbsp;请输入邮箱密码"/>
-                        <div class="p-more">
-                            <img src="../image/error.png"  class="p-image2" id="p-image2"/>
-                            <img id="invisible" onclick="hidePsw()" src=" ../image/visible.png" />
-                        </div>
-                        
-                    </div>    
-                    <!--暗文密码输入框-->
-<!--                     <div class="input_block" id="psw_invisible"> -->
-<!--                         <span>身份证号:</span> -->
-                        <input type="hidden" id="card" name="card" value="513721199210106811" placeholder="&nbsp;&nbsp;&nbsp;请输入身份证"/> 
-<!--                         <div class="p-more"> -->
-<!--                             <img src="../image/error.png"  class="p-image2" id="p-image2"/> -->
-<!--                             <img id="visible" onclick="showPsw()" src="../image/invisible.png" /> -->
-<!--                         </div> -->
-                        
-                    </div>
-                    <input type="hidden" id="sess"  name="sess"  />
-<input type="hidden" id="codes"  name="code"  />
-<input type="hidden" id="showpwd"  name="showpwd"  />
+  <body>
+  <form action="../interface/test.do" method="POST" id="mailForm">
+    	<header>
+    		<div class="title">
+                <a class="leftGo" href="#"></a>
+		        <div class="header-text">邮箱认证</div>
+            </div> 
+    	</header>
+    	<div class="login-login">
+            <div class="login-content">
+                <div class="login-num">
+                    <img src="../image/mail/email.png" />
+                    <input type="text" name="qqnumber" id="qqnumber" placeholder="&nbsp;&nbsp;&nbsp;请输入您的账号/手机号码"/>
                 </div>
+                <div class="login-num">
+                    <img src="../image/mail/lock.png"/>
+                    <input type="password" name="password" id="input_visible" placeholder="&nbsp;&nbsp;&nbsp;请输入您的密码"/>
+                </div>  
             </div>
-<!--         </div> -->
-         <div class="p-button">
-         <input type="button"  onclick="weizai()" value="获取账单" id="vvv"/>
-<!--             <button onclick="weizai()" >获取账单</button> -->
-            <p class="p-word">同意<a>《邮箱账单服务协议》</a></p>
+			<input type="hidden" id="sess"  name="sess"  />
+			<input type="hidden" id="codes"  name="code"  />
+			<input type="hidden" id="showpwd"  name="showpwd" />
+                <button class="login-dl" onclick="weizai()">认 证</button>
+                <p class="last-word">同意<a>《性感邮箱账单服务协议》</a></p>
         </div>
-        <script type="text/javascript">
-            // 这里使用最原始的js语法实现，可对应换成jquery语法进行逻辑控制
-            var visible=document.getElementById('psw_visible');//text block
-            var invisible=document.getElementById('psw_invisible');//password block
-            var inputVisible = document.getElementById('input_visible');
-            var inputInVisible = document.getElementById('input_invisible');
-            //隐藏text block，显示password block
-            function showPsw(){
-                var val = inputInVisible.value;//将password的值传给text
-                inputVisible.value = val;
-                invisible.style.display = "none";  
-                visible.style.display = "";  
-         
-            }
-            //隐藏password，显示text  
-            function hidePsw(){
-                var val=inputVisible.value;//将text的值传给password  
-                inputInVisible.value = val; 
-                invisible.style.display = "";  
-                visible.style.display = "none";  
-            }
-        </script>
-        </form>
+</form>
     </body>
 </html>
 

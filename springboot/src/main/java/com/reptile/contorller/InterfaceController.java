@@ -272,7 +272,7 @@ public class InterfaceController  {
 	}
 
 	@RequestMapping("test")
-	public String test(HttpServletRequest request,@RequestParam( "qqnumber") String qqnumber,@RequestParam("sess") String sess,@RequestParam("password")String password,@RequestParam("code")String code,@RequestParam("card") String card,@RequestParam("showpwd") String showpwd ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+	public String test(HttpServletRequest request,@RequestParam( "qqnumber") String qqnumber,@RequestParam("sess") String sess,@RequestParam("password")String password,@RequestParam("code")String code,@RequestParam("showpwd") String showpwd ) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		HttpSession session=request.getSession();
 		Map<String,Object> map=new HashMap<String, Object>();
 		String page="";
