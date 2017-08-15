@@ -65,12 +65,13 @@ import com.reptile.util.htmlUtil;
 @SuppressWarnings("deprecation")
 @Service("mobileService")
 public class MobileService {
-	
+	//http://124.89.33.70:8082
  	public Map<String,Object> mapWeb=new HashMap<String,Object>();
 	private Logger logger = Logger.getLogger(MobileService.class);
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
 	private static htmlUtil htmlUtil = new htmlUtil();
 	final List collectedAlerts = new ArrayList();
+
 	MobileBean mobileBean=new MobileBean();
 	Resttemplate resttemplate=new Resttemplate();
 	/**
@@ -91,8 +92,9 @@ public class MobileService {
 		BufferedImage ioim=ImageIO.read(CodePage.getInputStream());
 		session.setAttribute("WebClient", webClient);
 		//map.put("WebClients", webClient);
+
 		ImageIO.write(ioim,"png",response.getOutputStream());
-	
+
 	}
 	
 	public Map Login(MobileBean mobileBean, HttpServletRequest request, HttpServletResponse response,String usertype)
@@ -478,9 +480,10 @@ public class MobileService {
 			    	info.put("UserPassword",mobileBean.getUserPassword());
 			    	map.put("accountMessage",info);
 			    	//推送数据
-			    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecord");
+			    	map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/callRecord");
 			    	
 			    	
+			    
 			  
 			     }else{
 			    	 map.put("errorInfo",pages.getElementById("message").asText());
@@ -716,7 +719,7 @@ public class MobileService {
 						JSONObject jsonObject=JSONObject.fromObject(info);
 						jsonObject.put("UserIphone", unicombean.getUseriphone());
 						jsonObject.put("UserPassword", unicombean.getUserPassword());
-						map=resttemplate.SendMessage(jsonObject,"http://124.89.33.70:8082/HSDC/authcode/callRecordLink",true);
+						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
 			 }
 				}else{
 					map.put("errorCode", "0001");
@@ -767,8 +770,9 @@ public class MobileService {
 				HtmlPage loginpage=(HtmlPage) page.executeJavaScript("$('#loginbtn').click();").getNewPage();
 				Thread.sleep(7000);
 	
-		    HtmlForm htmlform=  (HtmlForm) loginpage.getElementById("loginForm");
-		 		
+//		    HtmlForm htmlform=  (HtmlForm) loginpage.getElementById("loginForm");
+			    HtmlDivision htmlform=  (HtmlDivision) loginpage.getElementById("divErr");
+
 		    if(htmlform==null||htmlform.equals("")){
 		    	//开始授权 
 		     HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
@@ -808,15 +812,20 @@ public class MobileService {
 //					    	map.put("errorInfo","成功");
 					       	map.put("UserIphone",TelecomBean.getUserPhone());
 					    	map.put("UserPassword",TelecomBean.getUserPassword());
-					    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecordTelecom");
+					    	map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/callRecordTelecom");
 					    	
 					         
 
 		    	
 		    }else{
+		    	if(htmlform.asText().contains("请输入验证码")){
+		    		map.put("errorCode","0001");
+			    	map.put("errorInfo","该帐号已被锁定，请您明天再来尝试");
+		    	}else{
+		    		map.put("errorCode","0001");
+			    	map.put("errorInfo","帐号或密码错误");
+		    	}
 		    
-		    	map.put("errorCode","0001");
-		    	map.put("errorInfo","帐号或密码错误");
 		    	
 		    }
 			} catch (Exception e) {
@@ -983,7 +992,7 @@ public class MobileService {
 						map.put("password", showpwd);
 						map.put("card", card);
 						
-				 	  map= resttemplate.SendMessage(map,"http://124.89.33.70:8082/HSDC/authcode/mailBill");
+				 	  map= resttemplate.SendMessage(map,crawlerUtil.sendip+"/HSDC/authcode/mailBill");
 				 
 				 	 //	map.put("errorCode", "0004");
 				    	//map.put("errorInfo", "请取消独立密码后认证！！！");
@@ -1033,7 +1042,7 @@ public class MobileService {
 						//推送数据
 			
 					map.put("pCardNum", pCardNum);
-				  map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/grade/humanLaw");
+				  map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/grade/humanLaw");
 				  
 				  
 					
@@ -1102,19 +1111,33 @@ public class MobileService {
 	        HtmlPage pages=  submit.click();
 	        Thread.sleep(3000);
 	        if(!pages.asText().contains("您输入的用户名或密码有误")){
-	        	 System.out.println(pages.asXml());
-	 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
-	 	        Thread.sleep(3000);
-	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
-	 	         data.put("info", table.asXml());
-	 	         map.put("data", data);
-	 	         map.put("Usernumber",Usernumber); 
-	 	         map.put("UserPwd",UserPwd);
-	 	         map.put("Usercard",Usercard); 
-	 	         map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/hireright");
+	        	if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+	   	       	 System.out.println(pages.asXml());
+		 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
+		 	        Thread.sleep(3000);
+		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
+		 	         data.put("info", table.asXml());
+		 	         map.put("data", data);
+		 	         map.put("Usernumber",Usernumber); 
+		 	         map.put("UserPwd",UserPwd);
+		 	         map.put("Usercard",Usercard); 
+		 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
+	        	}else{
+	         		map.put("errorCode","0002");
+	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+	        	}
+	        	
+	        	
+
 	        }else{
-	    		map.put("errorCode","0002");
-    			map.put("errorInfo","信息有误");
+	        	if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+	        		map.put("errorCode","0002");
+	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+	        	}else{
+	        		map.put("errorCode","0002");
+	    			map.put("errorInfo","信息有误");
+	        	}
+	    
 	        }
 	       
 	      
@@ -1186,7 +1209,7 @@ public class MobileService {
 							map.put("userPwd", UserPwd);
 							map.put("userCard", userCard);
 							
-							map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/taobaoPush");
+							map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/taobaoPush");
 					 }else{
 							data.put("info","网络错误");
 							map.put("data", data);
