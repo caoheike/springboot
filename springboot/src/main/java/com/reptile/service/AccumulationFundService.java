@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUtils;
 
-import com.reptile.util.ConstantInterface;
 import net.sf.json.JSONObject;
 
 import org.springframework.stereotype.Service;
@@ -133,7 +132,7 @@ public class AccumulationFundService {
                 
                 //ludangwei 2017-08-11
                 Resttemplate resttemplate = new Resttemplate();
-                map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
+                map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.4:8081/HSDC/person/accumulationFund");
                 //ludangwei 2017/08/10
                 session.removeAttribute("sessionWebClient");
                 session.removeAttribute("sessionLoginPage");

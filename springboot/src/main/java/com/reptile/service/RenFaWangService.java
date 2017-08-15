@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.reptile.util.ConstantInterface;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -151,6 +150,8 @@ public class RenFaWangService {
 		// 提交
 		HtmlButton button = (HtmlButton) page.getElementById("button");
 		HtmlPage click = (HtmlPage) button.click();
+		System.out.println(click.asXml());
+		
 		
 		// 获取页面中所有的信息的id存储在list中
 		List<String> idList = new ArrayList();
@@ -219,7 +220,7 @@ public class RenFaWangService {
 			infoMap.put("cardNumber", idCard);
 			Resttemplate resttemplate=new Resttemplate();
 			dataMap = resttemplate.SendMessage(infoMap,
-					ConstantInterface.port+"/HSDC/grade/humanLawTwo");
+					"http://192.168.3.4:8081/HSDC/grade/humanLawTwo");
 		} catch (Exception e) {
 			dataMap.put("errorinfo", "系统繁忙，请稍后再试");
 			dataMap.put("errorCode", "0001");

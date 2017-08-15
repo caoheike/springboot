@@ -6,7 +6,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.PersonAccount;
 import com.reptile.model.PersonInfo;
-import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONObject;
@@ -91,7 +90,7 @@ public class SocialSecurityService {
 //            HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/socialSecurity", JSONObject.fromObject(map).toString());
             //ludangwei 2017-08-11
             Resttemplate resttemplate = new Resttemplate();
-            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/socialSecurity");
+            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.4:8081/HSDC/person/socialSecurity");
         }catch (NullPointerException e) {
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");

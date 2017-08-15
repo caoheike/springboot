@@ -101,63 +101,54 @@ public class taobao {
 		HtmlPage page= webClient.getPage("http://login.189.cn/login");
 		HtmlTextInput txe=(HtmlTextInput) page.getElementById("txtAccount");
 		HtmlPasswordInput txepasswprd=(HtmlPasswordInput) page.getElementById("txtPassword");
-		//txe.setValueAttribute("17791309689");
-		txe.setValueAttribute("17791309686");
+		txe.setValueAttribute("17791309689");
 		txepasswprd.setValueAttribute("585819");
 		HtmlPage loginpage=(HtmlPage) page.executeJavaScript("$('#loginbtn').click();").getNewPage();
 		Thread.sleep(7000);
-	    HtmlDivision htmlform=  (HtmlDivision) loginpage.getElementById("divErr");
-		System.out.println(htmlform.asText());
-		if(htmlform.asText().contains("请输入验证码")){
-    		map.put("errorCode","0001");
-	    	map.put("errorInfo","该帐号已被锁定，请您明天再来尝试");
-    	}else{
-    		map.put("errorCode","0001");
-	    	map.put("errorInfo","帐号或密码错误");
-    	}
-		System.out.println(map.toString());
-//		
-//		
-//		   HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
-//			  
-//		 	WebRequest webRequest=new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
-//		 	 List<NameValuePair> reqParamsinfo = new ArrayList<NameValuePair>();  
-//		 	reqParamsinfo.add(new NameValuePair("currentPage","1"));
-//		 	reqParamsinfo.add(new NameValuePair("pageSize","10"));
-//		 	reqParamsinfo.add(new NameValuePair("effDate","2017-05-01"));
-//		 	reqParamsinfo.add(new NameValuePair("expDate","2017-07-07"));
-//		 	reqParamsinfo.add(new NameValuePair("serviceNbr","17791309689"));
-//		 	reqParamsinfo.add(new NameValuePair("operListID","1"));
-//		 	reqParamsinfo.add(new NameValuePair("isPrepay","0"));
-//		 	reqParamsinfo.add(new NameValuePair("pOffrType","481"));
-//		    webRequest.setHttpMethod(HttpMethod.POST);
-//		    webRequest.setRequestParameters(reqParamsinfo);
-//		    List<String> list=new ArrayList<String>();
-//		    
-//		    HtmlPage  Infopage=webClient.getPage(webRequest);
-//		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
-//		   Document doc = Jsoup.parse(htmlTable.asXml());
-////	        Elements trs = doc.select("table").select("tr");
-////	        for(int i = 0;i<trs.size();i++){
-////	            Elements tds = trs.get(i).select("td");
-////	            for(int j = 0;j<tds.size();j++){
-////	                String text = tds.get(j).text();
-////	                System.out.println(text);
-////	               list.add(text);
-////	         
-////	            }
-////	        }
-//	    
-//	        // data.put("info", htmlTable.asXml().replace("100%","50%").replace("mt10 transact_tab","testv"));
-//		   data.put("info", htmlTable.asXml());
-//	        map.put("data", data);
-////		   	map.put("errorCode","0000");
-////	    	map.put("errorInfo","成功");
-//	       	map.put("UserIphone","17791309689");
-//	    	map.put("UserPassword","585819");
-//	    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecordTelecom");
-//	    	System.out.println(map.toString());
-//		
+		System.out.println(loginpage.asXml());
+
+		
+		
+		   HtmlPage logi=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
+			  
+		 	WebRequest webRequest=new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
+		 	 List<NameValuePair> reqParamsinfo = new ArrayList<NameValuePair>();  
+		 	reqParamsinfo.add(new NameValuePair("currentPage","1"));
+		 	reqParamsinfo.add(new NameValuePair("pageSize","10"));
+		 	reqParamsinfo.add(new NameValuePair("effDate","2017-05-01"));
+		 	reqParamsinfo.add(new NameValuePair("expDate","2017-07-07"));
+		 	reqParamsinfo.add(new NameValuePair("serviceNbr","17791309689"));
+		 	reqParamsinfo.add(new NameValuePair("operListID","1"));
+		 	reqParamsinfo.add(new NameValuePair("isPrepay","0"));
+		 	reqParamsinfo.add(new NameValuePair("pOffrType","481"));
+		    webRequest.setHttpMethod(HttpMethod.POST);
+		    webRequest.setRequestParameters(reqParamsinfo);
+		    List<String> list=new ArrayList<String>();
+		    
+		    HtmlPage  Infopage=webClient.getPage(webRequest);
+		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
+		   Document doc = Jsoup.parse(htmlTable.asXml());
+//	        Elements trs = doc.select("table").select("tr");
+//	        for(int i = 0;i<trs.size();i++){
+//	            Elements tds = trs.get(i).select("td");
+//	            for(int j = 0;j<tds.size();j++){
+//	                String text = tds.get(j).text();
+//	                System.out.println(text);
+//	               list.add(text);
+//	         
+//	            }
+//	        }
+	    
+	        // data.put("info", htmlTable.asXml().replace("100%","50%").replace("mt10 transact_tab","testv"));
+		   data.put("info", htmlTable.asXml());
+	        map.put("data", data);
+//		   	map.put("errorCode","0000");
+//	    	map.put("errorInfo","成功");
+	       	map.put("UserIphone","17791309689");
+	    	map.put("UserPassword","585819");
+	    	map=resttemplate.SendMessage(map, "http://124.89.33.70:8082/HSDC/authcode/callRecordTelecom");
+	    	System.out.println(map.toString());
+		
 }
  
 // public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {

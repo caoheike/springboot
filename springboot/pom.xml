@@ -206,7 +206,6 @@
   <version>2.25</version>
 </dependency>
 
-
 	</dependencies>
 
 <build>  
@@ -221,10 +220,6 @@
            <encoding>UTF-8</encoding> 
             </configuration>  
         </plugin>  
-        <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-</plugin>
     </plugins>  
 </build> 
 

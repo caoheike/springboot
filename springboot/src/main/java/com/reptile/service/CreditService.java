@@ -8,7 +8,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.Option;
 import com.reptile.model.Question;
-import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
 import com.reptile.util.Resttemplate;
 
@@ -40,6 +39,7 @@ public class CreditService {
     private final static String ApplyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
     private final static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
     private final static String verifyCodeImageUrl="https://ipcrs.pbccrc.org.cn/imgrc.do?a="+System.currentTimeMillis();
+    private Resttemplate resttemplate = new Resttemplate();
     public Map<String,Object> getVerifyImage(String type, HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
@@ -473,7 +473,7 @@ public class CreditService {
                         resMap.put("ResultCode","0000");
                         resMap.put("userId",userId);
                         resMap.put("data",resData);
-                        HttpUtils.sendPost(ConstantInterface.port+"/HSDC/person/creditInvestigationQuestion", JSONObject.fromObject(resMap).toString());
+                        HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion", JSONObject.fromObject(resMap).toString());
                        
                         //ludangwei 2017-08-11
 //                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
@@ -535,7 +535,7 @@ public class CreditService {
                         //ludangwei 2017-08-03
                         // HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigation", JSONObject.fromObject(map).toString());
                         Resttemplate temp=new Resttemplate();
-                        Map<String, Object> sendMessage = temp.SendMessageCredit(JSONObject.fromObject(map),ConstantInterface.port+"/HSDC/person/creditInvestigation");
+                        Map<String, Object> sendMessage = temp.SendMessageCredit(JSONObject.fromObject(map),"http://192.168.3.16:8089/HSDC/person/creditInvestigation");
                         return sendMessage;
                     } catch (Exception e) {
                         System.out.println("征信报告推送失败!"+e.getMessage());
