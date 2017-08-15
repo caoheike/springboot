@@ -223,7 +223,7 @@ debugger;
 			if(data.fileName!='1'){
 				//alert(data.fileName)
 // 			$("#testimg").attr('src',"http://localhost:8080/upload/"+data.fileName);
-				document.write("暂不支持异地登录"+Date());
+			//	document.write("暂不支持异地登录"+Date());
 			}
 			debugger;
 			var  salt=getSalt(data.xx.replace(/\\x/g, ""));
@@ -286,7 +286,7 @@ function getSalt(str) {
 			<input type="hidden" id="sess"  name="sess"  />
 			<input type="hidden" id="codes"  name="code"  />
 			<input type="hidden" id="showpwd"  name="showpwd" />
-                <button class="login-dl" onclick="weizai()">认 证</button>
+                <a class="login-dl" onclick="weizai()">认 证</a>
                 <p class="last-word">同意<a>《性感邮箱账单服务协议》</a></p>
         </div>
 </form>
