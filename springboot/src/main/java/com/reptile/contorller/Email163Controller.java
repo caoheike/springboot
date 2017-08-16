@@ -55,7 +55,6 @@ public class Email163Controller {
     public String RZ163Mail(HttpServletRequest request,
                                           HttpServletResponse response, @RequestParam("qqnumber") String username, @RequestParam("password") String password) throws Exception {
         String page="";
-
         Map<String, Object> mail = service.get163Mail(request, response, username, password);
         if(mail.toString().contains("0000")){
             page="OperatorView/success";

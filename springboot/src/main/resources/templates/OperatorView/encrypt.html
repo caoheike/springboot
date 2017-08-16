@@ -226,6 +226,7 @@ debugger
 	jq142.ajax({
         data: {qqnumber:jq142("#qqnumber").val()},
 		 url:"../interface/encryptrsa.do",
+		 async:false,
 		 success:function (data, textStatus) {
 		
 			//给 全局变量赋值。用于提交加密
