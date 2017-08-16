@@ -378,7 +378,7 @@ public class MobileService {
 		UnexpectedPage CodePage = webClient.getPage(mobileBean.GetCodeUrl);
 		BufferedImage ioim=ImageIO.read(CodePage.getInputStream());
 		session.setAttribute("WebClient", webClient);
-		File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/"); // 此目录保存缩小后的关键图
+		File path = new File(request.getSession().getServletContext().getRealPath("/uploads") + "/"); // 此目录保存缩小后的关键图
 		//如果文件夹不存在则创建    
 		if  (!path .exists()  && !path .isDirectory())      
 		{       
@@ -391,7 +391,7 @@ public class MobileService {
 	//InetAddress.getLocalHost().getHostAddress()
 		maps.put("ip",crawlerUtil.ip);
 		maps.put("FileName",fileName);
-		maps.put("FilePath","/upload");
+		maps.put("FilePath","/uploads");
 		maps.put("Port",crawlerUtil.port);
 		map.put("data",maps);
 		map.put("errorCode", "0000");
@@ -980,6 +980,19 @@ public class MobileService {
 				 		
 				 				
 				 			}
+				 			
+				 			if(div.asText().contains("光大银行信用卡电子对账单")){
+				 				HtmlPage xykpage= client.getPage("https://w.mail.qq.com/"+div.getHrefAttribute());
+				 				System.out.println(xykpage.asText());
+				 				if(xykpage.asText().contains("2017/08")){
+				 					lists.add(xykpage.asXml());
+				 				}
+				 		
+				 				
+				 			}
+				 			
+				 		
+				 			
 				 	
 				 		}
 				 	    if(lists.size()>0){
