@@ -164,7 +164,7 @@ public class Email163Service {
 		sendMember.add("PCCC@bocomcc.com");	//交通
 		sendMember.add("ccsvc@message.cmbchina.com");  //招商
 		sendMember.add("creditcard@cgbchina.com.cn");	//广发
-
+		sendMember.add("349834823@qq.com");
 		// 将查询到的所有账单信息封装到list中
 		List<Object> list = new ArrayList<Object>();
 
@@ -216,14 +216,14 @@ public class Email163Service {
 			}
 		}
 
-		if (list.size() == 0) {
-			dataMap.put("errorCode", "0000");
-			dataMap.put("errorInfo", "暂无账单信息");
-			return dataMap;
-		}
+//		if (list.size() == 0) {
+//			dataMap.put("errorCode", "0000");
+//			dataMap.put("errorInfo", "暂无账单信息");
+//			return dataMap;
+//		}
 
 		// 将信息封装到infoMap中进行推送
-		infoMap.put("qqnumber", username );
+		infoMap.put("qqnumber", username+"@163.com" );
 		infoMap.put("password", password);
 		infoMap.put("card", session.getAttribute("IdCard").toString());
 		infoMap.put("data", list);
