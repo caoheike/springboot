@@ -36,8 +36,6 @@ import com.reptile.util.Resttemplate;
 @Service
 public class Email163Service {
 
-	
-
 	public Map<String, Object> get163Mail(HttpServletRequest request,
 			HttpServletResponse response, @RequestParam String username,
 			@RequestParam String password) throws Exception {
@@ -52,6 +50,12 @@ public class Email163Service {
 		}
 		if (password == null ||password.trim().length()==0) {
 			dataMap.put("errorinfo", "请输入密码!");
+			dataMap.put("errorCode", "0001");
+			return dataMap;
+		}
+
+		if(!username.contains("@163.com")){
+			dataMap.put("errorinfo", "163邮箱地址不正确!");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
@@ -75,7 +79,6 @@ public class Email163Service {
 			list.add(new NameValuePair("savalogin", "0"));
 			list.add(new NameValuePair("password", password));
 			WebRequest webRequest = new WebRequest(url1);
-
 			webRequest.setRequestParameters(list);
 			webRequest.setHttpMethod(HttpMethod.POST);
 			HtmlPage click = webClient.getPage(webRequest);
@@ -108,7 +111,7 @@ public class Email163Service {
 			page1 = webClient.getPage("http://mail.163.com/js6/s?sid=" + sid
 					+ "&func=mbox:listMessages");
 		} catch (Exception e) {
-			dataMap.put("errorinfo", "系统维护中！");
+			dataMap.put("errorinfo", "系统异常！");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
