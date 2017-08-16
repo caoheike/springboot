@@ -81,11 +81,12 @@ public class RenFaWangService {
 		ImageIO.write(read, "png", new File(verifyImages + File.separator
 				+ fileName));
 
-		infoMap.put("fileName", fileName);
-		infoMap.put("path", "/refawangCodeImage");
-		infoMap.put("port", CrawlerUtil.port);
-		infoMap.put("ip", CrawlerUtil.ip);
-		mapData.put("data", infoMap);
+//		infoMap.put("fileName", fileName);
+//		infoMap.put("path", "/refawangCodeImage");
+//		infoMap.put("port", CrawlerUtil.port);
+//		infoMap.put("ip", CrawlerUtil.ip);
+//		mapData.put("data", infoMap);
+		mapData.put("path",CrawlerUtil.ip+":"+CrawlerUtil.port+"/refawangCodeImage/"+fileName);
 		request.getSession().setAttribute("rfw-webclient", webClient);
 		request.getSession().setAttribute("rfw-page", page);
 		return mapData;
@@ -115,17 +116,17 @@ public class RenFaWangService {
 		HtmlPage page = (HtmlPage) session.getAttribute("rfw-page");
 
 		if (webClient == null || page == null) {
-			dataMap.put("errorinfo", "系统异常！");
+			dataMap.put("errorinfo", "验证码错误！");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
 
-		if (code == null || "".equals(code.trim())) {
+		if (code == null ||code.trim().length()==0) {
 			dataMap.put("errorinfo", "请输入验证码！");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
-		if (userName == null || "".equals(userName.trim())) {
+		if (userName == null ||userName.trim().length()==0) {
 			dataMap.put("errorinfo", "请输入查询条件!");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
@@ -220,6 +221,8 @@ public class RenFaWangService {
 			Resttemplate resttemplate=new Resttemplate();
 			dataMap = resttemplate.SendMessage(infoMap,
 					ConstantInterface.port+"/HSDC/grade/humanLawTwo");
+			session.removeAttribute("rfw-webclient");
+			session.removeAttribute("rfw-page");
 		} catch (Exception e) {
 			dataMap.put("errorinfo", "系统繁忙，请稍后再试");
 			dataMap.put("errorCode", "0001");
@@ -248,9 +251,8 @@ public class RenFaWangService {
 
 		HtmlPage page = (HtmlPage) session.getAttribute("rfw-page");
 		if (page == null) {
-			mapData.put("errorinfo", "登录异常！");
-			mapData.put("errorCode", "0001");
-			return mapData;
+			Map<String, Object> imageCode = getImageCode(request, response);
+			return  imageCode;
 		}
 		try {
 
@@ -277,11 +279,12 @@ public class RenFaWangService {
 			ImageIO.write(bi, "png", new File(verifyImages + File.separator
 					+ fileName));
 
-			infoMap.put("fileName", fileName);
-			infoMap.put("path", "/refawangCodeImage");
-			infoMap.put("port", CrawlerUtil.port);
-			infoMap.put("ip", CrawlerUtil.ip);
-			mapData.put("data", infoMap);
+//			infoMap.put("fileName", fileName);
+//			infoMap.put("path", "/refawangCodeImage");
+//			infoMap.put("port", CrawlerUtil.port);
+//			infoMap.put("ip", CrawlerUtil.ip);
+//			mapData.put("data", infoMap);
+			mapData.put("path",CrawlerUtil.ip+":"+CrawlerUtil.port+"/refawangCodeImage/"+fileName);
 		} catch (Exception e) {
 			mapData.put("errorinfo", "系统异常！");
 			mapData.put("errorCode", "0001");

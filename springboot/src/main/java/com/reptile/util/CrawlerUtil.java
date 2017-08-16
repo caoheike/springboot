@@ -37,7 +37,7 @@ import org.jsoup.select.Elements;
  */
 public class CrawlerUtil {
 	public static final String port="8080";
-	public static final String ip="192.168.3.222";
+	public static final String ip="192.168.3.37";
 //	public static final String ip="124.89.33.70";
 	public static final String sendip="http://192.168.3.4:8081";
 	//public static final String sendport="http://192.168.3.4:8081";
