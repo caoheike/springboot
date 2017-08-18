@@ -13,11 +13,14 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Scheduler {
+     private static Logger logger=LoggerFactory.getLogger(Scheduler.class);
      public static String getIp="http://http-api.taiyangruanjian.com/getip?num=1&type=2&pro=&city=0&yys=0&port=11&pack=1321&ts=1&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1";
      private static int i=0;
      public static String ip="";
@@ -27,6 +30,7 @@ public class Scheduler {
      static{
     	 Scheduler.sendGet(getIp);
     	 System.out.println(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
+    	 logger.info(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
      }
     
     @Scheduled(fixedRate=5000)
@@ -34,9 +38,10 @@ public class Scheduler {
 
     	Date date=dateFormat.parse(expire_time);
     	if(date.getTime()-60000<System.currentTimeMillis()){
-    		String str= Scheduler.sendGet(getIp);
+    		Scheduler.sendGet(getIp);
+    		System.out.println(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
+    		logger.info(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
     	}
-         System.out.println(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
     }
     
     
@@ -74,6 +79,7 @@ public class Scheduler {
             ip=fromObject2.getJSONObject(0).getString("ip");
             port=Integer.parseInt(fromObject2.getJSONObject(0).getString("port"));
             expire_time=fromObject2.getJSONObject(0).getString("expire_time");
+            logger.info(ip+":"+port+"     time "+dateFormat.format(System.currentTimeMillis())+" expire_time"+expire_time);
         } catch (Exception e) {
             System.out.println("发送GET请求出现异常！" + e);
             e.printStackTrace();

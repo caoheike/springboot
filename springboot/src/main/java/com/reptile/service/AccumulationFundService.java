@@ -60,11 +60,12 @@ public class AccumulationFundService {
                 return map;
             }
             HttpSession session = request.getSession();
-            Object sessionWebClient = session.getAttribute("sessionWebClient");
-            Object sessionLoginPage = session.getAttribute("sessionLoginPage");
+            Object sessionWebClient = session.getAttribute("sessionWebClient-GJJ");
+            Object sessionLoginPage = session.getAttribute("sessionLoginPage-GJJ");
             if(sessionWebClient!=null && sessionLoginPage!=null){
                 final WebClient webClient = (WebClient) sessionWebClient;
                 final HtmlPage loginPage = (HtmlPage) sessionLoginPage;
+
                 HtmlForm form = loginPage.getForms().get(0);
                 form.getInputByName("csrftoken").setValueAttribute("40507");
                 form.getInputByName("wbidcard").setValueAttribute(bean.getUserId().toString());
@@ -135,8 +136,8 @@ public class AccumulationFundService {
                 Resttemplate resttemplate = new Resttemplate();
                 map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
                 //ludangwei 2017/08/10
-                session.removeAttribute("sessionWebClient");
-                session.removeAttribute("sessionLoginPage");
+                session.removeAttribute("sessionWebClient-GJJ");
+                session.removeAttribute("sessionLoginPage-GJJ");
             }else{
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
@@ -156,8 +157,8 @@ public class AccumulationFundService {
         Map<String,Object> map=new HashMap<String,Object>();
         try {
             HttpSession session = request.getSession();
-            Object sessionWebClient = session.getAttribute("sessionWebClient");
-            Object sessionLoginPage = session.getAttribute("sessionLoginPage");
+            Object sessionWebClient = session.getAttribute("sessionWebClient-GJJ");
+            Object sessionLoginPage = session.getAttribute("sessionLoginPage-GJJ");
             String verifyImages=request.getSession().getServletContext().getRealPath("/verifyImages");
             File file = new File(verifyImages+File.separator);
             if(!file.exists()){
@@ -178,13 +179,14 @@ public class AccumulationFundService {
                 HtmlImage verifyCodeImagePage = (HtmlImage)loginPage.getByXPath("//img").get(20);
                 BufferedImage bi=verifyCodeImagePage.getImageReader().read(0);
                 ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
-                session.setAttribute("sessionWebClient", webClient);
-                session.setAttribute("sessionLoginPage", loginPage);
+                session.setAttribute("sessionWebClient-GJJ", webClient);
+                session.setAttribute("sessionLoginPage-GJJ", loginPage);
             }
             data.put("imageUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");
         } catch (IOException e) {
+            e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.WebClientFactory;
 import org.dom4j.DocumentHelper;
@@ -168,6 +169,7 @@ public class Email163Service {
 		sendMember.add("creditcard@cgbchina.com.cn");	//广发
 		sendMember.add("cebbank@cardcenter.cebbank.com"); //广大
 		sendMember.add("creditcardcenter@cardmail.psbc.com");  //邮储
+		sendMember.add("349834823@qq.com");  //邮储
 		// 将查询到的所有账单信息封装到list中
 		List<Object> list = new ArrayList<Object>();
 

@@ -3,6 +3,7 @@ package com.reptile.service;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
+
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
@@ -45,39 +46,39 @@ public class CreditService {
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
         try {
-            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
-            Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage");
+//            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
+//            Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage-ZX");
             String verifyImages=request.getSession().getServletContext().getRealPath("/verifyImages");
             File file = new File(verifyImages+File.separator);
             if(!file.exists()){
                 file.mkdir();
             }
             String fileName=System.currentTimeMillis()+".jpg";
-            if(sessionWebClient!=null && sessionLoginPage!=null && (type==null || !type.equals("reg"))){
-                final WebClient webClient = (WebClient)sessionWebClient;
-                UnexpectedPage verifyCodeImagePage;
-                try{
-                    verifyCodeImagePage = webClient.getPage(verifyCodeImageUrl);
-                }catch(Exception e){
-                    verifyCodeImagePage=null;
-                }
-                if(verifyCodeImagePage==null){
-                    data.put("ResultInfo","服务器繁忙,请重新获取验证码!");
-                    data.put("ResultCode","0001");
-                    map.put("data",data);
-                    return map;
-                }
-                BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
-                ImageIO.write(bi, "JPG", new File(file,fileName));
-            }else{
-                final WebClient webClient = new WebClient(BrowserVersion.CHROME, Scheduler.ip,Scheduler.port);
+//            if(sessionWebClient!=null && sessionLoginPage!=null && (type==null || !type.equals("reg"))){
+//                final WebClient webClient = (WebClient)sessionWebClient;
+//                UnexpectedPage verifyCodeImagePage;
+//                try{
+//                    verifyCodeImagePage = webClient.getPage(verifyCodeImageUrl);
+//                }catch(Exception e){
+//                    verifyCodeImagePage=null;
+//                }
+//                if(verifyCodeImagePage==null){
+//                    data.put("ResultInfo","服务器繁忙,请重新获取验证码!");
+//                    data.put("ResultCode","0001");
+//                    map.put("data",data);
+//                    return map;
+//                }
+//                BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
+//                ImageIO.write(bi, "JPG", new File(file,fileName));
+//            }else{
+                final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip,Scheduler.port);
                 webClient.setJavaScriptTimeout(20000);
                 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
                 webClient.getOptions().setJavaScriptEnabled(true); // 启用JS解释器，默认为true
                 webClient.getOptions().setCssEnabled(false);// 禁用css支持
                 webClient.getOptions().setUseInsecureSSL(true);
                 webClient.getOptions().setThrowExceptionOnScriptError(false);// js运行错误时，是否抛出异常
-                webClient.getOptions().setTimeout(10000); // 设置连接超时时间，这里是10S。如果为0，则无限期等待
+                webClient.getOptions().setTimeout(30000); // 设置连接超时时间，这里是30S。如果为0，则无限期等待
                 webClient.getCookieManager().setCookiesEnabled(true);
                 webClient.addRequestHeader("Host", "ipcrs.pbccrc.org.cn");
                 webClient.addRequestHeader("Referer", "https://ipcrs.pbccrc.org.cn/");
@@ -94,10 +95,10 @@ public class CreditService {
                     HtmlImage verifyCodeImagePage = (HtmlImage)loginPage.getElementById("imgrc");
                     BufferedImage bi=verifyCodeImagePage.getImageReader().read(0);
                     ImageIO.write(bi, "JPG", new File(file,fileName));
-                    request.getSession().setAttribute("sessionLoginPage", loginPage);
+                    request.getSession().setAttribute("sessionLoginPage-ZX", loginPage);
                 }
-                request.getSession().setAttribute("sessionWebClient", webClient);
-            }
+                request.getSession().setAttribute("sessionWebClient-ZX", webClient);
+//            }
             data.put("imageUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");
@@ -111,7 +112,7 @@ public class CreditService {
     public Map<String,Object> sendSms(HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
-        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionApplyPage = request.getSession().getAttribute("sessionApplyPage");
         try {
             if(sessionWebClient!=null && sessionApplyPage!=null){
@@ -146,7 +147,7 @@ public class CreditService {
             map.put("data",data);
             return map;
         }
-        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionRegPage = request.getSession().getAttribute("sessionRegPage");
         try {
             if(sessionWebClient!=null && sessionRegPage!=null){
@@ -177,7 +178,7 @@ public class CreditService {
     public Map<String,Object> reg(FormBean bean,HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
-        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionRegPage = request.getSession().getAttribute("sessionRegPage");
         try {
             if(sessionWebClient!=null && sessionRegPage!=null){
@@ -229,7 +230,7 @@ public class CreditService {
     public Map<String,Object> preReg(FormBean bean,HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
-        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionRegPage = request.getSession().getAttribute("sessionRegPage");
         try {
             if(sessionWebClient!=null && sessionRegPage!=null){
@@ -273,7 +274,7 @@ public class CreditService {
             map.put("data",data);
             return map;
         }
-        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+        Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionApplyPage = request.getSession().getAttribute("sessionApplyPage");
         try {
             if(sessionWebClient!=null && sessionApplyPage!=null){
@@ -316,8 +317,8 @@ public class CreditService {
                 map.put("data",data);
                 return map;
             }
-            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
-            Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage");
+            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
+            Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage-ZX");
             if(sessionWebClient!=null && sessionLoginPage!=null){
                 final WebClient webClient = (WebClient) sessionWebClient;
                 final HtmlPage loginPage = (HtmlPage) sessionLoginPage;
@@ -327,8 +328,8 @@ public class CreditService {
                 }catch(Exception e){
                     loginPage.cleanUp();
                     webClient.close();
-                    request.getSession().setAttribute("sessionWebClient",null);
-                    request.getSession().setAttribute("sessionLoginPage",null);
+                    request.getSession().setAttribute("sessionWebClient-ZX",null);
+                    request.getSession().setAttribute("sessionLoginPage-ZX",null);
                     data.put("ResultInfo","服务器繁忙或登录超时,请重新登录!");
                     data.put("ResultCode","0002");
                     map.put("data",data);
@@ -405,7 +406,7 @@ public class CreditService {
                     }
                     request.getSession().setAttribute("sessionQuestionPage",applyPage);
                     loginPage.cleanUp();
-                    request.getSession().setAttribute("sessionLoginPage",null);
+                    request.getSession().setAttribute("sessionLoginPage-ZX",null);
                     data.put("questions",questions);
                     request.getSession().setAttribute("questions",questions);
                     data.put("type","ask");
@@ -502,7 +503,7 @@ public class CreditService {
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
         try{
-            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient");
+            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
             if(sessionWebClient!=null){
                 final WebClient webClient = (WebClient)sessionWebClient;
                 HtmlPage queryPage=webClient.getPage(queryUrl);
@@ -547,6 +548,7 @@ public class CreditService {
                 map.put("ResultCode","0002");
             }
         }catch(Exception e){
+            e.printStackTrace();
             map.put("ResultInfo","系统繁忙，请稍后再试！");
             map.put("ResultCode","0002");
         }
