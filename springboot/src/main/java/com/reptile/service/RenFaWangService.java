@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.WebClientFactory;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,7 @@ public class RenFaWangService {
 			ImageReader imageReader = captchaImg.getImageReader();
 			read = imageReader.read(0);
 		} catch (Exception e) {
+			Scheduler.sendGet(Scheduler.getIp);
 			mapData.put("errorInfor", "系统正在维护！");
 			mapData.put("errorCode", "0001");
 			return mapData;
@@ -262,9 +264,14 @@ public class RenFaWangService {
 			String idCode = elementValid.getAttribute("value");
 
 			// 获取新的验证码
-			String codeUrl = "http://zhixing.court.gov.cn/search/captcha.do?captchaId="
-					+ idCode + "&random=" + System.currentTimeMillis();
-			UnexpectedPage page2 = webClient.getPage(codeUrl);
+			UnexpectedPage page2=null;
+			try {
+				String codeUrl = "http://zhixing.court.gov.cn/search/captcha.do?captchaId="
+						+ idCode + "&random=" + System.currentTimeMillis();
+				page2 = webClient.getPage(codeUrl);
+			}catch (Exception e){
+				Scheduler.sendGet(Scheduler.getIp);
+			}
 
 			// 保存验证码
 			String verifyImages = request.getSession().getServletContext()

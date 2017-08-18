@@ -81,10 +81,17 @@ public class Email163Service {
 					"http://email.163.com/errorpage/error163.htm"));
 			list.add(new NameValuePair("savalogin", "0"));
 			list.add(new NameValuePair("password", password));
-			WebRequest webRequest = new WebRequest(url1);
-			webRequest.setRequestParameters(list);
-			webRequest.setHttpMethod(HttpMethod.POST);
-			HtmlPage click = webClient.getPage(webRequest);
+
+			HtmlPage click=null;
+			try{
+				WebRequest webRequest = new WebRequest(url1);
+				webRequest.setRequestParameters(list);
+				webRequest.setHttpMethod(HttpMethod.POST);
+				click = webClient.getPage(webRequest);
+			}catch (Exception e){
+				Scheduler.sendGet(Scheduler.getIp);
+			}
+
 			Thread.sleep(1000);
 
 			if (click.asText().contains("帐号或密码错误")) {
