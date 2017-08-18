@@ -317,8 +317,8 @@ public class InterfaceController  {
    	@ApiOperation(value="学信网查询", notes="无需参数")//设置标题描述
 	@ResponseBody
 	@RequestMapping(value="AcademicLogin",method=RequestMethod.POST)
-	public Map<String,Object> AcademicLogin(HttpServletRequest request,@RequestParam("Usernumber") String Usernumber,@RequestParam("UserPwd") String UserPwd,@RequestParam("Usercard") String Usercard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-   		return mobileService.AcademicLogin(request, Usernumber, UserPwd,Usercard);
+	public Map<String,Object> AcademicLogin(HttpServletRequest request,@RequestParam("Usernumber") String Usernumber,@RequestParam("UserPwd") String UserPwd,@RequestParam("Usercard") String Usercard,@RequestParam ("lt") String lt,@RequestParam("code") String code) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+   		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code, lt,Usercard);
    		
 
    	}
@@ -411,6 +411,14 @@ public class InterfaceController  {
    	}
    	
 
+   	@ApiOperation(value="学信网获得验证码", notes="无需参数")//设置标题描述
+	@ResponseBody
+	@RequestMapping(value="XuexinGetCode",method=RequestMethod.POST)
+	public Map<String,Object> XuexinGetCode(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+   		return mobileService.XuexinGetCode(request, response);
+   		
+
+   	}
 
 	
 
