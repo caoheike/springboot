@@ -42,7 +42,13 @@ public class SocialSecurityService {
             webClient.getOptions().setCssEnabled(false);// 禁用css支持
             webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
             webClient.getOptions().setTimeout(8000); // 设置连接超时时间
-            final HtmlPage loginPage = webClient.getPage(loginUrl);
+            HtmlPage loginPage=null;
+            try{
+                loginPage = webClient.getPage(loginUrl);
+            }catch (Exception e){
+                Scheduler.sendGet(Scheduler.getIp);
+            }
+
             HtmlForm form = loginPage.getForms().get(0);
             HtmlTextInput userId = form.getInputByName("uname");
             HtmlTextInput userName = form.getInputByName("aac003");
