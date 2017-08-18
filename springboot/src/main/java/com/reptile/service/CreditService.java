@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.Option;
 import com.reptile.model.Question;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
 import com.reptile.util.Resttemplate;
@@ -69,7 +70,7 @@ public class CreditService {
                 BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
                 ImageIO.write(bi, "JPG", new File(file,fileName));
             }else{
-                final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+                final WebClient webClient = new WebClient(BrowserVersion.CHROME, Scheduler.ip,Scheduler.port);
                 webClient.setJavaScriptTimeout(20000);
                 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
                 webClient.getOptions().setJavaScriptEnabled(true); // 启用JS解释器，默认为true

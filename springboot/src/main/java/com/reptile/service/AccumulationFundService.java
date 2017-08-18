@@ -170,7 +170,7 @@ public class AccumulationFundService {
                 BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
                 ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
             }else{
-                final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+                final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
                 webClient.getOptions().setCssEnabled(false);// 禁用css支持
                 webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
                 webClient.getOptions().setTimeout(8000); // 设置连接超时时间
@@ -185,6 +185,8 @@ public class AccumulationFundService {
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");
         } catch (IOException e) {
+            Scheduler.sendGet(Scheduler.getIp);
+            System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");
             data.put("ResultCode","0002");
         }
