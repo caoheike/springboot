@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.WebClientFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -50,7 +51,7 @@ public class RenFaWangService {
 		Map<String, Object> mapData = new HashMap<String, Object>();
 		Map<String, Object> infoMap = new HashMap<String, Object>();
 
-		WebClient webClient = new CrawlerUtil().WebClientNice();
+		WebClient webClient = new WebClientFactory().getWebClient();
 
 		String verifyImages = request.getSession().getServletContext()
 				.getRealPath("/refawangCodeImage");
@@ -247,7 +248,7 @@ public class RenFaWangService {
 		Map<String, Object> mapData = new HashMap<String, Object>();
 
 		HttpSession session = request.getSession();
-		WebClient webClient = new CrawlerUtil().WebClientNice();
+		WebClient webClient = new WebClientFactory().getWebClient();
 
 		HtmlPage page = (HtmlPage) session.getAttribute("rfw-page");
 		if (page == null) {

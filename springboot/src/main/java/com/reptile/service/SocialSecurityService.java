@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.PersonAccount;
 import com.reptile.model.PersonInfo;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 
@@ -37,7 +38,7 @@ public class SocialSecurityService {
             if(bean.getUserId()==null){
                 throw new NullPointerException("请输入身份证号!");
             }
-            final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+            final WebClient webClient = new WebClient(BrowserVersion.CHROME, Scheduler.ip,Scheduler.port);
             webClient.getOptions().setCssEnabled(false);// 禁用css支持
             webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
             webClient.getOptions().setTimeout(8000); // 设置连接超时时间
