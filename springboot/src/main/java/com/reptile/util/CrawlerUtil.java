@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -36,12 +37,16 @@ import org.jsoup.select.Elements;
  *
  */
 public class CrawlerUtil {
+//	public static final String port="8079";
+//	public static final String ip="124.89.33.70";//194外网
+//	public static final String sendip="http://124.89.33.70:8082";//194外网 数据中心
+	//--------------------------以上外网需要
+	
 	public static final String port="8080";
-	public static final String ip="192.168.3.37";
-//	public static final String ip="124.89.33.70";
+	public static final String ip="192.168.3.222";
 	public static final String sendip="http://192.168.3.4:8081";
-	//public static final String sendport="http://192.168.3.4:8081";
-	//public static final String sendip="http://124.89.33.70:8082";
+
+
 	
 	
 	public final WebClient webClient = new WebClient(BrowserVersion.CHROME);
@@ -190,7 +195,11 @@ public class CrawlerUtil {
 		
 
 	}
-	 
+	   public static String getUUID(){
+	         return UUID.randomUUID().toString().replace("-", "");
+	    }
+
+	
 
 
 }

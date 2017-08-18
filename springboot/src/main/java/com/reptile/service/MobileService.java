@@ -385,7 +385,7 @@ public class MobileService {
 		    System.out.println("//不存在");  
 		    path .mkdir();    
 		}
-		String  fileName = System.currentTimeMillis() +"Interface"+ ".png";
+		String  fileName = crawlerUtil.getUUID() +"Interface"+ ".png";
 		System.out.println(fileName);
 		ImageIO.write(ioim,"png",new File(path,fileName));
 	//InetAddress.getLocalHost().getHostAddress()
@@ -990,7 +990,25 @@ public class MobileService {
 				 		
 				 				
 				 			}
-				 			
+				 			if(div.asText().contains("邮储银行信用卡电子账单")){
+				 				HtmlPage xykpage= client.getPage("https://w.mail.qq.com/"+div.getHrefAttribute());
+				 				System.out.println(xykpage.asText());
+				 				if(xykpage.asText().contains("2017年08月")){
+				 					lists.add(xykpage.asXml());
+				 				}
+				 		
+				 				
+				 			}
+				 			if(div.asText().contains("中国建设银行信用卡电子账单")){
+				 				HtmlPage xykpage= client.getPage("https://w.mail.qq.com/"+div.getHrefAttribute());
+				 				System.out.println(xykpage.asText());
+				 				if(xykpage.asText().contains("2017-08")){
+				 					lists.add(xykpage.asXml());
+				 				}
+				 		
+				 				
+				 			}
+				 		
 				 		
 				 			
 				 	

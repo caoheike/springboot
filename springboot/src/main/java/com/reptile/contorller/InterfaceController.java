@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.portlet.ModelAndView;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -59,6 +60,7 @@ public class InterfaceController  {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
+
     @ApiOperation(value="获取移动验证码", notes="")//设置标题描述
 	@ResponseBody
 	@RequestMapping(value="GetCode", method=RequestMethod.POST)
