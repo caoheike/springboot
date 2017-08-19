@@ -99,14 +99,27 @@ public class SocialSecurityService {
             //ludangwei 2017-08-11
             Resttemplate resttemplate = new Resttemplate();
             map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/socialSecurity");
+
+            if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
+                map.put("errorInfo","查询成功");
+                map.put("errorCode","0001");
+            }else{
+                map.put("errorInfo","查询失败");
+                map.put("errorCode","0001");
+            }
+
         }catch (NullPointerException e) {
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");
+            map.put("errorInfo","服务器繁忙，请稍后再试！");
+            map.put("errorCode","0001");
         } catch (Exception e) {
             map.clear();
             data.clear();
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0002");
+            map.put("errorInfo","服务器繁忙，请稍后再试！");
+            map.put("errorCode","0002");
         }
         map.put("data",data);
         return map;
