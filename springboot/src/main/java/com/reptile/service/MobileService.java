@@ -310,7 +310,7 @@ public class MobileService {
 		try {
 
 			WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-			HtmlPage page=webClient.getPage("http://localhost:8080/interface/Rsa.do");
+			HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/Rsa.do");
 			HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaName");
 			String UserPasswords=password;
 			htmlInput.setValueAttribute(UserPasswords);
@@ -337,7 +337,7 @@ public class MobileService {
     	try {
     		
     		WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-    		HtmlPage page=webClient.getPage("http://localhost:8080/interface/UnicomAesPage.do");
+    		HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/UnicomAesPage.do");
     		HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaPwd");
     		String UserPasswords=password;
     		htmlInput.setValueAttribute(UserPasswords);
@@ -721,6 +721,9 @@ public class MobileService {
 						jsonObject.put("UserIphone", unicombean.getUseriphone());
 						jsonObject.put("UserPassword", unicombean.getUserPassword());
 						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
+			 }else{
+					map.put("errorCode", "0005");
+					map.put("errorInfo", json.get("msg"));
 			 }
 				}else{
 					map.put("errorCode", "0001");

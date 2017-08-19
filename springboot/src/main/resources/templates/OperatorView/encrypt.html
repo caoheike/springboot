@@ -33,7 +33,7 @@
     }
     .leftGo
     {
-        background:url(../image/mail/pre.png) no-repeat;
+/*         background:url(../image/mail/pre.png) no-repeat; */
         background-size:contain;
         width:2rem;
         height: 2rem;
@@ -208,15 +208,14 @@ jq142(function (){
 
 //加密密码
 function weizai(){
-	jq142("#btn").attr("disabled", true); 
-	jq142("#btn").css('background','#eee')
-	jq142("#btn").val("处理中...");
+
 	
 
         var number=jq142("#qqnumber").val();
         var pwds=jq142("#input_visible").val();
         if(number==null||number.trim().length==0||pwds==null||pwds.trim().length==0){
             alert("账号或密码不能为空！")
+         
             return false;
         }
         if((number.indexOf("@163.com"))>-1){
@@ -225,9 +224,13 @@ function weizai(){
             return true;
         }
 
-	    jq142("#vvv").css('background','#46b1ff')
 
+    	jq142("#btn").attr("disabled", true); 
+    	jq142("#btn").css('background','#eee')
+    	jq142("#btn").val("处理中...");
+	    jq142("#vvv").css('background','#46b1ff')
 	jq142.ajax({
+ 		timeout : 15000, //超时时间设置，单位毫秒
         data: {qqnumber:jq142("#qqnumber").val()},
 		 url:"../interface/encryptrsa.do",
 		 async:false,
@@ -255,7 +258,12 @@ function weizai(){
 	
 			 
 		
-		 }
+		 },complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+ 		　　　　if(status=='timeout'){//超时,status还有success,error等值的情况
+		 　　　
+	   			alert("请求超时");
+		　　　　}
+		　　}
 	});
 
 
@@ -286,7 +294,7 @@ function getSalt(str) {
     	<header>
     		<div class="title">
                 <a class="leftGo" href="#"></a>
-		        <div class="header-text">邮箱认证</div>
+<!-- 		        <div class="header-text">邮箱认证</div> -->
             </div> 
     	</header>
     	<div class="login-login">
