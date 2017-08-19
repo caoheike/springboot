@@ -102,7 +102,7 @@ public class SocialSecurityService {
 
             if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
                 map.put("errorInfo","查询成功");
-                map.put("errorCode","0001");
+                map.put("errorCode","0000");
             }else{
                 map.put("errorInfo","查询失败");
                 map.put("errorCode","0001");

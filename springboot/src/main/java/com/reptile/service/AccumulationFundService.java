@@ -79,6 +79,7 @@ public class AccumulationFundService {
                 form.getInputByName("surveyyanzheng").setValueAttribute(bean.getVerifyCode());
                 HtmlImageInput submit = (HtmlImageInput)loginPage.getByXPath("//input[@type='image']").get(0);
                 HtmlPage index=(HtmlPage)submit.click();
+                Thread.sleep(1000);
                 String str=index.asText();
                 if(str.indexOf("身份证号码：")!=-1){
                     map.put("ResultInfo","登录失败，请核对帐号密码和验证码!");

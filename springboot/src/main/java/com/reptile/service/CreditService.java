@@ -301,6 +301,8 @@ public class CreditService {
                         HtmlButtonInput jixu = applyPage.querySelector(".regist_btn");
                         applyPage = jixu.click();
                     }
+                    data.put("ResultInfo", applyPage.querySelector(".span-grey2").asText());
+                    data.put("ResultCode", "0000");
                     map.put("ResultInfo", applyPage.querySelector(".span-grey2").asText());
                     map.put("ResultCode", "0000");
                     applyPage.cleanUp();
@@ -311,6 +313,8 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            data.put("ResultInfo", "系统繁忙，请稍后再试！");
+            data.put("ResultCode", "0002");
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
             map.put("ResultCode", "0002");
         }
@@ -524,6 +528,8 @@ public class CreditService {
                 if (resultPage.asText().indexOf("身份验证码") != -1) {
                     map.put("ResultInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("ResultCode", "0001");
+                    map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
+                    map.put("errorCode", "0001");
                 } else {
                     HtmlTable table = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(1);
                     HtmlTable tableTime = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(0);
@@ -548,8 +554,15 @@ public class CreditService {
                         //ludangwei 2017-08-03
                         // HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigation", JSONObject.fromObject(map).toString());
                         Resttemplate temp = new Resttemplate();
-                        Map<String, Object> sendMessage = temp.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port + "/HSDC/person/creditInvestigation");
-                        return sendMessage;
+                        map = temp.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port + "/HSDC/person/creditInvestigation");
+
+                        if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
+                            map.put("errorInfo","查询成功");
+                            map.put("errorCode","0000");
+                        }else{
+                            map.put("errorInfo","查询失败");
+                            map.put("errorCode","0001");
+                        }
                     } catch (Exception e) {
                         System.out.println("征信报告推送失败!" + e.getMessage());
                     }
@@ -557,11 +570,15 @@ public class CreditService {
             } else {
                 map.put("ResultInfo", "您已超时,请重新登录查询!");
                 map.put("ResultCode", "0002");
+                map.put("errorInfo", "您已超时,请重新登录查询!");
+                map.put("errorCode", "0002");
             }
         } catch (Exception e) {
             e.printStackTrace();
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
             map.put("ResultCode", "0002");
+            map.put("errorInfo", "系统繁忙，请稍后再试！");
+            map.put("errorCode", "0002");
         }
         data.put("reportHtml", "");
         map.put("data", data);
