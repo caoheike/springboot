@@ -56,6 +56,8 @@ public class AccumulationFundService {
             if(!bean.verifyParams(bean)){
                 map.put("ResultInfo","提交数据有误,请刷新页面后重新输入!");
                 map.put("ResultCode","0001");
+                map.put("errorInfo","提交数据有误,请刷新页面后重新输入!");
+                map.put("errorCode","0001");
                 map.put("data",data);
                 return map;
             }
@@ -77,10 +79,13 @@ public class AccumulationFundService {
                 form.getInputByName("surveyyanzheng").setValueAttribute(bean.getVerifyCode());
                 HtmlImageInput submit = (HtmlImageInput)loginPage.getByXPath("//input[@type='image']").get(0);
                 HtmlPage index=(HtmlPage)submit.click();
+                Thread.sleep(1000);
                 String str=index.asText();
                 if(str.indexOf("身份证号码：")!=-1){
                     map.put("ResultInfo","登录失败，请核对帐号密码和验证码!");
                     map.put("ResultCode","0001");
+                    map.put("errorInfo","登录失败，请核对帐号密码和验证码!");
+                    map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
                 }
@@ -135,17 +140,27 @@ public class AccumulationFundService {
                 //ludangwei 2017-08-11
                 Resttemplate resttemplate = new Resttemplate();
                 map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
+
+                if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
+                    map.put("errorInfo","查询成功");
+                    map.put("errorCode","0000");
+                }else{
+                    map.put("errorInfo","查询失败");
+                    map.put("errorCode","0001");
+                }
                 //ludangwei 2017/08/10
                 session.removeAttribute("sessionWebClient-GJJ");
                 session.removeAttribute("sessionLoginPage-GJJ");
             }else{
-                throw new Exception("服务器繁忙，请刷新页面后重试!");
+                System.out.print("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
             map.clear();
             data.clear();
             map.put("ResultInfo","服务器繁忙，请刷新页面后重试!");
             map.put("ResultCode","0002");
+            map.put("errorInfo","服务器繁忙，请刷新页面后重试!");
+            map.put("errorCode","0002");
         }
         map.put("data",data);
         
@@ -185,12 +200,16 @@ public class AccumulationFundService {
             data.put("imageUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");
+            map.put("errorInfo","查询成功");
+            map.put("errorCode","0000");
         } catch (IOException e) {
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");
             data.put("ResultCode","0002");
+            map.put("errorInfo","服务器繁忙，请稍后再试！");
+            map.put("errorCode","0002");
         }
         map.put("data",data);
         return map;
