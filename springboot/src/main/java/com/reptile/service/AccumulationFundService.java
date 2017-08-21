@@ -172,31 +172,24 @@ public class AccumulationFundService {
         Map<String,Object> map=new HashMap<String,Object>();
         try {
             HttpSession session = request.getSession();
-            Object sessionWebClient = session.getAttribute("sessionWebClient-GJJ");
-            Object sessionLoginPage = session.getAttribute("sessionLoginPage-GJJ");
             String verifyImages=request.getSession().getServletContext().getRealPath("/verifyImages");
             File file = new File(verifyImages+File.separator);
             if(!file.exists()){
                 file.mkdir();
             }
             String fileName=System.currentTimeMillis()+".jpg";
-            if(sessionWebClient!=null && sessionLoginPage!=null){
-                final WebClient webClient = (WebClient)sessionWebClient;
-                UnexpectedPage verifyCodeImagePage = webClient.getPage(verifyCodeImageUrl);
-                BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
-                ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
-            }else{
-                final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
-                webClient.getOptions().setCssEnabled(false);// 禁用css支持
-                webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
-                webClient.getOptions().setTimeout(8000); // 设置连接超时时间
-                final HtmlPage loginPage = webClient.getPage(loginUrl);
-                HtmlImage verifyCodeImagePage = (HtmlImage)loginPage.getByXPath("//img").get(20);
-                BufferedImage bi=verifyCodeImagePage.getImageReader().read(0);
-                ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
-                session.setAttribute("sessionWebClient-GJJ", webClient);
-                session.setAttribute("sessionLoginPage-GJJ", loginPage);
-            }
+
+            final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
+            webClient.getOptions().setCssEnabled(false);// 禁用css支持
+            webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
+            webClient.getOptions().setTimeout(8000); // 设置连接超时时间
+            final HtmlPage loginPage = webClient.getPage(loginUrl);
+            HtmlImage verifyCodeImagePage = (HtmlImage)loginPage.getByXPath("//img").get(20);
+            BufferedImage bi=verifyCodeImagePage.getImageReader().read(0);
+            ImageIO.write(bi, "JPG", new File(verifyImages,fileName));
+            session.setAttribute("sessionWebClient-GJJ", webClient);
+            session.setAttribute("sessionLoginPage-GJJ", loginPage);
+
             data.put("imageUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");

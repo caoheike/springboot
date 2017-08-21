@@ -56,7 +56,6 @@ public class RenFaWangService {
 
 		String verifyImages = request.getSession().getServletContext()
 				.getRealPath("/refawangCodeImage");
-
 		File file = new File(verifyImages);
 		if (!file.exists()) {
 			file.mkdirs();
