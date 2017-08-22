@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUtils;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.reptile.util.ConstantInterface;
 import net.sf.json.JSONObject;
 
@@ -77,14 +78,17 @@ public class AccumulationFundService {
                 form.getInputByName("wbrealmima").setValueAttribute(bean.getUserPass());
                 form.getInputByName("wbmima").setValueAttribute(bean.getUserPass());
                 form.getInputByName("surveyyanzheng").setValueAttribute(bean.getVerifyCode());
+
+                final List collectedAlerts = new ArrayList();
+                webClient.setAlertHandler(new CollectingAlertHandler(collectedAlerts));
                 HtmlImageInput submit = (HtmlImageInput)loginPage.getByXPath("//input[@type='image']").get(0);
                 HtmlPage index=(HtmlPage)submit.click();
                 Thread.sleep(1000);
                 String str=index.asText();
-                if(str.indexOf("身份证号码：")!=-1){
-                    map.put("ResultInfo","登录失败，请核对帐号密码和验证码!");
+                if(str.indexOf("身份证号码：")!=-1&&collectedAlerts.size()!=0){
+                    map.put("ResultInfo",collectedAlerts.get(0));
                     map.put("ResultCode","0001");
-                    map.put("errorInfo","登录失败，请核对帐号密码和验证码!");
+                    map.put("errorInfo",collectedAlerts.get(0));
                     map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
