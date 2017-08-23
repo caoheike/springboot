@@ -199,7 +199,7 @@ public class AccumulationFundService {
             data.put("ResultCode","0000");
             map.put("errorInfo","查询成功");
             map.put("errorCode","0000");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             System.out.println("更换ip+++++++++++++mrlu");
