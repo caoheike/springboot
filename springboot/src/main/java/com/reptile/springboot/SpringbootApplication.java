@@ -24,14 +24,4 @@ public class SpringbootApplication extends WebMvcConfigurerAdapter {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
-
-	@Bean
-	public EmbeddedServletContainerCustomizer containerCustomizer(){
-		return new EmbeddedServletContainerCustomizer() {
-			@Override
-			public void customize(ConfigurableEmbeddedServletContainer Container) {
-				Container.setSessionTimeout(600);//单位为S
-			}
-		};
-	}
 }
