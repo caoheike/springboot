@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Scheduler {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
-    public static String getIp = "http://http-api.taiyangruanjian.com/getip?num=1&type=2&pro=&city=0&yys=0&port=11&pack=1439&ts=1&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1";
+    public static String getIp = "http://http-api.taiyangruanjian.com/getip?num=1&type=2&pro=&city=0&yys=0&port=11&pack=1509&ts=1&ys=0&cs=1&lb=1&sb=0&pb=4&mr=1";
     private static int i = 0;
     public static String ip = "";
     public static int port = 0;
