@@ -38,7 +38,7 @@ public class FormBean {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim();
     }
 
     public String getPhone() {
@@ -46,7 +46,7 @@ public class FormBean {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        this.phone = phone.trim();
     }
 
     public Long getUserId() {
@@ -54,7 +54,7 @@ public class FormBean {
     }
 
     public void setUserId(Long userId) {
-        this.userId = userId;
+        this.userId = userId;;
     }
 
     public String getUserName() {
@@ -62,7 +62,7 @@ public class FormBean {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.userName = userName.trim();
     }
 
     public String getUserPass() {
@@ -70,7 +70,7 @@ public class FormBean {
     }
 
     public void setUserPass(String userPass) {
-        this.userPass = userPass;
+        this.userPass = userPass.trim();
     }
 
     public String getVerifyCode() {
@@ -78,7 +78,7 @@ public class FormBean {
     }
 
     public void setVerifyCode(String verifyCode) {
-        this.verifyCode = verifyCode;
+        this.verifyCode = verifyCode.trim();
     }
 
     public String getCreateTime() {
@@ -86,7 +86,7 @@ public class FormBean {
     }
 
     public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+        this.createTime = createTime.trim();
     }
 
     public String getDesc() {
@@ -94,6 +94,6 @@ public class FormBean {
     }
 
     public void setDesc(String desc) {
-        this.desc = desc;
+        this.desc = desc.trim();
     }
 }
