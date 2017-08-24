@@ -25,8 +25,12 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Tree;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -57,6 +61,7 @@ import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Poi;
 import com.reptile.util.Resttemplate;
@@ -74,6 +79,7 @@ public class MobileService {
 
 	MobileBean mobileBean=new MobileBean();
 	Resttemplate resttemplate=new Resttemplate();
+
 	/**
 	 * 获取验证码
 	 * 初始化
@@ -309,7 +315,7 @@ public class MobileService {
 		try {
 
 			WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-			HtmlPage page=webClient.getPage("http://localhost:8080/interface/Rsa.do");
+			HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/Rsa.do");
 			HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaName");
 			String UserPasswords=password;
 			htmlInput.setValueAttribute(UserPasswords);
@@ -336,7 +342,7 @@ public class MobileService {
     	try {
     		
     		WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-    		HtmlPage page=webClient.getPage("http://localhost:8080/interface/UnicomAesPage.do");
+    		HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/UnicomAesPage.do");
     		HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaPwd");
     		String UserPasswords=password;
     		htmlInput.setValueAttribute(UserPasswords);
@@ -385,7 +391,7 @@ public class MobileService {
 		    System.out.println("//不存在");  
 		    path .mkdir();    
 		}
-		String  fileName = System.currentTimeMillis() +"Interface"+ ".png";
+		String  fileName = crawlerUtil.getUUID() +"Interface"+ ".png";
 		System.out.println(fileName);
 		ImageIO.write(ioim,"png",new File(path,fileName));
 	//InetAddress.getLocalHost().getHostAddress()
@@ -720,6 +726,9 @@ public class MobileService {
 						jsonObject.put("UserIphone", unicombean.getUseriphone());
 						jsonObject.put("UserPassword", unicombean.getUserPassword());
 						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
+			 }else{
+					map.put("errorCode", "0005");
+					map.put("errorInfo", json.get("msg"));
 			 }
 				}else{
 					map.put("errorCode", "0001");
@@ -782,7 +791,7 @@ public class MobileService {
 		    			 	reqParamsinfo.add(new NameValuePair("currentPage","1"));
 		    			 	reqParamsinfo.add(new NameValuePair("pageSize","10"));
 		    			 	reqParamsinfo.add(new NameValuePair("effDate","2017-05-01"));
-		    			 	reqParamsinfo.add(new NameValuePair("expDate","2017-07-07"));
+		    			 	reqParamsinfo.add(new NameValuePair("expDate","2017-08-20"));
 		    			 	reqParamsinfo.add(new NameValuePair("serviceNbr",TelecomBean.getUserPhone()));
 		    			 	reqParamsinfo.add(new NameValuePair("operListID","1"));
 		    			 	reqParamsinfo.add(new NameValuePair("isPrepay","0"));
@@ -792,8 +801,16 @@ public class MobileService {
 		    	 		    List list=new ArrayList();
 		    	 		    
 		    	 		    HtmlPage  Infopage=webClient.getPage(webRequest);
-		    	 		    HtmlTable htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
-		    	 		   Document doc = Jsoup.parse(htmlTable.asXml());
+		    	 		    System.out.print(Infopage.asXml());
+		    	 		   HtmlTable htmlTable=null;
+		    	 		    if(!Infopage.asXml().contains("您好，您查询的时间段内没有详单数据。中国电信")){
+		    	 		    	htmlTable=(HtmlTable) Infopage.getByXPath("//table").get(0);
+		    	 		    	  data.put("info", htmlTable.asXml());
+		    	 		    }else{
+		    	 		    	  data.put("info","");
+		    	 		    }
+		    	 		  
+		    	 		//s   Document doc = Jsoup.parse(htmlTable.asXml());
 //		    	 	        Elements trs = doc.select("table").select("tr");
 //		    	 	        for(int i = 0;i<trs.size();i++){
 //		    	 	            Elements tds = trs.get(i).select("td");
@@ -806,7 +823,7 @@ public class MobileService {
 //		    	 	        }
 		    	 	    
 		    	 	        // data.put("info", htmlTable.asXml().replace("100%","50%").replace("mt10 transact_tab","testv"));
-		    	 		   data.put("info", htmlTable.asXml());
+		    	 		 
 		    	 	        map.put("data", data);
 //		    			   	map.put("errorCode","0000");
 //					    	map.put("errorInfo","成功");
@@ -886,40 +903,53 @@ public class MobileService {
 		public Map<String,Object> encryptrsa(HttpServletRequest request,String qqnumber) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 				Map<String,Object> map=new HashMap<String, Object>();
 				WebClient webClients= crawlerUtil.WebClientNice();
-		        HtmlPage page= webClients.getPage("https://ssl.ptlogin2.qq.com/check?pt_tea=2&uin="+qqnumber+"&appid=522005705&ptlang=2052&regmaster=&pt_uistyle=9&r=0.07655477741844985&pt_jstoken=1515144655");
-		        String info=page.asText();
-		        String[] infoarry=info.split(",");
-		        String xx=infoarry[2].replace("'","");  
-		        String code=infoarry[1].replace("'","");
-		        String sess=infoarry[3].replace("'","");	
-		        String vecode=infoarry[0].replace("'","");
-		        System.out.println(vecode+"-----");
-		        if(vecode.contains("1")){
-		        	UnexpectedPage pagecode=webClients.getPage("https://ssl.captcha.qq.com/getimage?uin=_qq&aid=522005705&cap_cd=verify_cap_cd&0.7659631329588592");
-		        	BufferedImage ioim=ImageIO.read(pagecode.getInputStream());
-		        	File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/"); // 此目录保存缩小后的关键图
-		        	if  (!path .exists()  && !path .isDirectory())      
-		    		{       
-		    		    System.out.println("//不存在");  
-		    		    path .mkdir();    
-		    		}
-		        	
-		        	String  fileName = System.currentTimeMillis() +"mailcode"+ ".png";
-		        	ImageIO.write(ioim,"png",new File(path,fileName));
-		        	//需要验证码
-		            map.put("fileName", fileName);
-		            
-		        }else{
-		            map.put("fileName",'1');
-		        }
+				int count=0;
+		 	   boolean flg=true;
+		        do {
+		        	count++;
+		        	 Thread.sleep(2000);
+		        	  HtmlPage page= webClients.getPage("https://ssl.ptlogin2.qq.com/check?pt_tea=2&uin="+qqnumber+"&appid=522005705&ptlang=2052&regmaster=&pt_uistyle=9&r=0.07655477741844985&pt_jstoken=1515144655");
+				        String info=page.asText();
+				        String[] infoarry=info.split(",");
+				        String xx=infoarry[2].replace("'","");  
+				        String code=infoarry[1].replace("'","");
+				        String sess=infoarry[3].replace("'","");	
+				        String vecode=infoarry[0].replace("'","");
+				        System.out.println(vecode+"-----");
+				        if(!vecode.contains("1")){
+				        	flg=false;
+					        map.put("xx", xx);
+					        map.put("code", code);
+					        map.put("sess", sess);
+					      HttpSession session=request.getSession();
+					      session.setAttribute("webClients",webClients);
+				        }
+				        if(vecode.contains("1")&&count==10){
+				        	map.put("code", "用户邮箱异常,请明天再来尝试");
+				        	flg=false;
+				        }
+				} while (flg);
+//		        if(vecode.contains("1")){
+//		        	UnexpectedPage pagecode=webClients.getPage("https://ssl.captcha.qq.com/getimage?uin=_qq&aid=522005705&cap_cd=verify_cap_cd&0.7659631329588592");
+//		        	BufferedImage ioim=ImageIO.read(pagecode.getInputStream());
+//		        	File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/"); // 此目录保存缩小后的关键图
+//		        	if  (!path .exists()  && !path .isDirectory())      
+//		    		{       
+//		    		    System.out.println("//不存在");  
+//		    		    path .mkdir();    
+//		    		}
+//		        	
+//		        	String  fileName = System.currentTimeMillis() +"mailcode"+ ".png";
+//		        	ImageIO.write(ioim,"png",new File(path,fileName));
+//		        	//需要验证码
+//		            map.put("fileName", fileName);
+//		            
+//		        }else{
+//		            map.put("fileName",'1');
+//		        }
+		        
 		  
-		        map.put("xx", xx);
-		        map.put("code", code);
-		        map.put("sess", sess);
-		    
-
-		      HttpSession session=request.getSession();
-		      session.setAttribute("webClients",webClients);
+	
 			return map;
 			
 		}
@@ -946,7 +976,6 @@ public class MobileService {
 		    if(pages.asText().contains("登录成功")){
 		    	 HtmlPage pagev= client.getPage("http://mail.qq.com/cgi-bin/loginpage");
 		    	 if(!pagev.asText().contains("使用读屏软件的朋友请进入这个入口无障碍帮助入口")){
-		    		 System.out.println("请输入独立密码");
 		    		 	map.put("errorCode", "0004");
 				    	map.put("errorInfo", "请取消独立密码后认证！！！");
 		    	 }else{
@@ -990,7 +1019,25 @@ public class MobileService {
 				 		
 				 				
 				 			}
-				 			
+				 			if(div.asText().contains("邮储银行信用卡电子账单")){
+				 				HtmlPage xykpage= client.getPage("https://w.mail.qq.com/"+div.getHrefAttribute());
+				 				System.out.println(xykpage.asText());
+				 				if(xykpage.asText().contains("2017年08月")){
+				 					lists.add(xykpage.asXml());
+				 				}
+				 		
+				 				
+				 			}
+				 			if(div.asText().contains("中国建设银行信用卡电子账单")){
+				 				HtmlPage xykpage= client.getPage("https://w.mail.qq.com/"+div.getHrefAttribute());
+				 				System.out.println(xykpage.asText());
+				 				if(xykpage.asText().contains("2017-08")){
+				 					lists.add(xykpage.asXml());
+				 				}
+				 		
+				 				
+				 			}
+				 		
 				 		
 				 			
 				 	
@@ -1107,59 +1154,111 @@ public class MobileService {
 			return map;
 			
 		}
-		public Map<String,Object> AcademicLogin(HttpServletRequest request,String Usernumber,String UserPwd,String Usercard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-			
+		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		
 	   		Map<String,Object> map=new HashMap<String, Object>();
 			Map<String,Object> data=new HashMap<String, Object>();
-			try {
-				
-	
-	   		WebClient webClient= crawlerUtil.WebClientNice();
-			HtmlPage page= webClient.getPage("https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check");
-			HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("username");
-			HtmlPasswordInput htmlPasswordInput= (HtmlPasswordInput) page.getElementById("password");
-			htmlTextInput.setValueAttribute(Usernumber);
-			htmlPasswordInput.setValueAttribute(UserPwd);
-	        HtmlSubmitInput submit=page.getElementByName("submit"); 
-	        HtmlPage pages=  submit.click();
-	        Thread.sleep(3000);
-	        if(!pages.asText().contains("您输入的用户名或密码有误")){
-	        	if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-	   	       	 System.out.println(pages.asXml());
-		 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
-		 	        Thread.sleep(3000);
-		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
-		 	         data.put("info", table.asXml());
-		 	         map.put("data", data);
-		 	         map.put("Usernumber",Usernumber); 
-		 	         map.put("UserPwd",UserPwd);
-		 	         map.put("Usercard",Usercard); 
-		 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
-	        	}else{
-	         		map.put("errorCode","0002");
-	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-	        	}
-	        	
-	        	
+			HttpSession session=request.getSession();
+			WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
+			
+			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+			List<NameValuePair> list=new ArrayList<NameValuePair>();
+			list.add(new NameValuePair("username",username));
+			list.add(new NameValuePair("password",userpwd));
+			list.add(new NameValuePair("captcha", code));
 
-	        }else{
-	        	if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-	        		map.put("errorCode","0002");
-	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-	        	}else{
-	        		map.put("errorCode","0002");
-	    			map.put("errorInfo","信息有误");
-	        	}
-	    
-	        }
-	       
-	      
-			} catch (Exception e) {
-				map.put("errorCode","0003");
-    			map.put("errorInfo","网络错误");
+			list.add(new NameValuePair("lt", lt));
+			list.add(new NameValuePair("_eventId","submit"));
+			list.add(new NameValuePair("submit","登  录"));
+			
+			webRequest.setHttpMethod(HttpMethod.POST);
+			webRequest.setRequestParameters(list);
+			 try {
+			HtmlPage pages= webClient.getPage(webRequest);
+			
+		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+			logger.info("学信网登录成功，准备获取数据");
+		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
+	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
+	 	         data.put("info", table.asXml());
+	 	         map.put("data", data);
+	 	         map.put("Usernumber",username); 
+	 	         map.put("UserPwd",userpwd);
+	 	         map.put("Usercard",userCard); 
+	 	     
+				
+	 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
+	 	 
+			}else if(pages.asText().contains("您输入的用户名或密码有误")){
+		 		map.put("errorCode","0002");
+		 		map.put("errorInfo","您输入的用户名或密码有误");
+	
+			}else if(pages.asText().contains("图片验证码输入有误")){
+		 		map.put("errorCode","0001");
+		 		map.put("errorInfo","图片验证码输入有误");
+	
 			}
-	     
-	   		
+		   	} catch (Exception e) {
+		   		System.out.print(e);
+		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+		   			map.put("errorCode","0002");
+			 		map.put("errorInfo","密码错误");	
+		   		}else{
+		   			map.put("errorCode","0002");
+			 		map.put("errorInfo","网络错误");
+		   		}
+ 	    		
+			}
+//			try {
+//				
+//	
+//	   		WebClient webClient= crawlerUtil.WebClientNice();
+//			HtmlPage page= webClient.getPage("https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check");
+//			HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("username");
+//			HtmlPasswordInput htmlPasswordInput= (HtmlPasswordInput) page.getElementById("password");
+//			htmlTextInput.setValueAttribute(Usernumber);
+//			htmlPasswordInput.setValueAttribute(UserPwd);
+//	        HtmlSubmitInput submit=page.getElementByName("submit"); 
+//	        HtmlPage pages=  submit.click();
+//	        Thread.sleep(3000);
+//	        if(!pages.asText().contains("您输入的用户名或密码有误")){
+//	        	if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+//	   	       	 System.out.println(pages.asXml());
+//		 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
+//		 	        Thread.sleep(3000);
+//		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
+//		 	         data.put("info", table.asXml());
+//		 	         map.put("data", data);
+//		 	         map.put("Usernumber",Usernumber); 
+//		 	         map.put("UserPwd",UserPwd);
+//		 	         map.put("Usercard",Usercard); 
+//		 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
+//	        	}else{
+//	         		map.put("errorCode","0002");
+//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+//	        	}
+//	        	
+//	        	
+//
+//	        }else{
+//	        	if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+//	        		map.put("errorCode","0002");
+//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+//	        	}else{
+//	        		map.put("errorCode","0002");
+//	    			map.put("errorInfo","信息有误");
+//	        	}
+//	    
+//	        }
+//	       
+//	      
+//			} catch (Exception e) {
+//				map.put("errorCode","0003");
+//    			map.put("errorInfo","网络错误");
+//			}
+//	     
+//	   		
 	   		return map;	
 			
 		}
@@ -1176,11 +1275,14 @@ public class MobileService {
 		 * @throws InterruptedException
 		 */
 		public Map<String,Object> Taobao(HttpServletRequest request,String Usernumber,String UserPwd,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-			
-
+			boolean flg=false;//定义是否重复爬取
+			int count=0;//初始化爬取测试
+			int maxcount=3;//定义最大爬取次数
 	    	Map<String,Object> map=new HashMap<String, Object>();
 	    	Map<String,Object> data=new HashMap<String, Object>();
-			WebClient webClient = new WebClient();
+//			WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.port,Scheduler.ip);
+	    	//WebClient webClient = new WebClient(BrowserVersion.CHROME, Scheduler.ip, Scheduler.port);
+	    	WebClient webClient = new WebClient();
 			 webClient.getOptions().setUseInsecureSSL(true);
 			 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
 			 webClient.getOptions().setTimeout(100000);
@@ -1191,54 +1293,88 @@ public class MobileService {
 			 webClient.getOptions().setThrowExceptionOnScriptError(false);
 			 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 			 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			 WebRequest webRequest=new  WebRequest(new java.net.URL("https://login.taobao.com/member/login.jhtml"));
-			 webClient.addRequestHeader("accept-Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-			// webRequest.setAdditionalHeader("accept-Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");		
-			 List<NameValuePair> list=new ArrayList<NameValuePair>();
-			 list.add(new NameValuePair("TPL_password", UserPwd));
-			 list.add(new NameValuePair("TPL_username", Usernumber));
-			 list.add(new NameValuePair("newlogin", "1"));
-			 list.add(new NameValuePair("callback", "1"));
-			 webRequest.setHttpMethod(HttpMethod.POST);
-			 webRequest.setRequestParameters(list);
-			 HtmlPage pagess=webClient.getPage(webRequest);
-			 if(Usernumber.contains("@")){
-				 if(pagess.getTitleText().equals("页面跳转中")){
-					 String token=pagess.asXml().substring(pagess.asXml().indexOf("token")).split("&")[0].toString().replaceAll("token=", "");
-					 String token2=pagess.asXml().substring(pagess.asXml().indexOf("token",pagess.asXml().indexOf("token")+1)).split("&")[0].toString().replaceAll("token=", "");
-					 HtmlPage page= webClient.getPage("https://passport.alibaba.com/mini_apply_st.js?site=0&token="+token+"&callback=callback");
-					 HtmlPage page2= webClient.getPage("https://passport.alibaba.com/mini_apply_st.js?site=0&token="+token2+"&callback=callback");
-					 System.out.println(page2.asXml());
-					 HtmlPage pagev=webClient.getPage("https://login.taobao.com/member/login.jhtml?redirectURL=http%3A%2F%2Fwww.taobao.com%2F");
-					 webClient.getPage("https://login.taobao.com/member/vst.htm?st="+""+"&params=style%3Dminisimple%26sub%3Dtrue%26TPL_username%3D"+Usernumber+"%26loginsite%3D0%26from_encoding%3D%26not_duplite_str%3D%26guf%3D%26full_redirect%3D%26isIgnore%3D%26need_sign%3D%26sign%3D%26from%3Ddatacube%26TPL_redirect_url%3Dhttp%25253A%25252F%25252Fmofang.taobao.com%25252Fs%25252Flogin%26css_style%3D%26allp%3D&_ksTS=1404787873165_78&callback=jsonp79");
-					HtmlPage enpage=webClient.getPage("http://trade.taobao.com/trade/itemlist/list_bought_items.htm?spm=1.7274553.1997525045.2.C6QtVd");
-					 HtmlPage pagea= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm?addrId=5874841844");
-					 HtmlTable table;
-					 if(pagea.querySelectorAll(".tbl-main").getLength()>0){
-							table=(HtmlTable) pagea.querySelectorAll(".tbl-main").get(0);
-							data.put("info", table.asXml());
-							map.put("data", data);
-							map.put("userName", Usernumber);
-							map.put("userPwd", UserPwd);
-							map.put("userCard", userCard);
+			 do {
+				 count++;
+				 WebRequest webRequest=new  WebRequest(new java.net.URL("https://login.taobao.com/member/login.jhtml"));
+				 webClient.addRequestHeader("accept-Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+				// webRequest.setAdditionalHeader("accept-Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");		
+				 List<NameValuePair> list=new ArrayList<NameValuePair>();
+				 list.add(new NameValuePair("TPL_password", UserPwd));
+				 list.add(new NameValuePair("TPL_username", Usernumber));
+				 list.add(new NameValuePair("newlogin", "1"));
+				 list.add(new NameValuePair("callback", "1"));
+				 webRequest.setHttpMethod(HttpMethod.POST);
+				 webRequest.setRequestParameters(list);
+				 HtmlPage pagess=webClient.getPage(webRequest);
+
+					 if(pagess.getTitleText().equals("页面跳转中")){
+						 String token=pagess.asXml().substring(pagess.asXml().indexOf("token")).split("&")[0].toString().replaceAll("token=", "");
+						 String token2=pagess.asXml().substring(pagess.asXml().indexOf("token",pagess.asXml().indexOf("token")+1)).split("&")[0].toString().replaceAll("token=", "");
+						 HtmlPage page= webClient.getPage("https://passport.alibaba.com/mini_apply_st.js?site=0&token="+token+"&callback=callback");
+						 HtmlPage page2= webClient.getPage("https://passport.alibaba.com/mini_apply_st.js?site=0&token="+token2+"&callback=callback");
+						 System.out.println(page2.asXml());
+						 HtmlPage pagev=webClient.getPage("https://login.taobao.com/member/login.jhtml?redirectURL=http%3A%2F%2Fwww.taobao.com%2F");
+						 webClient.getPage("https://login.taobao.com/member/vst.htm?st="+""+"&params=style%3Dminisimple%26sub%3Dtrue%26TPL_username%3D"+Usernumber+"%26loginsite%3D0%26from_encoding%3D%26not_duplite_str%3D%26guf%3D%26full_redirect%3D%26isIgnore%3D%26need_sign%3D%26sign%3D%26from%3Ddatacube%26TPL_redirect_url%3Dhttp%25253A%25252F%25252Fmofang.taobao.com%25252Fs%25252Flogin%26css_style%3D%26allp%3D&_ksTS=1404787873165_78&callback=jsonp79");
+						HtmlPage enpage=webClient.getPage("http://trade.taobao.com/trade/itemlist/list_bought_items.htm?spm=1.7274553.1997525045.2.C6QtVd");
+						 HtmlPage pagea= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm?addrId=5874841844");
+						 HtmlTable table;
+						 if(pagea.querySelectorAll(".tbl-main").getLength()>0){
+							 	flg=false;
+								//-------------------------------
+								 //成功进入 进入支付宝页面
+								 
+							 	  WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
+							 	  List<NameValuePair> lists=new ArrayList<NameValuePair>();
+							 	  lists.add(new NameValuePair("goto","https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
+							 	  lists.add(new NameValuePair("tti","2119"));
+							 	  lists.add(new NameValuePair("isIframe","false"));
+							 	  lists.add(new NameValuePair("REMOTE_PCID_NAME","_seaside_gogo_pcid"));
+							 	  lists.add(new NameValuePair("is_sign","Y"));
+							 	  lists.add(new NameValuePair("security_activeX_enabled","false"));
+							 	  lists.add(new NameValuePair("securityId","web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
+							 	  requests.setHttpMethod(HttpMethod.POST);
+							 	  requests.setRequestParameters(lists);
+							 	  HtmlPage pageinfos= webClient.getPage(requests);
+							 	  HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
+							 	  	table=(HtmlTable) pagea.querySelectorAll(".tbl-main").get(0);
+							 	  
+							 	  	
+//									data.put("info", table.asXml());
+//									map.put("data", data);
+//									map.put("userName", Usernumber);
+//									map.put("userPwd", UserPwd);
+//									map.put("userCard", userCard);
+					
+							 	  data.put("info",table.asXml() );
+							 	  data.put("page",pageinfoss.asXml() );
+							 	  map.put("data", data);
+							 	  map.put("userName", Usernumber);
+							 	  map.put("userPwd", UserPwd);
+							 	  map.put("userCard", userCard);
+							 	  map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/taobaoPush");
+							 	  logger.warn("===淘宝"+map.toString());
+						 }else{
+							 	flg=true;//如果没有继续爬取
 							
-							map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/taobaoPush");
+								
+						 }
+						 if(flg==true&&count==maxcount){//如果满足条件 不再爬取，提示稍后再来
+							 	map.put("errorCode","0002");
+				    			map.put("errorInfo","目前认证的人较多，请稍后再试");
+								logger.warn("读取收获地址table为空！请请检查");
+							
+						 }
 					 }else{
-							data.put("info","网络错误");
-							map.put("data", data);
+						 
+							HtmlDivision division= (HtmlDivision) pagess.getElementById("J_Message");
+							map.put("errorCode","0002");
+			    			map.put("errorInfo",division.asText());
+			    		
 					 }
-				 }else{
-					 
-						HtmlDivision division= (HtmlDivision) pagess.getElementById("J_Message");
-						map.put("errorCode","0002");
-		    			map.put("errorInfo",division.asText());
-				 }
+				
 			
-			 }else{
-					map.put("errorCode","0005");
-	    			map.put("errorInfo","请使用您绑定的邮箱登录");
-			 }
-			
+				
+			} while (flg);
 		
 	
 			
@@ -1246,5 +1382,43 @@ public class MobileService {
 		   	return map;
 			
 		}
+		
+		
+		public Map<String,Object> XuexinGetCode(HttpServletRequest request,HttpServletResponse response)
+				throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+			HttpSession session=request.getSession();
+			WebClient webClient =	crawlerUtil.WebClientXuexin();
+			Map<String,Object>map=new HashMap<String, Object>();
+			Map<String,Object>data=new HashMap<String, Object>();
+			HtmlPage pagelt = webClient.getPage(crawlerUtil.XueXinLogin);
+			HtmlHiddenInput hiddenInput= pagelt.getElementByName("lt");
+			String lt=hiddenInput.getValueAttribute();
+			UnexpectedPage pageimg=webClient.getPage(crawlerUtil.XueXinGetCode);
+			BufferedImage img=ImageIO.read(pageimg.getInputStream());
+			String  fileName = System.currentTimeMillis() + "xuexin.png";
+			
+		 	File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/");
+
+		 	// 此目录保存缩小后的关键图
+		 	if (!path.isDirectory()){
+				path.mkdirs();
+		 	}
+			ImageIO.write(img,"png",new File(path,fileName));
+			data.put("ip",crawlerUtil.ip);
+			data.put("FileName",fileName);
+			data.put("FilePath","/upload");
+			data.put("Port",crawlerUtil.port);
+			data.put("lt",lt);
+			map.put("data",data);
+			map.put("errorCode", "0000");
+			map.put("errorInfo", "查询成功");
+			session.setAttribute("xuexinWebClient", webClient);
+			logger.info(crawlerUtil.ip+crawlerUtil.port+"/upload"+fileName);
+			logger.info(request.getSession().getServletContext().getRealPath("/upload") + "/");
+			return map;
+			
+
+		}
+		
 		
 }

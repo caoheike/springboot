@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.portlet.ModelAndView;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -59,6 +60,7 @@ public class InterfaceController  {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
+
     @ApiOperation(value="获取移动验证码", notes="")//设置标题描述
 	@ResponseBody
 	@RequestMapping(value="GetCode", method=RequestMethod.POST)
@@ -279,9 +281,11 @@ public class InterfaceController  {
 		
 		map= mobileService.test(request, qqnumber, sess, password, code,session.getAttribute("IdCard").toString(),showpwd);
 		if(map.toString().contains("0000")){
-			page="OperatorView/success";
+			page="OperatorView/indexsuccess";
+		}else if(map.toString().contains("0004")){
+			page="OperatorView/index";
 		}else{
-			page="OperatorView/error";
+			page="OperatorView/indexone";
 		}
 		return page;
 		
@@ -315,8 +319,8 @@ public class InterfaceController  {
    	@ApiOperation(value="学信网查询", notes="无需参数")//设置标题描述
 	@ResponseBody
 	@RequestMapping(value="AcademicLogin",method=RequestMethod.POST)
-	public Map<String,Object> AcademicLogin(HttpServletRequest request,@RequestParam("Usernumber") String Usernumber,@RequestParam("UserPwd") String UserPwd,@RequestParam("Usercard") String Usercard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-   		return mobileService.AcademicLogin(request, Usernumber, UserPwd,Usercard);
+	public Map<String,Object> AcademicLogin(HttpServletRequest request,@RequestParam("Usernumber") String Usernumber,@RequestParam("UserPwd") String UserPwd,@RequestParam("Usercard") String Usercard,@RequestParam ("lt") String lt,@RequestParam("code") String code) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+   		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code, lt,Usercard);
    		
 
    	}
@@ -409,6 +413,28 @@ public class InterfaceController  {
    	}
    	
 
+   	@ApiOperation(value="学信网获得验证码", notes="无需参数")//设置标题描述
+	@ResponseBody
+	@RequestMapping(value="XuexinGetCode",method=RequestMethod.POST)
+	public Map<String,Object> XuexinGetCode(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+   		return mobileService.XuexinGetCode(request, response);
+   		
+
+   	}
+
+   	@RequestMapping(value="agreement.html",method=RequestMethod.GET)
+   	public String agreement(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		return "OperatorView/agreement";
+   		
+   		
+   	}
+   	
+   	@RequestMapping(value="index.html",method=RequestMethod.GET)
+   	public String index(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		return "OperatorView/indexsuccess";
+   		
+   		
+   	}
 
 	
 
