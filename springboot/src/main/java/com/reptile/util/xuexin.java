@@ -32,8 +32,10 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
  *
  */
 public class xuexin {
-	private static String username="513721199510106811";
-	private static String userpwd="598415805";
+	//private static String username="513721199510106811";
+	//private static String userpwd="598415805";
+	private static String username="123";
+	private static String userpwd="123";
 //	
 public static void main(String[] args) throws FailingHttpStatusCodeException, IOException {
 				Map<String,Object> map=new HashMap<String, Object>();
@@ -71,15 +73,9 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 				webRequest.setHttpMethod(HttpMethod.POST);
 				webRequest.setRequestParameters(list);
 				HtmlPage pages= webClient.getPage(webRequest);
-				HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
-				if(Logindiv==null||Logindiv.equals("")){
-					System.out.println("登录成功等待获取数据");
-			        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
-		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
-		 	        System.out.println(table.asXml());
-				}else{
-					System.out.println(Logindiv.asText());
-				}
+				//HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+				System.out.print(pages.asText());
+	
 	
 }
 	

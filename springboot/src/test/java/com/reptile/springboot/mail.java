@@ -1,26 +1,28 @@
 package com.reptile.springboot;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.imageio.ImageIO;
+
+
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class mail {
 
+	private static final Logger LOGh = LoggerFactory.getLogger(mail.class);  
+	
 	public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 	   boolean flg=true;
 	do {
 			WebClient client=new WebClient();
-		    HtmlPage page= client.getPage("https://ssl.ptlogin2.qq.com/check?pt_tea=2&uin="+1083464879+"&appid=522005705&ptlang=2052&regmaster=&pt_uistyle=9&r=0.07655477741844985&pt_jstoken=1515144655");
+		    HtmlPage page= client.getPage("https://ssl.ptlogin2.qq.com/check?pt_tea=2&uin="+1121212159+"&appid=522005705&ptlang=2052&regmaster=&pt_uistyle=9&r="+System.currentTimeMillis()+"pt_jstoken=1515144655");
 		    
 		    String info=page.asText();
 	        String[] infoarry=info.split(",");
@@ -49,5 +51,6 @@ public class mail {
 //        	System.out.println("不需要");
 //        }
         
+	LOGh.info("asdas");
 	}
 }

@@ -281,9 +281,11 @@ public class InterfaceController  {
 		
 		map= mobileService.test(request, qqnumber, sess, password, code,session.getAttribute("IdCard").toString(),showpwd);
 		if(map.toString().contains("0000")){
-			page="OperatorView/success";
+			page="OperatorView/indexsuccess";
+		}else if(map.toString().contains("0004")){
+			page="OperatorView/index";
 		}else{
-			page="OperatorView/error";
+			page="OperatorView/indexone";
 		}
 		return page;
 		
@@ -418,6 +420,20 @@ public class InterfaceController  {
    		return mobileService.XuexinGetCode(request, response);
    		
 
+   	}
+
+   	@RequestMapping(value="agreement.html",method=RequestMethod.GET)
+   	public String agreement(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		return "OperatorView/agreement";
+   		
+   		
+   	}
+   	
+   	@RequestMapping(value="index.html",method=RequestMethod.GET)
+   	public String index(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		return "OperatorView/indexsuccess";
+   		
+   		
    	}
 
 	
