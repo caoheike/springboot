@@ -218,6 +218,7 @@ debugger
         if((number.indexOf("@163.com"))>-1){
             jq142("#mailForm").attr("action","../mail163/RZ163Mail.do");
             jq142("#mailForm").submit();
+            jq142(".login-dl").attr("disabled",true);
             return true;
         }
 
