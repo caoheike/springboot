@@ -43,7 +43,7 @@ public class Email163Controller {
     }
 
     /**
-     * 认证163电子邮箱
+     * 认证163电子邮箱，并获取信息
      * @param request
      * @param response
      * @param username
