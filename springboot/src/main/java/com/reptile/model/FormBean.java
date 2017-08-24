@@ -12,6 +12,7 @@ public class FormBean {
     private String verifyCode;
     private String createTime;
     private String desc;
+    private String cityCode;
 
     @Override
     public String toString() {
@@ -95,5 +96,13 @@ public class FormBean {
 
     public void setDesc(String desc) {
         this.desc = desc.trim();
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode.trim();
     }
 }
