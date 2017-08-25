@@ -4,7 +4,7 @@ package com.reptile.model;
  * Created by HotWong on 2017/4/27 0027.
  */
 public class FormBean {
-    private Long userId;
+    private String userId;
     private String userName;
     private String userPass;
     private String email;
@@ -50,11 +50,11 @@ public class FormBean {
         this.phone = phone.trim();
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;;
     }
 
