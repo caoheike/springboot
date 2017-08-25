@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.scala-lang:scala-swing:2.11.0-M7">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.m2/repository/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7.jar!/" />
+      <root url="jar://E:/maven/maven_localDepot/repo/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.m2/repository/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7-javadoc.jar!/" />
+      <root url="jar://E:/maven/maven_localDepot/repo/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$USER_HOME$/.m2/repository/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7-sources.jar!/" />
+      <root url="jar://E:/maven/maven_localDepot/repo/org/scala-lang/scala-swing/2.11.0-M7/scala-swing-2.11.0-M7-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

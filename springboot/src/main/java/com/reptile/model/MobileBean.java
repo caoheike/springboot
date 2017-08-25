@@ -18,7 +18,7 @@ public String getCallCode() {
 public void setCallCode(String callCode) {
 	CallCode = callCode;
 }
-public static String GetCodeUrl="https://sn.ac.10086.cn/servlet/CreateImage";
+public static String GetCodeUrl="https://sn.ac.10086.cn/servlet/CreateImage?"+System.currentTimeMillis();
 public static String loginurl="https://sn.ac.10086.cn/loginAction";
 public static String ifLoginUrl="http://service.sn.10086.cn/app?service=page/MyBillQuery&listener=initPage&type=1&random=0.6167800748196473";
 public static String  CodeUrl="https://sn.ac.10086.cn/login";
