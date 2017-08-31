@@ -31,4 +31,33 @@ public class SEOandCHSIController {
 		return SEOandCHSIService.SeoEmailFind(request, UserEmail,UserCard);
 
    	}
+	
+	
+	/**
+	 * 光大银行信用卡账单查询
+	 * 1.光大银行页面图片验证码
+	 * 2.获取传过来的数据，触发动态密码
+	 * 3.获取信用卡账单
+	 * @throws Exception 
+	 */
+	
+	//获取登录页面的图像验证码没有参数
+	@ResponseBody
+	@RequestMapping(value="CabCardloginImage",method=RequestMethod.POST)
+	public Map<String,Object> CabCardloginImage(HttpServletRequest request) throws Exception{
+		return SEOandCHSIService.CabCardloginImage(request);
+	}
+	//获得得传过来的数据，触发动态密码，（需要传输身份证号，及图形验证码）
+	@ResponseBody
+	@RequestMapping(value="CabCardloginPass",method=RequestMethod.POST)
+	public Map<String,Object> CabCardloginPass(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("loginImage") String loginImage) throws Exception{
+		return SEOandCHSIService.CabCardloginPass(request,UserCard,loginImage);
+	}
+	//获得信用卡账单 （需要 身份证号 ， 图形验证码信息，短信动态密码）
+	@ResponseBody
+	@RequestMapping(value="CabCardloginPage",method=RequestMethod.POST)
+	public Map<String,Object> CabCardloginPage(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("loginImage") String loginImage,@RequestParam("Password") String Password) throws Exception{
+		return SEOandCHSIService.CabCardloginPage(request,UserCard,loginImage,Password);
+	}
+	
 }
