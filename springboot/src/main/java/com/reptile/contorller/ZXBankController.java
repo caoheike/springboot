@@ -50,8 +50,8 @@ public class ZXBankController {
     @ApiOperation(value = "4.获取账单信息", notes = "参数：手机验证码")
     @ResponseBody
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
-    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneCode") String phoneCode, @RequestParam("idCard") String idCard) throws  Exception {
-        return service.getDetailMes(request,phoneCode.trim(),idCard.trim());
+    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneCode") String phoneCode, @RequestParam("userCard") String userCard) throws  Exception {
+        return service.getDetailMes(request,phoneCode.trim(),userCard.trim());
     }
 
 }

@@ -35,7 +35,7 @@ public class ZXBankService {
     public Map<String, Object> getZXImageCode(HttpServletRequest request) {
         //获取验证码并保存在本地
         Map<String, Object> map = new HashMap<String, Object>();
-        Map<String,Object> mapInfo=new HashMap<String, Object>();
+        Map<String, Object> mapInfo = new HashMap<String, Object>();
         HttpSession session = request.getSession();
 
         HttpClient httpClient = new HttpClient();
@@ -63,12 +63,12 @@ public class ZXBankService {
             map.put("errorInfo", "操作成功");
             map.put("errorCode", "0000");
             mapInfo.put("imageCodePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/zxImageCode/" + fileName);
-            map.put("data",mapInfo);
+            map.put("data", mapInfo);
         } catch (Exception e) {
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             map.put("errorInfo", "系统繁忙");
-            map.put("errorCode", "0000");
+            map.put("errorCode", "0001");
         }
         return map;
     }
@@ -261,7 +261,17 @@ public class ZXBankService {
                     String response = json.get("response").toString();
                     net.sf.json.JSONObject jsonO = net.sf.json.JSONObject.fromObject(response);
                     net.sf.json.JSONArray cardlist = jsonO.getJSONArray("billsMonthList");
-                    for (int j = 0; j < cardlist.size(); j++) {
+
+                    int size = 0;
+                    if (cardlist != null) {
+                        if (cardlist.size() > 6) {
+                            size = 6;
+                        } else {
+                            size = cardlist.size();
+                        }
+                    }
+
+                    for (int j = 0; j < size; j++) {
                         PostMethod postMeth = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/billQuery.do?func=queryBillInfo");
                         postMeth.setRequestHeader("Cookie", coks);
                         NameValuePair param11 = new NameValuePair("cardNo", card_nbr);
@@ -291,6 +301,7 @@ public class ZXBankService {
                 System.out.println(map);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "查询出错");
             }

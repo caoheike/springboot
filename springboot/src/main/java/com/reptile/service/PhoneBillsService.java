@@ -7,6 +7,7 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
+import org.apache.http.conn.HttpHostConnectException;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -50,9 +51,11 @@ public class PhoneBillsService {
                 map.put("errorInfo", "发送短信验证码成功");
             }
             session.setAttribute("YD-webClient", webClient);
-        } catch (Exception e) {
+        } catch (HttpHostConnectException e) {
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
+        } catch (Exception e) {
+            e.printStackTrace();
             map.put("errorCode", "0003");
             map.put("errorInfo", "网络繁忙，请刷新后重新再试");
         }
