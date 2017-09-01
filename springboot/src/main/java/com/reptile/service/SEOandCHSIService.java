@@ -1,23 +1,13 @@
 package com.reptile.service;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
-import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Resttemplate;
-
 import net.sf.json.JSONObject;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -26,19 +16,11 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
 public class SEOandCHSIService {
@@ -60,7 +42,7 @@ public class SEOandCHSIService {
 			try {
 			String URL= "www"+"."+ UserEmail.substring(UserEmail.indexOf("@")+1);	
 			System.out.println("URL===="+URL);
-			WebClient webclient=new WebClient(BrowserVersion.FIREFOX_45,Scheduler.ip,Scheduler.port);
+			WebClient webclient=new WebClient();
 			webclient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
 			webclient.getOptions().setTimeout(90000);
 			webclient.getOptions().setCssEnabled(false);
@@ -93,7 +75,7 @@ public class SEOandCHSIService {
 		return map;
 	}
 	public Map<String,Object> CabCardloginImage(HttpServletRequest request) throws Exception  {
-		WebClient webclient=new WebClient(BrowserVersion.FIREFOX_45,Scheduler.ip,Scheduler.port);
+		WebClient webclient=new WebClient();
 		webclient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
 		webclient.getOptions().setTimeout(90000);
 		webclient.getOptions().setCssEnabled(false);
