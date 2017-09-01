@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
@@ -708,24 +709,36 @@ public class MobileService {
 						 webRequests.setRequestParameters(list);
 						 TextPage chekpage=webClient.getPage(webRequests);
 						System.out.println(chekpage.getContent()+"----");
-						
-						WebRequest webRequestss=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/callDetail?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001"));
-						List<NameValuePair> lists=new ArrayList<NameValuePair>();
-						lists.add(new NameValuePair("pageNo","1"));
-						lists.add(new NameValuePair("pageSize","20"));
-						lists.add(new NameValuePair("beginDate","20170601"));
-						lists.add(new NameValuePair("endDate","20170630"));
-						webRequestss.setHttpMethod(HttpMethod.POST);
-						webRequestss.setRequestParameters(lists);
-						TextPage chekpages=webClient.getPage(webRequestss);
-						System.out.println(chekpages.getContent()+"----vvv");
-						info=chekpages.getContent();
+						JSONArray array=new JSONArray();
+						List<Map> listdata = new htmlUtil().liantong();
+						for (int i = 0; i < listdata.size(); i++) {
+							WebRequest webRequestss=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/callDetail?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001"));
+							List<NameValuePair> lists=new ArrayList<NameValuePair>();
+							lists.add(new NameValuePair("pageNo","1"));
+							lists.add(new NameValuePair("pageSize","2000"));
+							lists.add(new NameValuePair("beginDate",listdata.get(i).get("begin").toString().replaceAll("-", "")));
+							lists.add(new NameValuePair("endDate",listdata.get(i).get("end").toString().replaceAll("-", "")));
+							webRequestss.setHttpMethod(HttpMethod.POST);
+							webRequestss.setRequestParameters(lists);
+							TextPage chekpages=webClient.getPage(webRequestss);
+							System.out.println(chekpages.getContent()+"----vvv");
+							info=chekpages.getContent();
+							JSONObject jsonObject=JSONObject.fromObject(info);
+							if(i==2){
+								jsonObject.put("UserIphone", unicombean.getUseriphone());
+								jsonObject.put("UserPassword", unicombean.getUserPassword());
+							}
+							array.add(jsonObject);
+						}
+						System.out.println("---haha"+array.toString()+"haha");
 
 						//联通数据推送
-						JSONObject jsonObject=JSONObject.fromObject(info);
-						jsonObject.put("UserIphone", unicombean.getUseriphone());
-						jsonObject.put("UserPassword", unicombean.getUserPassword());
-						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
+					
+						//变更为三个月的。
+//						jsonObject.put("UserIphone", unicombean.getUseriphone());
+//						jsonObject.put("UserPassword", unicombean.getUserPassword());
+//						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
+						map=resttemplate.SendMessageCredit(array,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink");
 			 }else{
 					map.put("errorCode", "0005");
 					map.put("errorInfo", json.get("msg"));

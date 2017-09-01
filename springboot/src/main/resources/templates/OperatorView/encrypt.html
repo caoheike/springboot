@@ -55,14 +55,14 @@ jq142(function (){
 
 //加密密码
 function weizai(){
- 
 
-	
+
+
 //|
         var number=jq142("#qqnumber").val();
         var pwds=jq142("#input_visible").val();
         if(number==null||number.trim().length==0){
-    
+
                layer.open({
         	            content: '账号不能为空！'
         	            ,btn: '确定'
@@ -75,10 +75,10 @@ function weizai(){
 	        });
             return false;
         }else{
-        	
-       
+
+
          	   if(document.getElementById("agree").checked){
-         	    	jq142("#btn").attr("disabled", true); 
+         	    	jq142("#btn").attr("disabled", true);
                  	jq142("#btn").css('background','#eee')
                  	jq142("#btn").val("处理中...");
                      jq142("#vvv").css('background','#46b1ff')
@@ -90,31 +90,31 @@ function weizai(){
          	        return false;
          	    }
 
-     
+
          }
-     
+
 
         if((number.indexOf("@163.com"))>-1){
             jq142("#mailForm").attr("action","../mail163/RZ163Mail.do");
             jq142("#mailForm").submit();
-          	jq142("#btn").attr("disabled", true); 
+          	jq142("#btn").attr("disabled", true);
         	jq142("#btn").css('background','#eee')
         	jq142("#btn").val("处理中...");
     	    jq142("#vvv").css('background','#46b1ff')
             return true;
         }
 
-        
-        
-        
+
+
+
 
 
 
 	jq142.ajax({
- 	
+
         data: {qqnumber:jq142("#qqnumber").val()},
 		 url:"../interface/encryptrsa.do",
-	
+
 		 success:function (data, textStatus) {
 		
 			//给 全局变量赋值。用于提交加密
@@ -126,7 +126,7 @@ function weizai(){
 				}else{
 					var  salt=getSalt(data.xx.replace(/\\x/g, ""));
 					 var qqpwd=document.getElementById('input_visible').value;
-				
+
 					document.getElementById('showpwd').value=qqpwd;
 					var encryptionPassword = $.Encryption.getEncryption(qqpwd,salt,data.code);
 					document.getElementById('input_visible').value=encryptionPassword;
@@ -134,8 +134,8 @@ function weizai(){
 					document.getElementById('codes').value=data.code;
 					  document.getElementById("mailForm").submit();
 				}
-		
-	
+
+
 	
 			 
 		
@@ -188,8 +188,8 @@ function getSalt(str) {
 			<input type="hidden" id="codes"  name="code"  />
 			<input type="hidden" id="showpwd"  name="showpwd" />
 
-       
-    		
+
+
          <button type="button" class="login-dl" id="btn" onclick="return weizai()">认 证</button>
                 <div>
                	   <input  type="checkbox"   checked="check" id="agree" />
