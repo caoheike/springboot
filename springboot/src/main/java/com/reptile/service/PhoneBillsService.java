@@ -45,12 +45,25 @@ public class PhoneBillsService {
             //发送登录手机验证码
             TextPage page1 = webClient.getPage("https://login.10086.cn/sendRandomCodeAction.action?userName=" + userNumber + "&type=01&channelID=12003");
             System.out.println(page1.getContent());
-            if (!"0".equals(page1.getContent())) {
+
+            if("0".equals(page1.getContent())){
+                map.put("errorCode", "0000");
+                map.put("errorInfo", "已将短信随机码发送至手机，请查收!");
+            }else if("4005".equals(page1.getContent())){
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "手机号码有误，请重新输入!");
+            }else if ("1".equals(page1.getContent())){
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "对不起，短信随机码暂时不能发送，请一分钟以后再试！");
+            }else if ("2".equals(page1.getContent())){
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "短信下发数已达上限！");
+            }else if ("3".equals(page1.getContent())) {
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "对不起，短信发送次数过于频繁！");
+            }else {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "短信验证码发送错误");
-            } else {
-                map.put("errorCode", "0000");
-                map.put("errorInfo", "发送短信验证码成功");
             }
             session.setAttribute("YD-webClient", webClient);
         } catch (HttpHostConnectException e) {
