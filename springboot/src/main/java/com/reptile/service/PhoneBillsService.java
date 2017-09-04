@@ -8,6 +8,8 @@ import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 import org.apache.http.conn.HttpHostConnectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -23,8 +25,8 @@ import java.util.*;
 public class PhoneBillsService {
     private long timeStamp = System.currentTimeMillis();
     private String path = "";
-
-    public Map<String, String> getChinaMobileCode(HttpServletRequest request, String userNumber) throws Exception {
+    private Logger logger= LoggerFactory.getLogger(PhoneBillsService.class);
+    public Map<String, String> getChinaMobileCode(HttpServletRequest request, String userNumber) {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -52,9 +54,11 @@ public class PhoneBillsService {
             }
             session.setAttribute("YD-webClient", webClient);
         } catch (HttpHostConnectException e) {
+            logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             map.put("errorCode", "0003");
             map.put("errorInfo", "网络繁忙，请刷新后重新再试");
@@ -62,7 +66,7 @@ public class PhoneBillsService {
         return map;
     }
 
-    public Map<String, String> chinaMobilLoad(HttpServletRequest request, String userNumber, String duanxinCode) throws Exception {
+    public Map<String, String> chinaMobilLoad(HttpServletRequest request, String userNumber, String duanxinCode)  {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -149,6 +153,7 @@ public class PhoneBillsService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "操作成功");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"     mrlu");
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络繁忙");
@@ -157,7 +162,7 @@ public class PhoneBillsService {
         return map;
     }
 
-    public Map<String, String> getDetialImageCode(HttpServletRequest request) throws Exception {
+    public Map<String, String> getDetialImageCode(HttpServletRequest request) {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -184,6 +189,7 @@ public class PhoneBillsService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "验证码获取成功");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"     mrlu");
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "系统繁忙");
@@ -192,7 +198,7 @@ public class PhoneBillsService {
         return map;
     }
 
-    public Map<String, String> getDetialMobilCode(HttpServletRequest request, String userNumber) throws Exception {
+    public Map<String, String> getDetialMobilCode(HttpServletRequest request, String userNumber){
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -220,6 +226,7 @@ public class PhoneBillsService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"     mrlu");
                 e.printStackTrace();
                 map.put("errorCode", "0003");
                 map.put("errorInfo", "系统繁忙");
@@ -228,7 +235,7 @@ public class PhoneBillsService {
         return map;
     }
 
-    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode, String fuwuSec, String imageCode) throws Exception {
+    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode, String fuwuSec, String imageCode){
         Map<String, Object> map = new HashMap<String, Object>();
 
         Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -314,6 +321,7 @@ public class PhoneBillsService {
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(dataMap, "http://192.168.3.35:8080/HSDC/message/mobileCallRecord");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"     mrlu");
                 e.printStackTrace();
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
