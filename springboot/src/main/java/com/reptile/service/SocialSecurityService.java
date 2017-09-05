@@ -12,6 +12,8 @@ import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +29,7 @@ public class SocialSecurityService {
     private final static String loginUrl="http://117.36.52.39/sxlssLogin.jsp";
     private final static String infoUrl="http://117.36.52.39/personInfoQuery.do";
     private final static String detailsUrl="http://117.36.52.39/personAccountQuery.do";
-
+    private Logger logger= LoggerFactory.getLogger(SocialSecurityService.class);
     public Map<String,Object> login(FormBean bean){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
@@ -109,11 +111,13 @@ public class SocialSecurityService {
             }
 
         }catch (NullPointerException e) {
+            logger.warn(e.getMessage()+"     mrlu");
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");
             map.put("errorInfo","服务器繁忙，请稍后再试！");
             map.put("errorCode","0001");
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             map.clear();
             data.clear();
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
