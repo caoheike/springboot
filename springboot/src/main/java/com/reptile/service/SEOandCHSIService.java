@@ -24,6 +24,7 @@ import java.util.*;
 
 @Service
 public class SEOandCHSIService {
+
     //https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm
     private final static String CabCardloginPhone = "https://xyk.cebbank.com/mall/api/usercommon/dynamic";//发送短信密码
     private final static String CabCardIndexpage = "https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心

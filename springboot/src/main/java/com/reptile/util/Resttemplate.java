@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -118,5 +119,36 @@ public class Resttemplate {
 	  
   }
   		 
+  
+  
+  public Map<String,Object> SendMessageCredit(JSONArray jsonarray,String Url){
+	  Map<String,Object> message=new HashMap<String, Object>();
+	  try {
+		  StringHttpMessageConverter m = new StringHttpMessageConverter(Charset.forName("UTF-8"));  
+		  RestTemplate restTemplate = new RestTemplateBuilder().additionalMessageConverters(m).build();  
+		  HttpHeaders headers = new HttpHeaders();
+		  MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded; charset=UTF-8");
+		  headers.setContentType(type);
+		  headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		  System.out.println(jsonarray);
+		  HttpEntity<String> formEntity = new HttpEntity<String>(jsonarray.toString(), headers);
+		  String result = restTemplate.postForObject(Url, formEntity,String.class);
+		  JSONObject jsonObjects=JSONObject.fromObject(result);
+		  if("0".equals(jsonObjects.get("errorCode").toString())){
+			  message.put("ResultCode","0000");
+			  message.put("ResultInfo","查询成功");
+		  }else{
+			  message.put("ResultCode",jsonObjects.get("errorCode"));//异常处理
+			  message.put("ResultInfo",jsonObjects.get("errorInfo"));
+		  }
+		  
+	  } catch (Exception e) {
+		  System.out.println(e);
+		  message.put("ResultCode","0003");//异常处理
+		  message.put("ResultInfo","推送失败");
+	  }
+	  return message;
+	  
+  }
 
 }

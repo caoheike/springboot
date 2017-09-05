@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
+     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta http-equiv="Expires" CONTENT="-1"/>
+    <meta http-equiv="Cache-Control" CONTENT="no-cache"/>
+    <meta http-equiv="Pragma" CONTENT="no-cache"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Document</title>
+
+    <link rel="stylesheet" th:href="@{/css/layer.css}" />
+    <style>
+        body
+        {
+            margin:0;
+            padding:0;
+            height: 100%;
+            width:100%;
+        }
+        #box,#box2{
+            margin:  2rem auto 1rem auto;
+            position: relative;
+        }
+        #box2{
+            margin: 2rem auto 1rem auto;
+        }
+        #box3
+        {
+            text-align:center;
+            width:29%;
+            height:5rem;
+            margin:0 auto;
+        }
+         #line1
+         {
+            left: 0;
+            width:0.3rem;
+            height: 5rem;
+            border-radius:0.1rem;
+            background-color:#ccc;
+            margin-top:6rem;
+            margin-left:48%;
+         }
+        #line2
+        {
+            left: 0;
+            width:0.3rem;
+            height: 5rem;
+            border-radius:0.1rem;
+            background-color:#ccc;
+            margin-left:48%;
+        } 
+   
+    </style>
+</head>
+<body>
+    <div id="box">
+            
+    </div>
+    <div id="line1"> </div> 
+    <div id="box2">
+     
+    </div>
+    <div id="line2"></div>
+    <div id="box3">
+       <div style="width:110%; margin-left:-10%;" id="hiddenImg"> <img src="../image/scripts/img/zd1.png"  style="display:inline-block;margin:1rem auto;width:100%;" id="last-image1"/> </div>
+        <img src="../image/scripts/img/zd2.png"  style="display:none;width:100%;" id="last-image2"/> 
+    </div>
+    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>    
+    <script th:src="@{/scripts/aplay-loading.js}"></script>
+    <script th:src="@{/scripts/pollrequest.js}"></script>
+    <script th:src="@{/scripts/layer.js}"></script>
+    <script>
+   
+        window.onload = function(){
+            var flg =true;
+            var box = document.getElementById('box');
+            var w = 0.3 * document.body.clientWidth;
+            var box2 = document.getElementById('box2');
+            box.style.width = w + 'px';
+            box.style.height = w + 'px';
+            box2.style.width = w + 'px';
+            box2.style.height = w + 'px';
+            var img ="../image/scripts/img/email2.png"
+            var c = new cLoading(document.getElementById('box'),{
+                w:w,
+                h:w,
+                lw:3,
+                disabelTran:true,
+                defaultSrc:'../image/scripts/img/email2.png',
+               
+                events:{
+                    onEnd:function(){
+                        c2.start();
+                        pr.stop(img);
+                    },
+                    onChange:function(){
+                        box2.style.transition='all 0.5s ease'; 
+                        box2.style.marginTop="-3rem";
+                           // lastline.style.transition = 'all 0.5s ease';
+                    }
+                }
+            });
+         
+           
+
+
+            function test(){
+                $.ajax({
+                    url: '/sendemail',
+                    type:'GET',
+                    data:{}
+                })
+                .then(function(res){
+                    var img ="../image/scripts/img/check2.png";
+                    if(res.data){ 
+                        c2.stop(img);
+                         box2.style.transform = 'translateY(-10%)';
+                        $("#last-image1").css("display","none");
+                        $("#line2").css("background-color","red");
+                         var img=document.getElementById("last-image2");
+                         var lastline=document.getElementById("line2");
+                         setTimeout(function(){
+                            lastline.style.transform = 'translateY(-120%)';
+                            lastline.style.transition = 'all 0.5s ease';
+    
+                             },10)
+                         setTimeout(function(){
+                            img.style.display="block";
+                            box3.style.transform = 'translateY(-100%)';
+                         box3.style.transition = 'all 0.3s ease';
+    
+                             },100)
+                       
+                       
+                    }else{
+
+                    }
+                }).always(function(){
+                 
+                })
+                
+            }
+        
+            var c2 = new cLoading(box2,{
+                w:w,
+                h:w,
+                lw:3,
+                startImage:'../image/scripts/img/check1.png',
+                defaultSrc:'../image/scripts/img/check2.png',
+  
+                events:{
+                    onEnd:function(){
+                       
+        
+                    }
+                }
+
+            });
+            c.start();
+
+            // c2.start();
+            var success = function(){
+              	c.start();
+            	
+                setTimeout(function(){
+                 	c.stop();
+                    var line=document.getElementById("line1");
+           	     $("#line1").css("background-color","red");
+                    line.style.transition = 'all 0.5s ease';
+                   line.style.transform = 'translateY(-110%)';
+                   $("#line2").css("margin-top", "6rem");
+                	c2.start();
+       
+                     },3000)
+                                	c2.stop();
+                // console.log('success');
+                      setTimeout(function(){
+                    	 
+                             var lastline=document.getElementById("line2");
+                            
+                         
+//                              box2.style.transition = 'all 0.5s ease';
+//                              box2.style.transform = 'translateY(-90%)';
+//                             
+                             var img2=document.getElementById("hiddenImg");
+                             img2.style.transition = 'all 0.5s ease';
+                            // img2.style.transform = 'translateY(10%)';
+                             var img="../image/scripts/img/email2.png";
+                             c.stop(img);            
+//                             / c2.start();
+//                              test();
+                          	//----
+                             
+                            // c2.stop(img);
+//                              box2.style.transform = 'translateY(-10%)';
+                            $("#last-image1").css("display","none");
+                            $("#line2").css("background-color","red");
+                             var img=document.getElementById("last-image2");
+                             var lastline=document.getElementById("line2");
+                             setTimeout(function(){
+                                lastline.style.transform = 'translateY(-80%)';
+                                lastline.style.transition = 'all 0.1s ease';
+
+                                 },50)
+                             setTimeout(function(){
+                                img.style.display="block";
+                                box3.style.transform = 'translateY(-50%)';
+                             box3.style.transition = 'all 0.3s ease';
+
+                                 },150)
+
+                    },6500)
+           
+
+            }
+
+            var failt  = function(){
+                console.log('fail');
+                var img="../image/scripts/img/email1.png";
+                c.stop(img);
+                flg=false;
+                var failine=document.getElementById("line1");
+                failine.style.transition = 'all 0.5s ease';
+                failine.style.transform = 'translateY(-90%)';
+            
+                layer.open({
+                    content: '您短时间内尝试次数太多'
+                    ,btn: '确定'
+                });
+            }
+
+            success();
+            pr.start();
+   
+            
+        }
+
+    </script>
+</body>
+</html>
