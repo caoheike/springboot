@@ -30,7 +30,17 @@ public class PhoneBillsService {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
-        WebClient webClient = new WebClientFactory().getWebClient();
+//        WebClient webClient = new WebClientFactory().getWebClient();
+        WebClient webClient=new WebClient(BrowserVersion.CHROME);
+        webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setTimeout(90000);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.setJavaScriptTimeout(40000);
+        webClient.getOptions().setRedirectEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 
         //验证是否是移动用户
         try {
@@ -175,8 +185,9 @@ public class PhoneBillsService {
         return map;
     }
 
-    public Map<String, String> getDetialImageCode(HttpServletRequest request) {
-        Map<String, String> map = new HashMap<String, String>();
+    public Map<String, Object> getDetialImageCode(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String,String> mapPath=new HashMap<String, String>();
         HttpSession session = request.getSession();
 
         Object client = session.getAttribute("YD-webClient");
@@ -198,7 +209,8 @@ public class PhoneBillsService {
                 BufferedImage bi = ImageIO.read(page7.getInputStream());
                 ImageIO.write(bi, "png", new File(file, fileName));
 
-                map.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/vecImageCode/" + fileName);
+                mapPath.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/vecImageCode/" + fileName);
+                map.put("data",mapPath);
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "验证码获取成功");
             } catch (Exception e) {
@@ -231,10 +243,24 @@ public class PhoneBillsService {
                 webRequest1.setAdditionalHeader("Referer", "http://shop.10086.cn/i/?f=home&welcome=" + System.currentTimeMillis());
                 UnexpectedPage page6 = webClient.getPage(webRequest1);
                 System.out.println(page6.getWebResponse().getContentAsString());
+
+
                 if (!page6.getWebResponse().getContentAsString().contains("success")) {
-                    map.put("errorCode", "0002");
-                    map.put("errorInfo", "短信发送失败");
-                    return map;
+                    try{
+                        String results=page6.getWebResponse().getContentAsString();
+                        int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
+                        String json = results.substring(s);
+                        results = json.substring(0, json.length() - 1);
+                        JSONObject jsonObject = JSONObject.fromObject(results);
+                        map.put("errorCode", "0002");
+                        map.put("errorInfo", jsonObject.get("retMsg").toString());
+                        return map;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        map.put("errorCode", "0002");
+                        map.put("errorInfo", "短信发送失败");
+                        return map;
+                    }
                 }
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "短信发送成功");
@@ -332,6 +358,7 @@ public class PhoneBillsService {
                 map.put("errorInfo", "查询成功");
                 map.put("data", dataList.toString());
                 Resttemplate resttemplate = new Resttemplate();
+
                 map = resttemplate.SendMessage(dataMap, "http://192.168.3.35:8080/HSDC/message/mobileCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
