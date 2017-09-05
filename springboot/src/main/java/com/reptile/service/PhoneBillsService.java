@@ -30,8 +30,8 @@ public class PhoneBillsService {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
-//        WebClient webClient = new WebClientFactory().getWebClient();
-        WebClient webClient=new WebClient(BrowserVersion.CHROME);
+        WebClient webClient = new WebClientFactory().getWebClient();
+//        WebClient webClient=new WebClient(BrowserVersion.CHROME);
         webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setTimeout(90000);
