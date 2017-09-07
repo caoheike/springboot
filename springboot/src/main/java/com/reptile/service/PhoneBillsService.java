@@ -11,8 +11,10 @@ import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 
 import org.apache.http.conn.HttpHostConnectException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -385,8 +387,8 @@ public class PhoneBillsService {
                 map.put("data", dataList.toString());
                 Resttemplate resttemplate = new Resttemplate();
 
-
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
+
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
 
