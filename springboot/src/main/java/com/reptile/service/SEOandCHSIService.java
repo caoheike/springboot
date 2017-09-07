@@ -16,18 +16,19 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
 
 import net.sf.json.JSONObject;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +44,8 @@ import java.util.Scanner;
 
 @Service
 public class SEOandCHSIService {
+	 @Autowired
+	  private application applications;
 	//https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm
 	 private final static String CabCardloginPhone="https://xyk.cebbank.com/mall/api/usercommon/dynamic";//发送短信密码
 	 private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
@@ -50,7 +53,8 @@ public class SEOandCHSIService {
 	 private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
 	 private final static String CabCardendnUrl="https://xyk.cebbank.com/mall/api/user/login?t=1503663657867";//登录提交页面
 	 private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
-	//根据企业邮箱查询企业信息
+
+	 //根据企业邮箱查询企业信息
 	public Map<String,Object> SeoEmailFind(HttpServletRequest request,String UserEmail,String UserCard)  {
 		System.out.println("email============="+UserEmail);
 		Map<String, Object> map=new HashMap<String, Object>();
@@ -82,7 +86,7 @@ public class SEOandCHSIService {
 			System.out.println(ul.asText().trim());
 			Resttemplate resttemplate = new Resttemplate();
 			//http://192.168.3.35:8080/HSDC/message/companyEmail
-			map=resttemplate.SendMessage(seo, ConstantInterface.port+"/HSDC/message/companyEmail");
+			map=resttemplate.SendMessage(seo, applications.getSendip()+"/HSDC/message/companyEmail");
 			webclient.close();
 			}
 			catch (Exception e) {
@@ -253,7 +257,7 @@ public class SEOandCHSIService {
 //			seo.put("backtype","CEB" );
 			System.out.println(seo);
 			Resttemplate resttemplate = new Resttemplate();
-			map=resttemplate.SendMessage(seo, ConstantInterface.port+"/HSDC/BillFlow/BillFlowByreditCard");
+			map=resttemplate.SendMessage(seo, applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
 		    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
