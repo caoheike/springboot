@@ -18,6 +18,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -41,7 +43,7 @@ public class CreditService {
     private final static String ApplyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
     private final static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
     private final static String verifyCodeImageUrl = "https://ipcrs.pbccrc.org.cn/imgrc.do?a=" + System.currentTimeMillis();
-
+    private Logger logger= LoggerFactory.getLogger(CreditService.class);
     public Map<String, Object> getVerifyImage(String type, HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
@@ -110,6 +112,7 @@ public class CreditService {
             data.put("ResultInfo", "查询成功");
             data.put("ResultCode", "0000");
         } catch (IOException e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -134,6 +137,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -171,6 +175,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -224,6 +229,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -267,6 +273,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             data.put("ResultInfo", "验证码错误，请重新输入！");
 //            data.put("ResultInfo",e.getMessage()==null?e:e.getMessage());
@@ -313,6 +320,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
@@ -432,6 +440,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -496,6 +505,7 @@ public class CreditService {
 //                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
                     }
                 } catch (Exception e) {
+                    logger.warn(e.getMessage()+"     mrlu");
                     System.out.println("征信问题及答案-推送失败!" + e.getMessage());
                 }
                 applyPage.cleanUp();
@@ -506,6 +516,7 @@ public class CreditService {
                 throw new Exception("您已超时，请重新登录!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -564,6 +575,7 @@ public class CreditService {
                             map.put("errorCode","0001");
                         }
                     } catch (Exception e) {
+                        logger.warn(e.getMessage()+"     mrlu");
                         System.out.println("征信报告推送失败!" + e.getMessage());
                     }
                 }
@@ -574,6 +586,7 @@ public class CreditService {
                 map.put("errorCode", "0002");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
             map.put("ResultCode", "0002");

@@ -16,6 +16,10 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.json.JSONObject;
 import org.json.XML;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -31,6 +35,10 @@ import java.util.Map;
 
 @Service
 public class ZXBankService {
+
+
+    private Logger logger= LoggerFactory.getLogger(ZXBankService.class);
+
 
     public Map<String, Object> getZXImageCode(HttpServletRequest request) {
         //获取验证码并保存在本地
@@ -65,6 +73,9 @@ public class ZXBankService {
             mapInfo.put("imageCodePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/zxImageCode/" + fileName);
             map.put("data", mapInfo);
         } catch (Exception e) {
+
+            logger.warn(e.getMessage()+"     mrlu");
+
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             map.put("errorInfo", "系统繁忙");
@@ -73,7 +84,9 @@ public class ZXBankService {
         return map;
     }
 
-    public Map<String, String> loadZX(HttpServletRequest request, String userNumber, String passWord, String imageCode) throws Exception {
+
+    public Map<String, String> loadZX(HttpServletRequest request, String userNumber, String passWord, String imageCode){
+
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -138,6 +151,9 @@ public class ZXBankService {
                 map.put("errorInfo", "操作成功");
                 session.setAttribute("zxCookies2", coks);
             } catch (Exception e) {
+
+                logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "系统繁忙");
@@ -146,7 +162,9 @@ public class ZXBankService {
         return map;
     }
 
-    public Map<String, String> sendPhoneCode(HttpServletRequest request) throws Exception {
+
+    public Map<String, String> sendPhoneCode(HttpServletRequest request){
+
         //发送手机验证码
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
@@ -176,6 +194,9 @@ public class ZXBankService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
+
+                logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0003");
                 map.put("errorInfo", "系统繁忙");
@@ -184,7 +205,9 @@ public class ZXBankService {
         return map;
     }
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneCode, String userCard) throws Exception {
+
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneCode, String userCard){
+
         Map<String, Object> map = new HashMap<String, Object>();
         HttpSession session = request.getSession();
 
@@ -301,6 +324,9 @@ public class ZXBankService {
                 System.out.println(map);
 
             } catch (Exception e) {
+
+                logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "查询出错");

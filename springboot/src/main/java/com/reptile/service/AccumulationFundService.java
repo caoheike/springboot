@@ -20,6 +20,8 @@ import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.reptile.util.ConstantInterface;
 import net.sf.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -49,7 +51,7 @@ public class AccumulationFundService {
     private final static String loginUrl="http://query.xazfgjj.gov.cn/index.jsp?urltype=tree.TreeTempUrl&wbtreeid=1172";
     private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
     private static CrawlerUtil crawlerutil=new CrawlerUtil();
-    
+    private Logger logger= LoggerFactory.getLogger(AccumulationFundService.class);
     public Map<String,Object> login(FormBean bean, HttpServletRequest request){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
@@ -159,6 +161,7 @@ public class AccumulationFundService {
                 System.out.print("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             map.clear();
             data.clear();
             map.put("ResultInfo","服务器繁忙，请刷新页面后重试!");
@@ -200,6 +203,7 @@ public class AccumulationFundService {
             map.put("errorInfo","查询成功");
             map.put("errorCode","0000");
         } catch (Exception e) {
+            logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             System.out.println("更换ip+++++++++++++mrlu");
