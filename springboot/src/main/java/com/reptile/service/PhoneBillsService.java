@@ -11,10 +11,8 @@ import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 
 import org.apache.http.conn.HttpHostConnectException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -31,15 +29,12 @@ import java.util.*;
 public class PhoneBillsService {
     private long timeStamp = System.currentTimeMillis();
     private String path = "";
-
     private Logger logger= LoggerFactory.getLogger(PhoneBillsService.class);
     public Map<String, String> getChinaMobileCode(HttpServletRequest request, String userNumber) {
-
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
         WebClient webClient = new WebClientFactory().getWebClient();
-
 //        WebClient webClient=new WebClient(BrowserVersion.CHROME);
         webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
         webClient.getOptions().setCssEnabled(false);
@@ -50,7 +45,6 @@ public class PhoneBillsService {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-
 
         //验证是否是移动用户
         try {
@@ -65,7 +59,6 @@ public class PhoneBillsService {
             //发送登录手机验证码
             TextPage page1 = webClient.getPage("https://login.10086.cn/sendRandomCodeAction.action?userName=" + userNumber + "&type=01&channelID=12003");
             System.out.println(page1.getContent());
-
 
             if("0".equals(page1.getContent())){
                 map.put("errorCode", "0000");
@@ -93,7 +86,6 @@ public class PhoneBillsService {
             Scheduler.sendGet(Scheduler.getIp);
         } catch (Exception e) {
             logger.warn(e.getMessage()+"     mrlu");
-
             e.printStackTrace();
             map.put("errorCode", "0003");
             map.put("errorInfo", "网络繁忙，请刷新后重新再试");
@@ -101,9 +93,7 @@ public class PhoneBillsService {
         return map;
     }
 
-
     public Map<String, String> chinaMobilLoad(HttpServletRequest request, String userNumber, String duanxinCode)  {
-
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -388,6 +378,7 @@ public class PhoneBillsService {
                 Resttemplate resttemplate = new Resttemplate();
 
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
+
 
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");

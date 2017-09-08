@@ -533,6 +533,18 @@ public class CreditService {
             if (sessionWebClient != null) {
                 final WebClient webClient = (WebClient) sessionWebClient;
                 HtmlPage queryPage = webClient.getPage(queryUrl);
+
+                //判断3个选项中个人信用报告是否可选
+                String attribute = queryPage.getElementById("radiobutton1").getAttribute("disabled");
+                if(attribute!=null&&attribute.equals("disabled")){
+                    map.put("ResultInfo", "信用报告未生成！");
+                    map.put("ResultCode", "0001");
+                    map.put("errorInfo", "信用报告未生成！");
+                    map.put("errorCode", "0001");
+                    return map;
+                }
+                //end mrlu 2017-09-6
+
                 queryPage.getElementById("tradeCode").setAttribute("value", verifyCode);
                 queryPage.getElementById("radiobutton1").click();
                 HtmlPage resultPage = queryPage.getElementById("nextstep").click();
