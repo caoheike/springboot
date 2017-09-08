@@ -177,7 +177,9 @@ public class PhoneBillsService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "操作成功");
             } catch (Exception e) {
+
                 logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络繁忙");
@@ -186,9 +188,11 @@ public class PhoneBillsService {
         return map;
     }
 
+
     public Map<String, Object> getDetialImageCode(HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String,String> mapPath=new HashMap<String, String>();
+
         HttpSession session = request.getSession();
 
         Object client = session.getAttribute("YD-webClient");
@@ -210,12 +214,14 @@ public class PhoneBillsService {
                 BufferedImage bi = ImageIO.read(page7.getInputStream());
                 ImageIO.write(bi, "png", new File(file, fileName));
 
+
                 mapPath.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/vecImageCode/" + fileName);
                 map.put("data",mapPath);
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "验证码获取成功");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "系统繁忙");
@@ -224,7 +230,9 @@ public class PhoneBillsService {
         return map;
     }
 
+
     public Map<String, String> getDetialMobilCode(HttpServletRequest request, String userNumber){
+
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
@@ -246,6 +254,7 @@ public class PhoneBillsService {
                 System.out.println(page6.getWebResponse().getContentAsString());
 
 
+
                 if (!page6.getWebResponse().getContentAsString().contains("success")) {
                     try{
                         String results=page6.getWebResponse().getContentAsString();
@@ -262,11 +271,14 @@ public class PhoneBillsService {
                         map.put("errorInfo", "短信发送失败");
                         return map;
                     }
+
                 }
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
+
                 logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0003");
                 map.put("errorInfo", "系统繁忙");
@@ -275,7 +287,9 @@ public class PhoneBillsService {
         return map;
     }
 
+
     public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode, String fuwuSec, String imageCode){
+
         Map<String, Object> map = new HashMap<String, Object>();
 
         Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -360,9 +374,11 @@ public class PhoneBillsService {
                 map.put("data", dataList.toString());
                 Resttemplate resttemplate = new Resttemplate();
 
+
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
+
                 e.printStackTrace();
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");

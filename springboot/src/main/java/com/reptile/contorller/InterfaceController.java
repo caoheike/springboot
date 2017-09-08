@@ -18,6 +18,12 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -180,9 +186,15 @@ public class InterfaceController  {
 	 */
 	@ResponseBody
 	@RequestMapping("UnicomLogin")
-	public Map<String,Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,UnicomBean unicombean) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+//	public Map<String,Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,UnicomBean unicombean) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	public Map<String,Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,@RequestParam("Useriphone") String Useriphone,@RequestParam("UserPassword") String UserPassword ,@RequestParam("UserCode") String UserCode) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+
+		UnicomBean u=new UnicomBean();
+		u.setUseriphone(Useriphone);
+		u.setUserPassword(UserPassword);
+		u.setUserCode(UserCode);
 		System.out.println("已经被访问了");
-		return mobileService.UnicomLogin(request, response, unicombean);
+		return mobileService.UnicomLogin(request, response, u);
 	}
 /**
  * 联通切换验证码
@@ -245,7 +257,11 @@ public class InterfaceController  {
 	@ResponseBody
 	@RequestMapping(value="TelecomLogin", method = RequestMethod.POST)
 	@ApiOperation(value = "电信登录", notes = "电信登录")
-	public Map<String,Object> TelecomLogin(HttpServletRequest req,HttpServletResponse response,TelecomBean bean) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+	public Map<String,Object> TelecomLogin(HttpServletRequest req,HttpServletResponse response,@RequestParam("userPhone") String userPhone,@RequestParam("userPassword") String userPassword) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+		TelecomBean bean=new TelecomBean();
+		bean.setUserPhone(userPhone);
+		bean.setUserPassword(userPassword);
+
 		return mobileService.TelecomLogin(req,response,bean);
 	}
 	@ResponseBody
@@ -432,6 +448,22 @@ public class InterfaceController  {
    	@RequestMapping(value="index.html",method=RequestMethod.GET)
    	public String index(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		return "OperatorView/indexsuccess";
+   		
+   		
+   	}
+   	@RequestMapping(value="bankQuery",method=RequestMethod.GET)
+   	public void bankQuery(HttpServletRequest request,HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+   		System.setProperty("webdriver.ie.driver", "D:/ie/IEDriverServer.exe");
+   		WebDriver driver = new InternetExplorerDriver();
+   		driver.get("https://ebsnew.boc.cn/boc15/login.html");	
+   		
+//   		WebElement txtbox = driver.findElement(By.id("txt_username_79443"));
+//   		txtbox.sendKeys("a");
+//   		Actions action = new Actions(driver); 
+//   		action.contextClick();// 鼠标右键在当前停留的位置做单击操作 
+//   		action.sendKeys(Keys.TAB);
+//   		System.out.println("结束");
+
    		
    		
    	}

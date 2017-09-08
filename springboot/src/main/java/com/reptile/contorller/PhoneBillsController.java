@@ -38,7 +38,9 @@ public class PhoneBillsController {
     @ApiOperation(value = "第三步，获取详情页面的验证码", notes = "参数：无")
     @ResponseBody
     @RequestMapping(value = "getDetialImageCode",method = RequestMethod.POST)
+
     public Map<String,Object> getDetialImageCode(HttpServletRequest request) throws Exception {
+
         return phoneService.getDetialImageCode(request);
     }
 

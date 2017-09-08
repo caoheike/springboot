@@ -1,13 +1,16 @@
 package com.reptile.util;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
+
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;	
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -20,6 +23,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class taobao {
 private static String username="qq1121212159";
+//private static String username="13649291630";
 private static String userpwd="weizai..";
 //private static String username="tb783371_00";
  //private static String userpwd="w369852";
@@ -36,12 +40,12 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 			WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
 			 webClient.getOptions().setUseInsecureSSL(true);
 			 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
-//			 webClient.getOptions().setTimeout(100000);
+			 webClient.getOptions().setTimeout(100000);
 			 webClient.getOptions().setCssEnabled(true);
 			 webClient.getOptions().setJavaScriptEnabled(true);
-//			 webClient.setJavaScriptTimeout(100000); 
+			 webClient.setJavaScriptTimeout(100000); 
 			 webClient.getOptions().setRedirectEnabled(true);
-//			    webClient.waitForBackgroundJavaScript(10000);
+			    webClient.waitForBackgroundJavaScript(10000);
 			 webClient.getOptions().setThrowExceptionOnScriptError(false);
 			 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 			 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
@@ -76,7 +80,7 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 						 webRequest.setHttpMethod(HttpMethod.POST);
 						 webRequest.setRequestParameters(list);
 						 HtmlPage pagess=webClient.getPage(webRequest);
-						 if(pagess.getTitleText().equals("页面跳转中")){
+	 					 if(pagess.getTitleText().equals("页面跳转中")){
 							 System.out.println("进来了");
 							 System.out.println(pagess.asXml());
 						 }else{
@@ -84,10 +88,10 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 							 	if(pagess.asXml().contains("请按住滑块，拖动到最右边")){
 							 		System.out.println("可以破解");
 							 		//执行滑动JS
-							 		HtmlPage result= (HtmlPage) pagess.executeJavaScript(" var event = document.createEvent('MouseEvents');event.initMouseEvent('mousedown', true, true, document.defaultView,0,0,0,0,0, false, false, false, false, 11 ,null); nc_1_n1z.dispatchEvent(event);document.getElementById('nc_1__bg').style.width='258px';document.getElementById('nc_1_n1z').style.left='258px';var event = document.createEvent('MouseEvents');event.initMouseEvent('mousemove', true, true, document.defaultView, 0,0,0, 290,290, false, false, false, false,0,null);nc_1_n1z.dispatchEvent(event);").getNewPage();
-							 	
+							 		HtmlPage result= (HtmlPage) pagess.executeJavaScript("setTimeout(function () {  var event = document.createEvent('MouseEvents');event.initMouseEvent('mousedown', true, true, document.defaultView,0,0,0,0,0, false, false, false, false, 11 ,null); nc_1_n1z.dispatchEvent(event);document.getElementById('nc_1__bg').style.width='258px';document.getElementById('nc_1_n1z').style.left='258px';var event = document.createEvent('MouseEvents');event.initMouseEvent('mousemove', true, true, document.defaultView, 0,0,0, 290,290, false, false, false, false,0,null);nc_1_n1z.dispatchEvent(event);}, 5000);").getNewPage();
+									 webClient.setJavaScriptTimeout(100000); 
 							 		
-							 		Thread.sleep(3000);
+							 		Thread.sleep(10000);
 							 		System.out.println(result.asXml());
 							 		System.out.println(result.getUrl());
 							 
@@ -123,7 +127,7 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 			
  
 }
- 
+// 
 // public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 //		
 //	 Resttemplate resttemplate=new Resttemplate();
@@ -224,4 +228,15 @@ public static void main(String[] args) throws FailingHttpStatusCodeException, IO
 //		 System.out.println(pageinfo.asText());
 //		 
 //}
+	
+//	public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+////		System.setProperty("webdriver.firefox.bin", "C:/chme/chromedriver_x64.exe");  
+//		WebDriver driver=new HtmlUnitDriver();
+//		 driver.get("http://www.baidu.com");
+//		<dependency>
+//    <groupId>org.seleniumhq.selenium</groupId>
+//    <artifactId>selenium-java</artifactId>
+//    <version>2.44.0</version>
+//</dependency>  
+//	}
 }

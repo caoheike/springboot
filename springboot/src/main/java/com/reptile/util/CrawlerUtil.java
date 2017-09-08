@@ -39,13 +39,13 @@ import org.jsoup.select.Elements;
  */
 public class CrawlerUtil {
 	 public static final String port="8079";
-	 public static final String ip="124.89.33.70";//194外网
-	 public static final String sendip="http://124.89.33.70:8082";//194外网 数据中心
+	 public static final String ip="113.200.203.114";//194外网
+	 public static final String sendip="http://113.200.203.114:8082";//194外网 数据中心
 	//--------------------------以上外网需要
 	
-//	public static final String port="8080";
-//	public static final String ip="192.168.3.222";
-//	public static final String sendip="http://192.168.3.4:8081";
+	//public static final String port="8080";
+	//public static final String ip="192.168.3.222";
+	//public static final String sendip="http://192.168.3.4:8081";
 
 
 	public static String XueXinLogin="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";

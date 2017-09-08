@@ -1,3 +1,4 @@
+
 package com.reptile.springboot;
 
 import org.springframework.boot.SpringApplication;
@@ -25,3 +26,5 @@ public class SpringbootApplication extends WebMvcConfigurerAdapter {
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
 }
+
+
