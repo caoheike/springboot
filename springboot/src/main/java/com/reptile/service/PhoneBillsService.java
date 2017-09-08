@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
@@ -359,7 +360,7 @@ public class PhoneBillsService {
                 map.put("data", dataList.toString());
                 Resttemplate resttemplate = new Resttemplate();
 
-                map = resttemplate.SendMessage(dataMap, "http://192.168.3.35:8080/HSDC/message/mobileCallRecord");
+                map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
                 e.printStackTrace();

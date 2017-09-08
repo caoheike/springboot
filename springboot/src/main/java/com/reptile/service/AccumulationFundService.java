@@ -135,6 +135,7 @@ public class AccumulationFundService {
                 map.put("ResultCode","0000");
                 data.put("info",info);
                 data.put("detailsList",detailsList);
+                map.put("city",bean.getCityCode());
                 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
                 map.put("queryDate",sdf.format(new Date()).toString());
                 map.put("userId",bean.getUserId().toString());

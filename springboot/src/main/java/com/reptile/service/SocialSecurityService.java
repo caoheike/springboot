@@ -97,6 +97,7 @@ public class SocialSecurityService {
             map.put("userId",bean.getUserId().toString());
             map.put("queryDate",sdf.format(new Date()).toString());
             map.put("data",data);
+            map.put("city",bean.getCityCode());
 //            HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/socialSecurity", JSONObject.fromObject(map).toString());
             //ludangwei 2017-08-11
             Resttemplate resttemplate = new Resttemplate();
