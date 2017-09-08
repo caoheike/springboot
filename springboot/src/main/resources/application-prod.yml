@@ -1,0 +1,7 @@
+server:
+  port: 8086
+
+manInfo:
+    ip: 113.200.203.114
+    sendip: http://113.200.203.114:8082
+    port: 8079
