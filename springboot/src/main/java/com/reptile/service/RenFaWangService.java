@@ -18,6 +18,9 @@ import javax.servlet.http.HttpSession;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,6 +41,8 @@ import com.reptile.util.Resttemplate;
 
 @Service
 public class RenFaWangService {
+	@Autowired
+	private application application;
 	/**
 	 * 
 	 * 获取验证码
@@ -88,7 +93,7 @@ public class RenFaWangService {
 //		infoMap.put("port", CrawlerUtil.port);
 //		infoMap.put("ip", CrawlerUtil.ip);
 //		mapData.put("data", infoMap);
-		mapData.put("path",CrawlerUtil.ip+":"+CrawlerUtil.port+"/refawangCodeImage/"+fileName);
+		mapData.put("path",application.getIp()+":"+application.getPort()+"/refawangCodeImage/"+fileName);
 		request.getSession().setAttribute("rfw-webclient", webClient);
 		request.getSession().setAttribute("rfw-page", page);
 		return mapData;
@@ -291,7 +296,7 @@ public class RenFaWangService {
 //			infoMap.put("port", CrawlerUtil.port);
 //			infoMap.put("ip", CrawlerUtil.ip);
 //			mapData.put("data", infoMap);
-			mapData.put("path",CrawlerUtil.ip+":"+CrawlerUtil.port+"/refawangCodeImage/"+fileName);
+			mapData.put("path",application.getIp()+":"+application.getPort()+"/refawangCodeImage/"+fileName);
 		} catch (Exception e) {
 			mapData.put("errorinfo", "系统异常！");
 			mapData.put("errorCode", "0001");

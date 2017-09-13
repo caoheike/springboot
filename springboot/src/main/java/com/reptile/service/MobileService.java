@@ -21,16 +21,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import jdk.nashorn.api.scripting.JSObject;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Tree;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +62,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.google.gson.JsonObject;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
@@ -66,12 +70,15 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Poi;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
 import com.reptile.util.htmlUtil;
 
 @SuppressWarnings("deprecation")
 @Service("mobileService")
 public class MobileService {
-	//http://124.89.33.70:8082
+
+	@Autowired
+	private application application;
  	public Map<String,Object> mapWeb=new HashMap<String,Object>();
 	private Logger logger = Logger.getLogger(MobileService.class);
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
@@ -80,6 +87,8 @@ public class MobileService {
 
 	MobileBean mobileBean=new MobileBean();
 	Resttemplate resttemplate=new Resttemplate();
+	
+	
 
 	/**
 	 * 获取验证码
@@ -93,13 +102,12 @@ public class MobileService {
 	 */
 	public void TelecomLogin(MobileBean mobileBean, HttpServletRequest request, HttpServletResponse response)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession();	
 		WebClient webClient =  new WebClient(BrowserVersion.CHROME);
 		UnexpectedPage CodePage = webClient.getPage(mobileBean.GetCodeUrl);
 		BufferedImage ioim=ImageIO.read(CodePage.getInputStream());
 		session.setAttribute("WebClient", webClient);
 		//map.put("WebClients", webClient);
-
 		ImageIO.write(ioim,"png",response.getOutputStream());
 
 	}
@@ -316,7 +324,7 @@ public class MobileService {
 		try {
 
 			WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-			HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/Rsa.do");
+			HtmlPage page=webClient.getPage("http://"+application.getIp()+":"+application.getPort()+"/interface/Rsa.do");
 			HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaName");
 			String UserPasswords=password;
 			htmlInput.setValueAttribute(UserPasswords);
@@ -343,7 +351,7 @@ public class MobileService {
     	try {
     		
     		WebClient webClient =  new WebClient(BrowserVersion.CHROME);
-    		HtmlPage page=webClient.getPage("http://"+crawlerUtil.ip+":"+crawlerUtil.port+"/interface/UnicomAesPage.do");
+    		HtmlPage page=webClient.getPage("http://"+application.getIp()+":"+application.getPort()+"/interface/UnicomAesPage.do");
     		HtmlInput htmlInput= (HtmlInput) page.getElementById("rsaPwd");
     		String UserPasswords=password;
     		htmlInput.setValueAttribute(UserPasswords);
@@ -396,10 +404,10 @@ public class MobileService {
 		System.out.println(fileName);
 		ImageIO.write(ioim,"png",new File(path,fileName));
 	//InetAddress.getLocalHost().getHostAddress()
-		maps.put("ip",crawlerUtil.ip);
+		maps.put("ip",application.getIp());
 		maps.put("FileName",fileName);
 		maps.put("FilePath","/uploads");
-		maps.put("Port",crawlerUtil.port);
+		maps.put("Port",application.getPort());
 		map.put("data",maps);
 		map.put("errorCode", "0000");
 		map.put("errorInfo", "查询成功");
@@ -487,7 +495,7 @@ public class MobileService {
 			    	info.put("UserPassword",mobileBean.getUserPassword());
 			    	map.put("accountMessage",info);
 			    	//推送数据
-			    	map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/callRecord");
+			    	map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/callRecord");
 			    	
 			    	
 			    
@@ -533,10 +541,10 @@ public class MobileService {
 				System.out.println(fileName);
 				ImageIO.write(io,"png",new File(path,fileName));
 			
-				data.put("ip",crawlerUtil.ip);
+				data.put("ip",application.getIp());
 				data.put("FileName",fileName);
 				data.put("FilePath","/upload");
-				data.put("Port",crawlerUtil.port);
+				data.put("Port",application.getPort());
 				map.put("data",data);
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "查询成功");
@@ -608,10 +616,10 @@ public class MobileService {
 				System.out.println(fileName);
 				ImageIO.write(io,"png",new File(path,fileName));
 			
-				data.put("ip",crawlerUtil.ip);
+				data.put("ip",application.getIp());
 				data.put("FileName",fileName);
 				data.put("FilePath","/upload");
-				data.put("Port",crawlerUtil.port);
+				data.put("Port",application.getPort());
 				map.put("data",data);
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "查询成功");
@@ -652,10 +660,10 @@ public class MobileService {
 			
 			
 			
-			data.put("ip",crawlerUtil.ip);
+			data.put("ip",application.getIp());
 			data.put("FileName",fileName);
 			data.put("FilePath","/upload");
-			data.put("Port",crawlerUtil.port);
+			data.put("Port",application.getPort());
 			map.put("data",data);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
@@ -672,7 +680,10 @@ public class MobileService {
 			
 
 		 Map<String,Object> map=new HashMap<String,Object>();
-		 Map<String,Object> data=new HashMap<String,Object>(); 
+		 Map<String,Object> data=new HashMap<String,Object>();
+		 List listsy=new ArrayList();
+		 
+	
 		 String info = "";
 		 try {
 		
@@ -723,13 +734,21 @@ public class MobileService {
 							TextPage chekpages=webClient.getPage(webRequestss);
 							System.out.println(chekpages.getContent()+"----vvv");
 							info=chekpages.getContent();
-							JSONObject jsonObject=JSONObject.fromObject(info);
-							if(i==2){
-								jsonObject.put("UserIphone", unicombean.getUseriphone());
-								jsonObject.put("UserPassword", unicombean.getUserPassword());
-							}
-							array.add(jsonObject);
+							listsy.add(info);
+////							jsonObject=JSONObject.fromObject(info);
+////						  	String pagemap=jsonObject.get("pageMap").toString();
+//						  	JSONObject jsObject=JSONObject.fromObject(pagemap);
+//						  	JSONArray jsonArray=new JSONArray();
+//						  	jsonArray.add(jsObject.get("result"));
+					
+//						  	jsonpObject2.put("result", jsonArray);
+//						  	jsonpObject2.put("UserIphone", unicombean.getUseriphone());
+//						  	jsonpObject2.put("UserPassword", unicombean.getUserPassword());
+
 						}
+						map.put("data", listsy);
+						map.put("UserIphone", unicombean.getUseriphone());
+						map.put("UserPassword", unicombean.getUserPassword());
 						System.out.println("---haha"+array.toString()+"haha");
 
 						//联通数据推送
@@ -737,8 +756,11 @@ public class MobileService {
 						//变更为三个月的。
 //						jsonObject.put("UserIphone", unicombean.getUseriphone());
 //						jsonObject.put("UserPassword", unicombean.getUserPassword());
-//						map=resttemplate.SendMessage(jsonObject,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink",true);
-						map=resttemplate.SendMessageCredit(array,crawlerUtil.sendip+"/HSDC/authcode/callRecordLink");
+//						map=resttemplate.SendMessage(jsonObject,	application.getSendip()+"/HSDC/authcode/callRecordLink",true);
+				
+						map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/message/linkCallRecord");
+				
+			
 			 }else{
 					map.put("errorCode", "0005");
 					map.put("errorInfo", json.get("msg"));
@@ -842,7 +864,9 @@ public class MobileService {
 //					    	map.put("errorInfo","成功");
 					       	map.put("UserIphone",TelecomBean.getUserPhone());
 					    	map.put("UserPassword",TelecomBean.getUserPassword());
-					    	map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/callRecordTelecom");
+					    	map.put("flag","0");
+					    	map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
+//					    	map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/callRecordTelecom");
 					    	
 					         
 
@@ -1065,7 +1089,7 @@ public class MobileService {
 						map.put("password", showpwd);
 						map.put("card", card);
 						
-				 	  map= resttemplate.SendMessage(map,crawlerUtil.sendip+"/HSDC/authcode/mailBill");
+				 	  map= resttemplate.SendMessage(map,	application.getSendip()+"/HSDC/authcode/mailBill");
 				 
 				 	 //	map.put("errorCode", "0004");
 				    	//map.put("errorInfo", "请取消独立密码后认证！！！");
@@ -1115,7 +1139,7 @@ public class MobileService {
 						//推送数据
 			
 					map.put("pCardNum", pCardNum);
-				  map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/grade/humanLaw");
+				  map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/grade/humanLaw");
 				  
 				  
 					
@@ -1156,8 +1180,8 @@ public class MobileService {
 
 			String filename = System.currentTimeMillis() + "renxin.png";
 			ImageIO.write(bufferedImage, "png", new File(path, filename));
-			data.put("port", crawlerUtil.port);
-			data.put("host", crawlerUtil.ip);
+			data.put("port", application.getPort());
+			data.put("host", application.getIp());
 			data.put("PathName", "/upload/" + filename);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
@@ -1201,7 +1225,7 @@ public class MobileService {
 	 	         map.put("Usercard",userCard); 
 	 	     
 				
-	 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
+	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
 	 	 
 			}else if(pages.asText().contains("您输入的用户名或密码有误")){
 		 		map.put("errorCode","0002");
@@ -1246,7 +1270,7 @@ public class MobileService {
 //		 	         map.put("Usernumber",Usernumber); 
 //		 	         map.put("UserPwd",UserPwd);
 //		 	         map.put("Usercard",Usercard); 
-//		 	         map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/hireright");
+//		 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
 //	        	}else{
 //	         		map.put("errorCode","0002");
 //	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
@@ -1364,7 +1388,7 @@ public class MobileService {
 							 	  map.put("userName", Usernumber);
 							 	  map.put("userPwd", UserPwd);
 							 	  map.put("userCard", userCard);
-							 	  map=resttemplate.SendMessage(map, crawlerUtil.sendip+"/HSDC/authcode/taobaoPush");
+							 	  map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/taobaoPush");
 							 	  logger.warn("===淘宝"+map.toString());
 						 }else{
 							 	flg=true;//如果没有继续爬取
@@ -1417,16 +1441,16 @@ public class MobileService {
 				path.mkdirs();
 		 	}
 			ImageIO.write(img,"png",new File(path,fileName));
-			data.put("ip",crawlerUtil.ip);
+			data.put("ip",application.getIp());
 			data.put("FileName",fileName);
 			data.put("FilePath","/upload");
-			data.put("Port",crawlerUtil.port);
+			data.put("Port",application.getPort());
 			data.put("lt",lt);
 			map.put("data",data);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 			session.setAttribute("xuexinWebClient", webClient);
-			logger.info(crawlerUtil.ip+crawlerUtil.port+"/upload"+fileName);
+			logger.info(application.getIp()+application.getPort()+"/upload"+fileName);
 			logger.info(request.getSession().getServletContext().getRealPath("/upload") + "/");
 			return map;
 			

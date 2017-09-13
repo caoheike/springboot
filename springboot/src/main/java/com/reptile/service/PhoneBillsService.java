@@ -7,7 +7,9 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+
 import net.sf.json.JSONObject;
+
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -374,8 +377,9 @@ public class PhoneBillsService {
                 map.put("data", dataList.toString());
                 Resttemplate resttemplate = new Resttemplate();
 
-
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
+
+
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"     mrlu");
 
