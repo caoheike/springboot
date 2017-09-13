@@ -38,6 +38,7 @@ import org.jsoup.select.Elements;
  *
  */
 public class CrawlerUtil {
+
 	 public static final String port="8079";
 	 public static final String ip="113.200.203.114";//194外网
 	 public static final String sendip="http://113.200.203.114:8082";//194外网 数据中心
@@ -51,12 +52,12 @@ public class CrawlerUtil {
 	public static String XueXinLogin="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
 	public static String XueXinGetCode="https://account.chsi.com.cn/passport/captcha.image?id=68.95757530327288";
 	public static String XuexinPOST="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-	
+
 	public static String Xuexininfo="https://my.chsi.com.cn/archive/gdjy/xj/show.action";
-	
+
 	public final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 	private static Logger logger=Logger.getLogger(CrawlerUtil.class);
-	
+
 	public WebClient setWebClient(){
 		webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
 		webClient.getOptions().setTimeout(90000);
