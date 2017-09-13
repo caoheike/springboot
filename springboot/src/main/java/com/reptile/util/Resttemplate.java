@@ -118,6 +118,36 @@ public class Resttemplate {
 	  return message;
 	  
   }
+
+	public Map<String,Object> SendSDYDMessage(Map<String,Object> map,String Url){
+		Map<String,Object> message=new HashMap<String, Object>();
+		try {
+			StringHttpMessageConverter m = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+			RestTemplate restTemplate = new RestTemplateBuilder().additionalMessageConverters(m).build();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded; charset=UTF-8");
+			headers.setContentType(type);
+			headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+			System.out.println(map.toString()+"sssvvvv");
+			HttpEntity<String> formEntity = new HttpEntity<String>(map.toString(), headers);
+			String result = restTemplate.postForObject(Url, formEntity,String.class);
+			JSONObject jsonObject=JSONObject.fromObject(result);
+			if(jsonObject.get("errorCode").equals("0000")){
+				message.put("errorCode","0000");
+				message.put("errorInfo","查询成功");
+			}else{
+				message.put("errorCode",jsonObject.get("errorCode"));//异常处理
+				message.put("errorInfo",jsonObject.get("errorInfo"));
+			}
+
+		} catch (Exception e) {
+			message.put("errorCode","0003");//异常处理
+			message.put("errorInfo","操作失败");
+		}
+		return message;
+
+	}
   		 
   
   
