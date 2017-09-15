@@ -206,12 +206,12 @@ public class ZXBankService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneCode, String userCard){
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode){
 
         Map<String, Object> map = new HashMap<String, Object>();
         HttpSession session = request.getSession();
-
         Object zxhttpClient = session.getAttribute("ZXhttpClient");
+
         Object zxImageCodeCook = session.getAttribute("zxCookies2");
 
         if (zxhttpClient == null || zxImageCodeCook == null) {

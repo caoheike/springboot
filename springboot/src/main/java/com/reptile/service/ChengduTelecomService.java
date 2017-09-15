@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
@@ -110,7 +111,7 @@ public class ChengduTelecomService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneCode, String phoneNumber, String servePwd) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request,String phoneNumber,String phoneCode, String servePwd) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List list = new ArrayList();
@@ -176,7 +177,7 @@ public class ChengduTelecomService {
                 dataMap.put("flag","1");
                 dataMap.put("data", list);
                 Resttemplate resttemplate=new Resttemplate();
-                map = resttemplate.SendMessage(dataMap, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
+                map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 System.out.println(list);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"mrlu");

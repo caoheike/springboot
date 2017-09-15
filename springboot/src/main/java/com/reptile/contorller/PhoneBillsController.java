@@ -1,6 +1,7 @@
 package com.reptile.contorller;
 
 import com.reptile.service.PhoneBillsService;
+import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,6 +54,7 @@ public class PhoneBillsController {
 
     @ApiOperation(value = "第5步，获取账单信息", notes = "参数：手机号码")
     @ResponseBody
+    @CustomAnnotation
     @RequestMapping(value = "getDetailAccount",method = RequestMethod.POST)
     public Map<String,Object> getDetailAccount(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("phoneCode")String phoneCode,
                                                @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ) throws Exception {

@@ -1,6 +1,7 @@
 package com.reptile.contorller;
 
 
+import com.reptile.util.CustomAnnotation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,9 +75,10 @@ public class CreditController {
     }
 
     @ResponseBody
+    @CustomAnnotation
     @RequestMapping(value = "/queryCredit.html",method = RequestMethod.POST)
-    public Map<String,Object> queryCredit(String userId,String verifyCode,HttpServletRequest request){
-        return creditService.queryCredit(userId,verifyCode,request);
+    public Map<String,Object> queryCredit(HttpServletRequest request,String userId,String verifyCode){
+        return creditService.queryCredit(request,userId,verifyCode);
     }
 
 }

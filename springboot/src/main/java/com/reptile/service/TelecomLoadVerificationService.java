@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -88,6 +89,7 @@ public class TelecomLoadVerificationService {
             map.put("errorInfo", "操作成功");
             map.put("data", jsonObject);
         } catch (Exception e) {
+
             logger.warn(e.getMessage()+"mrlu");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
@@ -118,6 +120,7 @@ public class TelecomLoadVerificationService {
             }
 
         } catch (Exception e) {
+            Scheduler.sendGet(Scheduler.getIp);
             logger.warn(e.getMessage()+"mrlu");
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
