@@ -51,7 +51,6 @@ public class Resttemplate {
           }
            
 		} catch (Exception e) {
-		
 			message.put("errorCode","0003");//异常处理
 			message.put("errorInfo","推送失败");
 		}
@@ -118,7 +117,7 @@ public class Resttemplate {
 	  return message;
 	  
   }
-
+	//ludangwei
 	public Map<String,Object> SendSDYDMessage(Map<String,Object> map,String Url){
 		Map<String,Object> message=new HashMap<String, Object>();
 		try {

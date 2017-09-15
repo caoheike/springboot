@@ -1,6 +1,7 @@
 package com.reptile.contorller;
 
 import com.reptile.service.ZXBankService;
+import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,11 +48,12 @@ public class ZXBankController {
         return service.sendPhoneCode(request);
     }
 
+    @CustomAnnotation
     @ApiOperation(value = "4.获取账单信息", notes = "参数：手机验证码")
     @ResponseBody
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
-    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneCode") String phoneCode, @RequestParam("userCard") String userCard) throws  Exception {
-        return service.getDetailMes(request,phoneCode.trim(),userCard.trim());
+    public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userCard") String userCard, @RequestParam("phoneCode") String phoneCode) throws  Exception {
+        return service.getDetailMes(request,userCard.trim(),phoneCode.trim());
     }
 
 }

@@ -525,7 +525,7 @@ public class CreditService {
     }
 
     //查询信用报告
-    public Map<String, Object> queryCredit(String userId, String verifyCode, HttpServletRequest request) {
+    public Map<String, Object> queryCredit(HttpServletRequest request,String userId, String verifyCode) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
         try {
