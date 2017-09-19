@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -59,11 +60,14 @@ public class SEOandCHSIService {
 	public Map<String,Object> SeoEmailFind(HttpServletRequest request,String UserEmail,String UserCard)  {
 		System.out.println("email============="+UserEmail);
 		Map<String, Object> map=new HashMap<String, Object>();
+	
 		if(UserEmail==null||UserEmail==""){
 			map.put("ResultInfo", "企业邮箱信息为不正确，请确认后重写填写");
 			map.put("ResultCode","0002");
 		}else {
 			try {
+			PushState.state(UserCard, "CompanyEmal",100);
+			
 			String URL= "www"+"."+ UserEmail.substring(UserEmail.indexOf("@")+1);	
 			System.out.println("URL===="+URL);
 			WebClient webclient=new WebClient();
@@ -88,9 +92,21 @@ public class SEOandCHSIService {
 			Resttemplate resttemplate = new Resttemplate();
 			//http://192.168.3.35:8080/HSDC/message/companyEmail
 			map=resttemplate.SendMessage(seo, applications.getSendip()+"/HSDC/message/companyEmail");
+		  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+			    	PushState.state(UserCard, "CompanyEmal",300);
+	                map.put("errorInfo","查询成功");
+	                map.put("errorCode","0000");
+	        }else{
+	            	//--------------------数据中心推送状态----------------------
+	            	PushState.state(UserCard, "CompanyEmal",200);
+	            	//---------------------数据中心推送状态----------------------
+	                map.put("errorInfo","查询失败");
+	                map.put("errorCode","0001");
+	            }
 			webclient.close();
 			}
 			catch (Exception e) {
+				PushState.state(UserCard,"CompanyEmal", 200);
 				 e.printStackTrace();
 				 map.clear();
 		         map.put("errorInfo","企业邮箱信息为不正确，请确认后重写填写!");
@@ -156,6 +172,7 @@ public class SEOandCHSIService {
 		 Object sessionWebClient = session.getAttribute("sessionWebClient-Cab");//存在session 中的浏览器
          Map<String, Object> map=new HashMap<String, Object>();
          if(sessionWebClient!=null ){
+        	
         	 final WebClient webclient = (WebClient) sessionWebClient;
         	 Object sessionLoginPage = webclient.getPage(CabCardloginUrl);;//存在session 中的登录页面
         	 final HtmlPage loginPage = (HtmlPage) sessionLoginPage;
@@ -181,6 +198,9 @@ public class SEOandCHSIService {
 		list.add(new NameValuePair("code", loginImage));
 		System.out.println(UserCard+loginImage);
 		try{
+		 	//---------------------------数据中心推送状态----------------------------------
+			PushState.state(UserCard,"bankBillFlow", 100);
+			//---------------------------数据中心推送状态----------------------------------
 			WebRequest request1 =new WebRequest(new URL("https://xyk.cebbank.com/mall/api/usercommon/dynamic"));
 			request1.setHttpMethod(HttpMethod.POST);//提交方式
 			request1.setRequestParameters(list);
@@ -193,6 +213,9 @@ public class SEOandCHSIService {
 			session.setAttribute("sessionWebClient-Cab", webclient);
 	        session.setAttribute("sessionLoginPage-Cab", loginPage);
 			}catch (Exception e){
+				//---------------------------数据中心推送状态----------------------------------
+				PushState.state(UserCard, "bankBillFlow",200);
+			 	//---------------------------数据中心推送状态----------------------------------
 				 e.printStackTrace();
 				 map.clear();
 				map.put("errorInfo","填写信息有误");
@@ -216,6 +239,9 @@ public class SEOandCHSIService {
         	  final HtmlPage loginPage = (HtmlPage) sessionLoginPage;
               final WebClient webclient = (WebClient) sessionWebClient;
         try{
+         	//---------------------------数据中心推送状态----------------------------------
+        	PushState.state(UserCard,"bankBillFlow", 100);
+			//---------------------------数据中心推送状态----------------------------------
         	WebRequest requests =new WebRequest(new URL(CabCardendnUrl));
         	System.out.println("--------------进入第三个方法----------------");
         	Thread.sleep(2000);
@@ -260,19 +286,27 @@ public class SEOandCHSIService {
 			Resttemplate resttemplate = new Resttemplate();
 			map=resttemplate.SendMessage(seo, applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
 		    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+		    	PushState.state(UserCard, "bankBillFlow",300);
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
             }else{
+            	//--------------------数据中心推送状态----------------------
+            	PushState.state(UserCard, "bankBillFlow",200);
+            	//---------------------数据中心推送状态----------------------
                 map.put("errorInfo","查询失败");
                 map.put("errorCode","0001");
             }
 		} catch (Exception e) {
+		  	//---------------------------数据中心推送状态----------------------------------
+			PushState.state(UserCard, "bankBillFlow",200);
+			//---------------------------数据中心推送状态----------------------------------
 			 e.printStackTrace();
 			 map.clear();
 			 map.put("errorInfo","获取账单失败");
 			 map.put("errorCode","0002");
 		}
         }else{
+        	PushState.state(UserCard, "bankBillFlow",200);
        	 	map.put("errorInfo","服务器响应有误，重新尝试");
        	 	map.put("errorCode","0002");
         }

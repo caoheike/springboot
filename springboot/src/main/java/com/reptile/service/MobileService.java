@@ -69,6 +69,7 @@ import com.reptile.model.UnicomBean;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Poi;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 import com.reptile.util.htmlUtil;
@@ -676,7 +677,7 @@ public class MobileService {
 			return map;
 		 
 	 }
-	 public Map<String,Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,UnicomBean unicombean) throws IOException{
+	 public Map<String,Object> UnicomLogin(HttpServletRequest request,UnicomBean unicombean) throws IOException{
 			
 
 		 Map<String,Object> map=new HashMap<String,Object>();
@@ -1192,7 +1193,9 @@ public class MobileService {
 			
 		}
 		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		
+			//--------------------数据中心推送状态----------------------
+        	PushState.state(userCard, "CHSI",100);
+        	//---------------------数据中心推送状态----------------------
 	   		Map<String,Object> map=new HashMap<String, Object>();
 			Map<String,Object> data=new HashMap<String, Object>();
 			HttpSession session=request.getSession();
@@ -1226,22 +1229,35 @@ public class MobileService {
 	 	     
 				
 	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-	 	 
+	 	      //--------------------数据中心推送状态----------------------
+	         	PushState.state(userCard, "CHSI",300);
+	         	//---------------------数据中心推送状态----------------------
 			}else if(pages.asText().contains("您输入的用户名或密码有误")){
 		 		map.put("errorCode","0002");
 		 		map.put("errorInfo","您输入的用户名或密码有误");
+		 		  //--------------------数据中心推送状态----------------------
+	         	PushState.state(userCard, "CHSI",200);
+	         	//---------------------数据中心推送状态----------------------
 	
 			}else if(pages.asText().contains("图片验证码输入有误")){
 		 		map.put("errorCode","0001");
 		 		map.put("errorInfo","图片验证码输入有误");
-	
+		 		  //--------------------数据中心推送状态----------------------
+	         	PushState.state(userCard, "CHSI",200);
+	         	//---------------------数据中心推送状态----------------------
 			}
 		   	} catch (Exception e) {
 		   		System.out.print(e);
 		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+		   		  //--------------------数据中心推送状态----------------------
+		         	PushState.state(userCard, "CHSI",200);
+		         	//---------------------数据中心推送状态----------------------
 		   			map.put("errorCode","0002");
 			 		map.put("errorInfo","密码错误");	
 		   		}else{
+		   		  //--------------------数据中心推送状态----------------------
+		         	PushState.state(userCard, "CHSI",200);
+		         	//---------------------数据中心推送状态----------------------
 		   			map.put("errorCode","0002");
 			 		map.put("errorInfo","网络错误");
 		   		}
@@ -1330,6 +1346,8 @@ public class MobileService {
 			 webClient.getOptions().setThrowExceptionOnScriptError(false);
 			 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 			 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			 PushState.state(userCard, "TaoBao",100);//认证中
+			 System.out.println("推送认证中=="+userCard);
 			 do {
 				 count++;
 				 WebRequest webRequest=new  WebRequest(new java.net.URL("https://login.taobao.com/member/login.jhtml"));
@@ -1389,20 +1407,31 @@ public class MobileService {
 							 	  map.put("userPwd", UserPwd);
 							 	  map.put("userCard", userCard);
 							 	  map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/taobaoPush");
-							 	  logger.warn("===淘宝"+map.toString());
+							 	  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+								    	PushState.state(userCard, "TaoBao",300);
+						                map.put("errorInfo","查询成功");
+						                map.put("errorCode","0000");
+						        }else{
+						            	//--------------------数据中心推送状态----------------------
+						            	PushState.state(userCard, "TaoBao",200);
+						            	//---------------------数据中心推送状态----------------------
+						                map.put("errorInfo","查询失败");
+						                map.put("errorCode","0001");
+						            }
+;							 	  logger.warn("===淘宝"+map.toString());
 						 }else{
 							 	flg=true;//如果没有继续爬取
 							
 								
 						 }
 						 if(flg==true&&count==maxcount){//如果满足条件 不再爬取，提示稍后再来
+							 PushState.state(userCard, "TaoBao",200);
 							 	map.put("errorCode","0002");
 				    			map.put("errorInfo","目前认证的人较多，请稍后再试");
 								logger.warn("读取收获地址table为空！请请检查");
-							
 						 }
 					 }else{
-						 
+						 PushState.state(userCard, "TaoBao",200);
 							HtmlDivision division= (HtmlDivision) pagess.getElementById("J_Message");
 							map.put("errorCode","0002");
 			    			map.put("errorInfo",division.asText());

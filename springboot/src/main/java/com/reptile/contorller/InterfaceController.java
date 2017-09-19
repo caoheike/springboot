@@ -51,6 +51,7 @@ import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 import com.sun.jna.Library;
@@ -275,7 +276,7 @@ public class InterfaceController {
 //		u.setUserPassword(UserPassword);
 //		u.setUserCode(UserCode);
 		System.out.println("已经被访问了");
-		return mobileService.UnicomLogin(request, response,unicombean);
+		return mobileService.UnicomLogin(request, unicombean);
 	}
 
 	/**
@@ -698,7 +699,8 @@ public class InterfaceController {
 	@ResponseBody
 	@RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-
+		System.out.println("---------------"+"");
+		PushState.state(idCard, "TaoBao",100);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> data = new HashMap<String, Object>();
 		HttpSession session=request.getSession();
@@ -737,16 +739,19 @@ public class InterfaceController {
 	 	  map.put("userPwd", "123");
 	 	  map.put("userCard", idCard);
 	 	  map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
-		
+	 	 PushState.state(idCard, "TaoBao",300);
 		}else if(jsonObject2.get("code").equals("10004")){
+			PushState.state(idCard, "TaoBao",200);
 			System.out.println("二维码过期");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "二维码过期");
 		}else if(jsonObject2.get("code").equals("10001")) {
+			PushState.state(idCard, "TaoBao",200);
 			System.out.println("扫码陈功");
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "成功");
 		}else if(jsonObject2.get("code").equals("10000")){
+			PushState.state(idCard, "TaoBao",200);
 			System.out.println("等待授权");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "等待授权");
