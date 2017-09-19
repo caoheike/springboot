@@ -85,6 +85,7 @@ public class PhoneBillsService {
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
         } catch (Exception e) {
+            Scheduler.sendGet(Scheduler.getIp);
             logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
             map.put("errorCode", "0003");
