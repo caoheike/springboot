@@ -109,7 +109,7 @@ public class TelecomLoadVerificationService {
 
 //            System.out.println(loginbtn.asXml());
             Thread.sleep(1000);
-            if (!loginbtn.asText().contains("详单查询")) {
+            if (!loginbtn.asText().contains("详细查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
                 map.put("errorCode", "0007");
                 map.put("errorInfo", divErr);

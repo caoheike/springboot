@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.springboot.Scheduler;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import org.apache.commons.httpclient.Header;
@@ -320,7 +321,7 @@ public class ZXBankService {
                 Map<String, Object> mapTui = new HashMap<String, Object>();
                 mapTui.put("data", sendMap);
                 Resttemplate rs = new Resttemplate();
-                map = rs.SendMessage(mapTui, "http://192.168.3.16:8089/HSDC/BillFlow/BillFlowByreditCard");
+                map = rs.SendMessage(mapTui, ConstantInterface.port+"/HSDC/BillFlow/BillFlowByreditCard");
                 System.out.println(map);
 
             } catch (Exception e) {
