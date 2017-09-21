@@ -21,6 +21,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -535,8 +537,9 @@ public class CreditService {
                 HtmlPage queryPage = webClient.getPage(queryUrl);
 
                 //判断3个选项中个人信用报告是否可选
-                String attribute = queryPage.getElementById("radiobutton1").getAttribute("disabled");
-                if(attribute!=null&&attribute.equals("disabled")){
+                NamedNodeMap radiobutton1 = queryPage.getElementById("radiobutton1").getAttributes();
+                Node aClass = radiobutton1.getNamedItem("disabled");
+                if(aClass!=null){
                     map.put("ResultInfo", "信用报告未生成！");
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", "信用报告未生成！");
