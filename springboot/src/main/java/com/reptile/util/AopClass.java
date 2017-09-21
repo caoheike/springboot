@@ -106,7 +106,7 @@ public class AopClass {
         dataMap.put("approveState", "100");
         map.put("data", dataMap);
         Resttemplate resttemplate = new Resttemplate();
-        Map<String, Object> mapResult = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/Autherized");
+        Map<String, Object> mapResult = resttemplate.SendMessage(map, ConstantInterface.aopPort +"/HSDC/authcode/Autherized");
         return mapResult;
     }
 
