@@ -46,7 +46,7 @@ public class ShanDongTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10016&toStUrl=http://sd.189.cn/selfservice/account/returnAuth?columnId=0210"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-
+                Thread.sleep(2000);
                 File file = new File(request.getServletContext().getRealPath("/SDDXimageCode"));
                 if (!file.exists()) {
                     file.mkdirs();
@@ -210,7 +210,7 @@ public class ShanDongTelecomService {
                 int date = Integer.parseInt(format);
                 for (int i = 0; i < 6; i++) {
                     resultPage.executeJavaScript("\tvar params = {\n" +
-                            "    \taccNbr: \"18954870035\",//固定电话需带区号，移动电话不带区号\n" +
+                            "    \taccNbr: \""+userIphone+"\",//固定电话需带区号，移动电话不带区号\n" +
                             "\t    billingCycle:'" + date + "',//详单月份：格式yyyyMM\n" +
                             "\t    pageRecords:'20',//每页记录数：当值为-1时表示查询所有记录\n" +
                             "\t    pageNo:-1 + '',//页码：值为-1时表示查询所有记录\n" +

@@ -36,33 +36,57 @@ public class HeNanTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000356"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-                System.out.println(page1.asXml());
 
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 Date time = calendar.getTime();
                 String date = sim.format(time);
 
-                WebRequest req = new WebRequest(new URL("http://ha.189.cn/service/bill/getRand.jsp"));
+                WebRequest req = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha"));
+                req.setHttpMethod(HttpMethod.GET);
+                HtmlPage pages=webClient.getPage(req);
+                Thread.sleep(1000);
+                System.out.println(pages.asXml());
+                req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
-                list.add(new NameValuePair("PRODTYPE", "713070904705"));
-                list.add(new NameValuePair("RAND_TYPE", "002"));
-                list.add(new NameValuePair("BureauCode", "0371"));
-                list.add(new NameValuePair("ACC_NBR", phoneNumber));
-                list.add(new NameValuePair("PROD_TYPE", "713070904705"));
-                list.add(new NameValuePair("PROD_PWD", ""));
-                list.add(new NameValuePair("REFRESH_FLAG", "1"));
-                list.add(new NameValuePair("BEGIN_DATE", ""));
-                list.add(new NameValuePair("END_DATE", ""));
-                list.add(new NameValuePair("ACCT_DATE", date));
-                list.add(new NameValuePair("FIND_TYPE", "2"));
-                list.add(new NameValuePair("SERV_NO", ""));
-                list.add(new NameValuePair("QRY_FLAG", "1"));
-                list.add(new NameValuePair("ValueType", "4"));
-                list.add(new NameValuePair("MOBILE_NAME", phoneNumber));
-                list.add(new NameValuePair("OPER_TYPE", "CR1"));
-                list.add(new NameValuePair("PASSWORD", ""));
+                list.add(new NameValuePair("ACC_NBR",phoneNumber));
+                list.add(new NameValuePair("PROD_TYPE",pages.getElementById("PROD_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("BEGIN_DATE",""));
+                list.add(new NameValuePair("END_DATE",""));
+                list.add(new NameValuePair("SERV_NO",""));
+                list.add(new NameValuePair("ValueType","1"));
+                list.add(new NameValuePair("REFRESH_FLAG",pages.getElementById("REFRESH_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("FIND_TYPE",pages.getElementById("FIND_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("radioQryType","on"));
+                list.add(new NameValuePair("QRY_FLAG",pages.getElementById("QRY_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("ACCT_DATE",date));
+                list.add(new NameValuePair("ACCT_DATE_1",date));
+                req.setRequestParameters(list);
+                HtmlPage pagess= webClient.getPage(req);
+                Thread.sleep(1000);
+                System.out.println(pagess.asXml());
+
+                req = new WebRequest(new URL("http://ha.189.cn/service/bill/getRand.jsp"));
+                req.setHttpMethod(HttpMethod.POST);
+                list = new ArrayList<NameValuePair>();
+                list.add(new NameValuePair("PRODTYPE", pagess.getElementById("PRODTYPE").getAttribute("value")));
+                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));//
+                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));//
+                list.add(new NameValuePair("ACC_NBR",  phoneNumber));
+                list.add(new NameValuePair("PROD_TYPE",  pagess.getElementById("PROD_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("PROD_PWD",  ""));
+                list.add(new NameValuePair("REFRESH_FLAG",  pagess.getElementById("REFRESH_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("BEGIN_DATE",  ""));
+                list.add(new NameValuePair("END_DATE",  ""));
+                list.add(new NameValuePair("ACCT_DATE",  pagess.getElementById("ACCT_DATE").getAttribute("value")));
+                list.add(new NameValuePair("FIND_TYPE",  pagess.getElementById("FIND_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("SERV_NO",  pagess.getElementById("SERV_NO").getAttribute("value")));
+                list.add(new NameValuePair("QRY_FLAG",  pagess.getElementById("QRY_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("ValueType",  "4"));
+                list.add(new NameValuePair("MOBILE_NAME",  phoneNumber));
+                list.add(new NameValuePair("OPER_TYPE",  "CR1"));
+                list.add(new NameValuePair("PASSWORD",  ""));
                 req.setRequestParameters(list);
 
                 XmlPage page = webClient.getPage(req);
@@ -77,6 +101,7 @@ public class HeNanTelecomService {
                     map.put("errorCode", "0000");
                     map.put("errorInfo", "短信已成功发送，请注意查收！");
                     session.setAttribute("HNwebClient", webClient);
+                    session.setAttribute("HeNanHtmlPage", pagess);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,6 +117,7 @@ public class HeNanTelecomService {
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("HNwebClient");
+        Object pag = session.getAttribute("HeNanHtmlPage");
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
@@ -99,6 +125,7 @@ public class HeNanTelecomService {
         } else {
             try {
                 WebClient webClient = (WebClient) attribute;
+                HtmlPage pagess = (HtmlPage) pag;
                 WebRequest req = new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
@@ -108,57 +135,60 @@ public class HeNanTelecomService {
                 Date time = calendar.getTime();
                 String beforeDate = sim.format(time);
 
-                list.add(new NameValuePair("PRODTYPE", "713070904705"));
-                list.add(new NameValuePair("RAND_TYPE", "002"));
-                list.add(new NameValuePair("BureauCode", "0371"));
-                list.add(new NameValuePair("ACC_NBR", phoneNumber));
-                list.add(new NameValuePair("PROD_TYPE", "713070904705"));
-                list.add(new NameValuePair("PROD_PWD", ""));
-                list.add(new NameValuePair("REFRESH_FLAG", "1"));
-                list.add(new NameValuePair("BEGIN_DATE", ""));
-                list.add(new NameValuePair("END_DATE", ""));
-                list.add(new NameValuePair("ACCT_DATE", beforeDate));
-                list.add(new NameValuePair("FIND_TYPE", "2"));
-                list.add(new NameValuePair("SERV_NO", ""));
-                list.add(new NameValuePair("QRY_FLAG", "1"));
-                list.add(new NameValuePair("ValueType", "4"));
-                list.add(new NameValuePair("MOBILE_NAME", phoneNumber));
-                list.add(new NameValuePair("OPER_TYPE", "CR1"));
-                list.add(new NameValuePair("PASSWORD", phoneCode));
+                list.add(new NameValuePair("PRODTYPE", pagess.getElementById("PRODTYPE").getAttribute("value")));
+                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));//
+                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));//
+                list.add(new NameValuePair("ACC_NBR",  phoneNumber));
+                list.add(new NameValuePair("PROD_TYPE",  pagess.getElementById("PROD_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("PROD_PWD",  pagess.getElementById("PROD_PWD").getAttribute("value")));
+                list.add(new NameValuePair("REFRESH_FLAG",  pagess.getElementById("REFRESH_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("BEGIN_DATE",  ""));
+                list.add(new NameValuePair("END_DATE",  ""));
+                list.add(new NameValuePair("ACCT_DATE",  beforeDate));
+                list.add(new NameValuePair("FIND_TYPE",  pagess.getElementById("FIND_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("SERV_NO",  pagess.getElementById("SERV_NO").getAttribute("value")));
+                list.add(new NameValuePair("QRY_FLAG",  pagess.getElementById("QRY_FLAG").getAttribute("value")));
+                list.add(new NameValuePair("ValueType",  "4"));
+                list.add(new NameValuePair("MOBILE_NAME", phoneNumber ));
+                list.add(new NameValuePair("OPER_TYPE",  "CR1"));
+                list.add(new NameValuePair("PASSWORD",  phoneCode));
                 req.setRequestParameters(list);
                 HtmlPage page2 = webClient.getPage(req);
+                Thread.sleep(1000);
                 String result = page2.asText();
+
+                System.out.println(page2.asXml());
 
                 if (result.contains("您输入的查询验证码错误或过期")) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }
-                dataList.add(page2.asXml());
 
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     req = new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                     req.setHttpMethod(HttpMethod.POST);
                     list = new ArrayList<NameValuePair>();
 
-                    calendar.add(Calendar.MONTH, -1);
                     Date date = calendar.getTime();
                     String currentDate = sim.format(date);
                     list.add(new NameValuePair("ACC_NBR", phoneNumber));
-                    list.add(new NameValuePair("PROD_TYPE", "713070904705"));
+                    list.add(new NameValuePair("PROD_TYPE", page2.getElementById("PROD_TYPE").getAttribute("value")));
                     list.add(new NameValuePair("BEGIN_DATE", ""));
                     list.add(new NameValuePair("END_DATE", ""));
                     list.add(new NameValuePair("ValueType", "4"));
-                    list.add(new NameValuePair("REFRESH_FLAG", "1"));
+                    list.add(new NameValuePair("REFRESH_FLAG", page2.getElementById("REFRESH_FLAG").getAttribute("value")));
                     list.add(new NameValuePair("FIND_TYPE", "1"));
                     list.add(new NameValuePair("radioQryType", "on"));
-                    list.add(new NameValuePair("QRY_FLAG", "1"));
+                    list.add(new NameValuePair("QRY_FLAG", page2.getElementById("QRY_FLAG").getAttribute("value")));
                     list.add(new NameValuePair("ACCT_DATE", currentDate));
                     list.add(new NameValuePair("ACCT_DATE_1", beforeDate));
                     req.setRequestParameters(list);
                     page2 = webClient.getPage(req);
                     Thread.sleep(1000);
                     dataList.add(page2.asXml());
+
+                    calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
                 map.put("UserIphone", phoneNumber);
