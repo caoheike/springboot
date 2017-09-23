@@ -330,6 +330,7 @@ public class ZXBankService {
                 sendMap.put("backtype", "CCB");
                 sendMap.put("html", dataList);
                 sendMap.put("fixedEd",fixedEd);
+                logger.warn(sendMap.toString()+"   mrlu");
                 //推送信息
                 Map<String, Object> mapTui = new HashMap<String, Object>();
                 mapTui.put("data", sendMap);
