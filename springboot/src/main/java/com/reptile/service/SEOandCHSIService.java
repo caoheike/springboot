@@ -46,8 +46,10 @@ import java.util.Scanner;
 
 @Service
 public class SEOandCHSIService {
+	
 	 @Autowired
 	  private application applications;
+	  private PushState PushState;
 	//https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm
 	 private final static String CabCardloginPhone="https://xyk.cebbank.com/mall/api/usercommon/dynamic";//发送短信密码
 	 private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
@@ -199,7 +201,7 @@ public class SEOandCHSIService {
 		System.out.println(UserCard+loginImage);
 		try{
 		 	//---------------------------数据中心推送状态----------------------------------
-			PushState.state(UserCard,"bankBillFlow", 100);
+			 PushState.state(UserCard,"bankBillFlow", 100);
 			//---------------------------数据中心推送状态----------------------------------
 			WebRequest request1 =new WebRequest(new URL("https://xyk.cebbank.com/mall/api/usercommon/dynamic"));
 			request1.setHttpMethod(HttpMethod.POST);//提交方式

@@ -80,6 +80,7 @@ public class MobileService {
 
 	@Autowired
 	private application application;
+	private PushState PushState;
  	public Map<String,Object> mapWeb=new HashMap<String,Object>();
 	private Logger logger = Logger.getLogger(MobileService.class);
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
@@ -678,7 +679,6 @@ public class MobileService {
 		 
 	 }
 	 public Map<String,Object> UnicomLogin(HttpServletRequest request,UnicomBean unicombean) throws IOException{
-			
 
 		 Map<String,Object> map=new HashMap<String,Object>();
 		 Map<String,Object> data=new HashMap<String,Object>();
@@ -699,21 +699,46 @@ public class MobileService {
 			   	   if (c.getName().equals("uacverifykey")) {
 					   uvc= c.getValue();
 					  }
+			   	   webClient.getCookieManager().addCookie(c);
 			  
 			    }
-				HtmlPage page= webClient.getPage(unicombean.Loginurl(unicombean,uvc));
-			
-				JSONObject json=JSONObject.fromObject(page.asText());
+			    webClient.addRequestHeader("Accept","text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01");
+			    webClient.addRequestHeader("Accept-Encoding","gzip, deflate, br");
+			    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
+			    webClient.addRequestHeader("Connection","keep-alive");
+			    webClient.addRequestHeader("Host","uac.10010.com");
+			    webClient.addRequestHeader("Referer","https://uac.10010.com/portal/homeLogin");
+			    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
+			    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
+			    HtmlPage page= webClient.getPage(unicombean.Loginurl(unicombean,uvc));
+			System.out.println(page.asText());
+				JSONObject json=JSONObject.fromObject(page.asText());	
 				String resultCode=json.get("resultCode").toString();
 				if(!json.toString().contains("验证码")||!json.get("msg").equals("验证码错误。")){
 					if(resultCode.equals("0000")){
-						
+						   for (Cookie c : cookies) {  
+
+						   	   webClient.getCookieManager().addCookie(c);
+						  
+						    }
+						    webClient.addRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
+						    webClient.addRequestHeader("Accept-Encoding","gzip, deflate");
+						    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
+						    webClient.addRequestHeader("Connection","keep-alive");
+						    webClient.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+						    webClient.addRequestHeader("Host","iservice.10010.com");
+						    webClient.addRequestHeader("Origin","http://iservice.10010.com");
+						    webClient.addRequestHeader("Referer","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001");
+						    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
+						  
+						    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
 //						 session.setAttribute("webClient",webClient);
 //						 session.setAttribute("unicomBean",unicombean);
-						WebRequest webRequest=new WebRequest(new URL("http://iservice.10010.com/e3/static/check/checklogin?_="+System.currentTimeMillis()+""));
+						WebRequest webRequest=new WebRequest(new URL("http://iservice.10010.com/e3/static/check/checklogin?_=1505965738970"));
+						
 						 webRequest.setHttpMethod(HttpMethod.POST);
 						 TextPage textpage= webClient.getPage(webRequest);
-						 
+						 System.out.println(textpage.getContent());
 						 WebRequest webRequests=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/checkmapExtraParam?_="+System.currentTimeMillis()+""));
 					      List<NameValuePair> list=new ArrayList<NameValuePair>();
 					       list.add(new NameValuePair("menuId","000100030001"));
@@ -778,6 +803,7 @@ public class MobileService {
 			}
 				return map;
               
+
 
 	
 	 }

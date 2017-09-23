@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PushState {
 	@Autowired
-	private static application applications;
-	public static void state(String UserCard,String approveName,int stat){
+//	private  application applications;
+	public  static void state(String UserCard,String approveName,int stat){
 		Map<String, Object> map1=new HashMap<String, Object>();
 		Map<String, Object> data=new HashMap<String, Object>();
 		Map<String,Object> stati=new HashMap<String, Object>();
@@ -20,6 +20,7 @@ public class PushState {
 		System.out.println("--开始推送-");
 		Resttemplate resttemplatestati = new Resttemplate();
 		
-		map1=resttemplatestati.SendMessage(data, applications.getSendip()+"/HSDC/authcode/Autherized");
+//		map1=resttemplatestati.SendMessage(data, "http://192.168.3.4:8081/HSDC/authcode/Autherized");
+		map1=resttemplatestati.SendMessage(data, "http://10.1.1.12:8080/HSDC/authcode/Autherized");
 	}
 }

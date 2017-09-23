@@ -699,8 +699,7 @@ public class InterfaceController {
 	@ResponseBody
 	@RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-		System.out.println("---------------"+"");
-		PushState.state(idCard, "TaoBao",100);
+		PushState.state(idCard, "TaoBao",200);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> data = new HashMap<String, Object>();
 		HttpSession session=request.getSession();

@@ -24,6 +24,7 @@ public class SpringbootApplication extends WebMvcConfigurerAdapter {
       }
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootApplication.class, args);
+		
 	}
 }
 
