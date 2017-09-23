@@ -38,7 +38,7 @@ import java.util.Map;
 public class ZXBankService {
 
 
-    private Logger logger= LoggerFactory.getLogger(ZXBankService.class);
+    private Logger logger = LoggerFactory.getLogger(ZXBankService.class);
 
 
     public Map<String, Object> getZXImageCode(HttpServletRequest request) {
@@ -75,7 +75,7 @@ public class ZXBankService {
             map.put("data", mapInfo);
         } catch (Exception e) {
 
-            logger.warn(e.getMessage()+"     mrlu");
+            logger.warn(e.getMessage() + "     mrlu");
 
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
@@ -86,7 +86,7 @@ public class ZXBankService {
     }
 
 
-    public Map<String, String> loadZX(HttpServletRequest request, String userNumber, String passWord, String imageCode){
+    public Map<String, String> loadZX(HttpServletRequest request, String userNumber, String passWord, String imageCode) {
 
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
@@ -153,7 +153,7 @@ public class ZXBankService {
                 session.setAttribute("zxCookies2", coks);
             } catch (Exception e) {
 
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage() + "     mrlu");
 
                 e.printStackTrace();
                 map.put("errorCode", "0005");
@@ -164,7 +164,7 @@ public class ZXBankService {
     }
 
 
-    public Map<String, String> sendPhoneCode(HttpServletRequest request){
+    public Map<String, String> sendPhoneCode(HttpServletRequest request) {
 
         //发送手机验证码
         Map<String, String> map = new HashMap<String, String>();
@@ -196,7 +196,7 @@ public class ZXBankService {
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
 
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage() + "     mrlu");
 
                 e.printStackTrace();
                 map.put("errorCode", "0003");
@@ -207,7 +207,7 @@ public class ZXBankService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode){
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode) {
 
         Map<String, Object> map = new HashMap<String, Object>();
         HttpSession session = request.getSession();
@@ -245,6 +245,19 @@ public class ZXBankService {
                 httpClient.executeMethod(getMethod);
                 getMethod.getParams().setContentCharset("utf-8");
                 System.out.println(getMethod.getResponseBodyAsString());
+
+                //查询信用卡额度及可提现额度
+                PostMethod method = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/settingManage.do?func=getCreditLimit");
+                method.setRequestHeader("Cookie", coks);
+                httpClient.executeMethod(method);
+                System.out.println(method.getResponseBodyAsString());
+                String result = method.getResponseBodyAsString();
+                JSONObject jsonObject3 = XML.toJSONObject(result);
+                JSONObject response2 = (JSONObject) jsonObject3.get("response");
+                JSONObject creditLimit = (JSONObject) response2.get("CreditLimit");
+                String cashmoney = creditLimit.get("cashmoney").toString();
+                String fixedEd = creditLimit.get("fixedEd").toString();
+
 
                 //查询该账号下对应的银行卡信息有几个
                 PostMethod postMethod = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/common.do?func=querySignCards");
@@ -316,17 +329,17 @@ public class ZXBankService {
                 sendMap.put("idcard", userCard);
                 sendMap.put("backtype", "CCB");
                 sendMap.put("html", dataList);
-
+                sendMap.put("fixedEd",fixedEd);
                 //推送信息
                 Map<String, Object> mapTui = new HashMap<String, Object>();
                 mapTui.put("data", sendMap);
                 Resttemplate rs = new Resttemplate();
-                map = rs.SendMessage(mapTui, ConstantInterface.port+"/HSDC/BillFlow/BillFlowByreditCard");
+                map = rs.SendMessage(mapTui, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
                 System.out.println(map);
 
             } catch (Exception e) {
 
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage() + "     mrlu");
 
                 e.printStackTrace();
                 map.put("errorCode", "0002");
