@@ -106,7 +106,6 @@ public class TelecomLoadVerificationService {
             page.getElementById("txtAccount").setAttribute("value", userName);
             page.getElementById("txtPassword").setAttribute("value", servePwd);
             HtmlPage loginbtn = page.getElementById("loginbtn").click();
-            System.out.println(loginbtn.asXml());
             Thread.sleep(2000);
             if (!loginbtn.asText().contains("详细查询")&&!loginbtn.asText().contains("详单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
