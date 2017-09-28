@@ -535,7 +535,7 @@ public class CreditService {
             if (sessionWebClient != null) {
                 final WebClient webClient = (WebClient) sessionWebClient;
                 HtmlPage queryPage = webClient.getPage(queryUrl);
-
+                Thread.sleep(3000);
                 //判断3个选项中个人信用报告是否可选
                 NamedNodeMap radiobutton1 = queryPage.getElementById("radiobutton1").getAttributes();
                 Node aClass = radiobutton1.getNamedItem("disabled");
