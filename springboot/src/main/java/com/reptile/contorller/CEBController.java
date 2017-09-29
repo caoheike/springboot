@@ -22,13 +22,13 @@ public class CEBController {
 	
 	@Autowired
 	private CEBService ceb;
-		@ApiOperation(value = "1.发送短信验证码", notes = "参数：银行卡号或者身份证")
+		@ApiOperation(value = "1.发送短信验证码", notes = "参数：用户账号(身份证),银行账号")
 		@ResponseBody
 		@RequestMapping(value="CEBPass",method=RequestMethod.POST)
-		public Map<String,Object> CEBPass(HttpServletRequest request,@RequestParam("UserCard") String UserCard) throws Exception{
-			return ceb.CEBlogin1(request,UserCard);
+		public Map<String,Object> CEBPass(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserName") String UserName) throws Exception{
+			return ceb.CEBlogin1(request,UserCard,UserName);
 		}
-		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：银行卡号或身份证号,短信验证码")
+		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：用户账号(身份证),短信验证码")
 		@ResponseBody
 		@RequestMapping(value="CEBlogin",method=RequestMethod.POST)
 		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password) throws Exception{
