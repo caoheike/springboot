@@ -101,6 +101,7 @@ public class TelecomLoadVerificationService {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
         try {
+
             WebClient webClient = new WebClientFactory().getWebClient();
             HtmlPage page = webClient.getPage("http://login.189.cn/web/login");
             page.getElementById("txtAccount").setAttribute("value", userName);
