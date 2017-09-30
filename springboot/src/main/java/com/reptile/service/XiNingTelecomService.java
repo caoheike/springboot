@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import org.springframework.stereotype.Service;
@@ -108,6 +109,7 @@ public class XiNingTelecomService {
                         System.out.println(simple.format(calendar.getTime()));
                     }
                 } catch (Exception e) {
+                    Scheduler.sendGet(Scheduler.getIp);
                     e.printStackTrace();
                 }
                 map.put("data", dataList);

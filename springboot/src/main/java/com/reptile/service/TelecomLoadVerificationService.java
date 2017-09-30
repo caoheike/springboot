@@ -19,15 +19,14 @@ import javax.servlet.http.HttpSession;
 import java.net.URL;
 import java.util.*;
 
-
 @Service
 public class TelecomLoadVerificationService {
-    private Logger logger= LoggerFactory.getLogger(TelecomLoadVerificationService.class);
+    private Logger logger = LoggerFactory.getLogger(TelecomLoadVerificationService.class);
 
     //查询号码信息 eg:{"phonesen":"1819455","provinceId":"29","provinceName":"青海","cityNo":"971","cityName":"西宁","areaCode":"971","netId":null,"cardType":null,"remark":null}
     public Map<String, Object> getProvince(String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
-        Map<Object,Object> mapdata=new HashMap<Object, Object>();
+        Map<Object, Object> mapdata = new HashMap<Object, Object>();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
             WebRequest request1 = new WebRequest(new URL("http://login.189.cn/web/login/ajax"));
@@ -41,10 +40,10 @@ public class TelecomLoadVerificationService {
             JSONObject jsonObject = JSONObject.fromObject(result);
             System.out.println(jsonObject.get("netId"));
             Iterator keys = jsonObject.keys();
-            while (keys.hasNext()){
+            while (keys.hasNext()) {
                 String results = keys.next().toString();
-                if(jsonObject.get(results).toString()!="null"){
-                    mapdata.put(results,jsonObject.get(results));
+                if (jsonObject.get(results).toString() != "null") {
+                    mapdata.put(results, jsonObject.get(results));
                 }
             }
             System.out.println(page.getWebResponse().getContentAsString());
@@ -52,7 +51,7 @@ public class TelecomLoadVerificationService {
             map.put("errorInfo", "操作成功");
             map.put("data", mapdata);
         } catch (Exception e) {
-            logger.warn(e.getMessage()+"mrlu");
+            logger.warn(e.getMessage() + "mrlu");
             e.printStackTrace();
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
@@ -80,7 +79,7 @@ public class TelecomLoadVerificationService {
 
             System.out.println(page.getWebResponse().getContentAsString());
 
-            if(result.contains("true")){
+            if (result.contains("true")) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "密码错误3次，请休息一会再来！");
                 return map;
@@ -91,7 +90,7 @@ public class TelecomLoadVerificationService {
             map.put("data", jsonObject);
         } catch (Exception e) {
 
-            logger.warn(e.getMessage()+"mrlu");
+            logger.warn(e.getMessage() + "mrlu");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
         }
@@ -107,8 +106,10 @@ public class TelecomLoadVerificationService {
             page.getElementById("txtAccount").setAttribute("value", userName);
             page.getElementById("txtPassword").setAttribute("value", servePwd);
             HtmlPage loginbtn = page.getElementById("loginbtn").click();
+
+            System.out.println(loginbtn.asXml());
             Thread.sleep(2000);
-            if (!loginbtn.asText().contains("详细查询")&&!loginbtn.asText().contains("详单查询")) {
+            if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
                 map.put("errorCode", "0007");
                 map.put("errorInfo", divErr);
@@ -120,7 +121,7 @@ public class TelecomLoadVerificationService {
 
         } catch (Exception e) {
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage()+"mrlu");
+            logger.warn(e.getMessage() + "mrlu");
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
             e.printStackTrace();
@@ -128,5 +129,4 @@ public class TelecomLoadVerificationService {
         return map;
     }
 }
-
 
