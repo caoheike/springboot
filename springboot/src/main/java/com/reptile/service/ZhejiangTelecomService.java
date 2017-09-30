@@ -146,8 +146,6 @@ public class ZhejiangTelecomService {
 				     map.put("errorInfo", alertList.get(0).toString());	
 					 return map;
 				 }
-				
-			    
 				if (firstPage.asText().contains("我的清单详情")) {
 					
 				    HtmlSpan span=	(HtmlSpan) firstPage.getElementById("id1");
@@ -192,7 +190,6 @@ public class ZhejiangTelecomService {
 		return map;
 		
 	}
-	
 	
 	
 }

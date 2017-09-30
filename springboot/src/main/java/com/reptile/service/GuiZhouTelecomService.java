@@ -35,21 +35,21 @@ public class GuiZhouTelecomService {
 			 return map;
 	     }
 	     try {
-			//HtmlPage nextPage=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00320353");
+			 HtmlPage nextPage=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00320353");
 			//HtmlPage ifrPage=webClient.getPage("http://service.gz.189.cn/web/query.php?action=call&fastcode=00320353&cityCode=gz");
-	    	 HtmlPage ifrPage=webClient.getPage(" http://www.189.cn//dqmh/ssoLink.do?method=linkTo&platNo=10024&toStUrl=http://service.gz.189.cn/web/query.php?action=call&fastcode=00320353&cityCode=gz");	
+	    	 HtmlPage ifrPage=webClient.getPage("http://www.189.cn//dqmh/ssoLink.do?method=linkTo&platNo=10024&toStUrl=http://service.gz.189.cn/web/query.php?action=call&fastcode=00320353&cityCode=gz");	
 	    	
 				Thread.sleep(1000);
 			
 			//System.out.println(P.asXml());
 	    	 HtmlButtonInput button= (HtmlButtonInput) ifrPage.getElementById("getcheckcode");
+	    	 button.click();//发送验证码
+	    	 Thread.sleep(500);
 	    	 if(button.getAttribute("value").contains("发送次数过多")){	
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "发送次数过多，请稍后重试");
 				 return map;
-			   }
-	    	 button.click();//发送验证码
-	    	  if(button.getAttribute("value").contains("秒后可重新获取")){
+			   }else if(button.getAttribute("value").contains("秒后可重新获取")){
 	    		 map.put("errorCode", "0000");
 	             map.put("errorInfo", "验证码已发送!");
 			 }else{
@@ -96,7 +96,7 @@ public class GuiZhouTelecomService {
         	 try {
 				 radio.get(i).click(); 
 				 HtmlPage detial= button.click();
-				 Thread.sleep(500);
+				 Thread.sleep(1000);
 			//======================验证码正确性验证===============================	
 				 if(code==null||code.equals("")){
 					 map.put("errorCode", "0001");
@@ -135,7 +135,10 @@ public class GuiZhouTelecomService {
            map.put("errorCode", "0000");
            map.put("errorInfo", "查询成功");
            Resttemplate resttemplate = new Resttemplate();
-           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
+          // map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
+           
+           map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord"); 
+           
            System.out.println(map);
            if(map.get("errorCode").equals("0003")){
         	   map.put("errorCode", "0001");
