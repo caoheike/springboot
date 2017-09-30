@@ -11,7 +11,8 @@ public class MyCYDMDemo {
 
 		// 下载云打码DLL http://yundama.com/apidoc/YDM_SDK.html#DLL
 		// yundamaAPI 32位, yundamaAPI-x64 64位
-		public static String	DLLPATH		= "yundamaAPI-x64.dll";
+		//public static String	DLLPATH		= "C://yundamaAPI-x64.dll";
+		public static String	DLLPATH		= "C://yundamaAPI.dll";
 
 		public interface YDM extends Library
 		{
@@ -39,7 +40,7 @@ public class MyCYDMDemo {
 		}
 		
 		
-		public static Map<String,Object> Imagev(String imagepath) throws Exception {
+		public static  Map<String,Object> Imagev(String imagepath) throws Exception {
 			
 			Map<String,Object> map=new HashMap<>();
 			
@@ -65,7 +66,7 @@ public class MyCYDMDemo {
 			int uid = 0;
 			YDM.INSTANCE.YDM_SetAppInfo(appid, appkey);			// 设置软件ID和密钥
 			uid = YDM.INSTANCE.YDM_Login(username, password);	// 登陆到云打码
-
+			YDM.INSTANCE.YDM_SetTimeOut(20);
 			if(uid > 0){
 				System.out.println("登陆成功,正在提交识别...");
 				
