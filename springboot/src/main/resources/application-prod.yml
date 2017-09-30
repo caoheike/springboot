@@ -2,6 +2,6 @@ server:
   port: 8086
 
 manInfo:
-    ip: 113.200.203.114
-    sendip: http://113.200.203.114:8082
-    port: 8079
+    ip: 113.200.105.34
+    sendip: http://10.1.1.12:8080
+    port: 8086

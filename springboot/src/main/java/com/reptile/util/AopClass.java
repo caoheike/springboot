@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,7 +22,8 @@ import java.util.Map;
 @Aspect
 public class AopClass {
     private Logger logger = LoggerFactory.getLogger(AopClass.class);
-
+    @Autowired
+	private static application applications;
     @Pointcut("@annotation(com.reptile.util.CustomAnnotation)")
     public void pointCut() {
     }
@@ -104,7 +106,9 @@ public class AopClass {
         dataMap.put("approveState", "100");
         map.put("data", dataMap);
         Resttemplate resttemplate = new Resttemplate();
-        Map<String, Object> mapResult = resttemplate.SendMessage(map, ConstantInterface.aopPort +"/HSDC/authcode/Autherized");
+
+        Map<String, Object> mapResult = resttemplate.SendMessage(map, ConstantInterface.port +"/HSDC/authcode/Autherized");
+
         return mapResult;
     }
 
@@ -122,12 +126,11 @@ public class AopClass {
         if (className.contains("ZXBankController")) {
             dataMap.put("approveName", "bankBillFlow");
         }
-
         dataMap.put("cardNumber", argsName);
         dataMap.put("approveState", approveState);
         map.put("data", dataMap);
         Resttemplate resttemplate = new Resttemplate();
-        Map<String, Object> mapResult= resttemplate.SendMessage(map, ConstantInterface.aopPort + "/HSDC/authcode/Autherized");
+        Map<String, Object> mapResult= resttemplate.SendMessage(map,ConstantInterface.port + "/HSDC/authcode/Autherized");
         return mapResult;
     }
 

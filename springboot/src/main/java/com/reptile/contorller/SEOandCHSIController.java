@@ -29,7 +29,6 @@ public class SEOandCHSIController {
 	public Map<String,Object> SeoEmailFind(HttpServletRequest request,@RequestParam("UserEmail") String UserEmail,@RequestParam("UserCard") String UserCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		System.out.println("UserEmail==="+UserEmail);
 		return SEOandCHSIService.SeoEmailFind(request, UserEmail,UserCard);
-
    	}
 	
 	
