@@ -19,8 +19,6 @@ import java.util.*;
 @Service
 public class GuangXiTelecomService {
 
-    private SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
-
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
         HttpSession session = request.getSession();
@@ -95,7 +93,7 @@ public class GuangXiTelecomService {
                     map.put("errorInfo", popup);
                     return map;
                 }
-
+                SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar=Calendar.getInstance();
                 String lastTime = sim.format(calendar.getTime());
                 String startTime=lastTime;
