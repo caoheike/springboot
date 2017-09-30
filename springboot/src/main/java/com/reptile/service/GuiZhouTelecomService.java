@@ -135,9 +135,9 @@ public class GuiZhouTelecomService {
            map.put("errorCode", "0000");
            map.put("errorInfo", "查询成功");
            Resttemplate resttemplate = new Resttemplate();
-          // map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
+           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
            
-           map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord"); 
+          // map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord"); 
            
            System.out.println(map);
            if(map.get("errorCode").equals("0003")){
