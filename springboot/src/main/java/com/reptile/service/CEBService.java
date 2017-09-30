@@ -113,7 +113,7 @@ public class CEBService {
 			 Map<String, Object> map=new HashMap<String, Object>();
 			 Map<String,Object> data=new HashMap<String,Object>();
 				HttpSession session=request.getSession();//获得session
-				Object sessiondriver = session.getAttribute("sessionDriver-Ceb");//存在session 中的浏览器
+				Object sessiondriver = session.getAttribute("sessionDriver-Ceb"+UserCard);//存在session 中的浏览器
 				final WebDriver driver = (WebDriver) sessiondriver;
 				if(sessiondriver==null){
 					PushState.state(UserCard, "bankBillFlow",200);
