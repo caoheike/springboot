@@ -69,6 +69,7 @@ import com.reptile.model.UnicomBean;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Poi;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 import com.reptile.util.htmlUtil;
@@ -79,6 +80,7 @@ public class MobileService {
 
 	@Autowired
 	private application application;
+	private PushState PushState;
  	public Map<String,Object> mapWeb=new HashMap<String,Object>();
 	private Logger logger = Logger.getLogger(MobileService.class);
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
@@ -676,8 +678,7 @@ public class MobileService {
 			return map;
 		 
 	 }
-	 public Map<String,Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,UnicomBean unicombean) throws IOException{
-			
+	 public Map<String,Object> UnicomLogin(HttpServletRequest request,UnicomBean unicombean) throws IOException{
 
 		 Map<String,Object> map=new HashMap<String,Object>();
 		 Map<String,Object> data=new HashMap<String,Object>();
@@ -698,21 +699,46 @@ public class MobileService {
 			   	   if (c.getName().equals("uacverifykey")) {
 					   uvc= c.getValue();
 					  }
+			   	   webClient.getCookieManager().addCookie(c);
 			  
 			    }
-				HtmlPage page= webClient.getPage(unicombean.Loginurl(unicombean,uvc));
-			
-				JSONObject json=JSONObject.fromObject(page.asText());
+			    webClient.addRequestHeader("Accept","text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01");
+			    webClient.addRequestHeader("Accept-Encoding","gzip, deflate, br");
+			    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
+			    webClient.addRequestHeader("Connection","keep-alive");
+			    webClient.addRequestHeader("Host","uac.10010.com");
+			    webClient.addRequestHeader("Referer","https://uac.10010.com/portal/homeLogin");
+			    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
+			    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
+			    HtmlPage page= webClient.getPage(unicombean.Loginurl(unicombean,uvc));
+			System.out.println(page.asText());
+				JSONObject json=JSONObject.fromObject(page.asText());	
 				String resultCode=json.get("resultCode").toString();
 				if(!json.toString().contains("验证码")||!json.get("msg").equals("验证码错误。")){
 					if(resultCode.equals("0000")){
-						
+						   for (Cookie c : cookies) {  
+
+						   	   webClient.getCookieManager().addCookie(c);
+						  
+						    }
+						    webClient.addRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
+						    webClient.addRequestHeader("Accept-Encoding","gzip, deflate");
+						    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
+						    webClient.addRequestHeader("Connection","keep-alive");
+						    webClient.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+						    webClient.addRequestHeader("Host","iservice.10010.com");
+						    webClient.addRequestHeader("Origin","http://iservice.10010.com");
+						    webClient.addRequestHeader("Referer","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001");
+						    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
+						  
+						    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
 //						 session.setAttribute("webClient",webClient);
 //						 session.setAttribute("unicomBean",unicombean);
-						WebRequest webRequest=new WebRequest(new URL("http://iservice.10010.com/e3/static/check/checklogin?_="+System.currentTimeMillis()+""));
+						WebRequest webRequest=new WebRequest(new URL("http://iservice.10010.com/e3/static/check/checklogin?_=1505965738970"));
+						
 						 webRequest.setHttpMethod(HttpMethod.POST);
 						 TextPage textpage= webClient.getPage(webRequest);
-						 
+						 System.out.println(textpage.getContent());
 						 WebRequest webRequests=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/checkmapExtraParam?_="+System.currentTimeMillis()+""));
 					      List<NameValuePair> list=new ArrayList<NameValuePair>();
 					       list.add(new NameValuePair("menuId","000100030001"));
@@ -777,6 +803,7 @@ public class MobileService {
 			}
 				return map;
               
+
 
 	
 	 }
@@ -1191,114 +1218,143 @@ public class MobileService {
 			return map;
 			
 		}
-		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-		
-	   		Map<String,Object> map=new HashMap<String, Object>();
-			Map<String,Object> data=new HashMap<String, Object>();
-			HttpSession session=request.getSession();
-			WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
-			
-			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
-			List<NameValuePair> list=new ArrayList<NameValuePair>();
-			list.add(new NameValuePair("username",username));
-			list.add(new NameValuePair("password",userpwd));
-			list.add(new NameValuePair("captcha", code));
+		 public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+			    List listinfo=new ArrayList();
+			    
+			      //--------------------数据中心推送状态----------------------
+			          PushState.state(userCard, "CHSI",100);
+			          //---------------------数据中心推送状态----------------------
+			         Map<String,Object> map=new HashMap<String, Object>();
+			      Map<String,Object> data=new HashMap<String, Object>();
+			      HttpSession session=request.getSession();
+			      WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
+			      
+			      WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+			      List<NameValuePair> list=new ArrayList<NameValuePair>();
+			      list.add(new NameValuePair("username",username));
+			      list.add(new NameValuePair("password",userpwd));
+			      list.add(new NameValuePair("captcha", code));
 
-			list.add(new NameValuePair("lt", lt));
-			list.add(new NameValuePair("_eventId","submit"));
-			list.add(new NameValuePair("submit","登  录"));
-			
-			webRequest.setHttpMethod(HttpMethod.POST);
-			webRequest.setRequestParameters(list);
-			 try {
-			HtmlPage pages= webClient.getPage(webRequest);
-			
-		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
-			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
-			logger.info("学信网登录成功，准备获取数据");
-		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
-	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
-	 	         data.put("info", table.asXml());
-	 	         map.put("data", data);
-	 	         map.put("Usernumber",username); 
-	 	         map.put("UserPwd",userpwd);
-	 	         map.put("Usercard",userCard); 
-	 	     
-				
-	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-	 	 
-			}else if(pages.asText().contains("您输入的用户名或密码有误")){
-		 		map.put("errorCode","0002");
-		 		map.put("errorInfo","您输入的用户名或密码有误");
-	
-			}else if(pages.asText().contains("图片验证码输入有误")){
-		 		map.put("errorCode","0001");
-		 		map.put("errorInfo","图片验证码输入有误");
-	
-			}
-		   	} catch (Exception e) {
-		   		System.out.print(e);
-		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","密码错误");	
-		   		}else{
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","网络错误");
-		   		}
- 	    		
-			}
-//			try {
-//				
-//	
-//	   		WebClient webClient= crawlerUtil.WebClientNice();
-//			HtmlPage page= webClient.getPage("https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check");
-//			HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("username");
-//			HtmlPasswordInput htmlPasswordInput= (HtmlPasswordInput) page.getElementById("password");
-//			htmlTextInput.setValueAttribute(Usernumber);
-//			htmlPasswordInput.setValueAttribute(UserPwd);
-//	        HtmlSubmitInput submit=page.getElementByName("submit"); 
-//	        HtmlPage pages=  submit.click();
-//	        Thread.sleep(3000);
-//	        if(!pages.asText().contains("您输入的用户名或密码有误")){
-//	        	if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-//	   	       	 System.out.println(pages.asXml());
-//		 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
-//		 	        Thread.sleep(3000);
-//		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
-//		 	         data.put("info", table.asXml());
-//		 	         map.put("data", data);
-//		 	         map.put("Usernumber",Usernumber); 
-//		 	         map.put("UserPwd",UserPwd);
-//		 	         map.put("Usercard",Usercard); 
-//		 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-//	        	}else{
-//	         		map.put("errorCode","0002");
-//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-//	        	}
-//	        	
-//	        	
-//
-//	        }else{
-//	        	if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-//	        		map.put("errorCode","0002");
-//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-//	        	}else{
-//	        		map.put("errorCode","0002");
-//	    			map.put("errorInfo","信息有误");
-//	        	}
-//	    
-//	        }
-//	       
-//	      
-//			} catch (Exception e) {
-//				map.put("errorCode","0003");
-//    			map.put("errorInfo","网络错误");
-//			}
-//	     
-//	   		
-	   		return map;	
-			
-		}
+			      list.add(new NameValuePair("lt", lt));
+			      list.add(new NameValuePair("_eventId","submit"));
+			      list.add(new NameValuePair("submit","登  录"));
+			      
+			      webRequest.setHttpMethod(HttpMethod.POST);
+			      webRequest.setRequestParameters(list);
+			       try {
+			      HtmlPage pages= webClient.getPage(webRequest);
+			      
+			    //  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+			      if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+			      logger.info("学信网登录成功，准备获取数据");
+			            HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
+//			             HtmlTable table=(HtmlTable)
+			         List infos= pagess.querySelectorAll(".mb-table");  
+			         
+			        for (int i = 0; i < infos.size(); i++) {
+			          HtmlTable table=(HtmlTable) infos.get(i);
+			          listinfo.add(table.asXml());
+			      }
+			              data.put("info",listinfo);
+			              map.put("data", data);
+			              map.put("Usernumber",username); 
+			              map.put("UserPwd",userpwd);
+			              map.put("Usercard",userCard); 
+			          
+			        
+			              map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright");
+			              if(map.toString().contains("无学历信息")){
+			            	  map.put("errorCode", "0000");
+			            	  map.put("errorInfo", "认证成功");
+			                  PushState.state(userCard, "CHSI",300);
+			              }
+			              PushState.state(userCard, "CHSI",300);
+			           //--------------------数据中心推送状态----------------------
+			  
+			             //---------------------数据中心推送状态----------------------
+			      }else if(pages.asText().contains("您输入的用户名或密码有误")){
+			         map.put("errorCode","0002");
+			         map.put("errorInfo","您输入的用户名或密码有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			  
+			      }else if(pages.asText().contains("图片验证码输入有误")){
+			         map.put("errorCode","0001");
+			         map.put("errorInfo","图片验证码输入有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			      }
+			         } catch (Exception e) {
+			           System.out.print(e);
+			           if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","密码错误");  
+			           }else{
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","网络错误");
+			           }
+			           
+			      }
+//			      try {
+//			        
+			//  
+//			         WebClient webClient= crawlerUtil.WebClientNice();
+//			      HtmlPage page= webClient.getPage("https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check");
+//			      HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("username");
+//			      HtmlPasswordInput htmlPasswordInput= (HtmlPasswordInput) page.getElementById("password");
+//			      htmlTextInput.setValueAttribute(Usernumber);
+//			      htmlPasswordInput.setValueAttribute(UserPwd);
+//			          HtmlSubmitInput submit=page.getElementByName("submit"); 
+//			          HtmlPage pages=  submit.click();
+//			          Thread.sleep(3000);
+//			          if(!pages.asText().contains("您输入的用户名或密码有误")){
+//			            if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+//			                 System.out.println(pages.asXml());
+//			               HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
+//			               Thread.sleep(3000);
+//			               HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
+//			                data.put("info", table.asXml());
+//			                map.put("data", data);
+//			                map.put("Usernumber",Usernumber); 
+//			                map.put("UserPwd",UserPwd);
+//			                map.put("Usercard",Usercard); 
+//			                map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright");
+//			            }else{
+//			               map.put("errorCode","0002");
+//			            map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+//			            }
+//			            
+//			            
+			//
+//			          }else{
+//			            if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
+//			              map.put("errorCode","0002");
+//			            map.put("errorInfo","出错次数达到上限,请明天再来尝试");
+//			            }else{
+//			              map.put("errorCode","0002");
+//			            map.put("errorInfo","信息有误");
+//			            }
+//			      
+//			          }
+//			         
+//			        
+//			      } catch (Exception e) {
+//			        map.put("errorCode","0003");
+//			          map.put("errorInfo","网络错误");
+//			      }
+//			       
+//			         
+			         return map;  
+			      
+			    }
 		/**
 		 * 淘宝信息认证
 		 * @param request
@@ -1330,6 +1386,8 @@ public class MobileService {
 			 webClient.getOptions().setThrowExceptionOnScriptError(false);
 			 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
 			 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			 PushState.state(userCard, "TaoBao",100);//认证中
+			 System.out.println("推送认证中=="+userCard);
 			 do {
 				 count++;
 				 WebRequest webRequest=new  WebRequest(new java.net.URL("https://login.taobao.com/member/login.jhtml"));
@@ -1389,20 +1447,31 @@ public class MobileService {
 							 	  map.put("userPwd", UserPwd);
 							 	  map.put("userCard", userCard);
 							 	  map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/taobaoPush");
-							 	  logger.warn("===淘宝"+map.toString());
+							 	  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+								    	PushState.state(userCard, "TaoBao",300);
+						                map.put("errorInfo","查询成功");
+						                map.put("errorCode","0000");
+						        }else{
+						            	//--------------------数据中心推送状态----------------------
+						            	PushState.state(userCard, "TaoBao",200);
+						            	//---------------------数据中心推送状态----------------------
+						                map.put("errorInfo","查询失败");
+						                map.put("errorCode","0001");
+						            }
+;							 	  logger.warn("===淘宝"+map.toString());
 						 }else{
 							 	flg=true;//如果没有继续爬取
 							
 								
 						 }
 						 if(flg==true&&count==maxcount){//如果满足条件 不再爬取，提示稍后再来
+							 PushState.state(userCard, "TaoBao",200);
 							 	map.put("errorCode","0002");
 				    			map.put("errorInfo","目前认证的人较多，请稍后再试");
 								logger.warn("读取收获地址table为空！请请检查");
-							
 						 }
 					 }else{
-						 
+						 PushState.state(userCard, "TaoBao",200);
 							HtmlDivision division= (HtmlDivision) pagess.getElementById("J_Message");
 							map.put("errorCode","0002");
 			    			map.put("errorInfo",division.asText());

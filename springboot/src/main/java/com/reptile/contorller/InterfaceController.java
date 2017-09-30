@@ -51,6 +51,7 @@ import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 import com.sun.jna.Library;
@@ -275,7 +276,7 @@ public class InterfaceController {
 //		u.setUserPassword(UserPassword);
 //		u.setUserCode(UserCode);
 		System.out.println("已经被访问了");
-		return mobileService.UnicomLogin(request, response,unicombean);
+		return mobileService.UnicomLogin(request, unicombean);
 	}
 
 	/**
@@ -695,67 +696,83 @@ public class InterfaceController {
 
 
 	}
-	@ResponseBody
-	@RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
-	public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
+		@ResponseBody
+	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
+	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
+	    System.out.println("---------------"+"");
+	    PushState.state(idCard, "TaoBao",100);
+	    Map<String, Object> map = new HashMap<String, Object>();
+	    Map<String, Object> data = new HashMap<String, Object>();
+	    HttpSession session=request.getSession();
+	    WebClient webClient = (WebClient) session.getAttribute(sessid);
+	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
+	    System.out.println(pages.getContent());
+	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
+	    if(jsonObject2.get("code").equals("10006")){
+	    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
+	    System.out.println(pageinfo.asXml());
+	    map.put("errorCode", "0000");
+	    map.put("errorInfo", "成功");
+	    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
+	    HtmlTable  table= pagev.querySelector(".tbl-main");
+	    System.out.println(table.asXml()+"收货地址");
+	    
+	    //现在开始爬取 支付宝信息
+	      WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
+	       List<NameValuePair> lists=new ArrayList<NameValuePair>();
+	       lists.add(new NameValuePair("goto","https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
+	       lists.add(new NameValuePair("tti","2119"));
+	       lists.add(new NameValuePair("isIframe","false"));
+	       lists.add(new NameValuePair("REMOTE_PCID_NAME","_seaside_gogo_pcid"));
+	       lists.add(new NameValuePair("is_sign","Y"));
+	       lists.add(new NameValuePair("security_activeX_enabled","false"));
+	       lists.add(new NameValuePair("securityId","web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
+	       requests.setHttpMethod(HttpMethod.POST);
+	       requests.setRequestParameters(lists);
+	       HtmlPage pageinfos= webClient.getPage(requests);
+	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
+	      
+	       data.put("info",table.asXml() );
+	       data.put("page",pageinfoss.asXml() );
+	       map.put("data", data);
+	       map.put("userName", "123");
+	       map.put("userPwd", "123");
+	       map.put("userCard", idCard);
+	       map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
+	      PushState.state(idCard, "TaoBao",300);
+	    }else if(jsonObject2.get("code").equals("10004")){
+	      PushState.state(idCard, "TaoBao",200);
+	      System.out.println("二维码过期");
+	      map.put("errorCode", "0001");
+	      map.put("errorInfo", "二维码过期");
+	    }else if(jsonObject2.get("code").equals("10001")) {
+	      if(map.size()==0){
+	        map.put("errorCode", "0001");
+	        map.put("errorInfo", "请勿乱操作");
+		      PushState.state(idCard, "TaoBao",200);
+	      }else{
+	        map.put("errorCode", "0000");
+	        map.put("errorInfo", "成功");
+	      }
+	      
+	    
+	      
+	      
+	    }else if(jsonObject2.get("code").equals("10000")){
+	      System.out.println("等待授权");
+	      map.put("errorCode", "0001");
+	      map.put("errorInfo", "等待授权");
+	      PushState.state(idCard, "TaoBao",200);
+	      
+	    }else{
+	    	PushState.state(idCard, "TaoBao",200);
+	      map.put("errorCode", "0001");
+	      map.put("errorInfo", "非法操作！请重试");
+	    }
+	    return map;
 
-		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> data = new HashMap<String, Object>();
-		HttpSession session=request.getSession();
-		WebClient webClient = (WebClient) session.getAttribute(sessid);
-		TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
-		System.out.println(pages.getContent());
-		JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
-		if(jsonObject2.get("code").equals("10006")){
-		HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
-		System.out.println(pageinfo.asXml());
-		map.put("errorCode", "0000");
-		map.put("errorInfo", "成功");
-		HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
-		HtmlTable  table= pagev.querySelector(".tbl-main");
-		System.out.println(table.asXml()+"收货地址");
-		
-		//现在开始爬取 支付宝信息
-		  WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
-	 	  List<NameValuePair> lists=new ArrayList<NameValuePair>();
-	 	  lists.add(new NameValuePair("goto","https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
-	 	  lists.add(new NameValuePair("tti","2119"));
-	 	  lists.add(new NameValuePair("isIframe","false"));
-	 	  lists.add(new NameValuePair("REMOTE_PCID_NAME","_seaside_gogo_pcid"));
-	 	  lists.add(new NameValuePair("is_sign","Y"));
-	 	  lists.add(new NameValuePair("security_activeX_enabled","false"));
-	 	  lists.add(new NameValuePair("securityId","web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
-	 	  requests.setHttpMethod(HttpMethod.POST);
-	 	  requests.setRequestParameters(lists);
-	 	  HtmlPage pageinfos= webClient.getPage(requests);
-	 	  HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
-	 	 
-	 	  data.put("info",table.asXml() );
-	 	  data.put("page",pageinfoss.asXml() );
-	 	  map.put("data", data);
-	 	  map.put("userName", "123");
-	 	  map.put("userPwd", "123");
-	 	  map.put("userCard", idCard);
-	 	  map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
-		
-		}else if(jsonObject2.get("code").equals("10004")){
-			System.out.println("二维码过期");
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "二维码过期");
-		}else if(jsonObject2.get("code").equals("10001")) {
-			System.out.println("扫码陈功");
-			map.put("errorCode", "0000");
-			map.put("errorInfo", "成功");
-		}else if(jsonObject2.get("code").equals("10000")){
-			System.out.println("等待授权");
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "等待授权");
-			
-		}
-		return map;
-
-		
-	}
+	    
+	  }
 	
 	/**
 	 * OA学信网
