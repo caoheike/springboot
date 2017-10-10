@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -24,10 +25,12 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
 
 @Service
 public class HuBeiProviceService {
-	
+	 @Autowired
+	  private application applications;
 	public static Map<String,Object> hubeicode(HttpServletRequest request,String PhoneCode,String PassPhone){
 		System.out.println("湖北电信");
 		  Map<String,Object> map = new HashMap<String,Object>();
@@ -77,7 +80,7 @@ public class HuBeiProviceService {
 		     		}else{
 		     			System.out.println(backtrack.asText()+"-----失败-----");
 		     			map.put("errorCode", "0001");
-		     			map.put("errorInfo", "服务跑偏了!");
+		     			map.put("errorInfo", "服务器异常!");
 		     		}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -168,7 +171,7 @@ public class HuBeiProviceService {
 				HUBEI.put("flag", 12);
 				HUBEI.put("UserPassword", PhonePass);
 				Resttemplate resttemplate = new Resttemplate();
-				map=resttemplate.SendMessage(HUBEI,"http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
+				map=resttemplate.SendMessage(HUBEI, applications.getSendip()+"/HSDC/message/telecomCallRecord");
 				if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 			    	PushState.state(PhoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
@@ -177,7 +180,7 @@ public class HuBeiProviceService {
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(PhoneNume, "callLog",200);
 	            	//---------------------数据中心推送状态----------------------
-	                map.put("errorInfo","服务器跑偏了");
+	                map.put("errorInfo","响应异常,请重试");
 	                map.put("errorCode","0001");
 	          }
 				webClient.close();

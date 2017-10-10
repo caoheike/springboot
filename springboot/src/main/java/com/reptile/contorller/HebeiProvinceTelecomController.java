@@ -22,14 +22,17 @@ public class HebeiProvinceTelecomController {
 	@Autowired
 	private  HebeiProvinceService hebei;
 	
+	 @ApiOperation(value = "1.发送短信验证码", notes = "参数：手机号,查询密码,姓名,身份证号")
 	 @ResponseBody
 	 @RequestMapping(value = "HebeiUsercard1", method = RequestMethod.POST)
-	 public  Map<String,Object> HebeiUsercard1(HttpServletRequest request ){
-		return hebei.HebeiUsercard1(request);
+	 //河北电信发送短信验证码
+	 public  Map<String,Object> HebeiUsercard1(HttpServletRequest request ,@RequestParam ("Usernum") String Usernum,@RequestParam ("UserPass") String UserPass,@RequestParam ("Username") String Username,@RequestParam ("Usercode") String Usercode){
+		return hebei.HebeiUsercard1(request,Usernum,UserPass,Username,Usercode);
 	 }
+	 @ApiOperation(value = "2.获得通话详单", notes = "参数：手机号,查询密码,短信验证码")
 	 @ResponseBody
 	 @RequestMapping(value = "HebeiUsercard2", method = RequestMethod.POST)
-	 public  Map<String,Object> HebeiUsercard2(HttpServletRequest request,@RequestParam ("Capth") String Capth  ){
-		return hebei.HebeiUsercard2(request,Capth);
+	 public  Map<String,Object> HebeiUsercard2(HttpServletRequest request,@RequestParam ("Usernum") String Usernum,@RequestParam ("UserPass") String UserPass,@RequestParam ("Capth") String Capth  ){
+		return hebei.HebeiUsercard2(request,Usernum,UserPass,Capth);
 	 }
 }

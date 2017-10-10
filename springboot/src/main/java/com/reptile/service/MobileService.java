@@ -1262,13 +1262,9 @@ public class MobileService {
 			              map.put("Usercard",userCard); 
 			          
 			        
-			              map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright");
-			              if(map.toString().contains("无学历信息")){
-			            	  map.put("errorCode", "0000");
-			            	  map.put("errorInfo", "认证成功");
-			                  PushState.state(userCard, "CHSI",300);
-			              }
-			              PushState.state(userCard, "CHSI",300);
+			              map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright",userCard);
+			           
+			  
 			           //--------------------数据中心推送状态----------------------
 			  
 			             //---------------------数据中心推送状态----------------------
