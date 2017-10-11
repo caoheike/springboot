@@ -227,26 +227,26 @@ public class InterfaceController {
 		return mobileService.MobileBelong(request, response, phone);
 	}
 
-	/**
-	 * 中国联通 获取验证码
-	 * 
-	 * @param request
-	 * @param response
-	 * @param unicombean
-	 * @return
-	 * @throws FailingHttpStatusCodeException
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 */
-	@ResponseBody
-	@RequestMapping("UnicomGetCode")
-	public Map<String, Object> UnicomGetCode(HttpServletRequest request,
-			HttpServletResponse response, UnicomBean unicombean)
-			throws FailingHttpStatusCodeException, MalformedURLException,
-			IOException {
-
-		return mobileService.GetCode(request, response, unicombean);
-	}
+//	/**
+//	 * 中国联通 获取验证码
+//	 * 
+//	 * @param request
+//	 * @param response
+//	 * @param unicombean
+//	 * @return
+//	 * @throws FailingHttpStatusCodeException
+//	 * @throws MalformedURLException
+//	 * @throws IOException
+//	 */
+//	@ResponseBody
+//	@RequestMapping("UnicomGetCode")
+//	public Map<String, Object> UnicomGetCode(HttpServletRequest request,
+//			HttpServletResponse response, UnicomBean unicombean)
+//			throws FailingHttpStatusCodeException, MalformedURLException,
+//			IOException {
+//
+//		return mobileService.GetCode(request, response, unicombean);
+//	}
 
 	/**
 	 * 联通登录接口
@@ -259,25 +259,25 @@ public class InterfaceController {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	@ResponseBody
-	@RequestMapping("UnicomLogin")
-	 public Map<String,Object> UnicomLogin(HttpServletRequest
-	 request,HttpServletResponse response,UnicomBean unicombean) throws
-	 FailingHttpStatusCodeException, MalformedURLException, IOException {
-//	public Map<String, Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,
-////			@RequestParam("Useriphone") String Useriphone,
-////			@RequestParam("UserPassword") String UserPassword,
-////			@RequestParam("UserCode") String UserCode)
-//			throws FailingHttpStatusCodeException, MalformedURLException,
-//			IOException {
-//
-//		UnicomBean u = new UnicomBean();
-//		u.setUseriphone(Useriphone);
-//		u.setUserPassword(UserPassword);
-//		u.setUserCode(UserCode);
-		System.out.println("已经被访问了");
-		return mobileService.UnicomLogin(request, unicombean);
-	}
+//	@ResponseBody
+//	@RequestMapping("UnicomLogin")
+//	 public Map<String,Object> UnicomLogin(HttpServletRequest
+//	 request,HttpServletResponse response,UnicomBean unicombean) throws
+//	 FailingHttpStatusCodeException, MalformedURLException, IOException {
+////	public Map<String, Object> UnicomLogin(HttpServletRequest request,HttpServletResponse response,
+//////			@RequestParam("Useriphone") String Useriphone,
+//////			@RequestParam("UserPassword") String UserPassword,
+//////			@RequestParam("UserCode") String UserCode)
+////			throws FailingHttpStatusCodeException, MalformedURLException,
+////			IOException {
+////
+////		UnicomBean u = new UnicomBean();
+////		u.setUseriphone(Useriphone);
+////		u.setUserPassword(UserPassword);
+////		u.setUserCode(UserCode);
+//		System.out.println("已经被访问了");
+//		return mobileService.UnicomLogin(request, unicombean);
+//	}
 
 	/**
 	 * 联通切换验证码

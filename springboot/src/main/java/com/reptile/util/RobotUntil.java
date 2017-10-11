@@ -49,6 +49,7 @@ public class RobotUntil {
             System.out.println(file1.getAbsolutePath());
             code = DamaDemo.getCode(file1.getAbsolutePath());
         } catch (Exception e) {
+        	driver.close();
             e.printStackTrace();
         }
         return code;
