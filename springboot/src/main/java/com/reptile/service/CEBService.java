@@ -129,8 +129,8 @@ public class CEBService {
 				Thread.sleep(2000);
 				loginform.findElement(ByClassName.className("login-style-bt")).click();
 				try {
-					PushState.state(UserCard, "bankBillFlow",200);
 					driver.findElement(ByClassName.className("popup-dialog-message"));
+					PushState.state(UserCard, "bankBillFlow",200);
 					map.put("errorInfo","操作异常请刷新重试");
 					map.put("errorCode","0002");
 					driver.close();

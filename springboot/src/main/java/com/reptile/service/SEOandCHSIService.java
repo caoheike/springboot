@@ -10,6 +10,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
@@ -55,7 +56,8 @@ public class SEOandCHSIService {
 	 private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	 private final static String CabCardloginImage="https://xyk.cebbank.com/mall/api/captcha";//光大银行信用卡登录页面图片验证码
 	 private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
-	 private final static String CabCardendnUrl="https://xyk.cebbank.com/mall/api/user/login?t=1503663657867";//登录提交页面
+	//
+	 private final static String CabCardendnUrl="https://xyk.cebbank.com/mall/api/user/login?t=1506425611968";//登录提交页面
 	 private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
 
 	 //根据企业邮箱查询企业信息
@@ -153,6 +155,7 @@ public class SEOandCHSIService {
 			ImageIO.write(bufferedImage , "png", new File(file,findImage));
 			 session.setAttribute("sessionWebClient-Cab", webclient);
 	       //  session.setAttribute("sessionLoginPage-Cab", loginPage);
+			 System.out.println(request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/CebloginImger/"+findImage);
 			data.put("ImagerUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/CebloginImger/"+findImage);
 			data.put("ResultInfo","查询成功");
 			data.put("ResultCode","0000");
@@ -219,8 +222,8 @@ public class SEOandCHSIService {
 				PushState.state(UserCard, "bankBillFlow",200);
 			 	//---------------------------数据中心推送状态----------------------------------
 				 e.printStackTrace();
-				 map.clear();
-				map.put("errorInfo","填写信息有误");
+				map.clear();
+				map.put("errorInfo","填写信息有误！请重新填写");
 				map.put("errorCode","0002");
 			}
          }else{
@@ -241,10 +244,7 @@ public class SEOandCHSIService {
         	  final HtmlPage loginPage = (HtmlPage) sessionLoginPage;
               final WebClient webclient = (WebClient) sessionWebClient;
         try{
-         	//---------------------------数据中心推送状态----------------------------------
-        	PushState.state(UserCard,"bankBillFlow", 100);
-			//---------------------------数据中心推送状态----------------------------------
-        	WebRequest requests =new WebRequest(new URL(CabCardendnUrl));
+     	WebRequest requests =new WebRequest(new URL(CabCardendnUrl));
         	System.out.println("--------------进入第三个方法----------------");
         	Thread.sleep(2000);
 			List<NameValuePair> lists= new ArrayList<NameValuePair>();
@@ -255,8 +255,8 @@ public class SEOandCHSIService {
 			lists.add(new NameValuePair("target", ""));
 			requests.setHttpMethod(HttpMethod.POST);
 			requests.setRequestParameters(lists);
-			UnexpectedPage page= webclient.getPage(requests);
-			JSONObject jsonObject=JSONObject.fromObject(page.getWebResponse().getContentAsString());
+        	HtmlPage page= webclient.getPage(requests);
+        	JSONObject jsonObject=JSONObject.fromObject(page.getWebResponse().getContentAsString());
 			System.out.println("进入已出账单");
 			HtmlPage ccenterPage=webclient.getPage(CabCardIndexpage);
 			HtmlTable  table= (HtmlTable) ccenterPage.getByXPath("//table[@class='tab_one']").get(0);

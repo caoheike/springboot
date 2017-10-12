@@ -2,6 +2,8 @@ package com.reptile.util;
 
 
 
+import java.io.UnsupportedEncodingException;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
@@ -9,7 +11,7 @@ public class CYDMDemo
 {
 	// 下载云打码DLL http://yundama.com/apidoc/YDM_SDK.html#DLL
 	// yundamaAPI 32位, yundamaAPI-x64 64位
-	public static String	DLLPATH		= "yundamaAPI";
+	public static String	DLLPATH		= "C://yundamaAPI.dll";
 
 	public interface YDM extends Library
 	{
@@ -37,8 +39,7 @@ public class CYDMDemo
 	}
 	
 	
-	public static void main(String[] args) throws Exception
-	{
+	public  String getcode(String filename) throws UnsupportedEncodingException{
 		// 注意这里是普通会员账号，不是开发者账号，注册地址 http://www.yundama.com/index/reg/user
 		// 开发者可以联系客服领取免费调试题分
 		String username = "caoheike";
@@ -52,7 +53,7 @@ public class CYDMDemo
 		String 	appkey	= "22cc5376925e9387a23cf797cb9ba745";
 		
 		// 图片路径
-		String	imagepath	= "C:\\888.png";
+		String	imagepath	= "C:\\"+filename+".png";
 
 		//  例：1004表示4位字母数字，不同类型收费不同。请准确填写，否则影响识别率。在此查询所有类型 http://www.yundama.com/price.html
 		int codetype = 1004;
@@ -72,9 +73,12 @@ public class CYDMDemo
 			// 返回其他错误代码请查询 http://www.yundama.com/apidoc/YDM_ErrorCode.html
 			System.out.println("识别返回代码:" + cid);
 			System.out.println("识别返回结果:" + strResult); 
-
+			return strResult;  
 		}else{
 			System.out.println("登录失败，错误代码为：" + uid);
-		}  
+		}
+		return "";
+	
 	}
+	
 }
