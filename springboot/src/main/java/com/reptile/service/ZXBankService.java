@@ -245,7 +245,11 @@ public class ZXBankService {
                 httpClient.executeMethod(getMethod);
                 getMethod.getParams().setContentCharset("utf-8");
                 System.out.println(getMethod.getResponseBodyAsString());
-
+                if (getMethod.getResponseBodyAsString().contains("您还未绑卡，暂不支持业务办理")) {
+                    map.put("errorCode", "0003");
+                    map.put("errorInfo", "您还未绑卡，暂不支持业务办理");
+                    return map;
+                }
                 //查询信用卡额度及可提现额度
                 PostMethod method = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/settingManage.do?func=getCreditLimit");
                 method.setRequestHeader("Cookie", coks);
@@ -329,9 +333,9 @@ public class ZXBankService {
                 sendMap.put("idcard", userCard);
                 sendMap.put("backtype", "CCB");
                 sendMap.put("html", dataList);
-                sendMap.put("fixedEd",fixedEd);
+                sendMap.put("fixedEd", fixedEd);
 
-                logger.warn(sendMap.toString()+"   mrlu");
+                logger.warn(sendMap.toString() + "   mrlu");
 
                 //推送信息
                 Map<String, Object> mapTui = new HashMap<String, Object>();
