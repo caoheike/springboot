@@ -42,7 +42,7 @@ public class MyCYDMDemo {
 		
 		public static  Map<String,Object> Imagev(String imagepath) throws Exception {
 			
-			Map<String,Object> map=new HashMap<>();
+			Map<String,Object> map=new HashMap<String,Object>();
 			
 			
 			// 注意这里是普通会员账号，不是开发者账号，注册地址 http://www.yundama.com/index/reg/user

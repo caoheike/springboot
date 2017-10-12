@@ -377,7 +377,7 @@ public class MobileService {
     
     /**
 	 * 接口验证码
-	 * @param mobileBean
+	 * @param
 	 * @param request
 	 * @param response
 	 * @throws FailingHttpStatusCodeException
@@ -702,6 +702,7 @@ public class MobileService {
 			   	   webClient.getCookieManager().addCookie(c);
 			  
 			    }
+
 			    webClient.addRequestHeader("Accept","text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01");
 			    webClient.addRequestHeader("Accept-Encoding","gzip, deflate, br");
 			    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
@@ -713,6 +714,7 @@ public class MobileService {
 			    HtmlPage page= webClient.getPage(unicombean.Loginurl(unicombean,uvc));
 			System.out.println(page.asText());
 				JSONObject json=JSONObject.fromObject(page.asText());	
+
 				String resultCode=json.get("resultCode").toString();
 				if(!json.toString().contains("验证码")||!json.get("msg").equals("验证码错误。")){
 					if(resultCode.equals("0000")){
@@ -1360,7 +1362,7 @@ public class MobileService {
 		 * @param request
 		 * @param Usernumber
 		 * @param UserPwd
-		 * @param Usercard
+		 * @param
 		 * @return
 		 * @throws FailingHttpStatusCodeException
 		 * @throws MalformedURLException

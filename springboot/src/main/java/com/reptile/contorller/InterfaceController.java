@@ -1,49 +1,11 @@
 package com.reptile.contorller;
 
-import io.swagger.annotations.ApiOperation;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.portlet.ModelAndView;
-
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.Result;
+import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import com.reptile.model.MobileBean;
@@ -56,6 +18,30 @@ import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.portlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("interface")
@@ -125,8 +111,8 @@ public class InterfaceController {
 	 * 
 	 * @param mobileBean
 	 * @param request
-	 * @param responsl
-	 * @param userType
+	 * @param
+	 * @param
 	 * @return
 	 * @throws FailingHttpStatusCodeException
 	 * @throws MalformedURLException
@@ -184,7 +170,7 @@ public class InterfaceController {
 	/**
 	 * 移动刷新验证码
 	 * 
-	 * @param password
+	 * @param
 	 * @return
 	 * @throws FailingHttpStatusCodeException
 	 * @throws MalformedURLException
@@ -276,7 +262,9 @@ public class InterfaceController {
 //		u.setUserPassword(UserPassword);
 //		u.setUserCode(UserCode);
 		System.out.println("已经被访问了");
-		return mobileService.UnicomLogin(request, unicombean);
+
+		return mobileService.UnicomLogin(request,unicombean);
+
 	}
 
 	/**
@@ -329,7 +317,7 @@ public class InterfaceController {
 	/**
 	 * Rsa加密
 	 * 
-	 * @param password
+	 * @param
 	 * @return
 	 * @throws FailingHttpStatusCodeException
 	 * @throws MalformedURLException
