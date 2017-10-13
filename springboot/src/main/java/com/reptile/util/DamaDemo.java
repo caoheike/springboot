@@ -7,7 +7,8 @@ import com.sun.jna.Native;
 public class DamaDemo {
     // 下载云打码DLL http://yundama.com/apidoc/YDM_SDK.html#DLL
     // yundamaAPI 32位, yundamaAPI-x64 64位
-    public static String DLLPATH = "C://yundamaAPI.dll";
+    public static String DLLPATH = "yundamaAPI-x64";
+//    public static String DLLPATH = "yundamaAPI";
 
     public interface YDM extends Library {
         YDM INSTANCE = (YDM) Native.loadLibrary(DLLPATH, YDM.class);
