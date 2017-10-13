@@ -48,9 +48,7 @@ public class GlobalUnicomController {
     @ResponseBody
     @RequestMapping(value = "UnicomGetCode",method = RequestMethod.POST)
     public Map<String, Object> UnicomGetCode(HttpServletRequest request,
-			HttpServletResponse response, @RequestParam("Useriphone") String Useriphone)
-            throws FailingHttpStatusCodeException, MalformedURLException,
-            IOException, InterruptedException {
+			HttpServletResponse response, @RequestParam("Useriphone") String Useriphone){
         return mobileService.GetCode(request, response, Useriphone);
     }
 
@@ -70,8 +68,9 @@ public class GlobalUnicomController {
     @ResponseBody
     @RequestMapping(value = "UnicomLogin",method = RequestMethod.POST)
     public Map<String, Object> UnicomLogin(HttpServletRequest request,@RequestParam("Useriphone") String Useriphone,
-                                           @RequestParam("password") String password,@RequestParam("UserCode") String UserCode)throws Exception {
+                                           @RequestParam("password") String password,@RequestParam("UserCode") String UserCode){
         System.out.println("已经被访问了");
+        
         return mobileService.UnicomLogin(request,Useriphone, password,UserCode);
     }
     
@@ -88,11 +87,9 @@ public class GlobalUnicomController {
     @ApiOperation(value = "0.3获取验证码",notes = "")
     @ResponseBody
     @RequestMapping(value = "getCodeTwo",method = RequestMethod.POST)
-    public Map<String, Object> GetCodeTwo(HttpServletRequest request)
-            throws FailingHttpStatusCodeException, MalformedURLException,
-            IOException, InterruptedException {
-    	
+    public Map<String, Object> GetCodeTwo(HttpServletRequest request){
         return mobileService.GetCodeTwo(request);
+        
     }
     /**
      * 获取详单
@@ -108,8 +105,7 @@ public class GlobalUnicomController {
     @RequestMapping(value = "getDetials",method = RequestMethod.POST)
     public Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("Useriphone")String Useriphone,
     		@RequestParam("UserPassword")String UserPassword,
-    		@RequestParam("code")String code) throws IOException{
-    	
+    		@RequestParam("code")String code) {
     	
 				return mobileService.getDetial(request, Useriphone, UserPassword, code);
     	
