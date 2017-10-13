@@ -19,6 +19,7 @@ public class GetMonth {
 		 cal.set(Calendar.MONTH, nowMonth-1);
 		 cal.add(Calendar.MONTH, -num);//从现在算，之前一个月,如果是2个月，那么-1-----》改为-2
 		return sdf.format(cal.getTime());
+			
 	}
 
 	/**
@@ -33,6 +34,20 @@ public class GetMonth {
 		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyyMM" );
 		return sdf.format(date);
 	}	
+	
+	
+	/**
+	 * 获得今天
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+
+	public static  String today(){
+		Date date=new Date();
+		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyyMMdd" );
+		return sdf.format(date);
+	}
 	/**
 	 * 获得上个月
 	 * @param year

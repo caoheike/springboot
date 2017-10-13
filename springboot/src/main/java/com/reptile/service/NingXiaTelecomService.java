@@ -53,7 +53,8 @@ public class NingXiaTelecomService {
 			// account.clear();
 			account.sendKeys(phoneNumber);
 			Thread.sleep(500);
-
+				
+			//driver.switchTo().frame("name");
 			WebElement passWord = form.findElement(By.id("txtShowPwd"));
 			passWord.click();
 			WebElement passWord1 = form.findElement(By.id("txtPassword"));

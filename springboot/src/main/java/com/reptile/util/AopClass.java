@@ -98,7 +98,7 @@ public class AopClass {
         if (className.contains("CreditController")) {
             dataMap.put("approveName", "creditInvestigation");
         }
-        if (className.contains("ZXBankController")) {
+        if (className.contains("BankController")) {
             dataMap.put("approveName", "bankBillFlow");
         }
 
