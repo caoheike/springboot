@@ -26,12 +26,12 @@ public class RobotUntil {
     }
 
     //截取验证码
-    public static String getImgFileByScreenshot(WebElement element, WebDriver driver,File file) {
+    public static String getImgFileByScreenshot(WebElement element, WebDriver driver,File file) throws Exception {
         if (element == null) throw new NullPointerException("图片元素失败");
         WrapsDriver wrapsDriver = (WrapsDriver) element; //截取整个页面
         File scrFile = ((TakesScreenshot) wrapsDriver.getWrappedDriver()).getScreenshotAs(OutputType.FILE);
         String code = "";
-        try {
+
             BufferedImage img = ImageIO.read(scrFile);
             int screenshotWidth = img.getWidth();
             org.openqa.selenium.Dimension dimension = driver.manage().window().getSize(); //获取浏览器尺寸与截图的尺寸
@@ -48,10 +48,7 @@ public class RobotUntil {
             ImageIO.write(dest, "png", file1);
             System.out.println(file1.getAbsolutePath());
             code = DamaDemo.getCode(file1.getAbsolutePath());
-        } catch (Exception e) {
-        	driver.close();
-            e.printStackTrace();
-        }
+
         return code;
     }
 }

@@ -36,19 +36,13 @@ public class ChinaBankService {
         driver.get("https://ebsnew.boc.cn/boc15/login.html");
         String ss1 = cardNumber;
         try {
-//        driver.findElement(By.id("txt_username_79443")).click();
-//        for (int i = 0; i < ss1.length(); i++) {
-//            keyPress(robot, VKMapping.map.get(String.valueOf(ss1.charAt(i))));
-//            Thread.sleep(10);
-//        }
             List<WebElement> input = driver.findElements(By.className("input"));
             for (int i = 0; i < input.size(); i++) {
                 if (input.get(i).getAttribute("v") != null && input.get(i).getAttribute("v").contains("用户名")) {
                     input.get(i).sendKeys(ss1);
                 }
             }
-//
-//        driver.findElement(By.id("txt_username_79443")).sendKeys(ss1);
+
             Thread.sleep(1000);
             Actions action = new Actions(driver);
 
@@ -61,9 +55,6 @@ public class ChinaBankService {
                 driver.close();
                 return map;
             }
-
-//        driver.findElement(By.id("input_txt_50531_740884")).click();
-
             ss1 = userPwd;
             List<WebElement> input1 = driver.findElements(By.tagName("input"));
             for (int i = 0; i < input1.size(); i++) {
@@ -71,23 +62,18 @@ public class ChinaBankService {
                     input1.get(i).sendKeys(ss1);
                 }
             }
-//        driver.findElement(By.id("input_txt_50531_740884")).sendKeys(ss1);
             Thread.sleep(1000);
-//        for (int i = 0; i < ss1.length(); i++) {
-////            VirtualKeyBoard.KeyPress(ss1.charAt(i));
-//            keyPress(robot, VKMapping.map.get(String.valueOf(ss1.charAt(i))));
-//            Thread.sleep(500);
-//            System.out.println(i);
-//        }
-
-            WebElement imageCode = driver.findElement(By.id("captcha_creditCard"));
+            WebElement imageCode=null;
+            try{
+                imageCode = driver.findElement(By.id("captcha_creditCard"));
+            }catch (Exception e){
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "请输入正确的信用卡号");
+                driver.close();
+                return map;
+            }
             String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver,file);
 
-//        driver.findElement(By.id("txt_captcha_740885")).click();
-//        for (int i = 0; i < code.length(); i++) {
-//            keyPress(robot, VKMapping.map.get(String.valueOf(code.toLowerCase().charAt(i))));
-//            Thread.sleep(10);
-//        }
             List<WebElement> input2 = driver.findElements(By.className("input"));
             for (int i = 0; i < input2.size(); i++) {
                 if (input2.get(i).getAttribute("v") != null && input2.get(i).getAttribute("v").contains("验证码") &&
@@ -95,8 +81,8 @@ public class ChinaBankService {
                     input2.get(i).sendKeys(code);
                 }
             }
-//        driver.findElement(By.id("txt_captcha_740885")).sendKeys(code);
-            Thread.sleep(1000);
+
+            Thread.sleep(2000);
             List<WebElement> elements = driver.findElements(By.className("btn"));
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getText().contains("查询")) {
@@ -105,7 +91,6 @@ public class ChinaBankService {
 //                break;
                 }
             }
-//        driver.findElement(By.id("btn_49_740887")).click();
             Thread.sleep(5000);
 
             msgContent = driver.findElement(By.id("msgContent")).getText();
@@ -127,9 +112,6 @@ public class ChinaBankService {
                 }
             }
             Thread.sleep(2000);
-//        driver.findElement(By.id("div_billedtrans_740846")).click();
-//        Thread.sleep(1000);
-
             List<WebElement> listDom = driver.findElements(By.className("sel"));
             String id = "";
             Thread.sleep(1000);
@@ -153,7 +135,6 @@ public class ChinaBankService {
                         btn.get(j).click();
                     }
                 }
-//            driver.findElement(By.id("btn_49_740751")).click();
                 Thread.sleep(3000);
                 String pageSource = driver.getPageSource();
                 System.out.println(pageSource);
