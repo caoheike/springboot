@@ -879,7 +879,12 @@ public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone
 	JSONObject json3=JSONObject.fromObject(newPage.getContent());	
 	   String resultCode=json3.get("flag").toString();
 	     if(resultCode.equals("00")){
+	    	 
+	    	 
+	    	 
+	    	 
 	    	 System.out.println("验证码成功，可查询");
+	    	 PushState.state(Useriphone, "callLog",100);
 //=======================获取详单================================================      		
 	        		webClient.addRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
 				    webClient.addRequestHeader("Accept-Encoding","gzip, deflate");
@@ -929,11 +934,21 @@ public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone
 					map.put("UserIphone", Useriphone);
 					map.put("UserPassword", UserPassword);
 				    //System.out.println("---haha"+array.toString()+"haha");
-				    //map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
-				    
-				    map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
+				    map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
+				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+				    	PushState.state(Useriphone, "callLog",300);
+		                map.put("errorInfo","推送成功");
+		                map.put("errorCode","0000");
+		            }else{
+		            	//--------------------数据中心推送状态----------------------
+		            	PushState.state(Useriphone, "callLog",200);
+		            	//---------------------数据中心推送状态----------------------
+		                map.put("errorInfo","推送失败");
+		                map.put("errorCode","0001");
+		            }
+//				    map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
 	     }else{
-	    	
+	    	PushState.state(Useriphone, "callLog",200);
 	    	map.put("errorCode", "0001");
 	    	map.put("errorInfo", json3.get("error").toString());
 	    	 System.out.println(json3.get("error").toString()); 
@@ -1349,77 +1364,157 @@ public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone
 			return map;
 			
 		}
-		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-			//--------------------数据中心推送状态----------------------
-        	PushState.state(userCard, "CHSI",100);
-        	//---------------------数据中心推送状态----------------------
-	   		Map<String,Object> map=new HashMap<String, Object>();
-			Map<String,Object> data=new HashMap<String, Object>();
-			HttpSession session=request.getSession();
-			WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
-			
-			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
-			List<NameValuePair> list=new ArrayList<NameValuePair>();
-			list.add(new NameValuePair("username",username));
-			list.add(new NameValuePair("password",userpwd));
-			list.add(new NameValuePair("captcha", code));
+//		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+//			//--------------------数据中心推送状态----------------------
+//        	PushState.state(userCard, "CHSI",100);
+//        	//---------------------数据中心推送状态----------------------
+//	   		Map<String,Object> map=new HashMap<String, Object>();
+//			Map<String,Object> data=new HashMap<String, Object>();
+//			HttpSession session=request.getSession();
+//			WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
+//			
+//			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+//			List<NameValuePair> list=new ArrayList<NameValuePair>();
+//			list.add(new NameValuePair("username",username));
+//			list.add(new NameValuePair("password",userpwd));
+//			list.add(new NameValuePair("captcha", code));
+//
+//			list.add(new NameValuePair("lt", lt));
+//			list.add(new NameValuePair("_eventId","submit"));
+//			list.add(new NameValuePair("submit","登  录"));
+//			
+//			webRequest.setHttpMethod(HttpMethod.POST);
+//			webRequest.setRequestParameters(list);
+//			 try {
+//			HtmlPage pages= webClient.getPage(webRequest);
+//			
+//		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+//			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+//			logger.info("学信网登录成功，准备获取数据");
+//		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
+//	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
+//	 	         data.put("info", table.asXml());
+//	 	         map.put("data", data);
+//	 	         map.put("Usernumber",username); 
+//	 	         map.put("UserPwd",userpwd);
+//	 	         map.put("Usercard",userCard); 
+//	 	     
+//				
+//	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
+//	 	      //--------------------数据中心推送状态----------------------
+//	         	PushState.state(userCard, "CHSI",300);
+//	         	//---------------------数据中心推送状态----------------------
+//			}else if(pages.asText().contains("您输入的用户名或密码有误")){
+//		 		map.put("errorCode","0002");
+//		 		map.put("errorInfo","您输入的用户名或密码有误");
+//		 		  //--------------------数据中心推送状态----------------------
+//	         	PushState.state(userCard, "CHSI",200);
+//	         	//---------------------数据中心推送状态----------------------
+//	
+//			}else if(pages.asText().contains("图片验证码输入有误")){
+//		 		map.put("errorCode","0001");
+//		 		map.put("errorInfo","图片验证码输入有误");
+//		 		  //--------------------数据中心推送状态----------------------
+//	         	PushState.state(userCard, "CHSI",200);
+//	         	//---------------------数据中心推送状态----------------------
+//			}
+//		   	} catch (Exception e) {
+//		   		System.out.print(e);
+//		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+//		   		  //--------------------数据中心推送状态----------------------
+//		         	PushState.state(userCard, "CHSI",200);
+//		         	//---------------------数据中心推送状态----------------------
+//		   			map.put("errorCode","0002");
+//			 		map.put("errorInfo","密码错误");	
+//		   		}else{
+//		   		  //--------------------数据中心推送状态----------------------
+//		         	PushState.state(userCard, "CHSI",200);
+//		         	//---------------------数据中心推送状态----------------------
+//		   			map.put("errorCode","0002");
+//			 		map.put("errorInfo","网络错误");
+//		   		}
+// 	    		
+//			}
+		
+		 public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+			    List listinfo=new ArrayList();
+			    
+			      //--------------------数据中心推送状态----------------------
+			          PushState.state(userCard, "CHSI",100);
+			          //---------------------数据中心推送状态----------------------
+			         Map<String,Object> map=new HashMap<String, Object>();
+			      Map<String,Object> data=new HashMap<String, Object>();
+			      HttpSession session=request.getSession();
+			      WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
+			      
+			      WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+			      List<NameValuePair> list=new ArrayList<NameValuePair>();
+			      list.add(new NameValuePair("username",username));
+			      list.add(new NameValuePair("password",userpwd));
+			      list.add(new NameValuePair("captcha", code));
 
-			list.add(new NameValuePair("lt", lt));
-			list.add(new NameValuePair("_eventId","submit"));
-			list.add(new NameValuePair("submit","登  录"));
-			
-			webRequest.setHttpMethod(HttpMethod.POST);
-			webRequest.setRequestParameters(list);
-			 try {
-			HtmlPage pages= webClient.getPage(webRequest);
-			
-		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
-			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
-			logger.info("学信网登录成功，准备获取数据");
-		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
-	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
-	 	         data.put("info", table.asXml());
-	 	         map.put("data", data);
-	 	         map.put("Usernumber",username); 
-	 	         map.put("UserPwd",userpwd);
-	 	         map.put("Usercard",userCard); 
-	 	     
-				
-	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-	 	      //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",300);
-	         	//---------------------数据中心推送状态----------------------
-			}else if(pages.asText().contains("您输入的用户名或密码有误")){
-		 		map.put("errorCode","0002");
-		 		map.put("errorInfo","您输入的用户名或密码有误");
-		 		  //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",200);
-	         	//---------------------数据中心推送状态----------------------
-	
-			}else if(pages.asText().contains("图片验证码输入有误")){
-		 		map.put("errorCode","0001");
-		 		map.put("errorInfo","图片验证码输入有误");
-		 		  //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",200);
-	         	//---------------------数据中心推送状态----------------------
-			}
-		   	} catch (Exception e) {
-		   		System.out.print(e);
-		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
-		   		  //--------------------数据中心推送状态----------------------
-		         	PushState.state(userCard, "CHSI",200);
-		         	//---------------------数据中心推送状态----------------------
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","密码错误");	
-		   		}else{
-		   		  //--------------------数据中心推送状态----------------------
-		         	PushState.state(userCard, "CHSI",200);
-		         	//---------------------数据中心推送状态----------------------
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","网络错误");
-		   		}
- 	    		
-			}
+			      list.add(new NameValuePair("lt", lt));
+			      list.add(new NameValuePair("_eventId","submit"));
+			      list.add(new NameValuePair("submit","登  录"));
+			      
+			      webRequest.setHttpMethod(HttpMethod.POST);
+			      webRequest.setRequestParameters(list);
+			       try {
+			      HtmlPage pages= webClient.getPage(webRequest);
+			      
+			    //  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+			      if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+			      logger.info("学信网登录成功，准备获取数据");
+			            HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
+//			             HtmlTable table=(HtmlTable)
+			         List infos= pagess.querySelectorAll(".mb-table");  
+			         
+			        for (int i = 0; i < infos.size(); i++) {
+			          HtmlTable table=(HtmlTable) infos.get(i);
+			          listinfo.add(table.asXml());
+			      }
+			              data.put("info",listinfo);
+			              map.put("data", data);
+			              map.put("Usernumber",username); 
+			              map.put("UserPwd",userpwd);
+			              map.put("Usercard",userCard); 
+			          
+			        
+			              map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",300);
+			             //---------------------数据中心推送状态----------------------
+			      }else if(pages.asText().contains("您输入的用户名或密码有误")){
+			         map.put("errorCode","0002");
+			         map.put("errorInfo","您输入的用户名或密码有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			  
+			      }else if(pages.asText().contains("图片验证码输入有误")){
+			         map.put("errorCode","0001");
+			         map.put("errorInfo","图片验证码输入有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			      }
+			         } catch (Exception e) {
+			           System.out.print(e);
+			           if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","密码错误");  
+			           }else{
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","网络错误");
+			           }
+			           
+			      }
 //			try {
 //				
 //	

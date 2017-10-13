@@ -25,14 +25,13 @@ public class ConstructionService {
 	  private PushState PushState;
 	  
 	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass){
-		  
+		  Map<String,Object>map=new HashMap<String,Object>();
 		  System.out.println(Thread.currentThread().getName());  
-			System.setProperty("webdriver.chrome.driver", "F:/ie/chromedriver.exe");
+			System.setProperty("webdriver.chrome.driver", "D:/ie/chromedriver.exe");
 			WebDriver driver = new ChromeDriver();
 			driver.get("http://creditcard.ccb.com/tran/WCCMainPlatV5?CCB_IBSVersion=V5&SERVLET_NAME=WCCMainPlatV5&TXCODE=NE3050");
-			driver.switchTo().frame("itemiframe");
-			Map<String,Object>map=new HashMap<String,Object>();
 			try {
+				driver.switchTo().frame("itemiframe");
 				driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 //				Thread.sleep(2000);
 				WebElement Acc_no_temp= driver.findElement(By.id("ACC_NO_temp"));
@@ -110,6 +109,8 @@ public class ConstructionService {
 					map.put("errorInfo","获取账单失败");
 					map.put("errorCode","0002");
 			}
+			
+		
 		return map;
 		  
 	  }
