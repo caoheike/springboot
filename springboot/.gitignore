@@ -1,5 +1,5 @@
 
 /target/
-/test
-/.idea
+/test/
+.idea/
 
