@@ -28,7 +28,6 @@ public class ChinaBankController {
     @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("userCard") String userCard,
                                             @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd) throws Exception {
-
         Map<String,Object> map=new HashMap<String,Object>();
         synchronized (service){
             map= service.getDetailMes(request, userCard, cardNumber, userPwd);
