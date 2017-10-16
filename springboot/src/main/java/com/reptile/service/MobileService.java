@@ -937,13 +937,130 @@ public Map<String, Object> GetCodeTwo(HttpServletRequest request) {
  * @throws IOException
  */
 
+//public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone,
+//		String UserPassword,
+//		String code){
+//	  Map<String,Object> map=new HashMap<String,Object>();
+//      
+//      List listsy=new ArrayList();
+//      String info = "";
+//	HttpSession session = request.getSession();
+//	WebClient webClient=(WebClient) session.getAttribute("webClientTwo");
+//	if(webClient==null){
+//		map.put("errorCode", "0001");
+//	    map.put("errorInfo", "请先获取验证码！");
+//		return map;
+//	}
+//
+//	//System.out.println("验证码发送成功");
+////=======================确定验证码===============================================  
+//  String verCode="http://iservice.10010.com/e3/static/query/verificationSubmit?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001";
+// 
+//try {
+//	 WebRequest webRequest2 = new WebRequest(new URL(verCode));
+//	
+//  webRequest2.setHttpMethod(HttpMethod.POST);  
+//  List<NameValuePair> paramer2=new ArrayList<NameValuePair>();
+//	    paramer2.add(new NameValuePair("_",System.currentTimeMillis()+""));
+//	    paramer2.add(new NameValuePair("accessURL","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001"));
+//	    paramer2.add(new NameValuePair("menuid","000100030001"));  
+//	    paramer2.add(new NameValuePair("menuId","000100030001"));
+//	    paramer2.add(new NameValuePair("inputcode",code));
+//	  
+//	webRequest2.setRequestParameters(paramer2); 
+//	TextPage newPage= webClient.getPage(webRequest2);
+//	//System.out.println(newPage.getContent());
+//	
+//	JSONObject json3=JSONObject.fromObject(newPage.getContent());	
+//	   String resultCode=json3.get("flag").toString();
+//	     if(resultCode.equals("00")){
+//	    	 System.out.println("验证码成功，可查询");
+//	    	 PushState.state(Useriphone,"callLog",100);
+////=======================获取详单================================================      		
+//	        		webClient.addRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
+//				    webClient.addRequestHeader("Accept-Encoding","gzip, deflate");
+//				    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
+//				    webClient.addRequestHeader("Connection","keep-alive");
+//				    //webClient.addRequestHeader("Content-Length","56");
+//				    webClient.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+//				    webClient.addRequestHeader("Host","iservice.10010.com");
+//				    webClient.addRequestHeader("Origin","http://iservice.10010.com");
+//				    webClient.addRequestHeader("Referer","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001");
+//				    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
+//				    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
+//				    JSONArray array=new JSONArray();
+//					String begin=GetMonth.nowMonth()+"01";//开始是时间
+//					String end=GetMonth.today();//结束时间
+//					int year=new Integer(begin.substring(0, 4));
+//					int month=new Integer(begin.substring(4,
+//					 6));//获取月  作为获取每个月的最后一天的参数
+//					String beforMonth="";//上月
+//					for (int i = 1; i < 7; i++) {
+//						Map<String,Object> dataMap=new HashMap<String,Object>();
+//						System.out.println(begin+"*****"+end);
+//						WebRequest webRequestss=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/callDetail?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001"));
+//						List<NameValuePair> lists=new ArrayList<NameValuePair>();
+//						lists.add(new NameValuePair("pageNo","1"));
+//						lists.add(new NameValuePair("pageSize","2000"));
+//						lists.add(new NameValuePair("beginDate",begin));
+//						lists.add(new NameValuePair("endDate",end));
+//						webRequestss.setHttpMethod(HttpMethod.POST);
+//						webRequestss.setRequestParameters(lists);
+//						TextPage chekpages=webClient.getPage(webRequestss);
+//						
+//						System.out.println(chekpages.getContent()+"----vvv");
+//					
+//						beforMonth=GetMonth.beforMon(year,month,i);//上i月
+//						begin=beforMonth+"01";
+//						int y=new Integer(begin.substring(0, 4));
+//						int m=new Integer(begin.substring(4,6));
+//						end=GetMonth.lastDate(y, m);//一个月的最后一天
+//						dataMap.put("item", chekpages.getContent());
+//						listsy.add(dataMap);
+//					}	
+//					map.put("errorCode", "0000");
+//			    	map.put("errorInfo", "查询成功");
+//			    	
+//					map.put("data", listsy);
+//					map.put("UserIphone", Useriphone);
+//					map.put("UserPassword", UserPassword);
+//				    //map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
+//					map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
+//				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+//				    	    PushState.state(Useriphone, "callLog",300);
+//			                map.put("errorInfo","推送成功");
+//			                map.put("errorCode","0000");
+//		            }else{
+//			            	//--------------------数据中心推送状态----------------------
+//			            	PushState.state(Useriphone, "callLog",200);
+//			            	//---------------------数据中心推送状态----------------------
+//			                map.put("errorInfo","推送失败");
+//			                map.put("errorCode","0001");
+//		            }   				        
+//	     }else{
+//	    	PushState.state(Useriphone,"callLog",200);
+//	    	map.put("errorCode", "0001");
+//	    	map.put("errorInfo", json3.get("error").toString());
+//	    	 System.out.println(json3.get("error").toString()); 
+//	     }
+//     } catch (Exception e) {
+//    	    PushState.state(Useriphone,"callLog",200);
+//	    	map.put("errorCode", "0001");
+//	    	map.put("errorInfo", "网络异常");
+//	        e.printStackTrace();
+//   }  	
+//    return map;
+//
+//	}
+
+
 public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone,
 		String UserPassword,
 		String code){
 	  Map<String,Object> map=new HashMap<String,Object>();
-      
-      List listsy=new ArrayList();
-      String info = "";
+     
+     List listsy=new ArrayList();
+     String info = "";
 	HttpSession session = request.getSession();
 	WebClient webClient=(WebClient) session.getAttribute("webClientTwo");
 	if(webClient==null){
@@ -954,13 +1071,13 @@ public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone
 
 	//System.out.println("验证码发送成功");
 //=======================确定验证码===============================================  
-  String verCode="http://iservice.10010.com/e3/static/query/verificationSubmit?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001";
- 
+ String verCode="http://iservice.10010.com/e3/static/query/verificationSubmit?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001";
+
 try {
-	 WebRequest webRequest2 = new WebRequest(new URL(verCode));
+	    WebRequest webRequest2 = new WebRequest(new URL(verCode));
 	
-  webRequest2.setHttpMethod(HttpMethod.POST);  
-  List<NameValuePair> paramer2=new ArrayList<NameValuePair>();
+       webRequest2.setHttpMethod(HttpMethod.POST);  
+       List<NameValuePair> paramer2=new ArrayList<NameValuePair>();
 	    paramer2.add(new NameValuePair("_",System.currentTimeMillis()+""));
 	    paramer2.add(new NameValuePair("accessURL","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001"));
 	    paramer2.add(new NameValuePair("menuid","000100030001"));  
@@ -1024,8 +1141,8 @@ try {
 					map.put("data", listsy);
 					map.put("UserIphone", Useriphone);
 					map.put("UserPassword", UserPassword);
-				    //map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
-					map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
+				    map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
+					//map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
 				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 				    	    PushState.state(Useriphone, "callLog",300);
 			                map.put("errorInfo","推送成功");
@@ -1038,18 +1155,35 @@ try {
 			                map.put("errorCode","0001");
 		            }   				        
 	     }else{
-	    	PushState.state(Useriphone,"callLog",200);
-	    	map.put("errorCode", "0001");
-	    	map.put("errorInfo", json3.get("error").toString());
+	    	 PushState.state(Useriphone,"callLog",200);
 	    	 System.out.println(json3.get("error").toString()); 
+	    	 if(resultCode.equals("01")){
+	    		 map.put("errorCode", "0001");
+		    	 map.put("errorInfo", "验证码已过期，请从新获取新的验证码");  
+	    		 
+	    	 }else if(resultCode.equals("02")){
+	    		 map.put("errorCode", "0001");
+		    	 map.put("errorInfo", "校验失败"); 
+	    	 }else if(resultCode.equals("03")){
+	    		 map.put("errorCode", "0001");
+		    	 map.put("errorInfo", "验证码发送失败！"); 
+	    		 
+	    	 }else if(resultCode.equals("04")){
+	    		 map.put("errorCode", "0001");
+		    	 map.put("errorInfo", "验证码不能为空");  
+	    	 }else{
+	    	 map.put("errorCode", "0001");
+	    	 map.put("errorInfo", json3.get("error").toString());
+	    	
+	    	 }
 	     }
-     } catch (Exception e) {
-    	    PushState.state(Useriphone,"callLog",200);
+    } catch (Exception e) {
+   	    PushState.state(Useriphone,"callLog",200);
 	    	map.put("errorCode", "0001");
 	    	map.put("errorInfo", "网络异常");
 	        e.printStackTrace();
-   }  	
-    return map;
+  }  	
+   return map;
 
 	}
  
@@ -1459,129 +1593,87 @@ try {
 			return map;
 			
 		}
-		public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-			//--------------------数据中心推送状态----------------------
-        	PushState.state(userCard, "CHSI",100);
-        	//---------------------数据中心推送状态----------------------
-	   		Map<String,Object> map=new HashMap<String, Object>();
-			Map<String,Object> data=new HashMap<String, Object>();
-			HttpSession session=request.getSession();
-			WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
-			
-			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
-			List<NameValuePair> list=new ArrayList<NameValuePair>();
-			list.add(new NameValuePair("username",username));
-			list.add(new NameValuePair("password",userpwd));
-			list.add(new NameValuePair("captcha", code));
+		 public Map<String,Object> AcademicLogin(HttpServletRequest request,String username,String userpwd,String code,String lt,String userCard) throws Exception {
+			    List listinfo=new ArrayList();
+			    
+			      //--------------------数据中心推送状态----------------------
+			          PushState.state(userCard, "CHSI",100);
+			          //---------------------数据中心推送状态----------------------
+			         Map<String,Object> map=new HashMap<String, Object>();
+			      Map<String,Object> data=new HashMap<String, Object>();
+			      HttpSession session=request.getSession();
+			      WebClient webClient= (WebClient) session.getAttribute("xuexinWebClient");
+			      
+			      WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+			      List<NameValuePair> list=new ArrayList<NameValuePair>();
+			      list.add(new NameValuePair("username",username));
+			      list.add(new NameValuePair("password",userpwd));
+			      list.add(new NameValuePair("captcha", code));
 
-			list.add(new NameValuePair("lt", lt));
-			list.add(new NameValuePair("_eventId","submit"));
-			list.add(new NameValuePair("submit","登  录"));
-			
-			webRequest.setHttpMethod(HttpMethod.POST);
-			webRequest.setRequestParameters(list);
-			 try {
-			HtmlPage pages= webClient.getPage(webRequest);
-			
-		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
-			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
-			logger.info("学信网登录成功，准备获取数据");
-		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
-	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
-	 	         data.put("info", table.asXml());
-	 	         map.put("data", data);
-	 	         map.put("Usernumber",username); 
-	 	         map.put("UserPwd",userpwd);
-	 	         map.put("Usercard",userCard); 
-	 	     
-				
-	 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-	 	      //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",300);
-	         	//---------------------数据中心推送状态----------------------
-			}else if(pages.asText().contains("您输入的用户名或密码有误")){
-		 		map.put("errorCode","0002");
-		 		map.put("errorInfo","您输入的用户名或密码有误");
-		 		  //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",200);
-	         	//---------------------数据中心推送状态----------------------
-	
-			}else if(pages.asText().contains("图片验证码输入有误")){
-		 		map.put("errorCode","0001");
-		 		map.put("errorInfo","图片验证码输入有误");
-		 		  //--------------------数据中心推送状态----------------------
-	         	PushState.state(userCard, "CHSI",200);
-	         	//---------------------数据中心推送状态----------------------
-			}
-		   	} catch (Exception e) {
-		   		System.out.print(e);
-		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
-		   		  //--------------------数据中心推送状态----------------------
-		         	PushState.state(userCard, "CHSI",200);
-		         	//---------------------数据中心推送状态----------------------
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","密码错误");	
-		   		}else{
-		   		  //--------------------数据中心推送状态----------------------
-		         	PushState.state(userCard, "CHSI",200);
-		         	//---------------------数据中心推送状态----------------------
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","网络错误");
-		   		}
- 	    		
-			}
-//			try {
-//				
-//	
-//	   		WebClient webClient= crawlerUtil.WebClientNice();
-//			HtmlPage page= webClient.getPage("https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check");
-//			HtmlTextInput htmlTextInput= (HtmlTextInput) page.getElementById("username");
-//			HtmlPasswordInput htmlPasswordInput= (HtmlPasswordInput) page.getElementById("password");
-//			htmlTextInput.setValueAttribute(Usernumber);
-//			htmlPasswordInput.setValueAttribute(UserPwd);
-//	        HtmlSubmitInput submit=page.getElementByName("submit"); 
-//	        HtmlPage pages=  submit.click();
-//	        Thread.sleep(3000);
-//	        if(!pages.asText().contains("您输入的用户名或密码有误")){
-//	        	if(!pages.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-//	   	       	 System.out.println(pages.asXml());
-//		 	        HtmlPage pagess= webClient.getPage("https://my.chsi.com.cn/archive/gdjy/xj/show.action");
-//		 	        Thread.sleep(3000);
-//		 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");    
-//		 	         data.put("info", table.asXml());
-//		 	         map.put("data", data);
-//		 	         map.put("Usernumber",Usernumber); 
-//		 	         map.put("UserPwd",UserPwd);
-//		 	         map.put("Usercard",Usercard); 
-//		 	         map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/hireright");
-//	        	}else{
-//	         		map.put("errorCode","0002");
-//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-//	        	}
-//	        	
-//	        	
-//
-//	        }else{
-//	        	if(page.asText().contains("为保障您的账号安全，请输入验证码后重新登录")){
-//	        		map.put("errorCode","0002");
-//	    			map.put("errorInfo","出错次数达到上限,请明天再来尝试");
-//	        	}else{
-//	        		map.put("errorCode","0002");
-//	    			map.put("errorInfo","信息有误");
-//	        	}
-//	    
-//	        }
-//	       
-//	      
-//			} catch (Exception e) {
-//				map.put("errorCode","0003");
-//    			map.put("errorInfo","网络错误");
-//			}
-//	     
-//	   		
-	   		return map;	
-			
-		}
+			      list.add(new NameValuePair("lt", lt));
+			      list.add(new NameValuePair("_eventId","submit"));
+			      list.add(new NameValuePair("submit","登  录"));
+			      
+			      webRequest.setHttpMethod(HttpMethod.POST);
+			      webRequest.setRequestParameters(list);
+			       try {
+			      HtmlPage pages= webClient.getPage(webRequest);
+			      
+			    //  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+			      if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+			      logger.info("学信网登录成功，准备获取数据");
+			            HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
+//			             HtmlTable table=(HtmlTable)
+			         List infos= pagess.querySelectorAll(".mb-table");  
+			         
+			        for (int i = 0; i < infos.size(); i++) {
+			          HtmlTable table=(HtmlTable) infos.get(i);
+			          listinfo.add(table.asXml());
+			      }
+			              data.put("info",listinfo);
+			              map.put("data", data);
+			              map.put("Usernumber",username); 
+			              map.put("UserPwd",userpwd);
+			              map.put("Usercard",userCard); 
+			          
+			        
+			              map=resttemplate.SendMessage(map,   application.getSendip()+"/HSDC/authcode/hireright");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",300);
+			             //---------------------数据中心推送状态----------------------
+			      }else if(pages.asText().contains("您输入的用户名或密码有误")){
+			         map.put("errorCode","0002");
+			         map.put("errorInfo","您输入的用户名或密码有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			  
+			      }else if(pages.asText().contains("图片验证码输入有误")){
+			         map.put("errorCode","0001");
+			         map.put("errorInfo","图片验证码输入有误");
+			           //--------------------数据中心推送状态----------------------
+			             PushState.state(userCard, "CHSI",200);
+			             //---------------------数据中心推送状态----------------------
+			      }
+			         } catch (Exception e) {
+			           System.out.print(e);
+			           if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","密码错误");  
+			           }else{
+			             //--------------------数据中心推送状态----------------------
+			               PushState.state(userCard, "CHSI",200);
+			               //---------------------数据中心推送状态----------------------
+			             map.put("errorCode","0002");
+			           map.put("errorInfo","网络错误");
+			           }
+			           
+			      }
+				return map;
+		 }
 		/**
 		 * 淘宝信息认证
 		 * @param request

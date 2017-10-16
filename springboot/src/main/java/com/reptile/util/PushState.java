@@ -21,6 +21,6 @@ public class PushState {
 		Resttemplate resttemplatestati = new Resttemplate();
 		
 	map1=resttemplatestati.SendMessage(data, "http://192.168.3.4:8081/HSDC/authcode/Autherized");
-//		map1=resttemplatestati.SendMessage(data, "http://10.1.1.12:8080/HSDC/authcode/Autherized");
+		//map1=resttemplatestati.SendMessage(data, "http://10.1.1.12:8080/HSDC/authcode/Autherized");
 	}
 }

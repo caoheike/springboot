@@ -464,8 +464,7 @@ public class InterfaceController {
 			@RequestParam("UserPwd") String UserPwd,
 			@RequestParam("Usercard") String Usercard,
 			@RequestParam("lt") String lt, @RequestParam("code") String code)
-			throws FailingHttpStatusCodeException, MalformedURLException,
-			IOException, InterruptedException {
+			throws Exception {
 		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code,
 				lt, Usercard);
 
