@@ -133,8 +133,13 @@ public class TelecomLoadVerificationService {
             Thread.sleep(2000);
             if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
-                map.put("errorCode", "0007");
-                map.put("errorInfo", divErr);
+                if(divErr.contains("验证码")){
+                    map.put("errorCode", "0008");
+                    map.put("errorInfo", "服务器繁忙，请刷新后重试");
+                }else{
+                    map.put("errorCode", "0007");
+                    map.put("errorInfo", divErr);
+                }
             } else {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "登陆成功");
