@@ -1014,8 +1014,8 @@ try {
 					map.put("data", listsy);
 					map.put("UserIphone", Useriphone);
 					map.put("UserPassword", UserPassword);
-				    map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
-				   //map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
+				    //map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
+				  map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
 				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 				    	    PushState.state(Useriphone, "callLog",300);
 			                map.put("errorInfo","推送成功");
