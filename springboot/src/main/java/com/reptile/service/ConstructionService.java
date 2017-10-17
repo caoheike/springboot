@@ -1,5 +1,6 @@
 package com.reptile.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +13,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.os.WindowsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
+import sun.print.resources.serviceui;
 @Service
 public class ConstructionService {
 	@Autowired
@@ -31,6 +35,7 @@ public class ConstructionService {
 			WebDriver driver = new ChromeDriver();
 			driver.get("http://creditcard.ccb.com/tran/WCCMainPlatV5?CCB_IBSVersion=V5&SERVLET_NAME=WCCMainPlatV5&TXCODE=NE3050");
 			try {
+				
 				driver.switchTo().frame("itemiframe");
 				driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 //				Thread.sleep(2000);
@@ -91,6 +96,8 @@ public class ConstructionService {
 		                map.put("errorInfo","推送成功");
 		                map.put("errorCode","0000");
 		                driver.close();
+		                driver.quit();
+		               
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
 		            	PushState.state(UserCard, "bankBillFlow",200);
@@ -98,19 +105,20 @@ public class ConstructionService {
 		                map.put("errorInfo","推送失败");
 		                map.put("errorCode","0001");
 		            	driver.close();
+		            	driver.quit();
 		            }
 			} catch (Exception e) { 
 				// TODO Auto-generated catch block
 					e.printStackTrace();
 					PushState.state(UserCard, "bankBillFlow",200);
 					driver.close();
+					driver.quit();
 					e.printStackTrace();
 					map.clear();
 					map.put("errorInfo","获取账单失败");
 					map.put("errorCode","0002");
 			}
 			
-		
 		return map;
 		  
 	  }

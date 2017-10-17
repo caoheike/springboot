@@ -24,6 +24,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.os.WindowsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,7 @@ public class CEBService {
 		public Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
 			 Map<String, Object> map=new HashMap<String, Object>();
 			 System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+
 			 WebDriver driver = new InternetExplorerDriver();
 			try {
 				driver.get(CabCardloginUrl);
@@ -85,6 +87,7 @@ public class CEBService {
 				List<WebElement> button =	loginform.findElements(By.tagName("button"));
 				button.get(0).click();
 				try{
+					
 					Thread.sleep(3000);
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					System.out.println("报错！！！");
@@ -92,6 +95,11 @@ public class CEBService {
 					map.put("errorCode","0002");
 					System.out.println(map);
 					driver.close();
+					
+//					WindowsUtils.tryToKillByName("IEDriverServer.exe");
+//					System.out.println("---------IEDriverServer.exe---------");
+//			        WindowsUtils.tryToKillByName("iexplore.exe");
+//			    	System.out.println("---------iexplore.exe---------");
 				}catch(Exception e){
 					HttpSession session=request.getSession();//获得session
 					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
@@ -100,6 +108,8 @@ public class CEBService {
 					System.out.println(map);
 				}
 			} catch (Exception e) {
+				WindowsUtils.tryToKillByName("IEDriverServer.exe");
+		        WindowsUtils.tryToKillByName("iexplore.exe");
 				e.printStackTrace();
 				map.put("errorInfo","服务繁忙！请稍后再试");
 				map.put("errorCode","0001");
