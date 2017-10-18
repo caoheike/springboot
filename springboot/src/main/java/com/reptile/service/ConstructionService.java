@@ -14,6 +14,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.os.WindowsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class ConstructionService {
 	@Autowired
 	  private application applications;
 	  private PushState PushState;
-	  
+	  private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
 	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass){
 		  Map<String,Object>map=new HashMap<String,Object>();
 		  System.out.println(Thread.currentThread().getName());  
@@ -53,6 +55,7 @@ public class ConstructionService {
 					PushState.state(UserCard, "bankBillFlow",200);
 					driver.close();
 					map.clear();
+					logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
 					map.put("errorInfo","账号或卡号与账户类型不匹配");
 					map.put("errorCode","0002");
 					return map;
@@ -100,6 +103,7 @@ public class ConstructionService {
 		               
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
+		            	logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
 		            	PushState.state(UserCard, "bankBillFlow",200);
 		            	//---------------------数据中心推送状态----------------------
 		                map.put("errorInfo","推送失败");
@@ -111,6 +115,7 @@ public class ConstructionService {
 				// TODO Auto-generated catch block
 					e.printStackTrace();
 					PushState.state(UserCard, "bankBillFlow",200);
+					logger.warn("建设银行账单获取失败"+UserCard);
 					driver.close();
 					driver.quit();
 					e.printStackTrace();

@@ -25,6 +25,8 @@ import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.os.WindowsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,7 @@ public class CEBService {
 	 @Autowired
 	  private application applications;
 	  private PushState PushState;
-	  
+	  private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
 	  private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
 		public Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
@@ -91,6 +93,7 @@ public class CEBService {
 					Thread.sleep(3000);
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					System.out.println("报错！！！");
+					logger.info("光大银行登录时输入有误"+Usercard);
 					map.put("errorInfo","异常服务请重新尝试");
 					map.put("errorCode","0002");
 					System.out.println(map);
@@ -111,6 +114,7 @@ public class CEBService {
 				WindowsUtils.tryToKillByName("IEDriverServer.exe");
 		        WindowsUtils.tryToKillByName("iexplore.exe");
 				e.printStackTrace();
+				logger.info("光大银行登录时发送验证码失败"+Usercard);
 				map.put("errorInfo","服务繁忙！请稍后再试");
 				map.put("errorCode","0001");
 				driver.close();
@@ -127,6 +131,7 @@ public class CEBService {
 				final WebDriver driver = (WebDriver) sessiondriver;
 				if(sessiondriver==null){
 					PushState.state(UserCard, "bankBillFlow",200);
+					logger.warn("连接超时！请重新获取验证码"+UserCard);
 					map.put("errorInfo","连接超时！请重新获取验证码");
 					map.put("errorCode","0002");
 					driver.close();
@@ -141,6 +146,7 @@ public class CEBService {
 				try {
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					PushState.state(UserCard, "bankBillFlow",200);
+					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","操作异常请刷新重试");
 					map.put("errorCode","0002");
 					driver.close();
@@ -189,6 +195,7 @@ public class CEBService {
 		            	//--------------------数据中心推送状态----------------------
 		            	PushState.state(UserCard, "bankBillFlow",200);
 		            	//---------------------数据中心推送状态----------------------
+		            	logger.warn("光大银行账单推送失败"+UserCard);
 		                map.put("errorInfo","查询失败");
 		                map.put("errorCode","0001");
 		            	driver.close();
@@ -202,6 +209,7 @@ public class CEBService {
 				//---------------------------数据中心推送状态----------------------------------
 				 e.printStackTrace();
 				 map.clear();
+				 logger.warn("光大银行账单推送失败"+UserCard);
 				 map.put("errorInfo","获取账单失败");
 				 map.put("errorCode","0002");
 			}
@@ -209,6 +217,10 @@ public class CEBService {
 			return map;
 			
 		}
+		
+		
+		
+		
 		
 		//获取图片验证码
 		public Map<String, Object> CEBImage(HttpServletRequest request) {

@@ -5,17 +5,24 @@ import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
+import com.reptile.util.DamaDemo;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -79,11 +86,11 @@ public class TelecomLoadVerificationService {
 
             System.out.println(page.getWebResponse().getContentAsString());
 
-            if (result.contains("true")) {
-                map.put("errorCode", "0001");
-                map.put("errorInfo", "密码错误3次，请休息一会再来！");
-                return map;
-            }
+//            if (result.contains("true")) {
+//                map.put("errorCode", "0001");
+//                map.put("errorInfo", "密码错误3次，请休息一会再来！");
+//                return map;
+//            }
             JSONObject jsonObject = JSONObject.fromObject(result);
             map.put("errorCode", "0000");
             map.put("errorInfo", "操作成功");
@@ -104,16 +111,35 @@ public class TelecomLoadVerificationService {
 
             WebClient webClient = new WebClientFactory().getWebClient();
             HtmlPage page = webClient.getPage("http://login.189.cn/web/login");
+            page.getElementById("txtAccount").focus();
             page.getElementById("txtAccount").setAttribute("value", userName);
+            page.getElementById("txtAccount").blur();
             page.getElementById("txtPassword").setAttribute("value", servePwd);
+
+            String realPath = request.getServletContext().getRealPath("/imageFile");
+            File file=new File(realPath);
+            if(!file.exists()){
+                file.mkdirs();
+            }
+            String fileName="loadImageCode"+System.currentTimeMillis()+".png";
+            HtmlImage imgCaptcha = (HtmlImage) page.getElementById("imgCaptcha");
+            BufferedImage read =   imgCaptcha.getImageReader().read(0);
+            ImageIO.write(read,"png",new File(file,fileName));
+            String code = DamaDemo.getCode(realPath + "/" + fileName);
+            HtmlInput txtCaptcha = (HtmlInput) page.getElementById("txtCaptcha");
+            txtCaptcha.setValueAttribute(code.toLowerCase());
             HtmlPage loginbtn = page.getElementById("loginbtn").click();
 
-            System.out.println(loginbtn.asXml());
             Thread.sleep(2000);
             if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
-                map.put("errorCode", "0007");
-                map.put("errorInfo", divErr);
+                if(divErr.contains("验证码")){
+                    map.put("errorCode", "0008");
+                    map.put("errorInfo", "服务器繁忙，请刷新后重试");
+                }else{
+                    map.put("errorCode", "0007");
+                    map.put("errorInfo", divErr);
+                }
             } else {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "登陆成功");

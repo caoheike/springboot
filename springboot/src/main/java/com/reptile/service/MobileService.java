@@ -88,6 +88,7 @@ import com.reptile.util.htmlUtil;
 public class MobileService {
 
 	@Autowired
+	
 	private application application;
 	private PushState PushState;
  	public Map<String,Object> mapWeb=new HashMap<String,Object>();
@@ -700,7 +701,6 @@ public class MobileService {
 	        WebClient webClient = new WebClientFactory().getWebClient();
 			try {
 				HtmlPage loginPage=	webClient.getPage("https://uac.10010.com/portal/homeLogin");
-			
 			Thread.sleep(500);
 	        String url="https://uac.10010.com/portal/Service/CheckNeedVerify?callback=jQuery17209863190566662376_"+System.currentTimeMillis()+"&userName="+Useriphone+"&pwdType=01&_="+System.currentTimeMillis();
 	        UnexpectedPage page = webClient.getPage(url);
@@ -710,13 +710,21 @@ public class MobileService {
 	       String tips=	resultInfo.split("\\(")[1].split("\\)")[0];
 	       JSONObject jsons=JSONObject.fromObject(tips);	
  		   String tipInfo=jsons.get("resultCode").toString();	
+ 		   String tip=jsons.get("ckCode").toString();
 	        if(tipInfo.equals("true")){
-	    	   System.out.println("需要图形验证码");
-	    	   session.setAttribute("isTrue", "true");
+	    	   //System.out.println("需要图形验证码");
+	    	     session.setAttribute("isTrue", "true");
 	        }else{
 	        	 session.setAttribute("isTrue", "false");
-	        	System.out.println("不需要 图形验证码");
-	        }      	
+	        	//System.out.println("不需要 图形验证码");
+	        }     
+	        if(tip.contains("1")){
+	        	map.put("errorCode", "0000");
+				map.put("errorInfo", "此次不需要验证码");
+				session.setAttribute("isTrueCk", "false");
+	        }else{
+	        System.out.println("需要验证码");	
+	        session.setAttribute("isTrueCk", "true");
 	        String url2="https://uac.10010.com/portal/Service/SendCkMSG?callback=jQuery17209863190566662376_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&mobile="+Useriphone+"&_="+System.currentTimeMillis();
 	        HtmlPage page1 = webClient.getPage(url2);
 	        Thread.sleep(500);
@@ -724,7 +732,7 @@ public class MobileService {
 	        if(result.contains("0000")){
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "验证码发送成功");
-				session.setAttribute("webClientone", webClient);
+				//session.setAttribute("webClientone", webClient);
 				
 			}else{
 				JSONObject json=JSONObject.fromObject(result.split("\\(")[1].split("\\)")[0]);
@@ -738,6 +746,8 @@ public class MobileService {
 				}
 						
 		    }	
+	        }
+	        session.setAttribute("webClientone", webClient);
 			} catch (Exception e) {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络异常");
@@ -755,92 +765,137 @@ public class MobileService {
  
 	 public Map<String,Object> UnicomLogin(HttpServletRequest request,String Useriphone,String password,
 		String code) {
-        Map<String,Object> map=new HashMap<String,Object>();
-    try {
-		HttpSession session = request.getSession();
-		WebClient webClient=(WebClient) session.getAttribute("webClientone");
-		if(webClient==null){
-			map.put("errorCode", "0001");
-		    map.put("errorInfo", "请先获取短信验证码！");
-			return map;
-		}	
-	  String isTrue=(String) session.getAttribute("isTrue");
-	  WebRequest request1=null;
-	  if(isTrue.equals("true")){
-		//===========需要图形验证码===========================
-		//1.读取页面验证码图片到本地
-		    String imageUrl="https://uac.10010.com/portal/Service/CreateImage?t="+System.currentTimeMillis();//动态码url
-		    UnexpectedPage Imagepage=  webClient.getPage(imageUrl);
-		    BufferedImage bufferedImage  = ImageIO.read(Imagepage.getInputStream());
-			String findImage="gd"+System.currentTimeMillis()+".png";
-			ImageIO.write(bufferedImage , "png", new File("C:\\Shimage",findImage)); 
-	        //2.转码
-			Map<String,Object> aa= SHCode.getCode("C:\\Shimage\\"+findImage);
-	        String catpy=  (String) aa.get("strResult");//转码后的动态码
-	        //System.out.println(catpy+"-***-*-");	  
-	        WebRequest webRequest3=new WebRequest(new URL("https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&verifyCode="+catpy+"&verifyType=1&_="+System.currentTimeMillis()));
-		    webRequest3.setHttpMethod(HttpMethod.GET);
-		    webRequest3.setAdditionalHeader("Referer", "https://uac.10010.com/portal/homeLogin");
-		    HtmlPage page2 = webClient.getPage(webRequest3);
-		       String resultInfo=page2.getWebResponse().getContentAsString();
-		       String tips=	resultInfo.split("\\(")[1].split("\\)")[0];
-		       JSONObject jsons=JSONObject.fromObject(tips);	
-	 		   String tipInfo=jsons.get("resultCode").toString();
-	 		  if(tipInfo.equals("true")){//图形验证码正确可以发包登陆
-		    	   System.out.println("图形验证码正确");
-		    	   Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-				    String uvc="";
-				    for (Cookie c : cookies) {  
-		
-				   	   if (c.getName().equals("uacverifykey")) {
-						   uvc= c.getValue();
-						  }
-				   	   webClient.getCookieManager().addCookie(c);
-				  
-				    }  
-				    request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&verifyCode="+catpy+"&uvc="+uvc+"&redirectType=01&rememberMe=1&verifyCKCode="+code+"&_="+System.currentTimeMillis()));
-					
-		        }else{
-		        	
-		        	System.out.println("图形验证码 错误");
-		        	map.put("errorCode", "0001");
-					map.put("errorInfo","图形验证码 错误");
-					return map;
-		        }
-	      }else{			
-	//===========不需要图形验证码===========================		
-		request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17209863190566662376_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&redirectType=01&rememberMe=1&verifyCKCode="+code+"&_="+System.currentTimeMillis()));
-		
-	     }
-	    request1.setHttpMethod(HttpMethod.GET);
-		request1.setAdditionalHeader("Referer", "https://uac.10010.com/portal/homeLogin");
-		HtmlPage page2 = webClient.getPage(request1);
-		Thread.sleep(500);
-        String tip=  page2.asText();
-        String tips=tip.split("\\(")[1].split("\\)")[0];
-        System.out.println(tips);
-	     JSONObject json=JSONObject.fromObject(tips);	
- 		String tipInfo=json.get("resultCode").toString();	
-    	if(tipInfo.equals("0000")){
-    		map.put("errorCode", "0000");
-			map.put("errorInfo", "登陆成功！");
-			session.setAttribute("webClientSucce", webClient);
-    	}else{	
-    		System.out.println(json.get("msg").toString());
-    		map.put("errorCode", "0001");
-    		if(json.get("msg").toString().contains("codefail")){
-    			map.put("errorInfo", "验证码错误");	
-    		}else{
-    			map.put("errorInfo", json.get("msg").toString());
-    		}
-    	}
-	
-	} catch (Exception e) {
-	map.put("errorInfo", "0001");
-	map.put("errorInfo", "网络异常");
-	System.out.println(e);
-	}
-		return map;
+	        Map<String,Object> map=new HashMap<String,Object>();
+	        try {
+	    		HttpSession session = request.getSession();
+	    		WebClient webClient=(WebClient) session.getAttribute("webClientone");
+	    		if(webClient==null){
+	    			map.put("errorCode", "0001");
+	    		    map.put("errorInfo", "网络异常！");
+	    			return map;
+	    		}	
+	    	  String isTrue=(String) session.getAttribute("isTrue");//图形验证码
+	    	  String isTrueCk=(String) session.getAttribute("isTrueCk");//短信验证码
+	    	  if(isTrueCk==null){
+	    		    map.put("errorCode", "0001");
+	    		    map.put("errorInfo", "请先获取验证码！");
+	    			return map;  
+	    	  }
+	    	  WebRequest request1=null;
+	    	//===========需要图形验证码================================== 
+	    	  if(isTrue.equals("true")){
+	    		//1.读取页面验证码图片到本地
+	    		    String imageUrl="https://uac.10010.com/portal/Service/CreateImage?t="+System.currentTimeMillis();//动态码url
+	    		    UnexpectedPage Imagepage=  webClient.getPage(imageUrl);
+	    		    BufferedImage bufferedImage  = ImageIO.read(Imagepage.getInputStream());
+	    			String findImage="gd"+System.currentTimeMillis()+".png";
+	    			ImageIO.write(bufferedImage , "png", new File("C:\\Shimage",findImage)); 
+	    	        //2.转码
+	    			Map<String,Object> aa= SHCode.getCode("C:\\Shimage\\"+findImage);
+	    	        String catpy=  (String) aa.get("strResult");//转码后的动态码
+	    	        //System.out.println(catpy+"-***-*-");	  
+	    	        WebRequest webRequest3=new WebRequest(new URL("https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&verifyCode="+catpy+"&verifyType=1&_="+System.currentTimeMillis()));
+	    		    webRequest3.setHttpMethod(HttpMethod.GET);
+	    		    webRequest3.setAdditionalHeader("Referer", "https://uac.10010.com/portal/homeLogin");
+	    		    HtmlPage page2 = webClient.getPage(webRequest3);
+	    		       String resultInfo=page2.getWebResponse().getContentAsString();
+	    		       String tips=	resultInfo.split("\\(")[1].split("\\)")[0];
+	    		       JSONObject jsons=JSONObject.fromObject(tips);	
+	    	 		   String tipInfo=jsons.get("resultCode").toString();
+	    		  if(isTrueCk.equals("true")){
+	    			//===========需要图形验证码，短信验证码=========================== 
+	    			 
+	    		 		  if(tipInfo.equals("true")){//图形验证码正确可以发包登陆
+	    			    	   System.out.println("图形验证码正确");
+	    			    	   Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+	    					    String uvc="";
+	    					    for (Cookie c : cookies) {  
+	    					   	   if (c.getName().equals("uacverifykey")) {
+	    							   uvc= c.getValue();
+	    							  }
+	    					   	   webClient.getCookieManager().addCookie(c);
+	    					  
+	    					    }  
+	    					    request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&verifyCode="+catpy+"&uvc="+uvc+"&redirectType=01&rememberMe=1&verifyCKCode="+code+"&_="+System.currentTimeMillis()));
+	    						
+	    			        }else{
+	    			        	
+	    			        	System.out.println("图形验证码 错误");
+	    			        	map.put("errorCode", "0001");
+	    						map.put("errorInfo","验证码 错误");
+	    						return map;
+	    			        }
+	    		  }else{
+	    			  
+	    			    	//===========需要图形验证码，不需要短信===========================
+	    			  if(tipInfo.equals("true")){//图形验证码正确可以发包登陆
+	    		    	   System.out.println("图形验证码正确");
+	    		    	   Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+	    				    String uvc="";
+	    				    for (Cookie c : cookies) {  
+	    				   	   if (c.getName().equals("uacverifykey")) {
+	    						   uvc= c.getValue();
+	    						  }
+	    				   	   webClient.getCookieManager().addCookie(c);
+	    				  
+	    				    }  
+	    				    request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&verifyCode="+catpy+"&uvc="+uvc+"&redirectType=01&rememberMe=1&_="+System.currentTimeMillis()));
+	    					
+	    		        }else{
+	    		        	
+	    		        	System.out.println("图形验证码 错误");
+	    		        	map.put("errorCode", "0001");
+	    					map.put("errorInfo","验证码 错误");
+	    					return map;
+	    		        }
+	    			  
+	    		   }  
+	    	      }else {
+	    	    	   if(isTrueCk.equals("true")){			
+	    	    			//===========不需要图形验证码,需要短信===========================		
+	    	    				request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17209863190566662376_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&redirectType=01&rememberMe=1&verifyCKCode="+code+"&_="+System.currentTimeMillis()));
+	    	    				
+	    	    		}else {
+	    	    			    //===========不需要图形验证码,不需要短信(不会发生)===========================		
+	    	    			    	 request1=new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17209863190566662376_"+System.currentTimeMillis()+"&req_time="+System.currentTimeMillis()+"&redirectURL=http://www.10010.com&userName="+Useriphone+"&password="+password+"&pwdType=01&productType=01&redirectType=01&rememberMe=1&_="+System.currentTimeMillis()));
+	    	    			   } 
+	    	      }
+	    	    	  
+	    	    request1.setHttpMethod(HttpMethod.GET);
+	    		request1.setAdditionalHeader("Referer", "https://uac.10010.com/portal/homeLogin");
+	    		HtmlPage page2 = webClient.getPage(request1);
+	    		Thread.sleep(500);
+	            String tip=  page2.asText();
+	            String tips=tip.split("\\(")[1].split("\\)")[0];
+	            System.out.println(tips);
+	    	     JSONObject json=JSONObject.fromObject(tips);	
+	     		String tipInfo=json.get("resultCode").toString();	
+	        	if(tipInfo.equals("0000")||tipInfo.equals("0301")){
+	        		map.put("errorCode", "0000");
+	    			map.put("errorInfo", "登陆成功！");
+	    			session.setAttribute("webClientSucce", webClient);
+	        	}else{	
+	        		//System.out.println(json.get("msg").toString());
+	        		map.put("errorCode", "0001");
+	        		if(json.get("msg").toString().contains("codefail")){
+	        			map.put("errorInfo", "验证码错误");	
+//	        		}else if(tipInfo.equals("7007")&&tipInfo.contains("")){
+//	        			System.out.println(tipInfo.length());
+//	        			String a=json.get("msg").toString();
+//	        			System.out.println(a.split("\\<a")[0]);
+//	        			map.put("errorInfo", "用户名或密码不正确，还有3次机会");
+	    		
+	        		}else{
+	        			map.put("errorInfo", json.get("msg").toString());
+	        		}
+	        	}
+	    	
+	    	} catch (Exception e) {
+	    	map.put("errorInfo", "0001");
+	    	map.put("errorInfo", "网络异常");
+	    	System.out.println(e);
+	    	}
+	    	return map;
 }
    
 /**	 
@@ -936,121 +991,6 @@ public Map<String, Object> GetCodeTwo(HttpServletRequest request) {
  * @throws IOException
  */
 
-//public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone,
-//		String UserPassword,
-//		String code){
-//	  Map<String,Object> map=new HashMap<String,Object>();
-//      
-//      List listsy=new ArrayList();
-//      String info = "";
-//	HttpSession session = request.getSession();
-//	WebClient webClient=(WebClient) session.getAttribute("webClientTwo");
-//	if(webClient==null){
-//		map.put("errorCode", "0001");
-//	    map.put("errorInfo", "请先获取验证码！");
-//		return map;
-//	}
-//
-//	//System.out.println("验证码发送成功");
-////=======================确定验证码===============================================  
-//  String verCode="http://iservice.10010.com/e3/static/query/verificationSubmit?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001";
-// 
-//try {
-//	 WebRequest webRequest2 = new WebRequest(new URL(verCode));
-//	
-//  webRequest2.setHttpMethod(HttpMethod.POST);  
-//  List<NameValuePair> paramer2=new ArrayList<NameValuePair>();
-//	    paramer2.add(new NameValuePair("_",System.currentTimeMillis()+""));
-//	    paramer2.add(new NameValuePair("accessURL","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001"));
-//	    paramer2.add(new NameValuePair("menuid","000100030001"));  
-//	    paramer2.add(new NameValuePair("menuId","000100030001"));
-//	    paramer2.add(new NameValuePair("inputcode",code));
-//	  
-//	webRequest2.setRequestParameters(paramer2); 
-//	TextPage newPage= webClient.getPage(webRequest2);
-//	//System.out.println(newPage.getContent());
-//	
-//	JSONObject json3=JSONObject.fromObject(newPage.getContent());	
-//	   String resultCode=json3.get("flag").toString();
-//	     if(resultCode.equals("00")){
-//	    	 System.out.println("验证码成功，可查询");
-//	    	 PushState.state(Useriphone,"callLog",100);
-////=======================获取详单================================================      		
-//	        		webClient.addRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
-//				    webClient.addRequestHeader("Accept-Encoding","gzip, deflate");
-//				    webClient.addRequestHeader("Accept-Language","zh-CN,zh;q=0.8");
-//				    webClient.addRequestHeader("Connection","keep-alive");
-//				    //webClient.addRequestHeader("Content-Length","56");
-//				    webClient.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-//				    webClient.addRequestHeader("Host","iservice.10010.com");
-//				    webClient.addRequestHeader("Origin","http://iservice.10010.com");
-//				    webClient.addRequestHeader("Referer","http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001");
-//				    webClient.addRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
-//				    webClient.addRequestHeader("X-Requested-With","XMLHttpRequest");
-//				    JSONArray array=new JSONArray();
-//					String begin=GetMonth.nowMonth()+"01";//开始是时间
-//					String end=GetMonth.today();//结束时间
-//					int year=new Integer(begin.substring(0, 4));
-//					int month=new Integer(begin.substring(4,
-//					 6));//获取月  作为获取每个月的最后一天的参数
-//					String beforMonth="";//上月
-//					for (int i = 1; i < 7; i++) {
-//						Map<String,Object> dataMap=new HashMap<String,Object>();
-//						System.out.println(begin+"*****"+end);
-//						WebRequest webRequestss=new WebRequest(new URL("http://iservice.10010.com/e3/static/query/callDetail?_="+System.currentTimeMillis()+"&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001"));
-//						List<NameValuePair> lists=new ArrayList<NameValuePair>();
-//						lists.add(new NameValuePair("pageNo","1"));
-//						lists.add(new NameValuePair("pageSize","2000"));
-//						lists.add(new NameValuePair("beginDate",begin));
-//						lists.add(new NameValuePair("endDate",end));
-//						webRequestss.setHttpMethod(HttpMethod.POST);
-//						webRequestss.setRequestParameters(lists);
-//						TextPage chekpages=webClient.getPage(webRequestss);
-//						
-//						System.out.println(chekpages.getContent()+"----vvv");
-//					
-//						beforMonth=GetMonth.beforMon(year,month,i);//上i月
-//						begin=beforMonth+"01";
-//						int y=new Integer(begin.substring(0, 4));
-//						int m=new Integer(begin.substring(4,6));
-//						end=GetMonth.lastDate(y, m);//一个月的最后一天
-//						dataMap.put("item", chekpages.getContent());
-//						listsy.add(dataMap);
-//					}	
-//					map.put("errorCode", "0000");
-//			    	map.put("errorInfo", "查询成功");
-//			    	
-//					map.put("data", listsy);
-//					map.put("UserIphone", Useriphone);
-//					map.put("UserPassword", UserPassword);
-//				    //map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");			
-//					map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/linkCallRecord");
-//				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-//				    	    PushState.state(Useriphone, "callLog",300);
-//			                map.put("errorInfo","推送成功");
-//			                map.put("errorCode","0000");
-//		            }else{
-//			            	//--------------------数据中心推送状态----------------------
-//			            	PushState.state(Useriphone, "callLog",200);
-//			            	//---------------------数据中心推送状态----------------------
-//			                map.put("errorInfo","推送失败");
-//			                map.put("errorCode","0001");
-//		            }   				        
-//	     }else{
-//	    	PushState.state(Useriphone,"callLog",200);
-//	    	map.put("errorCode", "0001");
-//	    	map.put("errorInfo", json3.get("error").toString());
-//	    	 System.out.println(json3.get("error").toString()); 
-//	     }
-//     } catch (Exception e) {
-//    	    PushState.state(Useriphone,"callLog",200);
-//	    	map.put("errorCode", "0001");
-//	    	map.put("errorInfo", "网络异常");
-//	        e.printStackTrace();
-//   }  	
-//    return map;
-//
-//	}
 
 
 public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone,
@@ -1165,7 +1105,7 @@ try {
 		    	 map.put("errorInfo", "校验失败"); 
 	    	 }else if(resultCode.equals("03")){
 	    		 map.put("errorCode", "0001");
-		    	 map.put("errorInfo", "验证码发送失败！"); 
+		    	 map.put("errorInfo", "校验失败,请稍后再试！"); 
 	    		 
 	    	 }else if(resultCode.equals("04")){
 	    		 map.put("errorCode", "0001");

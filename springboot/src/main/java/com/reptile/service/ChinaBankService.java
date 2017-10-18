@@ -59,7 +59,14 @@ public class ChinaBankService {
             List<WebElement> input1 = driver.findElements(By.tagName("input"));
             for (int i = 0; i < input1.size(); i++) {
                 if (input1.get(i).getAttribute("oncopy") != null && input1.get(i).getAttribute("oncopy").contains("return false;")) {
-                    input1.get(i).sendKeys(ss1);
+                    if(i==3){
+                        input1.get(i).sendKeys(ss1);
+                    }else{
+                        map.put("errorCode", "0001");
+                        map.put("errorInfo", "请使用信用卡号登录");
+                        driver.close();
+                        return map;
+                    }
                 }
             }
             Thread.sleep(1000);
