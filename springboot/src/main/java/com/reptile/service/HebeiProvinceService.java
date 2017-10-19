@@ -1,24 +1,33 @@
 package com.reptile.service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -36,6 +45,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -52,12 +62,9 @@ public class HebeiProvinceService {
 		 */
 	public static Map<String,Object> HebeiUsercard1(HttpServletRequest request,String Usernum,String UserPass,String Username,String Usercode){
 		Map<String,Object> map=new HashMap<String,Object>();
-//		System.setProperty("webdriver.ie.driver", "F:\\ie\\IEDriverServer.exe");
-//		WebDriver driver = new InternetExplorerDriver();
-		System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
-		WebDriver driver = new ChromeDriver();
-		
-		driver.get("http://login.189.cn/web/login");//电信登录地址
+		System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+		WebDriver driver = new InternetExplorerDriver();
+		driver.get("http://login.189.cn/web/login");
 		driver.navigate().refresh();
 		try {
 				Thread.sleep(3000);
@@ -70,6 +77,35 @@ public class HebeiProvinceService {
 				passWord.click();
 				WebElement passWord1 = form.findElement(By.id("txtPassword"));
 				passWord1.sendKeys(UserPass);//查询密码
+				
+				
+				//河北新增加的图片验证码
+				
+				 //
+		          WebElement f=  driver.findElement(By.id("loginForm"));
+				WebElement captchaImg= f.findElement(By.id("imgCaptcha"));
+				File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+				BufferedImage  fullImg = ImageIO.read(screenshot);
+				Point point = captchaImg.getLocation();
+				int eleWidth = captchaImg.getSize().getWidth();
+				int eleHeight = captchaImg.getSize().getHeight();
+				BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
+				    eleWidth, eleHeight);
+				ImageIO.write(eleScreenshot, "png", screenshot);
+				Date date=new Date();
+				SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddhhmmss");
+				String filename=System.currentTimeMillis()+".png";
+				File screenshotLocation = new File("C:\\images\\"+filename);
+				Thread.sleep(2000);
+				FileUtils.copyFile(screenshot, screenshotLocation);
+				Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
+				System.out.println(map1);
+				String catph= (String) map1.get("strResult");
+				Thread.sleep(2000);
+		          //
+				WebElement tup = driver.findElement(By.id("txtCaptcha"));
+				tup.sendKeys(catph);
+				//
 				WebElement loginBtn = driver.findElement(By.id("loginbtn"));
 				loginBtn.click();
 				Thread.sleep(5000);
