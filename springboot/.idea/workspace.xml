@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="9.8mrlu">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/CEBService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/CEBService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ConstructionService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ConstructionService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/HebeiProvinceService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/HebeiProvinceService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/NingXiaTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/NingXiaTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/SHCode.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/SHCode.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/logback.xml" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" />
+    <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="10.19更新">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/springboot.iml" afterPath="$PROJECT_DIR$/springboot.iml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -36,11 +30,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ConstantInterface.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ConstantInterface.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+            <state relative-caret-position="300">
+              <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -59,8 +53,8 @@
       <file leaf-file-name="MyCYDMDemo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+            <state relative-caret-position="400">
+              <caret line="21" column="68" lean-forward="false" selection-start-line="21" selection-start-column="68" selection-end-line="21" selection-end-column="68" />
               <folding />
             </state>
           </provider>
@@ -86,6 +80,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="ChinaBankService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="73" column="16" lean-forward="false" selection-start-line="73" selection-start-column="16" selection-end-line="73" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="Scheduler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/Scheduler.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -96,21 +100,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Swagger2.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/Swagger2.java">
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+            <state relative-caret-position="-3675">
+              <caret line="15" column="35" lean-forward="false" selection-start-line="15" selection-start-column="35" selection-end-line="15" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SpringbootApplication.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
+      <file leaf-file-name="MobileService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+            <state relative-caret-position="302">
+              <caret line="776" column="75" lean-forward="true" selection-start-line="776" selection-start-column="75" selection-end-line="776" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -127,16 +131,6 @@
                 <marker date="1508379101777" expanded="true" signature="2375:2469" ph="//..." />
                 <marker date="1508379101777" expanded="true" signature="2556:2762" ph="//..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/application.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -167,7 +161,6 @@
       <find>1.8</find>
       <find>maven-plugin</find>
       <find>WebClientFactory</find>
-      <find>联通</find>
       <find>scheduler</find>
       <find>log</find>
       <find>sta</find>
@@ -176,6 +169,7 @@
       <find>YD-webClient</find>
       <find>手机</find>
       <find>sel</find>
+      <find>联通</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -243,8 +237,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/DefineInterceptor.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/CreditService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/TelecomLoadVerificationService.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -364,6 +358,15 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="reptile" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="springboot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reptile" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -391,7 +394,7 @@
     <property name="RequestMappingsPanelOrder1" value="1" />
     <property name="RequestMappingsPanelWidth2" value="75" />
     <property name="RequestMappingsPanelOrder2" value="2" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="ChangesBrowser.SHOW_FLATTEN" value="false" />
@@ -1023,11 +1026,18 @@
       <option name="project" value="LOCAL" />
       <updated>1504858243340</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="10.19更新">
+      <created>1508379592199</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1508379592199</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="230146000" />
+    <option name="totallyTimeSpent" value="231769000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1152,7 +1162,8 @@
     <MESSAGE value="mrludw" />
     <MESSAGE value="9.5 mrlu" />
     <MESSAGE value="9.8mrlu" />
-    <option name="LAST_COMMIT_MESSAGE" value="9.8mrlu" />
+    <MESSAGE value="10.19更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="10.19更新" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1188,28 +1199,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-starter-parent/1.5.6.RELEASE/spring-boot-starter-parent-1.5.6.RELEASE.pom">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5069">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://F:/Maven_Pro Maven Webapp/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar!/org/apache/http/client/methods/HttpRequestBase.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -1284,14 +1273,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="37" column="51" lean-forward="true" selection-start-line="37" selection-start-column="51" selection-end-line="37" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="681" column="0" lean-forward="false" selection-start-line="681" selection-start-column="0" selection-end-line="681" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1385,6 +1366,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="38" column="75" lean-forward="false" selection-start-line="38" selection-start-column="75" selection-end-line="38" selection-end-column="75" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1407,12 +1389,12 @@
         <state relative-caret-position="875">
           <caret line="58" column="37" lean-forward="false" selection-start-line="58" selection-start-column="37" selection-end-line="58" selection-end-column="37" />
           <folding>
-            <element signature="e#1392#1408#0" expanded="true" />
-            <element signature="e#1461#1477#0" expanded="true" />
-            <element signature="e#1713#1728#0" expanded="true" />
-            <element signature="e#3174#3190#0" expanded="true" />
-            <element signature="e#3426#3441#0" expanded="true" />
-            <element signature="e#4861#4877#0" expanded="true" />
+            <element signature="e#1392#1408#0" expanded="false" />
+            <element signature="e#1461#1477#0" expanded="false" />
+            <element signature="e#1713#1728#0" expanded="false" />
+            <element signature="e#3174#3190#0" expanded="false" />
+            <element signature="e#3426#3441#0" expanded="false" />
+            <element signature="e#4861#4877#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1451,6 +1433,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="350">
           <caret line="23" column="63" lean-forward="true" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1496,26 +1479,26 @@
         <state relative-caret-position="534">
           <caret line="401" column="31" lean-forward="false" selection-start-line="401" selection-start-column="31" selection-end-line="401" selection-end-column="31" />
           <folding>
-            <element signature="e#1864#1880#0" expanded="true" />
-            <element signature="e#1930#1946#0" expanded="true" />
-            <element signature="e#6102#6118#0" expanded="true" />
-            <element signature="e#6168#6184#0" expanded="true" />
-            <element signature="e#7404#7420#0" expanded="true" />
-            <element signature="e#7470#7486#0" expanded="true" />
-            <element signature="e#8996#9012#0" expanded="true" />
-            <element signature="e#9062#9078#0" expanded="true" />
-            <element signature="e#11901#11917#0" expanded="true" />
-            <element signature="e#11967#11983#0" expanded="true" />
-            <element signature="e#14061#14077#0" expanded="true" />
-            <element signature="e#14127#14143#0" expanded="true" />
-            <element signature="e#16418#16434#0" expanded="true" />
-            <element signature="e#16484#16500#0" expanded="true" />
-            <element signature="e#20922#20932#0" expanded="true" />
-            <element signature="e#21297#21305#0" expanded="true" />
-            <element signature="e#22815#22831#0" expanded="true" />
-            <element signature="e#22881#22897#0" expanded="true" />
-            <element signature="e#27101#27117#0" expanded="true" />
-            <element signature="e#27167#27183#0" expanded="true" />
+            <element signature="e#1864#1880#0" expanded="false" />
+            <element signature="e#1930#1946#0" expanded="false" />
+            <element signature="e#6102#6118#0" expanded="false" />
+            <element signature="e#6168#6184#0" expanded="false" />
+            <element signature="e#7404#7420#0" expanded="false" />
+            <element signature="e#7470#7486#0" expanded="false" />
+            <element signature="e#8996#9012#0" expanded="false" />
+            <element signature="e#9062#9078#0" expanded="false" />
+            <element signature="e#11901#11917#0" expanded="false" />
+            <element signature="e#11967#11983#0" expanded="false" />
+            <element signature="e#14061#14077#0" expanded="false" />
+            <element signature="e#14127#14143#0" expanded="false" />
+            <element signature="e#16418#16434#0" expanded="false" />
+            <element signature="e#16484#16500#0" expanded="false" />
+            <element signature="e#20922#20932#0" expanded="false" />
+            <element signature="e#21297#21305#0" expanded="false" />
+            <element signature="e#22815#22831#0" expanded="false" />
+            <element signature="e#22881#22897#0" expanded="false" />
+            <element signature="e#27101#27117#0" expanded="false" />
+            <element signature="e#27167#27183#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1530,21 +1513,6 @@
             <marker date="1508379101777" expanded="true" signature="2375:2469" ph="//..." />
             <marker date="1508379101777" expanded="true" signature="2556:2762" ph="//..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-50">
-          <caret line="33" column="48" lean-forward="false" selection-start-line="33" selection-start-column="48" selection-end-line="33" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="254" column="9" lean-forward="true" selection-start-line="254" selection-start-column="9" selection-end-line="254" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1576,18 +1544,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        <state relative-caret-position="300">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/Swagger2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
-          <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/application.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="73" column="16" lean-forward="false" selection-start-line="73" selection-start-column="16" selection-end-line="73" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="21" column="68" lean-forward="false" selection-start-line="21" selection-start-column="68" selection-end-line="21" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="776" column="75" lean-forward="true" selection-start-line="776" selection-start-column="75" selection-end-line="776" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3675">
+          <caret line="15" column="35" lean-forward="false" selection-start-line="15" selection-start-column="35" selection-end-line="15" selection-end-column="35" />
           <folding />
         </state>
       </provider>
