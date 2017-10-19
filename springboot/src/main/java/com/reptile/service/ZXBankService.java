@@ -74,9 +74,7 @@ public class ZXBankService {
             mapInfo.put("imageCodePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/zxImageCode/" + fileName);
             map.put("data", mapInfo);
         } catch (Exception e) {
-
-            logger.warn(e.getMessage() + "     mrlu");
-
+            logger.warn("zxbankmrlu获取图片验证码",e);
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             map.put("errorInfo", "系统繁忙");
@@ -152,9 +150,7 @@ public class ZXBankService {
                 map.put("errorInfo", "操作成功");
                 session.setAttribute("zxCookies2", coks);
             } catch (Exception e) {
-
-                logger.warn(e.getMessage() + "     mrlu");
-
+                logger.warn("mrlu登录ZXbank",e);
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "系统繁忙");
@@ -195,9 +191,7 @@ public class ZXBankService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
-
-                logger.warn(e.getMessage() + "     mrlu");
-
+                logger.warn("mrlu发送手机验证码",e);
                 e.printStackTrace();
                 map.put("errorCode", "0003");
                 map.put("errorInfo", "系统繁忙");
@@ -337,8 +331,6 @@ public class ZXBankService {
                 sendMap.put("html", dataList);
                 sendMap.put("fixedEd",fixedEd);
 
-                logger.warn(sendMap.toString()+"   mrlu");
-
                 //推送信息
                 Map<String, Object> mapTui = new HashMap<String, Object>();
                 mapTui.put("data", sendMap);
@@ -347,9 +339,7 @@ public class ZXBankService {
                 System.out.println(map);
 
             } catch (Exception e) {
-
-                logger.warn(e.getMessage() + "     mrlu");
-
+                logger.warn("mrluzxbank获取详单",e);
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "查询出错");

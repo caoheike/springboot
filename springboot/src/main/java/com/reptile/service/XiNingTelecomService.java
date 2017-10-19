@@ -8,6 +8,8 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import java.util.*;
 
 @Service
 public class XiNingTelecomService {
+    private Logger logger= LoggerFactory.getLogger(XiNingTelecomService.class);
     //青海省
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -109,6 +112,7 @@ public class XiNingTelecomService {
                         System.out.println(simple.format(calendar.getTime()));
                     }
                 } catch (Exception e) {
+                    logger.warn(e.getMessage()+"  青海获取过程中ip被封  mrlu",e);
                     Scheduler.sendGet(Scheduler.getIp);
                     e.printStackTrace();
                 }
@@ -120,6 +124,7 @@ public class XiNingTelecomService {
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.warn(e.getMessage()+"  青海获取详单  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }

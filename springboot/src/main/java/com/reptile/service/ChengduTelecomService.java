@@ -101,7 +101,7 @@ public class ChengduTelecomService {
                 }
 
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"mrlu");
+                logger.warn("成都发送手机验证码mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
@@ -180,7 +180,7 @@ public class ChengduTelecomService {
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 System.out.println(list);
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"mrlu");
+                logger.warn("成都获取详情mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");

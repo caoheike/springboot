@@ -9,6 +9,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,8 @@ import java.util.Map;
 @Service
 public class ChinaBankService {
 
+    private Logger log= LoggerFactory.getLogger(ChinaBankService.class);
+
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userCard ,String cardNumber, String userPwd) throws Exception {
         String path=request.getServletContext().getRealPath("/vecImageCode");
         System.setProperty("java.awt.headless", "true");
@@ -32,10 +36,11 @@ public class ChinaBankService {
         System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
-        ChromeDriver driver = new ChromeDriver(options);
-        driver.get("https://ebsnew.boc.cn/boc15/login.html");
-        String ss1 = cardNumber;
+        ChromeDriver driver=null;
         try {
+            driver = new ChromeDriver(options);
+            driver.get("https://ebsnew.boc.cn/boc15/login.html");
+            String ss1 = cardNumber;
             List<WebElement> input = driver.findElements(By.className("input"));
             for (int i = 0; i < input.size(); i++) {
                 if (input.get(i).getAttribute("v") != null && input.get(i).getAttribute("v").contains("用户名")) {
@@ -156,8 +161,9 @@ public class ChinaBankService {
             System.out.println(listData.size());
             driver.close();
         }catch (Exception e){
-            driver.close();
+            log.warn("mr.lu  ZXbank出错",e);
             e.printStackTrace();
+            driver.close();
             map.put("errorCode", "0002");
             map.put("errorInfo", "网络繁忙");
         }

@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.reptile.util.CYDMDemo;
+
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;

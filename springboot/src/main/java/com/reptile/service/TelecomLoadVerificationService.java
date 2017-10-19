@@ -11,7 +11,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
-import com.reptile.util.DamaDemo;
+import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class TelecomLoadVerificationService {
             map.put("errorInfo", "操作成功");
             map.put("data", mapdata);
         } catch (Exception e) {
-            logger.warn(e.getMessage() + "mrlu");
+            logger.warn(e.getMessage()+"  获取电信信息  mrlu",e);
             e.printStackTrace();
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
@@ -97,7 +97,7 @@ public class TelecomLoadVerificationService {
             map.put("data", jsonObject);
         } catch (Exception e) {
 
-            logger.warn(e.getMessage() + "mrlu");
+            logger.warn(e.getMessage()+"  电信判断是否需要验证码  mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
         }
@@ -117,15 +117,17 @@ public class TelecomLoadVerificationService {
             page.getElementById("txtPassword").setAttribute("value", servePwd);
 
             String realPath = request.getServletContext().getRealPath("/imageFile");
-            File file=new File(realPath);
-            if(!file.exists()){
+            File file = new File(realPath);
+            if (!file.exists()) {
                 file.mkdirs();
             }
-            String fileName="loadImageCode"+System.currentTimeMillis()+".png";
+            String fileName = "loadImageCode" + System.currentTimeMillis() + ".png";
             HtmlImage imgCaptcha = (HtmlImage) page.getElementById("imgCaptcha");
-            BufferedImage read =   imgCaptcha.getImageReader().read(0);
-            ImageIO.write(read,"png",new File(file,fileName));
-            String code = DamaDemo.getCode(realPath + "/" + fileName);
+            BufferedImage read = imgCaptcha.getImageReader().read(0);
+            ImageIO.write(read, "png", new File(file, fileName));
+
+            Map<String, Object> imagev = MyCYDMDemo.Imagev(realPath + "/" + fileName);
+            String code = imagev.get("strResult").toString();
             HtmlInput txtCaptcha = (HtmlInput) page.getElementById("txtCaptcha");
             txtCaptcha.setValueAttribute(code.toLowerCase());
             HtmlPage loginbtn = page.getElementById("loginbtn").click();
@@ -133,10 +135,10 @@ public class TelecomLoadVerificationService {
             Thread.sleep(2000);
             if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
-                if(divErr.contains("验证码")){
+                if (divErr.contains("验证码")) {
                     map.put("errorCode", "0008");
                     map.put("errorInfo", "服务器繁忙，请刷新后重试");
-                }else{
+                } else {
                     map.put("errorCode", "0007");
                     map.put("errorInfo", divErr);
                 }
@@ -148,7 +150,7 @@ public class TelecomLoadVerificationService {
 
         } catch (Exception e) {
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage() + "mrlu");
+            logger.warn(e.getMessage()+"  登录全国电信  mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
             e.printStackTrace();

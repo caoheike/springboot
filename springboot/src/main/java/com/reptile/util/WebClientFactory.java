@@ -1,9 +1,7 @@
 package com.reptile.util;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.reptile.springboot.Scheduler;
 
 /**
  * Created by Administrator on 2017/8/18.

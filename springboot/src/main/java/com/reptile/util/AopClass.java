@@ -22,8 +22,6 @@ import java.util.Map;
 @Aspect
 public class AopClass {
     private Logger logger = LoggerFactory.getLogger(AopClass.class);
-    @Autowired
-	private static application applications;
     @Pointcut("@annotation(com.reptile.util.CustomAnnotation)")
     public void pointCut() {
     }

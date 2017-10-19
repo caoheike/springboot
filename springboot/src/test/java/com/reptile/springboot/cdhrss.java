@@ -1,37 +1,20 @@
 package com.reptile.springboot;
 
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.Resttemplate;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import java.awt.Rectangle;
-
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;  
-import org.openqa.selenium.Point;  
-import org.openqa.selenium.TakesScreenshot;  
-import org.openqa.selenium.WebDriver;  
-import org.openqa.selenium.WebElement;  
-import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.remote.Augmenter;
-
-import com.reptile.util.CYDMDemo;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.CrawlerUtil;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.Resttemplate;
-
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 
 public class cdhrss {

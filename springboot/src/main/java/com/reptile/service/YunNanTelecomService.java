@@ -7,6 +7,8 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import java.util.*;
 
 @Service
 public class YunNanTelecomService {
+    private Logger logger= LoggerFactory.getLogger(YunNanTelecomService.class);
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
@@ -82,6 +85,7 @@ public class YunNanTelecomService {
                 session.setAttribute("yunNanWebClient", webClient);
                 session.setAttribute("yunNanHtmlPage", click1);
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  云南电信发送手机验证码  mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
@@ -160,6 +164,7 @@ public class YunNanTelecomService {
                             getDetailList(phoneNumber, monthDate, areaCode, webClient, j, dataList);
                         }
                     } catch (Exception e) {
+                        logger.warn(e.getMessage()+"  云南循环获取详单出错  mrlu",e);
                         e.printStackTrace();
                     }
                     calendar.add(Calendar.MONTH, -1);
@@ -174,6 +179,7 @@ public class YunNanTelecomService {
                 System.out.println(dataList.size());
                 System.out.println(dataList.toString());
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");

@@ -20,7 +20,7 @@ public class PushState {
 		System.out.println("--开始推送-");
 		Resttemplate resttemplatestati = new Resttemplate();
 		
-	map1=resttemplatestati.SendMessage(data, "http://192.168.3.4:8081/HSDC/authcode/Autherized");//本地
-	//map1=resttemplatestati.SendMessage(data, "http://10.1.1.12:8080/HSDC/authcode/Autherized");//正式
+	map1=resttemplatestati.SendMessage(data, ConstantInterface.port+"/HSDC/authcode/Autherized");//本地
+	//map1=resttemplatestati.SendMessage(data, ConstantInterface.port+"/HSDC/authcode/Autherized");//正式
 	}
 }
