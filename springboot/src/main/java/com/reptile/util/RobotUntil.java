@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Map;
 
 public class RobotUntil {
     //单个 按键
@@ -47,8 +48,8 @@ public class RobotUntil {
             File file1=new File(file,"zgyh"+System.currentTimeMillis()+".png");
             ImageIO.write(dest, "png", file1);
             System.out.println(file1.getAbsolutePath());
-            code = DamaDemo.getCode(file1.getAbsolutePath());
-
+        Map<String, Object> imagev = MyCYDMDemo.Imagev(file1.getAbsolutePath());
+        code =imagev.get("strResult").toString();
         return code;
     }
 }

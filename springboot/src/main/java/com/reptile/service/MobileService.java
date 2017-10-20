@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.reptile.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -53,15 +54,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
-import com.reptile.util.CrawlerUtil;
-import com.reptile.util.GetMonth;
-import com.reptile.util.Poi;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.SHCode;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
-import com.reptile.util.htmlUtil;
 
 @SuppressWarnings("deprecation")
 @Service("mobileService")
@@ -350,7 +342,7 @@ public class MobileService {
     }
     /**
 	 * 接口验证码
-	 * @param mobileBean
+	 * @param
 	 * @param request
 	 * @param response
 	 * @throws FailingHttpStatusCodeException
@@ -693,8 +685,8 @@ public class MobileService {
 			String findImage="gd"+System.currentTimeMillis()+".png";
 			ImageIO.write(bufferedImage , "png", new File("C:\\Shimage",findImage)); 
 	        //2.转码
-			Map<String,Object> aa= SHCode.getCode("C:\\Shimage\\"+findImage);
-	        String catpy=  (String) aa.get("strResult");//转码后的动态码
+		  Map<String, Object> imagev = MyCYDMDemo.Imagev("C:\\Shimage\\" + findImage);
+		  String catpy=  (String) imagev.get("strResult");//转码后的动态码
 	        //System.out.println(catpy+"-***-*-");	  
 	        WebRequest webRequest3=new WebRequest(new URL("https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery17207654655044488388_"+System.currentTimeMillis()+"&verifyCode="+catpy+"&verifyType=1&_="+System.currentTimeMillis()));
 		    webRequest3.setHttpMethod(HttpMethod.GET);
@@ -800,9 +792,9 @@ public class MobileService {
    
 /**	 
  * 联通 获取详单的 验证码
- * @param request
- * @param response
- * @param Useriphone
+ * @param
+ * @param
+ * @param
  * @return
  * @throws IOException
  * @throws InterruptedException
@@ -1457,7 +1449,7 @@ public Map<String,Object> getDetial(HttpServletRequest request,String Useriphone
 		 * @param request
 		 * @param Usernumber
 		 * @param UserPwd
-		 * @param Usercard
+		 * @param
 		 * @return
 		 * @throws FailingHttpStatusCodeException
 		 * @throws MalformedURLException
