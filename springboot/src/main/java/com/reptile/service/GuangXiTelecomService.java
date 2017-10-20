@@ -8,6 +8,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import java.util.*;
 
 @Service
 public class GuangXiTelecomService {
+    private Logger logger= LoggerFactory.getLogger(GuangXiTelecomService.class);
 
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -51,6 +54,7 @@ public class GuangXiTelecomService {
                 session.setAttribute("GXDXwebClient", webClient);
                 session.setAttribute("GXDXHtmlPage", click1);
             } catch (Exception e) {
+                logger.warn(e.getMessage()+" 广西发送手机验证码   mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
@@ -60,7 +64,8 @@ public class GuangXiTelecomService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode, String userName, String userCard) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode, String userName,
+                                            String userCard,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -126,9 +131,12 @@ public class GuangXiTelecomService {
                 map.put("flag","7");
                 map.put("UserPassword",serverPwd);
                 map.put("UserIphone",phoneNumber);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+" 广西获取详单信息   mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");

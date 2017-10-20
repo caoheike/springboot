@@ -8,6 +8,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +20,8 @@ import java.util.*;
 
 @Service
 public class JiangSuTelecomService {
-
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword) {
+    private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -90,9 +92,12 @@ public class JiangSuTelecomService {
                 map.put("flag","4");
                 map.put("UserPassword",userPassword);
                 map.put("UserIphone",phoneNumber);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");

@@ -48,8 +48,8 @@ public class ShanDongTelecomController {
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userIphone")String userIphone, @RequestParam("imageCode") String imageCode,
                                             @RequestParam("userName")String userName, @RequestParam("userCard") String userCard,
-                                            @RequestParam("phoneCode")String phoneCode,
-                                            @RequestParam("userPassword")String userPassword){
-        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword);
+                                            @RequestParam("phoneCode")String phoneCode,@RequestParam("userPassword")String userPassword,
+                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude){
+        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword,longitude,latitude);
     }
 }

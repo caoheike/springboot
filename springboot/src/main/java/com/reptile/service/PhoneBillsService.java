@@ -49,8 +49,7 @@ public class PhoneBillsService {
         //验证是否是移动用户
         try {
             TextPage page = webClient.getPage("https://login.10086.cn/chkNumberAction.action?userName=" + userNumber);
-            System.out.println(page.getContent());
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
             if ("false".equals(page.getContent())) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "非移动用户请注册互联网用户登录");
@@ -58,7 +57,6 @@ public class PhoneBillsService {
             }
             //发送登录手机验证码
             TextPage page1 = webClient.getPage("https://login.10086.cn/sendRandomCodeAction.action?userName=" + userNumber + "&type=01&channelID=12003");
-            System.out.println(page1.getContent());
 
             if("0".equals(page1.getContent())){
                 map.put("errorCode", "0000");
@@ -81,12 +79,14 @@ public class PhoneBillsService {
             }
             session.setAttribute("YD-webClient", webClient);
         } catch (HttpHostConnectException e) {
-            logger.warn(e.getMessage()+"     mrlu");
+            map.put("errorCode", "0003");
+            map.put("errorInfo", "网络繁忙，请刷新后重新再试");
+            logger.warn(e.getMessage()+"  获取移动验证码   mrlu",e);
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
         } catch (Exception e) {
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage()+"     mrlu");
+            logger.warn(e.getMessage()+"  获取移动验证码   mrlu",e);
             e.printStackTrace();
             map.put("errorCode", "0003");
             map.put("errorInfo", "网络繁忙，请刷新后重新再试");
@@ -182,7 +182,7 @@ public class PhoneBillsService {
                 map.put("errorInfo", "操作成功");
             } catch (Exception e) {
 
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage()+"  移动登录   mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0005");
@@ -224,7 +224,7 @@ public class PhoneBillsService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "验证码获取成功");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage()+"  获取移动详单图片验证码   mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0002");
@@ -281,7 +281,7 @@ public class PhoneBillsService {
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
 
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage()+"  获取移动详单手机验证码   mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0003");
@@ -292,7 +292,8 @@ public class PhoneBillsService {
     }
 
 
-    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode, String fuwuSec, String imageCode){
+    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
+                                                String fuwuSec, String imageCode,String longitude ,String latitude ){
 
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -364,25 +365,30 @@ public class PhoneBillsService {
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
                     String json = results.substring(s);
                     results = json.substring(0, json.length() - 1);
-
-                    dataList.add(results);
+                    if(!results.contains("get data from cache success")){
+                        dataList.add(results);
+                    }
 
                     sDate--;
                     Thread.sleep(500);
                 }
-                dataMap.put("data", dataList);
-                dataMap.put("userPhone", userNumber);
-                dataMap.put("serverCard", fuwuSec);
-                map.put("errorCode", "0000");
-                map.put("errorInfo", "查询成功");
-                map.put("data", dataList.toString());
-                Resttemplate resttemplate = new Resttemplate();
-
-                map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
-
-
+                if(dataList.size()!=0){
+                    dataMap.put("data", dataList);//通话详单数据
+                    dataMap.put("userPhone", userNumber);//手机
+                    dataMap.put("serverCard", fuwuSec);//服务密码
+                    dataMap.put("longitude", longitude);//经度
+                    dataMap.put("latitude", latitude);//纬度
+                    map.put("errorCode", "0000");
+                    map.put("errorInfo", "查询成功");
+                    map.put("data", dataList.toString());
+                    Resttemplate resttemplate = new Resttemplate();
+                    map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
+                }else{
+                    map.put("errorCode", "0005");
+                    map.put("errorInfo", "业务办理失败！");
+                }
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"     mrlu");
+                logger.warn(e.getMessage()+"  获取移动详单  mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0004");

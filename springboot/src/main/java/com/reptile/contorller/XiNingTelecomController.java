@@ -24,8 +24,9 @@ public class XiNingTelecomController {
     @ResponseBody
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
-    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber, @RequestParam("serverPwd") String serverPwd) {
-        return service.getDetailMes(request,phoneNumber,serverPwd);
+    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber,
+                                            @RequestParam("serverPwd") String serverPwd,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
+        return service.getDetailMes(request,phoneNumber,serverPwd,longitude,latitude);
     }
 
 //    @ApiOperation(value = "3.获取详单信息", notes = "参数：手机验证码,手机号，服务密码")

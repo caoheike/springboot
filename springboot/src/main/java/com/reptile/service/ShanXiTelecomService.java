@@ -7,6 +7,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import java.util.*;
 
 @Service
 public class ShanXiTelecomService {
+    private Logger logger= LoggerFactory.getLogger(ShanXiTelecomService.class);
     /**
      * 西安电信
      *
@@ -27,7 +30,7 @@ public class ShanXiTelecomService {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd) throws IOException, InterruptedException {
+    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude) throws IOException, InterruptedException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
@@ -97,11 +100,14 @@ public class ShanXiTelecomService {
                 }
                 map.put("UserIphone",phoneNumber);
                 map.put("UserPassword",serverPwd);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 map.put("data",dataList);
                 map.put("flag","0");
                 Resttemplate resttemplate=new Resttemplate();
                 map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");

@@ -8,6 +8,8 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,7 @@ import java.util.*;
 
 @Service
 public class HeNanTelecomService {
-
+    private Logger logger= LoggerFactory.getLogger(HeNanTelecomService.class);
 
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
 
@@ -104,6 +106,7 @@ public class HeNanTelecomService {
                     session.setAttribute("HeNanHtmlPage", pagess);
                 }
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  广西发送手机验证码   mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络异常！");
@@ -112,7 +115,7 @@ public class HeNanTelecomService {
         return map;
     }
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -193,6 +196,8 @@ public class HeNanTelecomService {
                 }
                 map.put("UserIphone", phoneNumber);
                 map.put("UserPassword", serverPwd);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 map.put("flag", "5");
                 map.put("data", dataList);
                 Resttemplate resttemplate = new Resttemplate();
@@ -200,6 +205,7 @@ public class HeNanTelecomService {
 
                 System.out.println("河南电信拿到的数据条数：" + dataList.size());
             } catch (Exception e) {
+                logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
