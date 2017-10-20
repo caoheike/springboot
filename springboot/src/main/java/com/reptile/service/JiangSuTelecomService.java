@@ -21,7 +21,7 @@ import java.util.*;
 @Service
 public class JiangSuTelecomService {
     private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -92,6 +92,8 @@ public class JiangSuTelecomService {
                 map.put("flag","4");
                 map.put("UserPassword",userPassword);
                 map.put("UserIphone",phoneNumber);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
             } catch (Exception e) {

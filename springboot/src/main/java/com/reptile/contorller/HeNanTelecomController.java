@@ -30,8 +30,9 @@ public class HeNanTelecomController {
     @ResponseBody
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber,
-                                            @RequestParam("serverPwd")String serverPwd,@RequestParam("phoneCode")String phoneCode) {
-        return service.getDetailMes(request,phoneNumber,serverPwd,phoneCode);
+                                            @RequestParam("serverPwd")String serverPwd,@RequestParam("phoneCode")String phoneCode,
+                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
+        return service.getDetailMes(request,phoneNumber,serverPwd,phoneCode,longitude,latitude);
     }
 
 }

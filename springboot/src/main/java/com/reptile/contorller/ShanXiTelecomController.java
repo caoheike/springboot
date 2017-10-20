@@ -24,7 +24,8 @@ public class ShanXiTelecomController {
     @RequestMapping(value = "TelecomLogin", method = RequestMethod.POST)
     @ApiOperation(value = "陕西电信登录", notes = "电信登录")
     public Map<String, Object> TelecomLogin(HttpServletRequest req, @RequestParam("userPhone") String userPhone,
-                                            @RequestParam("userPassword") String userPassword) throws Exception {
-        return service.TelecomLogin(req, userPhone,userPassword);
+                                            @RequestParam("userPassword") String userPassword,@RequestParam("longitude") String longitude,
+                                            @RequestParam("latitude") String latitude) throws Exception {
+        return service.TelecomLogin(req, userPhone,userPassword,longitude,latitude);
     }
 }

@@ -22,7 +22,7 @@ import java.util.*;
 public class XiNingTelecomService {
     private Logger logger= LoggerFactory.getLogger(XiNingTelecomService.class);
     //青海省
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -120,6 +120,8 @@ public class XiNingTelecomService {
                 map.put("flag", "2");
                 map.put("UserPassword", serverPwd);
                 map.put("UserIphone", phoneNumber);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
             } catch (Exception e) {

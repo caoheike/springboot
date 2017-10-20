@@ -115,7 +115,7 @@ public class HeNanTelecomService {
         return map;
     }
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -196,6 +196,8 @@ public class HeNanTelecomService {
                 }
                 map.put("UserIphone", phoneNumber);
                 map.put("UserPassword", serverPwd);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 map.put("flag", "5");
                 map.put("data", dataList);
                 Resttemplate resttemplate = new Resttemplate();

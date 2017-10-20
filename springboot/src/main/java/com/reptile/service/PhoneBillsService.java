@@ -292,7 +292,8 @@ public class PhoneBillsService {
     }
 
 
-    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode, String fuwuSec, String imageCode){
+    public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
+                                                String fuwuSec, String imageCode,String longitude ,String latitude ){
 
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -364,23 +365,28 @@ public class PhoneBillsService {
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
                     String json = results.substring(s);
                     results = json.substring(0, json.length() - 1);
-
-                    dataList.add(results);
+                    if(!results.contains("get data from cache success")){
+                        dataList.add(results);
+                    }
 
                     sDate--;
                     Thread.sleep(500);
                 }
-                dataMap.put("data", dataList);
-                dataMap.put("userPhone", userNumber);
-                dataMap.put("serverCard", fuwuSec);
-                map.put("errorCode", "0000");
-                map.put("errorInfo", "查询成功");
-                map.put("data", dataList.toString());
-                Resttemplate resttemplate = new Resttemplate();
-
-                map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
-
-
+                if(dataList.size()!=0){
+                    dataMap.put("data", dataList);//通话详单数据
+                    dataMap.put("userPhone", userNumber);//手机
+                    dataMap.put("serverCard", fuwuSec);//服务密码
+                    dataMap.put("longitude", longitude);//经度
+                    dataMap.put("latitude", latitude);//纬度
+                    map.put("errorCode", "0000");
+                    map.put("errorInfo", "查询成功");
+                    map.put("data", dataList.toString());
+                    Resttemplate resttemplate = new Resttemplate();
+                    map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/mobileCallRecord");
+                }else{
+                    map.put("errorCode", "0005");
+                    map.put("errorInfo", "业务办理失败！");
+                }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  获取移动详单  mrlu",e);
 

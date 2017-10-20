@@ -30,7 +30,7 @@ public class ShanXiTelecomService {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd) throws IOException, InterruptedException {
+    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude) throws IOException, InterruptedException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
@@ -100,6 +100,8 @@ public class ShanXiTelecomService {
                 }
                 map.put("UserIphone",phoneNumber);
                 map.put("UserPassword",serverPwd);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 map.put("data",dataList);
                 map.put("flag","0");
                 Resttemplate resttemplate=new Resttemplate();

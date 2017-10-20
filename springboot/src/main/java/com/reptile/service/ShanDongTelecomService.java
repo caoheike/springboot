@@ -171,7 +171,7 @@ public class ShanDongTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userIphone, String imageCode, String userName,
-                                            String userCard, String phoneCode, String userPassword) {
+                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> listData = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -245,6 +245,8 @@ public class ShanDongTelecomService {
                 }
                 map.put("UserPassword", "'"+userPassword+"'");
                 map.put("UserIphone", userIphone);
+                map.put("longitude", longitude);//经度
+                map.put("latitude", latitude);//纬度
                 map.put("flag", "3");
                 map.put("data", listData);
                 map.put("errorCode", "0000");

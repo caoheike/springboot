@@ -42,8 +42,8 @@ public class ChengduTelecomController {
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("phoneNumber") String phoneNumber, @RequestParam("phoneCode") String phoneCode,
-                                             @RequestParam("servePwd") String servePwd) {
-        return service.getDetailMes(request,phoneNumber, phoneCode,servePwd);
+                                             @RequestParam("servePwd") String servePwd,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
+        return service.getDetailMes(request,phoneNumber, phoneCode,servePwd,longitude,latitude);
     }
 
 

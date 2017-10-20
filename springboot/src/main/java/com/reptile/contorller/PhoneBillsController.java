@@ -57,7 +57,8 @@ public class PhoneBillsController {
     @CustomAnnotation
     @RequestMapping(value = "getDetailAccount",method = RequestMethod.POST)
     public Map<String,Object> getDetailAccount(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("phoneCode")String phoneCode,
-                                               @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ) throws Exception {
-        return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim());
+                                               @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ,
+                                               @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude ) throws Exception {
+        return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim());
     }
 }
