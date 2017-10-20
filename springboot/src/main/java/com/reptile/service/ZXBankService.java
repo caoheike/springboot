@@ -75,7 +75,7 @@ public class ZXBankService {
             map.put("data", mapInfo);
         } catch (Exception e) {
 
-            logger.warn(e.getMessage() + "     mrlu");
+            logger.warn(e.getMessage() + " 获取中信验证码    mrlu",e);
 
             e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
@@ -153,7 +153,7 @@ public class ZXBankService {
                 session.setAttribute("zxCookies2", coks);
             } catch (Exception e) {
 
-                logger.warn(e.getMessage() + "     mrlu");
+                logger.warn(e.getMessage() + "  登录中信   mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0005");
@@ -196,7 +196,7 @@ public class ZXBankService {
                 map.put("errorInfo", "短信发送成功");
             } catch (Exception e) {
 
-                logger.warn(e.getMessage() + "     mrlu");
+                logger.warn(e.getMessage() + " 中信发送手机验证码    mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0003");
@@ -348,7 +348,7 @@ public class ZXBankService {
 
             } catch (Exception e) {
 
-                logger.warn(e.getMessage() + "     mrlu");
+                logger.warn(e.getMessage() + "  中信获取账单   mrlu",e);
 
                 e.printStackTrace();
                 map.put("errorCode", "0002");
