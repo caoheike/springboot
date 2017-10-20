@@ -169,6 +169,8 @@ public class HuBeiProviceService {
 				System.out.println(datalist);
 				HUBEI.put("data", datalist);
 				HUBEI.put("UserIphone", PhoneNume);
+				map.put("longitude", longitude);
+				map.put("latitude", latitude);
 				HUBEI.put("flag", 12);
 				HUBEI.put("UserPassword", PhonePass);
 				Resttemplate resttemplate = new Resttemplate();

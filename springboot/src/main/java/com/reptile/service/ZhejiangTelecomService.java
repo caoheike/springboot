@@ -183,6 +183,8 @@ public class ZhejiangTelecomService {
 		    map.put("data", dlist);
             map.put("UserPassword",servePwd);
             map.put("UserIphone", phoneNumber);
+            map.put("longitude", longitude);
+			map.put("latitude", latitude);
             map.put("flag", "9");
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
