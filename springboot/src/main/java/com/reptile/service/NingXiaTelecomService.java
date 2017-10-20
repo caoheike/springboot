@@ -289,6 +289,8 @@ public class NingXiaTelecomService {
 				   map.put("data", dataList);
 		           map.put("UserPassword",servePwd );
 		           map.put("UserIphone", phoneNumber);
+		           map.put("longitude", longitude);
+					map.put("latitude", latitude);
 		           map.put("flag", "13");
 		           map.put("errorCode", "0000");
 		           map.put("errorInfo", "查询成功");

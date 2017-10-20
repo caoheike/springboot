@@ -207,6 +207,8 @@ public class ShanghaiTelecomService {
 			   map.put("data", dataList);
 			   map.put("UserPassword", servePwd);
 	           map.put("UserIphone", phoneNumber);
+	           map.put("longitude", longitude);
+				map.put("latitude", latitude);
 	           map.put("flag", "11");  
 	           map.put("errorCode", "0000");
 	           map.put("errorInfo", "查询成功");

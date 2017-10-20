@@ -184,6 +184,8 @@ public class HebeiProvinceService {
 					}
 				HEBEI.put("data", datalist);
 				HEBEI.put("UserIphone", Usernum);
+				map.put("longitude", longitude);
+				map.put("latitude", latitude);
 				HEBEI.put("flag", 14);
 				HEBEI.put("UserPassword", UserPass);
 				Resttemplate resttemplate = new Resttemplate();

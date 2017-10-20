@@ -117,6 +117,8 @@ public class GansuProvinceService {
 					}
 					Gansu.put("data", datalist);
 					Gansu.put("UserIphone", UserNum);
+					map.put("longitude", longitude);
+					map.put("latitude", latitude);
 					Gansu.put("flag", 6);
 					Gansu.put("UserPassword", UserPass);
 					System.out.println(Gansu);
