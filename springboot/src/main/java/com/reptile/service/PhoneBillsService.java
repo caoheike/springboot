@@ -365,7 +365,7 @@ public class PhoneBillsService {
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
                     String json = results.substring(s);
                     results = json.substring(0, json.length() - 1);
-                    if(!results.contains("get data from cache success")){
+                    if(results.contains("startTime")&&results.contains("commPlac")){
                         dataList.add(results);
                     }
 
