@@ -1,9 +1,7 @@
 package com.reptile.contorller;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
-import com.reptile.util.CustomAnnotation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Map;
 
@@ -51,8 +48,6 @@ public class GlobalUnicomController {
 			HttpServletResponse response, @RequestParam("Useriphone") String Useriphone){
         return mobileService.GetCode(request, response, Useriphone);
     }
-
-
     /**
      * 联通登录接口
      * @CustomAnnotation("???")
@@ -73,8 +68,6 @@ public class GlobalUnicomController {
         
         return mobileService.UnicomLogin(request,Useriphone, password,UserCode);
     }
-    
-    
    /** 
     * 获取详单验证码
     * @param request
@@ -105,10 +98,9 @@ public class GlobalUnicomController {
     @RequestMapping(value = "getDetials",method = RequestMethod.POST)
     public Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("Useriphone")String Useriphone,
     		@RequestParam("UserPassword")String UserPassword,
-    		@RequestParam("code")String code) {
-    	
-				return mobileService.getDetial(request, Useriphone, UserPassword, code);
-    	
+    		@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude) {
+				
+    	return mobileService.getDetial(request, Useriphone, UserPassword,code,longitude,latitude);
     } 
  
 }

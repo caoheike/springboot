@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -92,10 +94,9 @@ public class ZhejiangTelecomService {
  * @return
  */
 	
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code){
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code,String longitude,String latitude){
 		    Map<String, Object> map = new HashMap<String, Object>();
-            //验证码	判断	=========================================     
-		    
+            //验证码	判断	=========================================  
 		    WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
 		    if(webClient==null){
 		    	 map.put("errorCode", "0001");

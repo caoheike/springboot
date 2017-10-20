@@ -74,10 +74,9 @@ public class GuiZhouTelecomService {
 	 * @return
 	 */
 	
-	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd) {
+	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude) {
 		    Map<String, Object> map = new HashMap<String, Object>();
 	        WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
-	        
 	        if(webClient==null){
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	

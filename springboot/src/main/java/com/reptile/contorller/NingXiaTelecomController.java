@@ -40,9 +40,8 @@ public class NingXiaTelecomController {
 		@ResponseBody
 		@CustomAnnotation
 		@RequestMapping(value = "ningXiaDetil", method = RequestMethod.POST)
-		public Map<String,Object> ningXiaDetil(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code){
-			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code);
+		public Map<String,Object> ningXiaDetil(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
+			
+			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code,longitude,latitude);
 		}
-		
-
 }

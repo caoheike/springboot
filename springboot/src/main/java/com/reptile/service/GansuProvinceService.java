@@ -78,9 +78,10 @@ public class GansuProvinceService {
 	        }
 		return map;
 	 }
-	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy){
+	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy,String longitude,String latitude){
 		   Map<String,Object> map = new HashMap<String,Object>();
 		   HttpSession session = request.getSession();
+		   
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
 	            map.put("errorCode", "0001");

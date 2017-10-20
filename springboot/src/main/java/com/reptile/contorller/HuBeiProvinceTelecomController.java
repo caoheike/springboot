@@ -32,7 +32,8 @@ public class HuBeiProvinceTelecomController {
 	  	@ResponseBody
 	    @RequestMapping(value = "HubeiPhone", method = RequestMethod.POST)
 	    //湖北电信获取通话详单
-	    public Map<String, Object> HubeiPhone(HttpServletRequest request,@RequestParam("PassCode") String PassCode,@RequestParam("PhoneNum") String PhoneNum,@RequestParam("PhonePass") String PhonePass) {
-	        return huebi.hubeiphone(request,PassCode,PhoneNum,PhonePass);
+	    public Map<String, Object> HubeiPhone(HttpServletRequest request,@RequestParam("PassCode") String PassCode,@RequestParam("PhoneNum") String PhoneNum,@RequestParam("PhonePass") String PhonePass,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude) {
+	        
+			return huebi.hubeiphone(request,PassCode,PhoneNum,PhonePass,longitude,latitude);
 	    }
 }

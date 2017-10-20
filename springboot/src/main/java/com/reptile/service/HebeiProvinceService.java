@@ -136,9 +136,10 @@ public class HebeiProvinceService {
 		
 	}
 	//河北电信获取通话详单
-	public Map<String, Object> HebeiUsercard2(HttpServletRequest request, String Usernum, String UserPass, String capth) {
+	public Map<String, Object> HebeiUsercard2(HttpServletRequest request, String Usernum, String UserPass, String capth,String longitude,String latitude) {
 		 Map<String,Object> map = new HashMap<String,Object>();
 		// TODO Auto-generated method stub
+		 
 		System.out.println("进入短信提交页面");
 		HttpSession session=request.getSession();//获得session
 		Object sessiondriver = session.getAttribute("sessionDriver-Hebei"+Usernum);

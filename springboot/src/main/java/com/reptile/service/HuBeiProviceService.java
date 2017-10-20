@@ -91,11 +91,12 @@ public class HuBeiProviceService {
 	        }
 		return map;
 	}
-	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass){
+	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass,String longitude,String latitude){
 		 Map<String,Object> map = new HashMap<String,Object>();
 		  HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-HUBEI");
 	        try {
+	        	
 	        	PushState.state(PhoneNume, "callLog",100);
 	        	WebClient webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));

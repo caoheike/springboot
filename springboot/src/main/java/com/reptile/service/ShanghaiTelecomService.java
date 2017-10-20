@@ -9,8 +9,10 @@ import java.util.Map;
 import java.lang.Object;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
@@ -64,9 +66,8 @@ public class ShanghaiTelecomService {
 	 * @param code
 	 * @return
 	 */
-	public Map<String,Object> getDetial(String phoneNumber,String servePwd,HttpServletRequest request,String code){
+	public Map<String,Object> getDetial(String phoneNumber,String servePwd,HttpServletRequest request,String code,String longitude,String latitude){
 		//定单详情查取方式1.选择月份 2.自定义时间
-		
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
 		 WebClient  webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient

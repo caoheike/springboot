@@ -32,7 +32,8 @@ public class HebeiProvinceTelecomController {
 	 @ApiOperation(value = "2.获得通话详单", notes = "参数：手机号,查询密码,短信验证码")
 	 @ResponseBody
 	 @RequestMapping(value = "HebeiUsercard2", method = RequestMethod.POST)
-	 public  Map<String,Object> HebeiUsercard2(HttpServletRequest request,@RequestParam ("Usernum") String Usernum,@RequestParam ("UserPass") String UserPass,@RequestParam ("Capth") String Capth  ){
-		return hebei.HebeiUsercard2(request,Usernum,UserPass,Capth);
+	 public  Map<String,Object> HebeiUsercard2(HttpServletRequest request,@RequestParam ("Usernum") String Usernum,@RequestParam ("UserPass") String UserPass,@RequestParam ("Capth") String Capth,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
+		
+		 return hebei.HebeiUsercard2(request,Usernum,UserPass,Capth,longitude,latitude);
 	 }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.ZhejiangTelecomService;
+import com.reptile.util.CustomAnnotation;
 
 @Controller
 @RequestMapping("zheJiangTelecom")
@@ -32,7 +33,9 @@ public class ZhejiangTelecomController {
 	@ApiOperation(value = "0.2获取详单", notes = "参数：手机号，服务密码，姓名，身份证号,验证码")
 	@ResponseBody
 	@RequestMapping(value = "zheJiangDetial", method = RequestMethod.POST)
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code){
-		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code);
+	@CustomAnnotation
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
+		
+		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code,longitude,latitude);
 	}
 }

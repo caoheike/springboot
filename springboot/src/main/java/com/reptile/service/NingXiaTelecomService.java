@@ -29,7 +29,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.reptile.util.GetMonth;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.Resttemplate;
@@ -47,82 +46,82 @@ public class NingXiaTelecomService {
 	 * @param servePwd
 	 * @return
 	 */
-	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd){Map<String, Object> map = new HashMap<String, Object>();
-		System.setProperty("webdriver.chrome.driver",
-				"C:\\Program Files\\iedriver\\chromedriver.exe");
-		//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
-		ChromeOptions options = new ChromeOptions();
-        options.addArguments("start-maximized");
-		WebDriver driver = new ChromeDriver(options);
-		driver.get("http://login.189.cn/web/login");
-			
-		driver.navigate().refresh();
-		try {
+
+	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd){
+		 
+			Map<String, Object> map = new HashMap<String, Object>();
+			System.setProperty("webdriver.chrome.driver",
+					"C:\\Program Files\\iedriver\\chromedriver.exe");
+			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
+			ChromeOptions options = new ChromeOptions();
+	        options.addArguments("start-maximized");
+			WebDriver driver = new ChromeDriver(options);
+			driver.get("http://login.189.cn/web/login");	
+			driver.navigate().refresh();
+			try {
+				Thread.sleep(500);
+			WebElement form = driver.findElement(By.id("loginForm"));
+
+			WebElement account = form.findElement(By.id("txtAccount"));
+			// account.clear();
+			account.sendKeys(phoneNumber);
 			Thread.sleep(500);
-		WebElement form = driver.findElement(By.id("loginForm"));
-		Thread.sleep(500);
-		WebElement account = form.findElement(By.id("txtAccount"));
-		// account.clear();
-		account.sendKeys(phoneNumber);
-		Thread.sleep(500);
-			
-		//driver.switchTo().frame("name");
-		WebElement passWord = form.findElement(By.id("txtShowPwd"));
-		passWord.click();
-		WebElement passWord1 = form.findElement(By.id("txtPassword"));
-		passWord1.sendKeys(servePwd);
-//===========图形验证==========================
-		String path=request.getServletContext().getRealPath("/vecImageCode");
-        System.setProperty("java.awt.headless", "true");
-        File file=new File(path);
-        if(!file.exists()){
-            file.mkdirs();
-        }
-		WebElement captchaImg = form.findElement(By.id("imgCaptcha"));
-	      File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-	      BufferedImage  fullImg = ImageIO.read(screenshot);
-	      Point point = captchaImg.getLocation();
-	      int eleWidth = captchaImg.getSize().getWidth();
-	      int eleHeight = captchaImg.getSize().getHeight();
-	      BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
-	          eleWidth, eleHeight);
-	      ImageIO.write(eleScreenshot, "png", screenshot);
-	      Date date=new Date();
-	      SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddhhmmss");
-	      String filename=System.currentTimeMillis()+".png";
-	      File screenshotLocation = new File("C:\\images\\"+filename);
-	      Thread.sleep(2000);
-	      FileUtils.copyFile(screenshot, screenshotLocation);
-	      Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
-	      System.out.println(map1);
-	      String catph= (String) map1.get("strResult");
-	      Thread.sleep(2000);
-	            //
-	        WebElement loginBtn = driver.findElement(By.id("txtCaptcha"));
-	          loginBtn.sendKeys(catph);
-	        Thread.sleep(2000);
-	          WebElement loginBtns = driver.findElement(By.id("loginbtn"));
-	        loginBtns.click();
-	          Thread.sleep(2000);
-		
-		
-		
-		if(driver.getPageSource().contains("详单查询")){
-			map.put("errorCode", "0000");
-			map.put("errorInfo", "登陆成功");
-			}else{
-				String divErr = driver.findElement(By.id("divErr")).getText();
-				
-				map.put("errorCode", "0007");
-				map.put("errorInfo", divErr);
-			}
-	 
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "网络连接异常");
-		}		
-	
+			//driver.switchTo().frame("name");
+			WebElement passWord = form.findElement(By.id("txtShowPwd"));
+			passWord.click();
+			WebElement passWord1 = form.findElement(By.id("txtPassword"));
+			passWord1.sendKeys(servePwd);
+           //===========图形验证==========================
+			String path=request.getServletContext().getRealPath("/vecImageCode");
+	        System.setProperty("java.awt.headless", "true");
+	        File file=new File(path);
+	        if(!file.exists()){
+	            file.mkdirs();
+	        }
+			  WebElement captchaImg = form.findElement(By.id("imgCaptcha"));
+		      File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+		      BufferedImage  fullImg = ImageIO.read(screenshot);
+		      Point point = captchaImg.getLocation();//坐标
+		      int eleWidth = captchaImg.getSize().getWidth();//宽
+		      int eleHeight = captchaImg.getSize().getHeight();//高
+		      BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
+		          eleWidth, eleHeight);
+		      ImageIO.write(eleScreenshot, "png", screenshot);
+		     /* Date date=new Date();
+		      SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddhhmmss");*/
+		      String filename=System.currentTimeMillis()+".png";
+		      File screenshotLocation = new File("C:\\images\\"+filename);
+		      Thread.sleep(2000);
+		      FileUtils.copyFile(screenshot, screenshotLocation);
+		      
+		      Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
+		      System.out.println(map1);
+		      String catph= (String) map1.get("strResult");
+		      Thread.sleep(2000);
+		      //================================
+		        WebElement loginBtn = driver.findElement(By.id("txtCaptcha"));
+		          loginBtn.sendKeys(catph);
+		        Thread.sleep(2000);
+		          WebElement loginBtns = driver.findElement(By.id("loginbtn"));
+		          loginBtns.click();
+		          Thread.sleep(2000);
+			if(driver.getPageSource().contains("详单查询")){
+				map.put("errorCode", "0000");
+				map.put("errorInfo", "登陆成功");
+				}else{
+					String divErr = driver.findElement(By.id("divErr")).getText();
+					
+					map.put("errorCode", "0001");
+					map.put("errorInfo", divErr);
+					driver.close();
+				}
+		 
+			} catch (Exception e) {
+				e.printStackTrace();
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "网络连接异常");
+				driver.close();
+			}	
 		    request.getSession().setAttribute("driver", driver);//把driver放到session 
 		// driver.close();
 	return map;	 
@@ -179,7 +178,7 @@ public class NingXiaTelecomService {
 	  * @return
 	  */
 	 
-	 public Map<String,Object> ningXiaDetial(HttpServletRequest request,String phoneNumber,String servePwd,String code){
+	 public Map<String,Object> ningXiaDetial(HttpServletRequest request,String phoneNumber,String servePwd,String code,String longitude,String latitude){
 		 
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
@@ -188,7 +187,6 @@ public class NingXiaTelecomService {
 		     map.put("errorInfo", "请先获取验证码");	
 			 return map; 
 		 }
-		 
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
            if(code==null||code.equals("")){
         	   map.put("errorCode", "0001");
