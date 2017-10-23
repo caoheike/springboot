@@ -63,8 +63,10 @@ public class AopClass {
                 afterTuiSong(className, argsName, approveState);
             }
         } catch (Exception e) {
-            logger.warn("mrlu认证状态推送失败" + e.getMessage());
+            logger.warn("mrlu认证状态推送失败" + e.getMessage(),e);
             e.printStackTrace();
+            map.put("errorCode","0001");
+            map.put("errorInfo","推送状态失败");
         }
         return map;
     }

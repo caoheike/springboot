@@ -68,7 +68,7 @@ public class ShanXiTelecomService {
                 webRequest.setRequestParameters(reqParamsinfo);
                 HtmlPage Infopage = webClient.getPage(webRequest);
                 System.out.print(Infopage.asXml());
-                if(!Infopage.asXml().contains("无话单记录!")){
+                if(!Infopage.asXml().contains("无话单记录")){
                     dataList.add(Infopage.asXml());
                 }
                 Thread.sleep(1000);
@@ -93,19 +93,25 @@ public class ShanXiTelecomService {
                     Infopage = webClient.getPage(webRequest);
                     System.out.print(Infopage.asXml());
                     Thread.sleep(1000);
-                    if(!Infopage.asXml().contains("无话单记录!")){
+                    if(!Infopage.asXml().contains("无话单记录")){
                         dataList.add(Infopage.asXml());
                     }
 
                 }
-                map.put("UserIphone",phoneNumber);
-                map.put("UserPassword",serverPwd);
-                map.put("longitude", longitude);//经度
-                map.put("latitude", latitude);//纬度
-                map.put("data",dataList);
-                map.put("flag","0");
-                Resttemplate resttemplate=new Resttemplate();
-                map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                if(dataList.size()!=0){
+                    map.put("UserIphone",phoneNumber);
+                    map.put("UserPassword",serverPwd);
+                    map.put("longitude", longitude);//经度
+                    map.put("latitude", latitude);//纬度
+                    map.put("data",dataList);
+                    map.put("flag","0");
+                    Resttemplate resttemplate=new Resttemplate();
+                    map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                }else{
+                    map.put("errorCode", "0005");
+                    map.put("errorInfo", "业务办理失败！");
+                }
+
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
                 e.printStackTrace();

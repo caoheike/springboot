@@ -7,6 +7,8 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 public class Resttemplate {
+	Logger logger= LoggerFactory.getLogger(Resttemplate.class);
 	/**
 	 * 
 	 * @param map 需要推送的数据
@@ -51,6 +54,8 @@ public class Resttemplate {
           }
            
 		} catch (Exception e) {
+	  		logger.warn("推送数据过程中出现错误 loggerError",e);
+	  		e.printStackTrace();
 			message.put("errorCode","0003");//异常处理
 			message.put("errorInfo","推送失败");
 		}
@@ -80,7 +85,8 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  System.out.println(e);
+		  logger.warn("推送数据过程中出现错误 loggerError",e);
+		  e.printStackTrace();
 		  message.put("errorCode","0003");//异常处理
 		  message.put("errorCode","推送失败");
 	  }
@@ -111,7 +117,8 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  System.out.println(e);
+		  logger.warn("推送数据过程中出现错误 loggerError",e);
+		  e.printStackTrace();
 		  message.put("ResultCode","0003");//异常处理
 		  message.put("ResultInfo","推送失败");
 	  }
@@ -142,6 +149,8 @@ public class Resttemplate {
 			}
 
 		} catch (Exception e) {
+			logger.warn("推送数据过程中出现错误 loggerError",e);
+			e.printStackTrace();
 			message.put("errorCode","0003");//异常处理
 			message.put("errorInfo","操作失败");
 		}
@@ -173,7 +182,8 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  System.out.println(e);
+		  logger.warn("推送数据过程中出现错误 loggerError",e);
+		  e.printStackTrace();
 		  message.put("ResultCode","0003");//异常处理
 		  message.put("ResultInfo","推送失败");
 	  }
@@ -209,6 +219,8 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
+		  logger.warn("推送数据过程中出现错误 loggerError",e);
+		  e.printStackTrace();
 		  message.put("errorCode","0003");//异常处理
 		  message.put("errorInfo","推送失败");
           PushState.state(card, "CHSI",200);
