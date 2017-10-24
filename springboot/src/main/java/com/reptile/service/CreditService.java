@@ -93,6 +93,7 @@ public class CreditService {
                 loginPage = webClient.getPage(loginUrl);
             } catch (Exception e) {
                 Scheduler.sendGet(Scheduler.getIp);
+                logger.warn("mrlu  征信前往登录页面",e);
                 data.put("ResultInfo", "系统繁忙，请稍后再试！");
                 data.put("ResultCode", "0002");
                 return data;
