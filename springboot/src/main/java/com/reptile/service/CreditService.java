@@ -590,12 +590,16 @@ public class CreditService {
                             map.put("errorInfo","查询成功");
                             map.put("errorCode","0000");
                         }else{
-                            map.put("errorInfo","查询失败");
+                            map.put("errorInfo",map.get("ResultInfo"));
                             map.put("errorCode","0001");
                         }
                     } catch (Exception e) {
                         logger.warn(e.getMessage()+" 查询征信报告推送异常    mrlu",e);
                         System.out.println("征信报告推送失败!" + e.getMessage());
+                        map.put("ResultInfo", "系统繁忙，请稍后再试！");
+                        map.put("ResultCode", "0002");
+                        map.put("errorInfo", "系统繁忙，请稍后再试！");
+                        map.put("errorCode", "0002");
                     }
                 }
             } else {
