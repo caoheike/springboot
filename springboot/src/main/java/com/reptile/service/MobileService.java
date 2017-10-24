@@ -1437,7 +1437,12 @@ public class MobileService {
 
 				map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/authcode/hireright");
 				//--------------------数据中心推送状态----------------------
-				PushState.state(userCard, "CHSI", 300);
+				if(map.get("errorCode").equals("0000")){
+					PushState.state(userCard, "CHSI", 300);
+				}else{
+					PushState.state(userCard, "CHSI", 200);
+				}
+
 				//---------------------数据中心推送状态----------------------
 			} else if (pages.asText().contains("您输入的用户名或密码有误")) {
 				map.put("errorCode", "0002");
