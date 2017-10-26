@@ -125,8 +125,8 @@ public class InterfaceController {
 	 * 
 	 * @param mobileBean
 	 * @param request
-	 * @param responsl
-	 * @param userType
+	 * @param
+	 * @param
 	 * @return
 	 * @throws FailingHttpStatusCodeException
 	 * @throws MalformedURLException
@@ -738,7 +738,18 @@ public class InterfaceController {
 	       map.put("userPwd", "123");
 	       map.put("userCard", idCard);
 	       map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
-	      PushState.state(idCard, "TaoBao",300);
+
+			if(map!=null&&"0000".equals(map.get("errorCode").toString())) {
+				PushState.state(idCard, "TaoBao", 300);
+				map.put("errorInfo", "查询成功");
+				map.put("errorCode", "0000");
+			}else{
+				//--------------------数据中心推送状态----------------------
+				PushState.state(idCard, "TaoBao",200);
+				//---------------------数据中心推送状态----------------------
+				map.put("errorInfo","查询失败");
+				map.put("errorCode","0001");
+			}
 	    }else if(jsonObject2.get("code").equals("10004")){
 	      PushState.state(idCard, "TaoBao",200);
 	      System.out.println("二维码过期");
