@@ -8,6 +8,7 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import net.sf.json.JSONArray;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -48,7 +49,7 @@ public class ZXBankService {
         HttpSession session = request.getSession();
 
         HttpClient httpClient = new HttpClient();
-        httpClient.getHostConfiguration().setProxy(Scheduler.ip, Scheduler.port);
+//        httpClient.getHostConfiguration().setProxy(Scheduler.ip, Scheduler.port);
         GetMethod postVec = new GetMethod("https://creditcard.ecitic.com/citiccard/ucweb/newvalicode.do?time=" + System.currentTimeMillis());
 
         try {
@@ -277,7 +278,15 @@ public class ZXBankService {
                 System.out.println(jsonObject);
                 String response1 = jsonObject.get("response").toString();
                 net.sf.json.JSONObject jsonObject1 = net.sf.json.JSONObject.fromObject(response1);
-                net.sf.json.JSONArray cardlist1 = jsonObject1.getJSONArray("cardlist");
+                net.sf.json.JSONArray cardlist1=new JSONArray();
+                try{
+                    cardlist1 = jsonObject1.getJSONArray("cardlist");
+                }catch (Exception e){
+                    Object cardlist = jsonObject1.get("cardlist");
+                    cardlist1.add(cardlist);
+                    logger.warn("中信银行获取卡列表失败 mrldw",e);
+                }
+
 
                 List dataList = new ArrayList();
                 for (int i = 0; i < cardlist1.size(); i++) {

@@ -212,6 +212,12 @@
   <version>2.25</version>
 </dependency>
 
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swingx</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
 <dependency>
   <groupId>com.xiongyingqi</groupId>
   <artifactId>qrcode</artifactId>
