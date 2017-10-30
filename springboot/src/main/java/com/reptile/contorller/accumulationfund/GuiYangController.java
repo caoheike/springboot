@@ -17,11 +17,21 @@ import java.util.Map;
 public class GuiYangController {
     @Autowired
     private GuiYangService service;
-    @RequestMapping(value = "loadMethod",method = RequestMethod.POST)
+
+    @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "加载图片验证码",notes = "参数：无")
+    public Map<String,String> loadImageCode(HttpServletRequest request){
+
+        return service.loadImageCode(request);
+    }
+
+    @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码")
-    public Map<String,String> loadMethod(HttpServletRequest request, @RequestParam("userCard") String userCard, @RequestParam("password")String password){
+    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("userCard") String userCard, @RequestParam("password")String password,
+                                           @RequestParam("imageCode")String imageCode){
 
-        return null;
+        return service.getDeatilMes(request, userCard, password,imageCode);
     }
 }
