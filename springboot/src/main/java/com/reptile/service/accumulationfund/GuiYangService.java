@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -25,9 +26,10 @@ import java.util.*;
 public class GuiYangService {
     private Logger logger = LoggerFactory.getLogger(GuiYangService.class);
 
-    public Map<String, String> loadImageCode(HttpServletRequest request) {
+    public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取贵阳公积金图片验证码");
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        Map<String, String> datamap = new HashMap<>();
         String path = request.getServletContext().getRealPath("ImageCode");
         HttpSession session = request.getSession();
 
@@ -37,6 +39,7 @@ public class GuiYangService {
         }
 
         WebClient webClient = new WebClientFactory().getWebClient();
+
         HtmlPage page = null;
         try {
             page = webClient.getPage("http://zxcx.gygjj.gov.cn/");
@@ -44,9 +47,10 @@ public class GuiYangService {
             BufferedImage read = rand.getImageReader().read(0);
             String fileName = "guiyang" + System.currentTimeMillis() + ".png";
             ImageIO.write(read, "png", new File(file, fileName));
+            datamap.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/ImageCode/" + fileName);
             map.put("errorCode", "0000");
             map.put("errorInfo", "加载验证码成功");
-            map.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/ImageCode/" + fileName);
+            map.put("data", datamap);
             session.setAttribute("htmlWebClient-guiyang", webClient);
             session.setAttribute("htmlPage-guiyang", page);
         } catch (IOException e) {
@@ -104,10 +108,16 @@ public class GuiYangService {
                 logger.warn("贵阳住房公积金获取基本缴纳信息");
                 WebRequest getMethod=new WebRequest(new URL("http://zxcx.gygjj.gov.cn/PersonBaseInfo.do?method=view"));
                 getMethod.setHttpMethod(HttpMethod.GET);
+                getMethod.setAdditionalHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36");
                 HtmlPage page1 = webClient.getPage(getMethod);
-                dataMap.put("baseMes", page1.asXml()); //存入基本信息
+                Thread.sleep(3000);
                 System.out.println(page1.asXml());
-
+                if(page1.asXml().contains("此网页使用了框架，但您的浏览器不支持框架")){
+                    map.put("errorCode", "0002");
+                    map.put("errorInfo", "认证失败，请重新认证");
+                    return map;
+                }
+                dataMap.put("base", page1.asXml()); //存入基本信息
                 logger.warn("贵阳住房公积金缴纳信息详情获取");
                 List<String> detailMes = new ArrayList<>();
                 WebRequest post = new WebRequest(new URL("http://zxcx.gygjj.gov.cn/PersonAccountsList.do?method=list"));
@@ -123,7 +133,7 @@ public class GuiYangService {
 
                 XmlPage page2 = webClient.getPage(post);
                 Thread.sleep(1000);
-                detailMes.add(page2.asXml());
+                detailMes.add(page2.asText());
                 System.out.println(page2.asText());
 
                 org.jsoup.nodes.Document xmlDocument = Jsoup.parse(page2.asText());
@@ -151,7 +161,7 @@ public class GuiYangService {
                     page2 = webClient.getPage(post);
                     Thread.sleep(1000);
                     System.out.println(page2.asText());
-                    detailMes.add(page2.asXml());
+                    detailMes.add(page2.asText());
                     xmlDocument = Jsoup.parse(page2.asText());
                     sort = xmlDocument.getElementById("sort").val();
                     dir = xmlDocument.getElementById("dir").val();
@@ -159,10 +169,11 @@ public class GuiYangService {
                     curye = xmlDocument.getElementById("curye").val();
                 }
                 logger.warn("贵阳住房公积金缴纳信息详情获取完成");
-                dataMap.put("detailMes", detailMes);
+                dataMap.put("item", detailMes);
                 map.put("data", dataMap);
                 map.put("userId", userCard);
                 map.put("city", "003");
+                map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");
             } catch (Exception e) {
                 logger.warn("贵阳住房公积金获取失败",e);
                 e.printStackTrace();

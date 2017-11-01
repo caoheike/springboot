@@ -21,7 +21,7 @@ public class GuiYangController {
     @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "加载图片验证码",notes = "参数：无")
-    public Map<String,String> loadImageCode(HttpServletRequest request){
+    public Map<String,Object> loadImageCode(HttpServletRequest request){
 
         return service.loadImageCode(request);
     }
