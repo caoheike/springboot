@@ -11,7 +11,7 @@ public class MyCYDMDemo {
 
 		// 下载云打码DLL http://yundama.com/apidoc/YDM_SDK.html#DLL
 		// yundamaAPI 32位, yundamaAPI-x64 64位
-		//public static String	DLLPATH		= "C://yundamaAPI-x64.dll";//本地
+//		public static String	DLLPATH		= "C://yundamaAPI-x64.dll";//本地
 		public static String	DLLPATH		= "C://yundamaAPI.dll";//正式
 
 		public interface YDM extends Library
@@ -85,6 +85,50 @@ public class MyCYDMDemo {
 			}
 			return map;  
 		}
+
+	public static Map<String,Object> getCode(String path) throws Exception {
+		// 注意这里是普通会员账号，不是开发者账号，注册地址 http://www.yundama.com/index/reg/user
+		// 开发者可以联系客服领取免费调试题分
+		Map<String,Object> map=new HashMap<>();
+
+		String username = "caoheike";
+		String password = "598415805";
+
+		// 测试时可直接使用默认的软件ID密钥，但要享受开发者分成必须使用自己的软件ID和密钥
+		// 1. http://www.yundama.com/index/reg/developer 注册开发者账号
+		// 2. http://www.yundama.com/developer/myapp 添加新软件
+		// 3. 使用添加的软件ID和密钥进行开发，享受丰厚分成
+		int appid = 1;
+		String appkey = "22cc5376925e9387a23cf797cb9ba745";
+
+		// 图片路径
+		String imagepath = path;
+
+		//  例：1004表示4位字母数字，不同类型收费不同。请准确填写，否则影响识别率。在此查询所有类型 http://www.yundama.com/price.html
+		int codetype = 1005;
+
+		// 只需要在初始的时候登陆一次
+		int uid = 0;
+		YDM.INSTANCE.YDM_SetAppInfo(appid, appkey);            // 设置软件ID和密钥
+		uid = YDM.INSTANCE.YDM_Login(username, password);    // 登陆到云打码
+
+		if (uid > 0) {
+			System.out.println("登陆成功,正在提交识别...");
+
+			byte[] byteResult = new byte[30];
+			int cid = YDM.INSTANCE.YDM_DecodeByPath(imagepath, codetype, byteResult);
+			String strResult = new String(byteResult, "UTF-8").trim();
+
+			// 返回其他错误代码请查询 http://www.yundama.com/apidoc/YDM_ErrorCode.html
+			System.out.println("识别返回代码:" + cid);
+			System.out.println("识别返回结果:" + strResult);
+			map.put("cid", cid);
+			map.put("strResult", strResult);
+		} else {
+			System.out.println("登录失败，错误代码为：" + uid);
+		}
+		return map;
+	}
 	}
 
 

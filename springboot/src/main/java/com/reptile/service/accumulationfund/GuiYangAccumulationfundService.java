@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class GuiYangService {
-    private Logger logger = LoggerFactory.getLogger(GuiYangService.class);
+public class GuiYangAccumulationfundService {
+    private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取贵阳公积金图片验证码");
@@ -63,7 +63,7 @@ public class GuiYangService {
         return map;
     }
 
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         HttpSession session = request.getSession();
@@ -172,7 +172,7 @@ public class GuiYangService {
                 dataMap.put("item", detailMes);
                 map.put("data", dataMap);
                 map.put("userId", userCard);
-                map.put("city", "003");
+                map.put("city", cityCode);
                 map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");
             } catch (Exception e) {
                 logger.warn("贵阳住房公积金获取失败",e);

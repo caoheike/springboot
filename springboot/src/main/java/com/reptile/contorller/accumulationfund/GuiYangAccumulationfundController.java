@@ -1,6 +1,6 @@
 package com.reptile.contorller.accumulationfund;
 
-import com.reptile.service.accumulationfund.GuiYangService;
+import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
-@RequestMapping("GuiYangController")
-public class GuiYangController {
+@RequestMapping("GuiYangAccumulationfundController")
+public class GuiYangAccumulationfundController {
     @Autowired
-    private GuiYangService service;
+    private GuiYangAccumulationfundService service;
 
     @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
     @ResponseBody
@@ -28,10 +28,10 @@ public class GuiYangController {
 
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码")
-    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("userCard") String userCard, @RequestParam("password")String password,
-                                           @RequestParam("imageCode")String imageCode){
+    @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码，图片验证码")
+    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
+                                           @RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode ){
 
-        return service.getDeatilMes(request, userCard, password,imageCode);
+        return service.getDeatilMes(request, idCard, passWord,catpy,cityCode);
     }
 }
