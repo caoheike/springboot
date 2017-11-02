@@ -179,6 +179,8 @@ public class GuiYangAccumulationfundService {
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+            }finally {
+                webClient.close();
             }
         } else {
             logger.warn("贵阳住房公积金登录过程中出错 ");

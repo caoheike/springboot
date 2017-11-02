@@ -25,6 +25,6 @@ public class GuiYangSocialSecurityController {
     @ResponseBody
     public synchronized   Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("idCard") String idCard,
                                                            @RequestParam("passWord") String passWord,@RequestParam("cityCode")String cityCode) throws Exception {
-        return service.getDetailMes(request,idCard,passWord,cityCode);
+        return service.getDetailMes(request,idCard.trim(),passWord.trim(),cityCode.trim());
     }
 }

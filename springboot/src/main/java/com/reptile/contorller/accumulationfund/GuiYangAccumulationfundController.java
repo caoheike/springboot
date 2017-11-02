@@ -32,6 +32,6 @@ public class GuiYangAccumulationfundController {
     public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
                                            @RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode ){
 
-        return service.getDeatilMes(request, idCard, passWord,catpy,cityCode);
+        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),catpy.trim(),cityCode.trim());
     }
 }
