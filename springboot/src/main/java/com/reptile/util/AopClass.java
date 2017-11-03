@@ -46,7 +46,9 @@ public class AopClass {
         try {
             String className = joinPoint.getSignature().getDeclaringTypeName(); //所调用类名全称
             String argsName = joinPoint.getArgs()[1].toString();//所调方法第一个参数
+            logger.warn("正在推送认证中状态");
             Map<String, Object> stringObjectMap = beforeTuiSong(className, argsName);
+            logger.warn("推送状态完毕");
             if(stringObjectMap.toString().contains("2222")){
                 map.put("errorCode","0001");
                 map.put("errorInfo","该账号未实名认证！");
@@ -60,7 +62,9 @@ public class AopClass {
                 if (jsonObject.get("errorCode").equals("0000")) {
                     approveState = "300";
                 }
+                logger.warn("正在推送认证结果");
                 afterTuiSong(className, argsName, approveState);
+                logger.warn("推送认证结果完成");
             }
         } catch (Exception e) {
             logger.warn("mrlu认证状态推送失败" + e.getMessage(),e);
