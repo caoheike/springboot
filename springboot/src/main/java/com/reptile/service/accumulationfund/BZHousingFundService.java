@@ -1,17 +1,11 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -30,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -39,30 +34,31 @@ import com.reptile.util.application;
 public class BZHousingFundService {
 	
 	private Logger logger = LoggerFactory.getLogger(BZHousingFundService.class);
-	public final static String BINZHOU_CITY_CODE = "005";
-	private final static  String IMG_PATH = "E:\\bzImg\\";
 	
 	@Autowired
 	private application application;
 	
 	/**
-	 * 登录
+	 * 登录并获取详情
 	 * @param request
-	 * @param userName 用户名
-	 * @param passWord 密码
+	 * @param userName 
+	 * @param passWord
+	 * @param idCard
+	 * @param cityCode
 	 * @return
 	 */
-	public Map<String, Object> bzLogin(HttpServletRequest request,
-			String userName, String passWord) {
+	public Map<String, Object> doLogin(HttpServletRequest request,
+			String userName, String passWord,String idCard,String cityCode) {
 		
-		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
+		Map<String, Object> data = new HashMap<String, Object>();//返回信息
 		
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
 			HtmlPage loginPage=webClient.getPage("http://www.bzgjj.cn/");
 			//获取验证码图片并识别
 			HtmlImage imageField= (HtmlImage) loginPage.getElementByName("imageField");
-			String imgPath = this.saveImg(imageField, "gjj", request);
+			String verifyImagesPath = request.getSession().getServletContext().getRealPath("/verifyImages");
+			String imgPath = ImgUtil.saveImg(imageField, "bz", verifyImagesPath, "png");
 			Map<String,Object> result = MyCYDMDemo.Imagev(imgPath);
 			String checkCode =  (String) result.get("strResult");//转码后的动态码
 			//获取登录表单
@@ -83,18 +79,25 @@ public class BZHousingFundService {
 	        submit.click();
 	        
 	        if(list.size() > 0){
-	        	data.put("errorCode", "0001");
-	        	data.put("errorInfo", list.get(0));
+	        	if((list.get(0).trim()).equals("验证码不正确，请重新输入")){
+	        		data.put("errorCode", "0002");
+	        		data.put("errorInfo", "系统繁忙，请重试！");
+	        	}else{
+	        		data.put("errorCode", "0001");
+	        		data.put("errorInfo", list.get(0));
+	        	}
 	        }else{
-	        	data.put("errorCode", "0000");
-	        	data.put("errorInfo", "登录成功");
-	        	request.getSession().setAttribute("houseWebClient",webClient); 
+	        	data = this.doGetDetail(request, idCard, cityCode, webClient);
 	        }
 	        
 		} catch (Exception e) {
 			logger.error("滨州市公积金登录失败，用户名为："+userName,e);
 			data.put("errorCode", "0002");
         	data.put("errorInfo", "系统繁忙，请重试！");
+		}finally{
+			if(webClient != null){
+				webClient.close();
+			}
 		}
 		return data;
 	}
@@ -103,19 +106,13 @@ public class BZHousingFundService {
 	/**
 	 * 获取公积金详情
 	 * @param request
+	 * @param idCard
+	 * @param cityCode
+	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> bzGetDetail(HttpServletRequest request,String idCard,String cityCode) {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		
-		WebClient webClient = (WebClient)request.getSession().getAttribute("houseWebClient");//从session中获得webClient
-		if(webClient != null){
-			logger.info("登录成功");
-		}else{
-			data.put("errorCode", "0001");
-			data.put("errorInfo", "网络繁忙，请重试");
-			return data;
-		}
 		
 		try {
 			WebRequest webRequest = new WebRequest(new URL("http://www.bzgjj.cn/usermain2.php"));
@@ -141,33 +138,9 @@ public class BZHousingFundService {
 			logger.error("滨州市公积金查询失败",e);
 			data.put("errorCode", "0002");
 			data.put("errorInfo", "网络繁忙，请重试");
-		}finally{
-			if(webClient != null){
-				webClient.close();
-			}
 		}
 		return data;
 	}
 
-	/**
-	 * 将验证码图片保存到本地
-	 * @param htmlImg
-	 * @param type
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public String saveImg(HtmlImage htmlImg,String type,HttpServletRequest request) throws IOException{
-		ImageReader imgReader = htmlImg.getImageReader();
-	    BufferedImage bufferedImage  = ImageIO.read((ImageInputStream)imgReader.getInput());
-		String fileName = type+System.currentTimeMillis()+".png";
-		File destF = new File(IMG_PATH);
-		if (!destF.exists()) {
-			destF.mkdirs();
-		}
-		ImageIO.write(bufferedImage, "png", new File(IMG_PATH,fileName));
-		String filePath = IMG_PATH + fileName;
-		return filePath;
-	}
-
+	
 }

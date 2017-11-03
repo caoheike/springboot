@@ -23,22 +23,6 @@ public class LYSocialSecurityController {
 	
 	
 	/**
-	 * 临沂市社保登录
-	 * @param request
-	 * @param userName 姓名
-	 * @param idCard 身份证号码
-	 * @return
-	 */
-	@ApiOperation(value = "临沂市社保：登陆",notes = "参数：姓名，身份证号码")
-	@ResponseBody
-	@RequestMapping(value = "lyLogin", method = RequestMethod.POST)
-	public  Map<String,Object> lyLogin(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("idCard")String idCard){
-		return lySocialSecurityService.lyLogin(request,userName,idCard);
-		
-	}
-	
-	
-	/**
 	 * 临沂市社保详情查询
 	 * @param request
 	 * @param idCard 身份证号
@@ -46,8 +30,9 @@ public class LYSocialSecurityController {
 	 */
 	@ApiOperation(value = "临沂市社保：详情")
 	@ResponseBody
-	@RequestMapping(value = "lyGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> lyGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
-		return lySocialSecurityService.lyGetDetail(request,idCard,cityCode);
+	@RequestMapping(value = "getDetail", method = RequestMethod.POST)
+	public  Map<String,Object> getDetail(HttpServletRequest request,@RequestParam("userName")String userName,
+				@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
+		return lySocialSecurityService.doLogin(request, userName, idCard, cityCode);
 	}
 }

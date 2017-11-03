@@ -25,18 +25,17 @@ import com.reptile.util.WebClientFactory;
 @Service
 public class LYSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(LYSocialSecurityService.class);
-	public final static String LINYI_CITY_CODE = "";
-	
 	
 	/**
-	 * 临沂社保登录
+	 * 临沂社保登录并获取详情
 	 * @param request
 	 * @param userName
 	 * @param idCard
+	 * @param cityCode
 	 * @return
 	 */
-	public Map<String, Object> lyLogin(HttpServletRequest request,
-			String userName, String idCard) {
+	public Map<String, Object> doLogin(HttpServletRequest request,
+			String userName, String idCard,String cityCode) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
@@ -70,7 +69,7 @@ public class LYSocialSecurityService {
 	        }else{
 	        	data.put("errorCode", "0000");
 	        	data.put("errorInfo", "登录成功");
-	        	request.getSession().setAttribute("detailPage",nextPage); 
+	        	data = this.doGetDetail(request, idCard, cityCode,nextPage);
 	        }
 			
 		} catch (Exception e) {
@@ -90,21 +89,14 @@ public class LYSocialSecurityService {
 	 * 临沂社保查询
 	 * @param request
 	 * @param idCard
+	 * @param cityCode
+	 * @param nextPage
 	 * @return
 	 */
-	public Map<String, Object> lyGetDetail(HttpServletRequest request,
-			String idCard,String cityCode) {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,
+			String idCard,String cityCode,HtmlPage nextPage) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		
-		HtmlPage  detailPage = (HtmlPage)request.getSession().getAttribute("detailPage");
-		
-		if(detailPage == null){
-			data.put("errorInfo", "系统繁忙，请稍后再试！");
-            data.put("errorCode", "0002");
-            return data;
-		}
-		
-		HtmlTable table = (HtmlTable) detailPage.getElementsByTagName("table").get(0);
+		HtmlTable table = (HtmlTable) nextPage.getElementsByTagName("table").get(0);
 		
 		Map<String, Object> infoAll = new HashMap<String, Object>();
 		infoAll.put("item", table.asXml());

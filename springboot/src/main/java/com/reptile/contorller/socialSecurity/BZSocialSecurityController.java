@@ -25,24 +25,9 @@ public class BZSocialSecurityController {
 	
 	@ApiOperation(value = "滨州市社保：获取验证码",notes = "参数：无")
 	@ResponseBody
-	@RequestMapping(value = "bzGetVerifyImg", method = RequestMethod.POST)
-	public  Map<String,Object> getVerifyImg(HttpServletRequest request){
-		return bzSocialSecurityService.getVerifyImg(request);
-		
-	}
-	
-	/**
-	 * 滨州市社保登录
-	 * @param request
-	 * @param userCard 用户名
-	 * @param passWord 密码
-	 * @return
-	 */
-	@ApiOperation(value = "滨州市社保：登陆",notes = "参数：身份证,密码,验证码")
-	@ResponseBody
-	@RequestMapping(value = "bzLogin", method = RequestMethod.POST)
-	public  Map<String,Object> bzLogin(HttpServletRequest request,@RequestParam("userCard")String userCard,@RequestParam("passWord")String passWord,@RequestParam("catpy")String userCode){
-		return bzSocialSecurityService.bzLogin(request, userCard, passWord,userCode);
+	@RequestMapping(value = "doGetVerifyImg", method = RequestMethod.POST)
+	public  Map<String,Object> doGetVerifyImg(HttpServletRequest request){
+		return bzSocialSecurityService.doGetVerifyImg(request);
 		
 	}
 	
@@ -50,12 +35,18 @@ public class BZSocialSecurityController {
 	/**
 	 * 滨州市社保详情查询
 	 * @param request
+	 * @param idCard 身份证
+	 * @param passWord 密码
+	 * @param catpy 验证码
+	 * @param cityCode 城市编码
 	 * @return
 	 */
-	@ApiOperation(value = "滨州市社保：详情")
+	@ApiOperation(value = "滨州市社保：详情",notes = "参数：身份证,密码,验证码,城市编码")
 	@ResponseBody
-	@RequestMapping(value = "bzGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> bzGetDetail(HttpServletRequest request,@RequestParam("userCard")String userCard,@RequestParam("cityCode")String cityCode){
-		return bzSocialSecurityService.bzGetDetail(request,userCard,cityCode);
+	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,
+			@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,
+			@RequestParam("cityCode")String cityCode){
+		return bzSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode);
 	}
 }
