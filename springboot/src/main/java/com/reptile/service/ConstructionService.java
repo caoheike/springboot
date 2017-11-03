@@ -99,8 +99,7 @@ public class ConstructionService {
 		                map.put("errorInfo","推送成功");
 		                map.put("errorCode","0000");
 		                driver.close();
-		                driver.quit();
-		               
+
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
 		            	logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
@@ -109,7 +108,7 @@ public class ConstructionService {
 		                map.put("errorInfo","推送失败");
 		                map.put("errorCode","0001");
 		            	driver.close();
-		            	driver.quit();
+
 		            }
 			} catch (Exception e) { 
 				// TODO Auto-generated catch block
@@ -117,7 +116,6 @@ public class ConstructionService {
 					PushState.state(UserCard, "bankBillFlow",200);
 					logger.warn("建设银行账单获取失败"+UserCard);
 					driver.close();
-					driver.quit();
 					e.printStackTrace();
 					map.clear();
 					map.put("errorInfo","获取账单失败");
