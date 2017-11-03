@@ -65,6 +65,22 @@ public class GetMonth {
 	}
 	
 	/**
+	 * 获得上个月
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+
+	public static  String beforMont(int year,int nowMonth,int num ){
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM" );
+		 cal.set(Calendar.YEAR,year);
+		 cal.set(Calendar.MONTH, nowMonth-1);
+		 cal.add(Calendar.MONTH, -num);//从现在算，之前一个月,如果是2个月，那么-1-----》改为-2
+		return sdf.format(cal.getTime());
+	}
+	
+	/**
 	 * 一个月的最后一天
 	 * 
 	 * @param year
@@ -81,6 +97,43 @@ public class GetMonth {
 
 		return sdf.format(cal.getTime());
 	}
+
+	/**
+	 * 一个月的最后一天
+	 * 
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String lastDateOfMonth(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+
+		return sdf.format(cal.getTime());
+	}
+	
+	
+	
+	/**
+	 * 一个月的第一天
+	 * 
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String firstDateOfMonth(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month - 1);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		return sdf.format(cal.getTime());
+	}
+
 
 	/**
 	 * 一个月的第一天
@@ -111,5 +164,23 @@ public class GetMonth {
 		 nowTime.add(Calendar.MINUTE, n);//n分钟后的时间
 		return nowTime;
 	}
+	/**
+	 * 获得当年月
+	 * @return
+	 */
+	public static int[] nowYearMonth(){
+		int[] day=new int[2];
+		Date date=new Date();
+		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyyMM" );
+		String result=sdf.format(date);
+		day[0]=new Integer(result.substring(0, 4)) ;
+		
+		day[1]=new Integer(result.substring(4)) ;
+		return day;
+		
+	}
+	
+	
+	
 	
 }

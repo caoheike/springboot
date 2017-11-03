@@ -22,32 +22,20 @@ public class BZHousingFundController {
 	@Autowired
 	private BZHousingFundService bzHouseFundService;
 	
-	
-	/**
-	 * 滨州市住房公积金登录
-	 * @param request
-	 * @param userCard 用户名
-	 * @param passWord 密码
-	 * @return
-	 */
-	@ApiOperation(value = "滨州市住房公积金：登陆",notes = "参数：用户名,密码")
-	@ResponseBody
-	@RequestMapping(value = "bzLogin", method = RequestMethod.POST)
-	public  Map<String,Object> bzLogin(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord){
-		return bzHouseFundService.bzLogin(request, userName, passWord);
-		
-	}
 
 	/**
 	 * 滨州市住房公积金详情查询
 	 * @param request
-	 * @param idCard 身份号
+	 * @param userName 用户名
+	 * @param passWord 密码
+	 * @param idCard 身份证号
+	 * @param cityCode 城市编码
 	 * @return
 	 */
-	@ApiOperation(value = "滨州市住房公积金：详情")
+	@ApiOperation(value = "滨州市住房公积金：详情",notes = "参数：用户名,密码,身份证号，城市编码")
 	@ResponseBody
-	@RequestMapping(value = "bzGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> bzGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
-		return bzHouseFundService.bzGetDetail(request,idCard,cityCode);
+	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
+		return bzHouseFundService.doLogin(request, userName, passWord, idCard, cityCode);
 	}
 }
