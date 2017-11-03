@@ -1,7 +1,5 @@
 package com.reptile.service.socialSecurity;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,12 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +25,13 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ImgUtil;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
 @Service
 public class BZSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(BZSocialSecurityService.class);
-	public final static String BINZHOU_CITY_CODE = "006";
 	
 	@Autowired
 	private application application;
@@ -48,7 +41,7 @@ public class BZSocialSecurityService {
 	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> getVerifyImg(HttpServletRequest request) {
+	public Map<String, Object> doGetVerifyImg(HttpServletRequest request) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
@@ -59,12 +52,12 @@ public class BZSocialSecurityService {
 			HtmlImage authcode_operator= (HtmlImage) loginPage.getElementById("authcode_operator");
 			HtmlImage authcode_numright= (HtmlImage) loginPage.getElementById("authcode_numright");
 			
-			data.put("leftImgPath", saveImg(authcode_numleft, "left",request));
-			data.put("operatorImgPath", saveImg(authcode_operator, "operator",request));
-			data.put("rightImgPath", saveImg(authcode_numright, "right",request));
+			data.put("leftImgPath", ImgUtil.saveImg(authcode_numleft, "left", "/verifyImages", "gif", request));
+			data.put("operatorImgPath", ImgUtil.saveImg(authcode_operator, "operator", "/verifyImages", "gif", request));
+			data.put("rightImgPath", ImgUtil.saveImg(authcode_numright, "right", "/verifyImages", "gif", request));
 			
-			request.getSession().setAttribute("webClient",webClient); 
-			request.getSession().setAttribute("loginPage",loginPage); 
+			request.getSession().setAttribute("binZhouWebClient",webClient); 
+			request.getSession().setAttribute("binZhouLoginPage",loginPage); 
 			data.put("errorInfo", "获取验证码成功");
             data.put("errorCode", "0000");
             
@@ -77,19 +70,20 @@ public class BZSocialSecurityService {
 	}
 	
 	/**
-	 * 登录
+	 * 登录并获取详情
 	 * @param request
-	 * @param userCard
+	 * @param userCard 
 	 * @param passWord
 	 * @param userCode
+	 * @param cityCode
 	 * @return
 	 */
-	public Map<String, Object> bzLogin(HttpServletRequest request,
-			String userCard, String passWord,String userCode) {
+	public Map<String, Object> doLogin(HttpServletRequest request,
+			String userCard, String passWord,String userCode,String cityCode) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		try {
-			WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
-			HtmlPage loginPage = (HtmlPage)request.getSession().getAttribute("loginPage");//从session中获得loginPage
+			WebClient webClient = (WebClient)request.getSession().getAttribute("binZhouWebClient");//从session中获得webClient
+			HtmlPage loginPage = (HtmlPage)request.getSession().getAttribute("binZhouLoginPage");//从session中获得loginPage
 			
 			if(webClient == null || loginPage == null){
 				data.put("errorInfo", "系统繁忙，请稍后再试！");
@@ -122,11 +116,7 @@ public class BZSocialSecurityService {
 			
 			String response = webRequest("http://222.134.45.172:8002/hsp/logon.do", ValueList, HttpMethod.POST, webClient);
 			if(response.contains("__usersession_uuid")){
-				String userSessionUuid = (String) JSONObject.fromObject(response).get("__usersession_uuid");
-				request.getSession().setAttribute("userSessionUuid", userSessionUuid);
-	        	request.getSession().setAttribute("webClient",webClient); 
-	        	data.put("errorCode", "0000");
-	        	data.put("errorInfo", "登录成功");
+				data = this.doGetDetail(request, userCard, cityCode, webClient);
 			}else{
 				data.put("errorInfo", response);
 	            data.put("errorCode", "0001");
@@ -143,18 +133,14 @@ public class BZSocialSecurityService {
 	/**
 	 * 获取社保详情信息
 	 * @param request
+	 * @param userCard 
+	 * @param cityCode
+	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> bzGetDetail(HttpServletRequest request,String userCard,String cityCode)  {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String userCard,String cityCode,WebClient webClient)  {
 		Map<String, Object> data = new HashMap<String, Object>();
 		Map<String, Object> infoAll = new HashMap<String, Object>();
-		
-		WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");
-		if(webClient == null){
-			data.put("errorInfo", "系统繁忙，请稍后再试！");
-            data.put("errorCode", "0002");
-            return data;
-		}
 		
 		try {
 			String userSessionUuid = (String)request.getSession().getAttribute("userSessionUuid");
@@ -189,10 +175,6 @@ public class BZSocialSecurityService {
 			logger.error("获取滨州市社保详情失败",e);
 			data.put("errorInfo", "系统繁忙，请稍后再试！");
             data.put("errorCode", "0002");
-		}finally{
-			if(webClient != null){
-				webClient.close();
-			}
 		}
 		
 		return data;
@@ -283,27 +265,6 @@ public class BZSocialSecurityService {
 		return response;
 	}
 	
-	/**
-	 * 保存验证码图片
-	 * @param htmlImg 图片流
-	 * @param type left：左边图片，right：右边图片 ，operator：中间图片（运算符号）
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public String saveImg(HtmlImage htmlImg,String type,HttpServletRequest request) throws IOException{
-	   String verifyImages = request.getSession().getServletContext().getRealPath("/verifyImages");
-       File file = new File(verifyImages + File.separator);
-       if (!file.exists()) {
-           file.mkdir();
-       }
-	   	ImageReader imgReader = htmlImg.getImageReader();
-	    BufferedImage bufferedImage  = ImageIO.read((ImageInputStream)imgReader.getInput());
-		String fileName = type + System.currentTimeMillis()+".gif";
-		ImageIO.write(bufferedImage, "gif", new File(file,fileName));
-	   	String filePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/verifyImages/" + fileName;
-		return filePath;
-	}
 
 
 }

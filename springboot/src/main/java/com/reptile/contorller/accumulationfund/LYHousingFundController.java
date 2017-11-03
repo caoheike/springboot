@@ -22,31 +22,21 @@ public class LYHousingFundController {
 	private LYHousingFundService lyHouseFundService;
 	
 	
-	/**
-	 * 临沂市住房公积金登录
-	 * @param request
-	 * @param userCard 用户名
-	 * @param passWord 密码
-	 * @return
-	 */
-	@ApiOperation(value = "临沂市住房公积金：登陆",notes = "参数：用户名,密码")
-	@ResponseBody
-	@RequestMapping(value = "lyLogin", method = RequestMethod.POST)
-	public  Map<String,Object> lyLogin(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord){
-		return lyHouseFundService.lyLogin(request, userName, passWord);
-		
-	}
 
 	/**
 	 * 临沂市住房公积金详情查询
 	 * @param request
-	 * @param idCard 身份证号
+	 * @param userName
+	 * @param passWord
+	 * @param idCard
+	 * @param cityCode
 	 * @return
 	 */
-	@ApiOperation(value = "临沂市住房公积金：详情")
+	@ApiOperation(value = "临沂市住房公积金：详情",notes = "参数：用户名,密码,身份证号，城市编码")
 	@ResponseBody
-	@RequestMapping(value = "lyGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> lyGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
-		return lyHouseFundService.lyGetDetail(request,idCard,cityCode);
+	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("userName")String userName,
+			@RequestParam("passWord")String passWord,@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
+		return lyHouseFundService.doLogin(request, userName, passWord, idCard, cityCode);
 	}
 }
