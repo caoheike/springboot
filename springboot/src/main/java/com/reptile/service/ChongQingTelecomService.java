@@ -77,20 +77,20 @@ public class ChongQingTelecomService {
 			         return map;
 			    }
 	        	
-//	        	driver.findElement(By.id("send_sms")).click();
-//	        	Thread.sleep(500);
-//	            String tip=	driver.findElement(By.id("send_sms")).getText();
-//	        	if(tip.contains("秒后")){
+	        	driver.findElement(By.id("send_sms")).click();
+	        	Thread.sleep(500);
+	            String tip=	driver.findElement(By.id("send_sms")).getText();
+	        	if(tip.contains("秒后")){
 	        		 map.put("errorCode", "0000");
 			         map.put("errorInfo", "验证码发送成功");
 			         session.setAttribute("driverGT", driver);   
-//	        	}else{
-//	        		Alert alert = driver.switchTo().alert();
-//	        		if(alert!=null){
-//	        			map.put("errorCode", "0001");
-//				        map.put("errorInfo", alert.getText());	
-//	        		}
-//	        	}
+	        	}else{
+        		Alert alert = driver.switchTo().alert();
+	        		if(alert!=null){
+	        			map.put("errorCode", "0001");
+			        map.put("errorInfo", alert.getText());
+	        		}
+	        	}
 	        	
 	        	
 	        	} catch (Exception e) {
@@ -107,8 +107,8 @@ public class ChongQingTelecomService {
 		 * @param request
 		 * @param phoneNumber
 		 * @param passWord
-		 * @param userName
-		 * @param idCard
+		 * @param
+		 * @param
 		 * @param code
 		 * @param longitude
 		 * @param latitude
@@ -207,14 +207,14 @@ public class ChongQingTelecomService {
 			        map.put("latitude", latitude);//纬度
 			        map.put("flag","15");
 	                Resttemplate resttemplate=new Resttemplate();
-	                map = resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
+	                map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
 				 //------------推数据------------------------
 	                //driver.close();
 					
 					} catch (Exception e) {
 						map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
-				        // driver.close();
+				        driver.close();
 						e.printStackTrace();
 					}
 		        	
