@@ -27,7 +27,7 @@ public class CEBService {
 	 @Autowired
 	  private application applications;
 	  private PushState PushState;
-	  private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
+	  private Logger logger= LoggerFactory.getLogger(CEBService.class);
 	  private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
 		public Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){

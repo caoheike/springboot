@@ -1,35 +1,30 @@
 package com.reptile.service;
 
-import java.io.IOException;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.os.WindowsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
-
-import sun.print.resources.serviceui;
 @Service
 public class ConstructionService {
 	@Autowired
 	  private application applications;
 	  private PushState PushState;
-	  private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
+	  private Logger logger= LoggerFactory.getLogger(ConstructionService.class);
 	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass){
 		  Map<String,Object>map=new HashMap<String,Object>();
 		  System.out.println(Thread.currentThread().getName());  
