@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,9 @@ public class ChinaBankDepositCardController {
 
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "储蓄卡获取数据",notes = "参数：")
-    public Map<String, Object> getDetailMes(HttpServletRequest request) {
-        return service.getDetailMes(request);
+    @ApiOperation(value = "储蓄卡获取数据",notes = "参数：身份证号，卡号，密码，用户名")
+    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String IDNumber, @RequestParam("cardNumber") String cardNumber,
+                                            @RequestParam("passWord") String passWord,  @RequestParam("userName")String userName){
+        return service.getDetailMes(request,IDNumber,cardNumber,passWord,userName);
     }
 }
