@@ -161,7 +161,7 @@ public class ChinaBankDepositCardService {
             map = new Resttemplate().SendMessage(map, "http://192.168.3.4:8081/HSDC/savings/authentication");  //推送数据
 
             logger.warn("中国银行储蓄卡账单信息推送完成");
-
+            driver.close();
         } catch (Exception e) {
             logger.warn("认证中信储蓄卡出错", e);
             driver.close();

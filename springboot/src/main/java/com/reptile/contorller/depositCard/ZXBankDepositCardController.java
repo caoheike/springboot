@@ -25,6 +25,7 @@ public class ZXBankDepositCardController {
     @ResponseBody
     @ApiOperation(value = "储蓄卡获取数据",notes = "参数：")
     public Map<String, Object> getDetailMes(HttpServletRequest request) {
-        return service.getDetailMes(request);
+//        return service.getDetailMes(request);
+        return null;
     }
 }

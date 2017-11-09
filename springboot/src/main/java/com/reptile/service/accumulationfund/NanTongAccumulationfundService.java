@@ -64,8 +64,8 @@ public class NanTongAccumulationfundService {
             pageContext = loadPage.asText();
             if (pageContext.contains("个人明细查询") && pageContext.contains("个人公积金基本信息")) {
                 logger.warn("登录成功，获取到基本信息");
-                dataMap.put("base", loadPage.asXml());
-
+                HtmlPage page2 = webClient.getPage("http://58.221.92.98:8080/searchGrye.do");
+                dataMap.put("base", page2.asXml());
                 Calendar instance = Calendar.getInstance();
                 SimpleDateFormat sim = new SimpleDateFormat("yyyy");
                 String format = sim.format(instance.getTime());
