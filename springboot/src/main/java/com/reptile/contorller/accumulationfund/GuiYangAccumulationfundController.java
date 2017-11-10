@@ -28,7 +28,7 @@ public class GuiYangAccumulationfundController {
 
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码，图片验证码")
+    @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码，图片验证码，城市编号")
     public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
                                            @RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode ){
 

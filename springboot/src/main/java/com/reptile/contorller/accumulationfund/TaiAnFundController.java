@@ -24,8 +24,8 @@ public class TaiAnFundController {
 	@ApiOperation(value = "1.泰安公积金", notes = "参数：身份证号，密码")
     @ResponseBody
     @RequestMapping(value = "TAlogin", method = RequestMethod.POST)
-	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("passWord")String passWord){
-		return service.login(request, idCard, passWord);
+	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("passWord")String passWord,@RequestParam("cityCode")String cityCode){
+		return service.login(request, idCard, passWord,cityCode);
 				
 	}
 }

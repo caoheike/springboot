@@ -31,8 +31,7 @@ public class LYSocialSecurityController {
 	@ApiOperation(value = "临沂市社保：详情")
 	@ResponseBody
 	@RequestMapping(value = "getDetail", method = RequestMethod.POST)
-	public  Map<String,Object> getDetail(HttpServletRequest request,@RequestParam("userName")String userName,
-				@RequestParam("idCard")String idCard,@RequestParam("cityCode")String cityCode){
+	public  Map<String,Object> getDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
 		return lySocialSecurityService.doLogin(request, userName, idCard, cityCode);
 	}
 }

@@ -32,7 +32,7 @@ public class TaiAnFundService {
 	 @Autowired
 	  private application applications;
 	  private final static String detailUrl=" http://tagjj.com:7001/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
-	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord){
+	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode){
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 Map<String, Object> dateMap = new HashMap<String, Object>();
 		 List<String>  dataList=new ArrayList<String>();
@@ -122,7 +122,7 @@ public class TaiAnFundService {
 			    	map.put("errorInfo", "查询成功");
 					map.put("errorCode", "0000");
 					map.put("data", dateMap);
-					map.put("city", "007");
+					map.put("city", cityCode);//007
 					map.put("userId", idCard);//TODO
 				    //map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
 					map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/accumulationFund");
