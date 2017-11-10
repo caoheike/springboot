@@ -21,4 +21,15 @@ public class Dates {
 	    String mon = format.format(m);
 		return mon;
 	}
+	
+	/**
+	 * 获取当前时间（年月日时分秒）
+	 * @return
+	 */
+	public static String currentTime(){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日  hh:mm:ss");
+	    String mon = format.format(new Date());
+		return mon;
+	}
+	
 }
