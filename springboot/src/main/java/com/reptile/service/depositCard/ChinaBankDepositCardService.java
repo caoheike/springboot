@@ -39,8 +39,9 @@ public class ChinaBankDepositCardService {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);
-        driver.get("https://ebsnew.boc.cn/boc15/login.html");
+
         try {
+            driver.get("https://ebsnew.boc.cn/boc15/login.html");
             List<WebElement> input = driver.findElementsByTagName("input");
             input.get(0).sendKeys(cardNumber);                      //输入卡号
             Thread.sleep(2000);
@@ -158,12 +159,13 @@ public class ChinaBankDepositCardService {
             map.put("IDNumber", IDNumber);
             map.put("cardNumber", cardNumber);
             map.put("userName", userName);
+            map.put("bankName", "中国银行");
             map = new Resttemplate().SendMessage(map, "http://192.168.3.4:8081/HSDC/savings/authentication");  //推送数据
 
             logger.warn("中国银行储蓄卡账单信息推送完成");
             driver.close();
         } catch (Exception e) {
-            logger.warn("认证中信储蓄卡出错", e);
+            logger.warn("认证中guo储蓄卡出错", e);
             driver.close();
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
@@ -215,6 +217,9 @@ public class ChinaBankDepositCardService {
         for (int index = 0; index < itemMes.size(); index++) {
             Document parse = Jsoup.parse(itemMes.get(index));
             Elements tbody = parse.getElementsByTag("tbody");
+            if(tbody==null||tbody.size()==0){
+                break;
+            }
             Elements tr = tbody.get(0).getElementsByTag("tr");
             for (int i = 0; i < tr.size(); i++) {
                 Element element = tr.get(i);
