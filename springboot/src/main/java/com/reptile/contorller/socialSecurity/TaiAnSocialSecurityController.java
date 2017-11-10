@@ -20,19 +20,19 @@ import com.reptile.service.socialSecurity.TaiAnSocialSecurityService;
 public class TaiAnSocialSecurityController {
 	@Autowired
     private TaiAnSocialSecurityService service;
-	@ApiOperation(value = "1.泰安社保获取图形验证码", notes = "参数：")
-    @ResponseBody
-    @RequestMapping(value = "TASImageCode", method = RequestMethod.POST)
-	 public Map<String, Object> getImageCode(HttpServletRequest request,@RequestParam("passWord")String passWord){
-		return service.getImageCode(request,passWord);
-	}
-	@ApiOperation(value = "1.泰安社保获取详单", notes = "参数：身份证，密码，图形验证码")
+	@ApiOperation(value = "1.泰安社保获取图形验证码", notes = "参数：省份证，密码，城市编号")
     @ResponseBody
     @RequestMapping(value = "TASDetail", method = RequestMethod.POST)
-	public  Map<String, Object> getDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("catpy")String catpy){
-		
-		return service.getDetails(request, idCard,catpy);
-		
-	}
+	 public Map<String, Object> getImageCode(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
+		return service.getImageCode(request, idCard, passWord,  cityCode);
+		}
+//	@ApiOperation(value = "1.泰安社保获取详单", notes = "参数：身份证，图形验证码")
+//    @ResponseBody
+//    @RequestMapping(value = "TASDetail", method = RequestMethod.POST)
+//	public  Map<String, Object> getDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("catpy")String catpy){
+//		
+//		return service.getDetails(request, idCard,catpy);
+//		
+//	}
 
 }

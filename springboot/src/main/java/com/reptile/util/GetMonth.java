@@ -49,6 +49,18 @@ public class GetMonth {
 		return sdf.format(date);
 	}
 	/**
+	 * 获得今天
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+
+	public static  String today1(){
+		Date date=new Date();
+		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM-dd" );
+		return sdf.format(date);
+	}
+	/**
 	 * 获得上个月
 	 * @param year
 	 * @param month

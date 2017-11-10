@@ -18,8 +18,10 @@ import javax.imageio.ImageReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 import com.reptile.util.*;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -27,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -646,6 +649,13 @@ public class MobileService {
 					map.put("errorInfo", "验证码发送成功");
 					//session.setAttribute("webClientone", webClient);
 
+					//---------------推测试-------------------
+				Session se=	talkFrame.getWsUserMap().get(Useriphone);
+				se.getBasicRemote().sendText("ssssssssssssssssssssssssss");
+					//---------------推测试-------------------
+					
+					
+					
 				} else {
 					JSONObject json = JSONObject.fromObject(result.split("\\(")[1].split("\\)")[0]);
 					String resultCode = json.get("resultCode").toString();
