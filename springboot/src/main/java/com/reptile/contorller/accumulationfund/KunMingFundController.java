@@ -29,9 +29,9 @@ public class KunMingFundController {
 	@ApiOperation(value = "1.昆明获取详单", notes = "参数：身份证，密码，图形验证码")
     @ResponseBody
     @RequestMapping(value = "KMFDetail", method = RequestMethod.POST)
-	public  Map<String, Object> getDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy){
+	public  Map<String, Object> getDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 		
-		return service.getDetail(request, idCard, passWord, catpy);
+		return service.getDetail(request, idCard, passWord, catpy,cityCode);
 		
 	}
     

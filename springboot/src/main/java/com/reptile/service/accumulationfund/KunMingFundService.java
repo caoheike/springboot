@@ -98,7 +98,7 @@ public class KunMingFundService {
 	   * 获取详单
 	   */
 	  
-	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy){
+	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -298,7 +298,7 @@ public class KunMingFundService {
   	               map.put("data", dateMap);
 		          
 	               map.put("userId", idCard);
-                   map.put("city", "004");
+                   map.put("city", cityCode);//004
                    map.put("errorCode", "0000");
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();

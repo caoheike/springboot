@@ -86,10 +86,10 @@ public class TaiAnFundService {
 				  HtmlElement totalPage =(HtmlElement) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[2]/td").get(0);
 				  String details=totalPage.asText().split("共")[1].split("页")[0];
 				  int num=new Integer(details);
-				  if(num==1&&tables.asXml().contains("jtpsoft")){
+				 // if(num==1&&tables.asXml().contains("jtpsoft")){
 					  dataList.add(tables.asXml());//当前年度
 					  //System.out.println(tables.asXml());
-				  }
+				 // }
 				//=========================  其余年度明细==============
 				  HtmlSelect select=detailPage.getElementByName("cxydone");
 				  int seleNum=select.getChildElementCount();
@@ -99,6 +99,7 @@ public class TaiAnFundService {
 					   detailPage=getPages2(webClient, detailUrl, select.getOption(i).asText(), select.getOption(i).asText(), "1", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
 					   Thread.sleep(500);
 					   tables=   (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
+					   Thread.sleep(500);
 					   totalPage =(HtmlElement) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[2]/td").get(0);
 					   
 					   details=totalPage.asText().split("共")[1].split("页")[0];

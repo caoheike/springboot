@@ -31,7 +31,7 @@ public class XiNingFundController {
 	   @ApiOperation(value = "2.西宁公积金获得清单", notes = "参数：身份证，密码,图形验证码")
 	    @ResponseBody
 	    @RequestMapping(value = "XNlogin", method = RequestMethod.POST)
-	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy){
+	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 		System.out.println("已经访问了");
 		return service.login( request,idCard, passWord,catpy);
 	}

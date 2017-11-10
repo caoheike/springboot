@@ -611,6 +611,7 @@ public class MobileService {
 	 * @throws InterruptedException
 	 */
 	public Map<String, Object> GetCode(HttpServletRequest request, HttpServletResponse response, String Useriphone) {
+		System.out.println("访问了。。。。。。。。");
 		Map<String, Object> map = new HashMap<String, Object>();
 		HttpSession session = request.getSession();
 		WebClient webClient = new WebClientFactory().getWebClient();
@@ -648,18 +649,23 @@ public class MobileService {
 					map.put("errorCode", "0000");
 					map.put("errorInfo", "验证码发送成功");
 					//session.setAttribute("webClientone", webClient);
-
-					//---------------推测试-------------------
-				Session se=	talkFrame.getWsUserMap().get(Useriphone);
-				se.getBasicRemote().sendText("ssssssssssssssssssssssssss");
-					//---------------推测试-------------------
-					
-					
+                  // Thread.sleep(2000);
+                   System.out.println("发送成功");
+                   
+//                   
+//					//---------------推测试-------------------
+//				Session se=	talkFrame.getWsUserMap().get(Useriphone);
+//				System.out.println(se);
+//				se.getBasicRemote().sendText("ssssssssssssssssssssssssss");
+//					//---------------推测试-------------------
+//					
+//					
 					
 				} else {
 					JSONObject json = JSONObject.fromObject(result.split("\\(")[1].split("\\)")[0]);
 					String resultCode = json.get("resultCode").toString();
 					if (resultCode.equals("7098")) {
+						
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "随机码发送次数已达上限，请明日再试！");
 					} else {
@@ -787,6 +793,7 @@ public class MobileService {
 			JSONObject json = JSONObject.fromObject(tips);
 			String tipInfo = json.get("resultCode").toString();
 			if (tipInfo.equals("0000") || tipInfo.equals("0301")) {
+			
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功！");
 				session.setAttribute("webClientSucce", webClient);
@@ -911,7 +918,7 @@ public class MobileService {
 	 * 联通通话详单
 	 */
 
-	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, String UserPassword, String code, String longitude, String latitude) {
+	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, String UserPassword, String code, String longitude, String latitude,String uuid) {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		List listsy = new ArrayList();
@@ -946,6 +953,13 @@ public class MobileService {
 				JSONObject json3 = JSONObject.fromObject(newPage.getContent());
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
+//					//---------------推测试-------------------
+				Session se=	talkFrame.getWsUserMap().get(uuid);
+				System.out.println(se);
+				se.getBasicRemote().sendText("0000");
+//					//---------------推测试-------------------
+//					
+					
 					System.out.println("验证码成功，可查询");
 					PushState.state(Useriphone, "callLog", 100);
 //=======================获取详单================================================      		
@@ -999,6 +1013,7 @@ public class MobileService {
 					//map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/linkCallRecord");//胡献根
 					map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/message/linkCallRecord");
 					if (map != null && "0000".equals(map.get("errorCode").toString())) {
+						
 						PushState.state(Useriphone, "callLog", 300);
 						map.put("errorInfo", "推送成功");
 						map.put("errorCode", "0000");
@@ -1010,6 +1025,12 @@ public class MobileService {
 						map.put("errorCode", "0001");
 					}
 				} else {
+					
+					//---------------推测试-------------------
+					Session se=	talkFrame.getWsUserMap().get(uuid);
+					System.out.println(se);
+					se.getBasicRemote().sendText("0001");//失败
+//						//---------------推测试-------------------
 					PushState.state(Useriphone, "callLog", 200);
 					System.out.println(json3.get("error").toString());
 					if (resultCode.equals("01")) {
