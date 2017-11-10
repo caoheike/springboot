@@ -56,7 +56,8 @@ public class ImgUtil {
 		String fileName = prefix + System.currentTimeMillis()+"."+suffix;
 		ImageIO.write(bufferedImage, suffix, new File(file,fileName));
 		
-		String filePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + verifyImagesPath + File.separator + fileName;
+
+		String filePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + verifyImagesPath + "/" + fileName;
 		return filePath;
 	}
 	

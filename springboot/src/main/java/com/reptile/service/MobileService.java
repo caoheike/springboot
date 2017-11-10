@@ -918,7 +918,7 @@ public class MobileService {
 	 * 联通通话详单
 	 */
 
-	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, String UserPassword, String code, String longitude, String latitude,String uuid) {
+	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, String UserPassword, String code, String longitude, String latitude,String UUID) {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		List listsy = new ArrayList();
@@ -954,7 +954,7 @@ public class MobileService {
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
 //					//---------------推测试-------------------
-				Session se=	talkFrame.getWsUserMap().get(uuid);
+				Session se=	talkFrame.getWsUserMap().get(UUID);
 				System.out.println(se);
 				se.getBasicRemote().sendText("0000");
 //					//---------------推测试-------------------
@@ -1027,7 +1027,7 @@ public class MobileService {
 				} else {
 					
 					//---------------推测试-------------------
-					Session se=	talkFrame.getWsUserMap().get(uuid);
+					Session se=	talkFrame.getWsUserMap().get(UUID);
 					System.out.println(se);
 					se.getBasicRemote().sendText("0001");//失败
 //						//---------------推测试-------------------

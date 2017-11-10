@@ -47,6 +47,8 @@ public class QinZhouSocialSecurityService {
 	 */
 	public Map<String, Object> doGetVerifyImg(HttpServletRequest request) {
 		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
+		
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
 			HtmlPage loginPage = webClient.getPage("http://gx.si.gov.cn:8001/siweb/login.do?method=person#");
@@ -54,8 +56,8 @@ public class QinZhouSocialSecurityService {
 			//读取页面验证码图片到本地
 			HtmlImage jcaptcha = (HtmlImage) loginPage.getElementById("jcaptcha");
 			
-			data.put("imgPath", ImgUtil.saveImg(jcaptcha, "qz", "/verifyImages", "png", request));
-			
+			map.put("imagePath", ImgUtil.saveImg(jcaptcha, "qz", "/verifyImages", "png", request));
+			data.put("data", map);
 			request.getSession().setAttribute("qinZhouWebClient",webClient); 
 			request.getSession().setAttribute("qinZhouLoginPage",loginPage); 
 			data.put("errorInfo", "获取验证码成功");

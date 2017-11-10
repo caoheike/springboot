@@ -98,9 +98,9 @@ public class GlobalUnicomController {
     @RequestMapping(value = "getDetials",method = RequestMethod.POST)
     public Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("Useriphone")String Useriphone,
     		@RequestParam("UserPassword")String UserPassword,
-    		@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("uuid")String uuid) {
+    		@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID) {
 				
-    	return mobileService.getDetial(request, Useriphone, UserPassword,code,longitude,latitude,uuid);
+    	return mobileService.getDetial(request, Useriphone, UserPassword,code,longitude,latitude,UUID);
     } 
  
 }
