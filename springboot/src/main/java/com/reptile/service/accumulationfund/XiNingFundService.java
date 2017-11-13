@@ -91,7 +91,7 @@ public class XiNingFundService {
 		return map;
 		  
 	  }
-	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy){
+	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -183,13 +183,13 @@ public class XiNingFundService {
 		  	               map.put("data", dateMap);
 				          
 			               map.put("userId", idCard);
-                           map.put("city", "002");
+                           map.put("city", cityCode);//002
 //				           map.put("errorInfo", "查询成功");
 				           Resttemplate resttemplate = new Resttemplate();
 //				           //
-			         //     map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
+			             map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
 						    
-			               map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");
+			              // map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");
 						    
 			  	         //===================推数据=====================    
 		 

@@ -302,8 +302,8 @@ public class KunMingFundService {
                    map.put("errorCode", "0000");
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
-	              // map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张浩敏
-		           map=resttemplate.SendMessage(map,applications.getSendip()+ "/HSDC/person/accumulationFund");//张浩敏
+	              map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张浩敏
+		          // map=resttemplate.SendMessage(map,applications.getSendip()+ "/HSDC/person/accumulationFund");//张浩敏
 		            	
 		               
 				}else{

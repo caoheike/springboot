@@ -6,13 +6,18 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.talkFrame;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
+
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -30,7 +35,7 @@ public class ShanXiTelecomService {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude) throws IOException, InterruptedException {
+    public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String UUID) throws IOException, InterruptedException {
 
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
@@ -99,6 +104,9 @@ public class ShanXiTelecomService {
 
                 }
                 if(dataList.size()!=0){
+                	//---------------推-------------------
+                	 PushSocket.push(map, UUID, "0000");
+    					//---------------推-------------------
                     map.put("UserIphone",phoneNumber);
                     map.put("UserPassword",serverPwd);
                     map.put("longitude", longitude);//经度
@@ -108,6 +116,9 @@ public class ShanXiTelecomService {
                     Resttemplate resttemplate=new Resttemplate();
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 }else{
+                	//---------------推-------------------
+                	 PushSocket.push(map, UUID, "0001");
+    					//---------------推-------------------
                     map.put("errorCode", "0005");
                     map.put("errorInfo", "业务办理失败！");
                 }

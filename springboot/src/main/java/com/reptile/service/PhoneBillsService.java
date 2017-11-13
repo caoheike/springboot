@@ -5,8 +5,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.talkFrame;
 
 import net.sf.json.JSONObject;
 
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -293,7 +296,7 @@ public class PhoneBillsService {
 
 
     public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
-                                                String fuwuSec, String imageCode,String longitude ,String latitude ){
+                                                String fuwuSec, String imageCode,String longitude ,String latitude,String UUID ){
 
         Map<String, Object> map = new HashMap<String, Object>();
 
@@ -343,12 +346,20 @@ public class PhoneBillsService {
                         String json = result.substring(s);
                         result = json.substring(0, json.length() - 1);
                     }
+                  //---------------推-------------------
+                    PushSocket.push(map, UUID, "0001");
+				 //---------------推-------------------
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                     return map;
                 }
 
+            	//---------------推-------------------
+                PushSocket.push(map, UUID, "0000");
+			   //---------------推-------------------
+                
+                
                 Date date = new Date();
                 SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyyMM");
                 String str = SimpleDateFormat.format(date);

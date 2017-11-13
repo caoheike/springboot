@@ -2,7 +2,9 @@ package com.reptile.contorller;
 
 import com.reptile.service.PhoneBillsService;
 import com.reptile.util.CustomAnnotation;
+
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 
 /**
@@ -58,7 +61,7 @@ public class PhoneBillsController {
     @RequestMapping(value = "getDetailAccount",method = RequestMethod.POST)
     public Map<String,Object> getDetailAccount(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("phoneCode")String phoneCode,
                                                @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ,
-                                               @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude ) throws Exception {
-        return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim());
+                                               @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID ) throws Exception {
+        return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim(),UUID.trim());
     }
 }

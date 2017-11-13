@@ -2,6 +2,7 @@ package com.reptile.service.ChinaTelecom;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.Session;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -29,11 +31,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.reptile.util.GetMonth;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import com.reptile.util.application;
+import com.reptile.util.talkFrame;
 
 @Service
 public class NingXiaTelecomService {
@@ -178,7 +183,7 @@ public class NingXiaTelecomService {
 	  * @return
 	  */
 	 
-	 public Map<String,Object> ningXiaDetial(HttpServletRequest request,String phoneNumber,String servePwd,String code,String longitude,String latitude){
+	 public Map<String,Object> ningXiaDetial(HttpServletRequest request,String phoneNumber,String servePwd,String code,String longitude,String latitude,String UUID){
 		 
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
@@ -196,11 +201,18 @@ public class NingXiaTelecomService {
 		  driver.findElement(By.id("yzm")).sendKeys(code);
 		  String tipInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 		  if(tipInfo.contains("验证失败")){
+			//---------------推-------------------
+			  PushSocket.push(map, UUID, "0001");
+					//---------------推-------------------
 			  map.put("errorCode", "0001");
 			  map.put("errorInfo", "验证码错误");
 			  return map;
 		  }
 		
+		  
+		//---------------推-------------------
+		  PushSocket.push(map, UUID, "0000");
+		//---------------推-------------------
 		//==================获取cookie==========================================  
 		 Set<Cookie> cookie=driver.manage().getCookies();
 		 StringBuffer cookies=new StringBuffer();

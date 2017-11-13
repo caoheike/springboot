@@ -953,11 +953,9 @@ public class MobileService {
 				JSONObject json3 = JSONObject.fromObject(newPage.getContent());
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
-//					//---------------推测试-------------------
-				Session se=	talkFrame.getWsUserMap().get(UUID);
-				System.out.println(se);
-				se.getBasicRemote().sendText("0000");
-//					//---------------推测试-------------------
+//					//---------------推-------------------
+				   PushSocket.push(map, UUID, "0000");
+					//---------------推-------------------
 //					
 					
 					System.out.println("验证码成功，可查询");
@@ -1026,11 +1024,10 @@ public class MobileService {
 					}
 				} else {
 					
-					//---------------推测试-------------------
-					Session se=	talkFrame.getWsUserMap().get(UUID);
-					System.out.println(se);
-					se.getBasicRemote().sendText("0001");//失败
-//						//---------------推测试-------------------
+					
+					//---------------推-------------------
+					   PushSocket.push(map, UUID, "0001");
+					//---------------推-------------------
 					PushState.state(Useriphone, "callLog", 200);
 					System.out.println(json3.get("error").toString());
 					if (resultCode.equals("01")) {
