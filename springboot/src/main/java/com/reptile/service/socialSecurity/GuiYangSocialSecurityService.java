@@ -1,6 +1,7 @@
 package com.reptile.service.socialSecurity;
 
 
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
@@ -111,7 +112,7 @@ public class GuiYangSocialSecurityService {
             map.put("city", cityCode);
             map.put("userId", userCard);
             log.warn("贵阳社保获取成功");
-            map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/socialSecurity");
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/socialSecurity");
         } catch (Exception e) {
             log.warn("贵阳社保获取失败", e);
             e.printStackTrace();

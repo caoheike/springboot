@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import org.jsoup.Jsoup;
@@ -173,7 +174,7 @@ public class GuiYangAccumulationfundService {
                 map.put("data", dataMap);
                 map.put("userId", userCard);
                 map.put("city", cityCode);
-                map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");
+                map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
             } catch (Exception e) {
                 logger.warn("贵阳住房公积金获取失败",e);
                 e.printStackTrace();

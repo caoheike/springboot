@@ -1,6 +1,7 @@
 package com.reptile.contorller.depositCard;
 
 import com.reptile.service.depositCard.ZXBankDepositCardService;
+import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,10 +26,10 @@ public class ZXBankDepositCardController {
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "储蓄卡获取数据",notes = "参数：身份证，卡号，用户名，密码")
+    @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String IDNumber,
                                             @RequestParam("cardNumber") String cardNumber,@RequestParam("passWord") String passWord,
                                             @RequestParam("userName")String userName) {
         return service.getDetailMes(request,IDNumber,cardNumber,userName,passWord);
-//        return null;
     }
 }

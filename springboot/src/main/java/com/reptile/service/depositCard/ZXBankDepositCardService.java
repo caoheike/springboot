@@ -1,5 +1,6 @@
 package com.reptile.service.depositCard;
 
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.winIO.VirtualKeyBoard;
 import org.apache.commons.httpclient.HttpClient;
@@ -10,6 +11,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
@@ -25,7 +28,7 @@ import java.util.*;
 
 @Service
 public class ZXBankDepositCardService {
-    private Logger logger= LoggerFactory.getLogger(ZXBankDepositCardService.class);
+    private Logger logger = LoggerFactory.getLogger(ZXBankDepositCardService.class);
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String userName, String passWord) {
         Map<String, Object> map = new HashMap<>();
@@ -43,6 +46,7 @@ public class ZXBankDepositCardService {
             Thread.sleep(1000);
             for (int i = 0; i < passWord.length(); i++) {
                 VirtualKeyBoard.KeyPress(passWord.charAt(i));
+                Thread.sleep(200);
             }
 
             //登录
@@ -50,9 +54,21 @@ public class ZXBankDepositCardService {
             Thread.sleep(3000);
 
             //判断是否登录成功
-            System.out.println(driver.getPageSource());
-            logger.warn("登录成功");
-
+            try {
+                WebElement errorReason = driver.findElementByClassName("errorReason");
+                logger.warn("登录失败！" + errorReason.getText());
+                map.put("errorCode", "0002");
+                map.put("errorInfo", errorReason.getText());
+                driver.quit();
+                return map;
+            } catch (NoSuchElementException e) {
+                logger.warn("登录成功");
+            }catch (UnhandledAlertException e){
+                map.put("errorCode", "0002");
+                map.put("errorInfo", "账号或密码格式不正确！");
+                driver.quit();
+                return map;
+            }
             logger.warn("获取账单详情...");
             //获取类似于tooken的标识
             String EMP_SID = driver.findElementByName("infobarForm").findElement(By.name("EMP_SID")).getAttribute("value");
@@ -62,7 +78,6 @@ public class ZXBankDepositCardService {
             WebElement mainframe = driver.findElementById("mainframe");
             driver.switchTo().frame(mainframe);
             Thread.sleep(1000);
-            System.out.println(driver.getPageSource());
 
             driver.findElement(By.id("spacilOpenDiv")).click();  //打开自定义查询
 
@@ -104,19 +119,22 @@ public class ZXBankDepositCardService {
             driver.get("https://i.bank.ecitic.com/perbank6/pb1110_query_detail.do?EMP_SID=" + EMP_SID + "&accountNo=" + cardNumber + "&index=0ff0 ");
             Thread.sleep(1000);
             String baseMes = driver.getPageSource();
-            map.put("baseMes",baseMes);
+            map.put("baseMes", baseMes);
             map = analyData(map);
             map.put("IDNumber", IDNumber);
             map.put("cardNumber", cardNumber);
             map.put("userName", userName);
             map.put("bankName", "中信银行");
-            map = new Resttemplate().SendMessage(map, "http://192.168.3.4:8081/HSDC/savings/authentication");  //推送数据
-            driver.close();//关闭浏览器
+            logger.warn("中信银行数据推送...");
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");  //推送数据
+            logger.warn("中信银行数据推送成功");
+            driver.quit();//关闭浏览器
         } catch (Exception e) {
-            driver.close();
-            logger.warn("中信银行认证失败",e);
-            map.put("errorCode","0001");
-            map.put("errorInfo","网络请求异常，请稍后再试");
+            driver.quit();
+            logger.warn("中信银行认证失败", e);
+            map=new HashMap<>();
+            map.put("errorCode", "0001");
+            map.put("errorInfo", "网络请求异常，请稍后再试");
         }
         return map;
     }
@@ -168,7 +186,7 @@ public class ZXBankDepositCardService {
             Document parse = Jsoup.parse(s);
             Elements tbody = parse.getElementsByTag("table");
             Elements tr = tbody.get(0).getElementsByTag("tr");
-            for (int i=0;i<tr.size();i++){
+            for (int i = 0; i < tr.size(); i++) {
                 Elements td = tr.get(i).getElementsByTag("td");
                 detailMap = new HashMap<>();
                 detailMap.put("dealTime", td.get(2).text());
