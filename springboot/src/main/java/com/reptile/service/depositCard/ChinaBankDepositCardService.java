@@ -1,5 +1,6 @@
 package com.reptile.service.depositCard;
 
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import org.jsoup.Jsoup;
@@ -53,7 +54,7 @@ public class ChinaBankDepositCardService {
             if (msgContent.length() != 0) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
-                driver.close();
+                driver.quit();
                 return map;
             }
 
@@ -67,7 +68,7 @@ public class ChinaBankDepositCardService {
             } catch (Exception e) {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "请输入正确的储蓄卡号");
-                driver.close();
+                driver.quit();
                 return map;
             }
 
@@ -94,7 +95,7 @@ public class ChinaBankDepositCardService {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", msgContent);
                 }
-                driver.close();
+                driver.quit();
                 return map;
             }
 
@@ -160,13 +161,14 @@ public class ChinaBankDepositCardService {
             map.put("cardNumber", cardNumber);
             map.put("userName", userName);
             map.put("bankName", "中国银行");
-            map = new Resttemplate().SendMessage(map, "http://192.168.3.4:8081/HSDC/savings/authentication");  //推送数据
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");  //推送数据
 
             logger.warn("中国银行储蓄卡账单信息推送完成");
-            driver.close();
+            driver.quit();
         } catch (Exception e) {
+            map=new HashMap<>();
             logger.warn("认证中guo储蓄卡出错", e);
-            driver.close();
+            driver.quit();
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
         }
@@ -217,7 +219,7 @@ public class ChinaBankDepositCardService {
         for (int index = 0; index < itemMes.size(); index++) {
             Document parse = Jsoup.parse(itemMes.get(index));
             Elements tbody = parse.getElementsByTag("tbody");
-            if(tbody==null||tbody.size()==0){
+            if (tbody == null || tbody.size() == 0) {
                 break;
             }
             Elements tr = tbody.get(0).getElementsByTag("tr");
