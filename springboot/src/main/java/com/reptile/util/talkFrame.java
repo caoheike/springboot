@@ -22,8 +22,15 @@ import java.util.Map;
 @ServerEndpoint("/hello")
 public class talkFrame {
 	private static  Map<String,Session> wsUserMap = new HashMap<String,Session>();
+	private static  Map<String,String> wsInfoMap = new HashMap<String,String>();
 	
-    public static Map<String, Session> getWsUserMap() {
+    public static Map<String, String> getWsInfoMap() {
+		return wsInfoMap;
+	}
+	public static void setWsInfoMap(Map<String, String> wsInfoMap) {
+		talkFrame.wsInfoMap = wsInfoMap;
+	}
+	public static Map<String, Session> getWsUserMap() {
 		return wsUserMap;
 	}
 	public static void setWsUserMap(Map<String, Session> wsUserMap) {
@@ -32,11 +39,11 @@ public class talkFrame {
 	@OnOpen
     public void onopen(Session session){
         System.out.println("连接成功");
-        try {
-            session.getBasicRemote().sendText("hello client...");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            session.getBasicRemote().sendText("1234...");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
     @OnClose
     public void onclose(Session session){
@@ -45,11 +52,22 @@ public class talkFrame {
     @OnMessage
     public void onsend(Session session,String msg){
     	if(msg!=null&&!msg.equals("")){
-    		msg=JSONObject.fromObject(msg).get("req").toString();
+    		try {
+				session.getBasicRemote().sendText(msg);//链接成功
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+    		JSONObject json=JSONObject.fromObject(msg);
+    		msg=json.get("req").toString();
+    		
+    		wsUserMap.put(msg, session);
+    		wsInfoMap.put(msg, json.get("seq_id").toString());
+    	}else{
+    		//System.out.println("qddd");
+    		onclose(session);
     	}
-       
-    	wsUserMap.put(msg, session);
-    
+     
     }
     
     

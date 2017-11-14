@@ -3,7 +3,9 @@ package com.reptile.contorller.ChinaTelecom;
 
 import com.reptile.service.ChinaTelecom.ShanDongTelecomService;
 import com.reptile.util.CustomAnnotation;
+
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 
 @Controller
@@ -49,7 +52,7 @@ public class ShanDongTelecomController {
     public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userIphone")String userIphone, @RequestParam("imageCode") String imageCode,
                                             @RequestParam("userName")String userName, @RequestParam("userCard") String userCard,
                                             @RequestParam("phoneCode")String phoneCode,@RequestParam("userPassword")String userPassword,
-                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude){
-        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword,longitude,latitude);
+                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID){
+        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword,longitude,latitude,UUID);
     }
 }

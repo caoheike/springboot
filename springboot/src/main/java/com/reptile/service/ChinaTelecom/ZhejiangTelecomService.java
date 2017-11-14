@@ -18,6 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.reptile.util.GetMonth;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -94,11 +95,12 @@ public class ZhejiangTelecomService {
  * @return
  */
 	
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code,String longitude,String latitude){
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code,String longitude,String latitude,String UUID){
 		    Map<String, Object> map = new HashMap<String, Object>();
             //验证码	判断	=========================================  
 		    WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
 		    if(webClient==null){
+		    	PushSocket.push(map, UUID, "0001");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
 				 return map;
@@ -143,9 +145,12 @@ public class ZhejiangTelecomService {
 						"cdrSubmit(2)").getNewPage();// 点击查询
 				 //=============================浙江验证码校验===================================================	
 				 if(alertList.size()>0){
+					 PushSocket.push(map, UUID, "0001");
 		             map.put("errorCode", "0001");
 				     map.put("errorInfo", alertList.get(0).toString());	
 					 return map;
+				 }else if(i==0){
+					 PushSocket.push(map, UUID, "0000");
 				 }
 				if (firstPage.asText().contains("我的清单详情")) {
 					
@@ -174,6 +179,7 @@ public class ZhejiangTelecomService {
 					}
 				    //}
 				} else { 
+					PushSocket.push(map, UUID, "0001");
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
 					return map;

@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.GetMonth;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 @Service
@@ -66,12 +67,13 @@ public class ShanghaiTelecomService {
 	 * @param code
 	 * @return
 	 */
-	public Map<String,Object> getDetial(String phoneNumber,String servePwd,HttpServletRequest request,String code,String longitude,String latitude){
+	public Map<String,Object> getDetial(String phoneNumber,String servePwd,HttpServletRequest request,String code,String longitude,String latitude,String UUID){
 		//定单详情查取方式1.选择月份 2.自定义时间
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
 		 WebClient  webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
 		 if(webClient==null){
+			 PushSocket.push(map, UUID, "0001");
 	    	 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
 			 return map;
@@ -83,10 +85,12 @@ public class ShanghaiTelecomService {
 			HtmlPage detailPage=webClient.getPage("http://service.sh.189.cn/service/service/authority/query/billdetail/validate.do?input_code="+code+"&selDevid="+phoneNumber+"&flag=nocw&checkCode=验证码");
 			String a=detailPage.getWebResponse().getContentAsString();
 			if(a.contains("ME10001")){
+				PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 		        map.put("errorInfo", "输入的验证码错误！");
 		        return map;
 			}else{
+				PushSocket.push(map, UUID, "0000");
 			Thread.sleep(1000);
 			 //1.选择月份
 	   		   //====================================== his===================================

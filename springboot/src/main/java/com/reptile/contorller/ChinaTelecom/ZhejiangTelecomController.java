@@ -34,8 +34,8 @@ public class ZhejiangTelecomController {
 	@ResponseBody
 	@RequestMapping(value = "zheJiangDetial", method = RequestMethod.POST)
 	@CustomAnnotation
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
 		
-		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code,longitude,latitude);
+		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code,longitude,latitude,UUID);
 	}
 }

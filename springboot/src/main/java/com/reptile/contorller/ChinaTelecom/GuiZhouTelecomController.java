@@ -33,9 +33,9 @@ public class GuiZhouTelecomController {
 	@ResponseBody
 	@CustomAnnotation
 	@RequestMapping(value = "guiZhouDetial", method = RequestMethod.POST)
-	public  Map<String,Object> guiZhouDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
+	public  Map<String,Object> guiZhouDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
 		
-		return guizhouTelecomService.guiZhouDetial(code, request, phoneNumber,servePwd,longitude,latitude);
+		return guizhouTelecomService.guiZhouDetial(code, request, phoneNumber,servePwd,longitude,latitude,UUID);
 	}
 	
 }

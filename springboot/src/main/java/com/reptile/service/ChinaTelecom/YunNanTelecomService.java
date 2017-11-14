@@ -6,13 +6,17 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -95,13 +99,14 @@ public class YunNanTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,
-                                            String userName, String userCard,String longitude,String latitude) {
+                                            String userName, String userCard,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         Object yunNanWebClient = session.getAttribute("yunNanWebClient");
         Object yunNanHtmlPage = session.getAttribute("yunNanHtmlPage");
         if (yunNanWebClient == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
         } else {
@@ -127,12 +132,13 @@ public class YunNanTelecomService {
                         popup = resultPage.getElementById("popup").getFirstChild().getChildNodes().get(1).getTextContent();
                     }
                     if (!popup.contains("验证成功")) {
+                    	  PushSocket.push(map, UUID, "0001");
                         map.put("errorCode", "0003");
                         map.put("errorInfo", popup);
                         return map;
                     }
                 }
-
+                PushSocket.push(map, UUID, "0000");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 for (int i = 0; i < 3; i++) {

@@ -926,6 +926,7 @@ public class MobileService {
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("webClientTwo");
 		if (webClient == null) {
+			 PushSocket.push(map, UUID, "0001");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码！");
 			return map;
@@ -1016,6 +1017,7 @@ public class MobileService {
 						map.put("errorInfo", "推送成功");
 						map.put("errorCode", "0000");
 					} else {
+						// PushSocket.push(map, UUID, "0001");
 						//--------------------数据中心推送状态----------------------
 						PushState.state(Useriphone, "callLog", 200);
 						//---------------------数据中心推送状态---------------------
@@ -1023,7 +1025,6 @@ public class MobileService {
 						map.put("errorCode", "0001");
 					}
 				} else {
-					
 					
 					//---------------推-------------------
 					   PushSocket.push(map, UUID, "0001");

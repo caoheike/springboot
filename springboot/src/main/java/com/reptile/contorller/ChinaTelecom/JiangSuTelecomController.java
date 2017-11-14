@@ -24,8 +24,8 @@ public class JiangSuTelecomController {
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public  Map<String,Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber,
-                                            @RequestParam("userPassword") String password,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude){
-        return service.getDetailMes(request,phoneNumber,password,longitude,latitude);
+                                            @RequestParam("userPassword") String password,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID){
+        return service.getDetailMes(request,phoneNumber,password,longitude,latitude,UUID);
     }
 
 }

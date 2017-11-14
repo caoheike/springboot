@@ -33,7 +33,7 @@ public class YunNanTelecomController {
     @ResponseBody
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, @RequestParam("serverPwd") String serverPwd,
                                             @RequestParam("phoneCode") String phoneCode, @RequestParam("userName") String userName,
-                                            @RequestParam("userCard")String userCard,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) {
-        return service.getDetailMes(request, phoneNumber, serverPwd, phoneCode, userName,userCard,longitude,latitude);
+                                            @RequestParam("userCard")String userCard,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID) {
+        return service.getDetailMes(request, phoneNumber, serverPwd, phoneCode, userName,userCard,longitude,latitude,UUID);
     }
 }

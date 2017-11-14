@@ -7,7 +7,9 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -171,7 +174,7 @@ public class ShanDongTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userIphone, String imageCode, String userName,
-                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude) {
+                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> listData = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -180,6 +183,7 @@ public class ShanDongTelecomService {
         Object htmlpage = session.getAttribute("SDDXsendMesPage");
 
         if (attribute == null || htmlpage == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
@@ -197,11 +201,12 @@ public class ShanDongTelecomService {
 //                System.out.println(aa.asXml());
 
                 if (!aa.asText().contains("您的客户信息校验成功，您可继续办理相关业务")) {
+                	PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您的用户信息校验未通过，请确认后重新输入");
                     return map;
                 }
-
+                PushSocket.push(map, UUID, "0000");
                 HtmlPage resultPage = aa.getElementById("easyDialogYesBtn").click();
 //                System.out.println(resultPage.asXml());
 

@@ -41,7 +41,7 @@ public class NingXiaTelecomController {
 		@CustomAnnotation
 		@RequestMapping(value = "ningXiaDetil", method = RequestMethod.POST)
 		public Map<String,Object> ningXiaDetil(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
-			
-			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code,longitude,latitude,UUID);
+			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code,longitude,latitude,UUID);	
+
 		}
 }

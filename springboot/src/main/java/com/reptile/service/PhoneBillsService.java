@@ -306,6 +306,7 @@ public class PhoneBillsService {
 
         Object client = session.getAttribute("YD-webClient");
         if (client == null) {
+        	 PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             return map;

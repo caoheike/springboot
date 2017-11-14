@@ -7,13 +7,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -115,13 +118,14 @@ public class HeNanTelecomService {
         return map;
     }
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("HNwebClient");
         Object pag = session.getAttribute("HeNanHtmlPage");
         if (attribute == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             return map;
@@ -163,11 +167,12 @@ public class HeNanTelecomService {
                 System.out.println(page2.asXml());
 
                 if (result.contains("您输入的查询验证码错误或过期")) {
+                	PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }
-
+                PushSocket.push(map, UUID, "0000");
                 for (int i = 0; i < 6; i++) {
                     req = new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                     req.setHttpMethod(HttpMethod.POST);
@@ -205,6 +210,7 @@ public class HeNanTelecomService {
 
                 System.out.println("河南电信拿到的数据条数：" + dataList.size());
             } catch (Exception e) {
+            	PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
