@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.talkFrame;
@@ -359,8 +360,7 @@ public class PhoneBillsService {
             	//---------------推-------------------
                 PushSocket.push(map, UUID, "0000");
 			   //---------------推-------------------
-                
-                
+                PushState.state(userNumber, "callLog", 100);
                 Date date = new Date();
                 SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyyMM");
                 String str = SimpleDateFormat.format(date);
@@ -401,7 +401,7 @@ public class PhoneBillsService {
                 }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  获取移动详单  mrlu",e);
-
+                PushSocket.push(map, UUID, "0001");
                 e.printStackTrace();
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");

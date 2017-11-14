@@ -53,16 +53,26 @@ public class talkFrame {
     public void onsend(Session session,String msg){
     	if(msg!=null&&!msg.equals("")){
     		try {
-				session.getBasicRemote().sendText(msg);//链接成功
-			} catch (IOException e) {
+    			
+//    			JSONObject json1=JSONObject.fromObject(msg);
+//    			json1.accumulate("resultCode", "0000");
+    			//session.getBasicRemote().sendObject(json1);
+    		
+				//session.getBasicRemote().sendText(json1.toString());//链接成功
+    			System.out.println(msg.substring(0, msg.length()-1).toString()+",\"resultCode\": \"1111\"}");
+				session.getBasicRemote().sendText(msg.substring(0, msg.length()-1).toString()+",\"resultCode\":\"1111\"}");//链接成功
+				
+			} catch (Exception e) {
 				
 				e.printStackTrace();
 			}
     		JSONObject json=JSONObject.fromObject(msg);
     		msg=json.get("req").toString();
-    		
     		wsUserMap.put(msg, session);
+    		
     		wsInfoMap.put(msg, json.get("seq_id").toString());
+    		
+    		
     	}else{
     		//System.out.println("qddd");
     		onclose(session);

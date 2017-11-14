@@ -19,14 +19,14 @@ public class PushSocket {
 	public static void push(Map<String, Object> map,String UUID,String errorInfo){
 		Map<String, Object> mapData=new HashMap<String, Object>();
 		Session se=	talkFrame.getWsUserMap().get(UUID);
-		String req_id=talkFrame.getWsInfoMap().get(UUID);
+		String seq_id=talkFrame.getWsInfoMap().get(UUID);
 		System.out.println(se);
-		System.out.println(req_id);
+		System.out.println(seq_id);
 		try {
-			mapData.put("resultCode", errorInfo);
-			mapData.put("req_id", req_id);
-			JSONObject json=JSONObject.fromObject(mapData);
-			se.getBasicRemote().sendText(json.toString());
+//			mapData.put("resultCode", errorInfo);
+//			mapData.put("seq_id", seq_id);
+//			JSONObject json=JSONObject.fromObject(mapData);
+			se.getBasicRemote().sendText("{\"resultCode\":"+errorInfo+",\"seq_id\":"+seq_id+"}");
 		
 			//se.getBasicRemote().sendObject(json);
 			

@@ -1,8 +1,10 @@
 package com.reptile.service;
 
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +28,7 @@ public class ConstructionService {
 	  private application applications;
 	  private PushState PushState;
 	  private Logger logger= LoggerFactory.getLogger(ConstructionService.class);
-	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass){
+	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass,String UUID){
 		  Map<String,Object>map=new HashMap<String,Object>();
 		  System.out.println(Thread.currentThread().getName());  
 			System.setProperty("webdriver.chrome.driver", "D:/ie/chromedriver.exe");
@@ -47,6 +50,7 @@ public class ConstructionService {
 //				Thread.sleep(1000);
 				String detailedpage1= driver.getPageSource();
 				if(detailedpage1.indexOf("账号或卡号与账户类型不匹配") !=-1){
+					PushSocket.push(map, UUID, "0001");
 					PushState.state(UserCard, "bankBillFlow",200);
 					driver.close();
 					map.clear();
@@ -55,6 +59,7 @@ public class ConstructionService {
 					map.put("errorCode","0002");
 					return map;
 				}
+				PushSocket.push(map, UUID, "0000");
 				System.out.println(driver.findElement(By.className("crd_box")).getText()) ;//账单日，可用额度，信用额度，取款额度信息
 				driver.switchTo().frame("result1");
 //				Thread.sleep(1000);

@@ -7,13 +7,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -65,7 +68,7 @@ public class GuangXiTelecomService {
 
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode, String userName,
-                                            String userCard,String longitude,String latitude) {
+                                            String userCard,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -73,6 +76,7 @@ public class GuangXiTelecomService {
         Object pages = session.getAttribute("GXDXHtmlPage");
 
         if (attribute == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
             return map;
@@ -92,12 +96,13 @@ public class GuangXiTelecomService {
 
                     HtmlAnchor popup1 = (HtmlAnchor) xmlPage.getElementById("popup").getFirstChild().getChildNodes().get(2).getChildNodes().get(0);
                     HtmlPage click1 = popup1.click();
-
+                    PushSocket.push(map, UUID, "0001");
                     Thread.sleep(1000);
                     map.put("errorCode", "0003");
                     map.put("errorInfo", popup);
                     return map;
                 }
+                PushSocket.push(map, UUID, "0000");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar=Calendar.getInstance();
                 String lastTime = sim.format(calendar.getTime());

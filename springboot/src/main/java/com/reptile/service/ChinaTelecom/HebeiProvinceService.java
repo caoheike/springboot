@@ -46,6 +46,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -144,6 +145,7 @@ public class HebeiProvinceService {
 		HttpSession session=request.getSession();//获得session
 		Object sessiondriver = session.getAttribute("sessionDriver-Hebei"+Usernum);
 		   if (sessiondriver == null) {
+			 
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;

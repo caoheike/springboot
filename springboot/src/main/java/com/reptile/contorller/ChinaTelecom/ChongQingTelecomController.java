@@ -41,8 +41,8 @@ public class ChongQingTelecomController {
      @ResponseBody
      @CustomAnnotation
      @RequestMapping(value = "CQGetDetail", method = RequestMethod.POST)
-	 public Map<String, Object> getDetail(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber,@RequestParam("passWord")String passWord,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
-		return chongQingService.getDetail(request, phoneNumber, passWord,code, longitude, latitude);
+	 public Map<String, Object> getDetail(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber,@RequestParam("passWord")String passWord,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
+		return chongQingService.getDetail(request, phoneNumber, passWord,code, longitude, latitude,UUID);
 			 
 	 }
 }

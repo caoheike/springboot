@@ -1,8 +1,10 @@
 package com.reptile.service;
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -12,6 +14,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +24,8 @@ import java.util.Map;
 @Service
 public class ChinaBankService {
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request,String userCard ,String cardNumber, String userPwd) throws Exception {
+    public Map<String, Object> getDetailMes(HttpServletRequest request,String userCard ,String cardNumber, String userPwd,String UUID
+    		) throws Exception {
         String path=request.getServletContext().getRealPath("/vecImageCode");
         System.setProperty("java.awt.headless", "true");
         File file=new File(path);
@@ -50,6 +54,7 @@ public class ChinaBankService {
             Thread.sleep(3000);
             String msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
+            	PushSocket.push(map, UUID, "0001");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
                 driver.close();
@@ -62,6 +67,7 @@ public class ChinaBankService {
                     if(i==3){
                         input1.get(i).sendKeys(ss1);
                     }else{
+                    	PushSocket.push(map, UUID, "0001");
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "请使用信用卡号登录");
                         driver.close();
@@ -74,6 +80,7 @@ public class ChinaBankService {
             try{
                 imageCode = driver.findElement(By.id("captcha_creditCard"));
             }catch (Exception e){
+            	PushSocket.push(map, UUID, "0001");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "请输入正确的信用卡号");
                 driver.close();
@@ -103,15 +110,19 @@ public class ChinaBankService {
             msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
                 if(msgContent.contains("验证码输入错误")){
+                	
                     map.put("errorCode", "0004");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
                 }else{
+                	
                     map.put("errorCode", "0001");
                     map.put("errorInfo", msgContent);
                 }
+                PushSocket.push(map, UUID, "0001");
                 driver.close();
                 return map;
             }
+            PushSocket.push(map, UUID, "0000");
             List<WebElement> element = driver.findElements(By.className("tabs"));
             for (int i = 0; i < element.size(); i++) {
                 if (element.get(i).getText().contains("已出账单")) {
@@ -157,6 +168,7 @@ public class ChinaBankService {
             driver.close();
         }catch (Exception e){
             driver.close();
+            PushSocket.push(map, UUID, "0001");
             e.printStackTrace();
             map.put("errorCode", "0002");
             map.put("errorInfo", "网络繁忙");

@@ -22,6 +22,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 
@@ -77,12 +78,13 @@ public class GansuProvinceService {
 	        }
 		return map;
 	 }
-	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy,String longitude,String latitude){
+	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy,String longitude,String latitude,String UUID){
 		   Map<String,Object> map = new HashMap<String,Object>();
 		   HttpSession session = request.getSession();
 		   
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
+	        	PushSocket.push(map, UUID, "0001");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
@@ -94,6 +96,7 @@ public class GansuProvinceService {
 	        	  Map<String,Object>Gansu=new HashMap<String,Object>();
 	        	  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				try {
+					
 					PushState.state(UserNum, "callLog",100);
 					String num="4:"+UserNum;
 					Date date=new Date();
@@ -126,14 +129,16 @@ public class GansuProvinceService {
 					map=resttemplate.SendMessage(Gansu,"http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
 					 
 					if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+						PushSocket.push(map, UUID, "0000");
 					    	PushState.state(UserNum, "callLog",300);
 			                map.put("errorInfo","查询成功");
 			                map.put("errorCode","0000");
 			         }else{
+			        	 PushSocket.push(map, UUID, "0001");
 			            	//--------------------数据中心推送状态----------------------
 			            	PushState.state(UserNum, "callLog",200);
 			            	//---------------------数据中心推送状态----------------------
-			                map.put("errorInfo","服务器跑偏了");
+			                map.put("errorInfo","短信验证码错误");
 			                map.put("errorCode","0001");
 			          }
 					webClient.close();
