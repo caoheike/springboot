@@ -6,8 +6,11 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -112,7 +116,7 @@ public class ChengduTelecomService {
 
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String phoneNumber,String phoneCode,
-                                            String servePwd,String longitude,String latitude) {
+                                            String servePwd,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List list = new ArrayList();
@@ -120,6 +124,7 @@ public class ChengduTelecomService {
         Object attribute = session.getAttribute("SCmobile-webclient2");
 
         if (attribute == null) {
+           PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
             return map;
@@ -138,11 +143,13 @@ public class ChengduTelecomService {
                 String record=null;
                 if (jsonObject.get("retCode") == null || !"0".equals(jsonObject.get("retCode").toString())) {
                     if(!result.contains("没有查询到相应记录")){
+                    	 PushSocket.push(map, UUID, "0001");
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         return map;
                     }
                 }else{
+                	 PushSocket.push(map, UUID, "0000");
                     record= jsonObject.get("json").toString();
                     list.add(record);
                 }

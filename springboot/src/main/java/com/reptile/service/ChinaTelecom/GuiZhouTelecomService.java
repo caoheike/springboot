@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -74,10 +75,11 @@ public class GuiZhouTelecomService {
 	 * @return
 	 */
 	
-	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude) {
+	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String UUID) {
 		    Map<String, Object> map = new HashMap<String, Object>();
 	        WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
 	        if(webClient==null){
+	        	PushSocket.push(map, UUID, "0001");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
 				 return map;
@@ -98,12 +100,14 @@ public class GuiZhouTelecomService {
 				 Thread.sleep(1000);
 			//======================验证码正确性验证===============================	
 				 if(code==null||code.equals("")){
+					 PushSocket.push(map, UUID, "0001");
 					 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码不能为空");
             		 return map; 
 				 }
 				 
 				 if( detial.getElementById("tilte").asXml().contains("验证码错误")){
+					 PushSocket.push(map, UUID, "0001");
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
             		 return map; 
@@ -115,6 +119,7 @@ public class GuiZhouTelecomService {
 		      	    dataList.add(dmap);
             	 }
 			} catch (Exception e) {
+				PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
 				e.printStackTrace();
@@ -126,7 +131,8 @@ public class GuiZhouTelecomService {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-       }        
+       }    
+             PushSocket.push(map, UUID, "0000");
            map.put("data", dataList);
            map.put("UserPassword",servePwd );
            map.put("UserIphone", phoneNumber);

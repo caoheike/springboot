@@ -105,7 +105,7 @@ public class TaiAnFundService {
 					   details=totalPage.asText().split("共")[1].split("页")[0];
 					   num=new Integer(details);
 					  if(num==1&&tables.asXml().contains("jtpsoft")){
-						  dataList.add(tables.asXml());//当前年度
+						  dataList.add(tables.asXml());
 						  System.out.println(tables.asXml());
 					  }else if(num>1){
 						  for (int j = 1; j <= num; j++) {

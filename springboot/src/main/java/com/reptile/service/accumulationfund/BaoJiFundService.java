@@ -41,7 +41,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 		
 		try {
 			HtmlPage loginPage= webclient.getPage("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/index.jsp");
-			WebRequest request1 =new WebRequest(new URL("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/login_hidden.jsp?pass=111111&zh=610323198712200942"));
+			WebRequest request1 =new WebRequest(new URL("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/login_hidden.jsp?pass="+passWord+"&zh="+idCard));
 			request1.setHttpMethod(HttpMethod.GET);//提交方式
 		 HtmlPage page1=	webclient.getPage(request1);
 		  if(page1.asXml().contains("alert")){
@@ -63,6 +63,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			  HtmlPage page2=webclient.getPage(requests1);	
 			 // System.out.println(page2.asXml());//基本信息
 			  HtmlTable table= (HtmlTable) page2.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[4]/tbody/tr/td/table/tbody/tr/td/table[1]").get(0);
+			  
+			  
 			  System.out.println(table.asXml());//宝鸡公积金基本信息
 			  
 			  
@@ -84,7 +86,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 		//	HtmlPage page3= page2.getElementByName("button5").click();
 			  
 			  Thread.sleep(3000);
-			  System.out.println(detailPage.asText()+"-------------"); 
+			 // System.out.println(detailPage.asText()+"-------------"); //当前年度
 			  //==============宝鸡所有明细==================
 			
 				  HtmlTable tables=   (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
@@ -94,12 +96,29 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 				  if(num==1&&tables.asXml().contains("jtpsoft")){
 					//  dataList.add(tables.asXml());//当前年度
 					 System.out.println(tables.asXml());
+				  }else{
+					  System.out.println(detailPage.asText()+"-------------"); //当前年度第一页
+					  if(num>1&&tables.asXml().contains("jtpsoft")){
+						//当前年度其余页
+						  for(int j=1;j<num;j++){
+							  
+							  detailPage=(HtmlPage) detailPage.executeJavaScript("down()").getNewPage();
+							  Thread.sleep(200);
+							  tables=   (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
+							  
+							  System.out.println(tables.asXml());
+							  
+						  }
+						  
+					  }else{
+						  System.out.println("暂无清单");
+					  }
 				  }
 				//=========================  其余年度明细==============
 				  HtmlSelect select=detailPage.getElementByName("cxydone");
 				  int seleNum=select.getChildElementCount();
-				  
-				  for (int i = 1; i < seleNum-1; i++) {
+				  try{
+				  for (int i = 1; i < seleNum; i++) {
 					   String da="";
 					   detailPage=getPages2(webclient, url, select.getOption(i).asText(), select.getOption(i).asText(), "1", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
 					   Thread.sleep(500);
@@ -124,8 +143,13 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 						 // dataList.add(da);//当前年度
 						  System.out.println(da);
 					  }  
-				}
-				
+				  }
+				  }catch (Exception e) {
+						logger.warn("宝鸡市公积金",e);
+						map.put("errorCode", "0001");
+			            map.put("errorInfo", "数据不全!");
+						e.printStackTrace();
+					}
 			 
 		  }
 			  

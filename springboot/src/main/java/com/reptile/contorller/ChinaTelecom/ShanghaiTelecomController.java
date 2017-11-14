@@ -32,7 +32,7 @@ public  Map<String,Object> afterLogin(HttpServletRequest request){
 @ResponseBody
 @CustomAnnotation
 @RequestMapping(value = "shhaigetDetial", method = RequestMethod.POST)
-public  Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude){
-	return telecomService.getDetial(phoneNumber,servePwd, request, code,longitude,latitude);
+public  Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
+	return telecomService.getDetial(phoneNumber,servePwd, request, code,longitude,latitude,UUID);
 }
 }

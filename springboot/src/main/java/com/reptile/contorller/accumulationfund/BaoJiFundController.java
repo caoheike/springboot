@@ -19,7 +19,7 @@ import com.reptile.service.accumulationfund.BaoJiFundService;
 public class BaoJiFundController {
 	@Autowired
     private BaoJiFundService service;
-	@ApiOperation(value = "1.宝鸡积金", notes = "参数：身份证号，密码")
+	@ApiOperation(value = "1.宝鸡积金", notes = "参数：身份证号，密码,城市编号")
     @ResponseBody
     @RequestMapping(value = "BaoJilogin", method = RequestMethod.POST)
 	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){

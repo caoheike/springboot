@@ -133,6 +133,7 @@ public class QinZhouFundService {
 		    	  String mid=driver.getPageSource().split("jczqqccx")[1];
 		    	  Thread.sleep(1000);
                   String paramers=mid.split("params=")[1].split("\\>")[0];
+                  Thread.sleep(200);
                   String jsonString=paramers.substring(1, paramers.length()-1).replace("&quot;", "\"");
 		    	  System.out.println(jsonString);
 		    	  JSONObject json=new JSONObject().fromObject(jsonString);
@@ -228,7 +229,7 @@ public class QinZhouFundService {
 				      map.put("userId", idCard);
 				      map.put("insertTime", sdf.format(new Date()));
 				      map.put("city", cityCode);
-				      map.put("cityName", "泰安市");
+				      map.put("cityName", "钦州市");
 				      
 				      map.put("data", dataMap);
 				      System.out.println(new JSONArray().fromObject(map));

@@ -7,13 +7,16 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,7 +24,7 @@ import java.util.*;
 @Service
 public class JiangSuTelecomService {
     private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -29,9 +32,11 @@ public class JiangSuTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
+        	PushSocket.push(map, UUID, "0000");
             try {
                 WebClient webClient = (WebClient) attribute;
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
@@ -97,6 +102,7 @@ public class JiangSuTelecomService {
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
             } catch (Exception e) {
+            	PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");

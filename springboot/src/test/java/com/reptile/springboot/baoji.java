@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -39,6 +41,7 @@ public class baoji {
 			  map.put("errorInfo", tip);
 			  
 		  }else{
+			 
 			  System.out.println("登陆成功");
 			  String zgzh=page1.getElementByName("zgzh").getAttribute("value");
 			  String sfzh=page1.getElementByName("sfzh").getAttribute("value");
