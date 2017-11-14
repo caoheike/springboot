@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.reptile.util.ConstantInterface;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -98,7 +99,7 @@ public class NanTongAccumulationfundService {
                 map.put("insertTime", Dates.currentTime());
                 //数据推送
 //			    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
-                map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+                map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
             } else {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "认证过程中出现未知错误");

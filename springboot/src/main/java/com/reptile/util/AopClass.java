@@ -107,6 +107,9 @@ public class AopClass {
         if (className.contains("BankController")) {
             dataMap.put("approveName", "bankBillFlow");
         }
+        if (className.contains("DepositCardController")) {
+            dataMap.put("approveName", "savings");
+        }
 
         dataMap.put("cardNumber", argsName);
         dataMap.put("approveState", "100");
@@ -131,6 +134,9 @@ public class AopClass {
         }
         if (className.contains("BankController")) {
             dataMap.put("approveName", "bankBillFlow");
+        }
+        if (className.contains("DepositCardController")) {
+            dataMap.put("approveName", "savings");
         }
         dataMap.put("cardNumber", argsName);
         dataMap.put("approveState", approveState);
