@@ -84,7 +84,7 @@ public class ChinaBankDepositCardService {
                 }
             }
 
-            Thread.sleep(15000);
+            Thread.sleep(5000);
 
             msgContent = driver.findElement(By.id("msgContent")).getText();                  //判断登录是否成功
             if (msgContent.length() != 0) {

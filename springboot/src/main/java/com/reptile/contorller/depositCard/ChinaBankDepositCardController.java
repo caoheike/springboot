@@ -23,12 +23,13 @@ public class ChinaBankDepositCardController {
     @Autowired
     private ChinaBankDepositCardService service;
 
-    @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
+    @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "储蓄卡获取数据",notes = "参数：身份证号，卡号，密码，用户名")
+    @ApiOperation(value = "储蓄卡获取数据", notes = "参数：身份证号，卡号，密码，用户名")
     @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String IDNumber, @RequestParam("cardNumber") String cardNumber,
-                                            @RequestParam("passWord") String passWord,  @RequestParam("userName")String userName){
-        return service.getDetailMes(request,IDNumber,cardNumber,passWord,userName);
+                                            @RequestParam("passWord") String passWord, @RequestParam("userName") String userName) {
+
+        return service.getDetailMes(request, IDNumber, cardNumber, passWord, userName);
     }
 }
