@@ -12,12 +12,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.reptile.util.ConstantInterface;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
@@ -30,11 +30,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.reptile.util.Dates;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
 
 @Service
 public class NanTongAccumulationfundService {
 
     private Logger logger = LoggerFactory.getLogger(NanTongAccumulationfundService.class);
+    
+	@Autowired
+	private application application;
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode) {
         Map<String, Object> map = new HashMap<>();
@@ -98,8 +102,7 @@ public class NanTongAccumulationfundService {
                 map.put("cityName", "南通");
                 map.put("insertTime", Dates.currentTime());
                 //数据推送
-//			    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
-                map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
+                map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
             } else {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "认证过程中出现未知错误");

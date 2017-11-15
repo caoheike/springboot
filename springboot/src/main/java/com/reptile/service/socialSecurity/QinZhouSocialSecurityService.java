@@ -21,6 +21,7 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -36,9 +37,14 @@ import com.reptile.util.ImgUtil;
 import com.reptile.util.JsonUtil;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
 @Service
 public class QinZhouSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(QinZhouSocialSecurityService.class);
+	
+	@Autowired
+	private application application;
+	    
 	
 	/**
 	 * 获取验证码图片
@@ -126,7 +132,7 @@ public class QinZhouSocialSecurityService {
 				data.put("userId", idCard);
 				data.put("createTime", Dates.currentTime());
 				data.put("data", info);
-				data = new Resttemplate().SendMessage(data,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
+				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 			}else{
 				if(response.contains("错误的验证码！")){
 					data.put("errorInfo", "错误的验证码！");

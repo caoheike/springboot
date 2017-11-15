@@ -15,6 +15,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -23,12 +24,17 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
 
 @Service
 public class NanTongSocialSecurityService {
     private Logger logger = LoggerFactory.getLogger(NanTongSocialSecurityService.class);
 
+    @Autowired
+	private application application;
+    
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String socialCard, String passWord, String cityCode) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
@@ -84,7 +90,7 @@ public class NanTongSocialSecurityService {
 			map.put("userId", idCard);
 			map.put("createTime", Dates.currentTime());
 			map.put("data", dataMap);
-//			map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/socialSecurity");
+			map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/socialSecurity");
         } catch (Exception e) {
             logger.warn("南通社保信息获取失败", e);
             e.printStackTrace();
