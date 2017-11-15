@@ -1420,7 +1420,7 @@ public class MobileService {
 
 	}
 
-	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard,String UUID) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		List listinfo = new ArrayList();
 
 		//--------------------数据中心推送状态----------------------
@@ -1448,6 +1448,7 @@ public class MobileService {
 
 			//  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
 			if (!pages.asText().contains("您输入的用户名或密码有误") && !pages.asText().contains("图片验证码输入有误")) {
+				PushSocket.push(map, UUID, "0000");
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)

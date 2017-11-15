@@ -51,6 +51,7 @@ import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -463,10 +464,10 @@ public class InterfaceController {
 			@RequestParam("Usernumber") String Usernumber,
 			@RequestParam("UserPwd") String UserPwd,
 			@RequestParam("Usercard") String Usercard,
-			@RequestParam("lt") String lt, @RequestParam("code") String code)
+			@RequestParam("lt") String lt, @RequestParam("code") String code,@RequestParam("UUID")String UUID)
 			throws Exception {
 		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code,
-				lt, Usercard);
+				lt, Usercard,UUID);
 
 	}
 
@@ -697,7 +698,7 @@ public class InterfaceController {
 	}
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
-	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
+	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 	    System.out.println("---------------"+"");
 	    PushState.state(idCard, "TaoBao",100);
 	    Map<String, Object> map = new HashMap<String, Object>();
@@ -710,6 +711,7 @@ public class InterfaceController {
 	    if(jsonObject2.get("code").equals("10006")){
 	    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 	    System.out.println(pageinfo.asXml());
+	    PushSocket.push(map, UUID, "0000");
 	    map.put("errorCode", "0000");
 	    map.put("errorInfo", "成功");
 	    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
@@ -769,6 +771,7 @@ public class InterfaceController {
 	      
 	      
 	    }else if(jsonObject2.get("code").equals("10000")){
+	    	
 	      System.out.println("等待授权");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "等待授权");
