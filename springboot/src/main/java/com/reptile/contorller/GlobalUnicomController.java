@@ -50,7 +50,7 @@ public class GlobalUnicomController {
     }
     /**
      * 联通登录接口
-     * @CustomAnnotation("???")
+     * 
      * @param request
      * @param response
      * @param

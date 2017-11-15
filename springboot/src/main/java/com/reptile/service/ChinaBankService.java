@@ -122,7 +122,9 @@ public class ChinaBankService {
                 driver.close();
                 return map;
             }
+            //--------------推-----------------
             PushSocket.push(map, UUID, "0000");
+            //--------------推-----------------
             List<WebElement> element = driver.findElements(By.className("tabs"));
             for (int i = 0; i < element.size(); i++) {
                 if (element.get(i).getText().contains("已出账单")) {
