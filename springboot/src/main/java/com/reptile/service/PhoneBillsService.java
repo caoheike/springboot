@@ -359,8 +359,6 @@ public class PhoneBillsService {
 
             	//---------------推-------------------
                 PushSocket.push(map, UUID, "0000");
-			   //---------------推-------------------
-                PushState.state(userNumber, "callLog", 100);
                 Date date = new Date();
                 SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyyMM");
                 String str = SimpleDateFormat.format(date);

@@ -50,7 +50,6 @@ public class NanTongSocialSecurityService {
 
             HtmlPage page1 = webClient.getPage(post);
             Thread.sleep(1000);
-            System.out.println(page1.asText());
             String result = page1.asText();
 
             if (!result.contains("success")) {
@@ -66,40 +65,7 @@ public class NanTongSocialSecurityService {
             String sessionid = split[2];
 
             webClient.getPage("http://www.jsnt.lss.gov.cn:1002/query/index.html?userid=" + userid + "&sessionid=" + sessionid);
-           /* logger.warn("获取南通社保基本信息");
-            HtmlPage page2 = webClient.getPage("http://www.jsnt.lss.gov.cn:1002/query/person/personYLNZH.html");
-            System.out.println(page2.asXml());
-            dataMap.put("base", page2.asXml());
-            logger.warn("获取南通社保缴纳详情");
-            post = new WebRequest(new URL("http://www.jsnt.lss.gov.cn:1002/query/person/personJFJL_result.html"));
-            list = new ArrayList<>();
-            list.add(new NameValuePair("aae002_b", ""));
-            list.add(new NameValuePair("aae002_e", ""));
-            list.add(new NameValuePair("aae140", "11"));
-            list.add(new NameValuePair("pageNo", "1"));
-            post.setRequestParameters(list);
-            page2 = webClient.getPage(post);
-            System.out.println(page2.asText());
-            dataList.add(page2.asXml());
-            result = page2.asText();
-            String[] split1 = result.split("当前1/");
-            String countStr = split1[1].substring(0, split1[1].length() - 1);
-            int count = Integer.parseInt(countStr);             //详单页数
-            Thread.sleep(1000);
-            for (int i = 2; i <= count; i++) {
-                post = new WebRequest(new URL("http://www.jsnt.lss.gov.cn:1002/query/person/personJFJL_result.html"));
-                list = new ArrayList<>();
-                list.add(new NameValuePair("aae002_b", ""));
-                list.add(new NameValuePair("aae002_e", ""));
-                list.add(new NameValuePair("aae140", "11"));
-                list.add(new NameValuePair("pageNo", i + ""));
-                post.setRequestParameters(list);
-                page2 = webClient.getPage(post);
-                System.err.println(page2.asXml());
-                dataList.add(page2.asXml());
-                Thread.sleep(1000);
-            }*/
-            logger.warn("获取南通社保缴纳详情成功");
+            
             List<Map<String,Object>> endowmentInsurance = this.getDetail(webClient, "11");//养老保险
 			List<Map<String,Object>> unemploymentInsurance = this.getDetail(webClient, "21");//失业保险
 			List<Map<String,Object>> medicalInsurance  = this.getDetail(webClient, "31");//医疗保险
@@ -118,6 +84,7 @@ public class NanTongSocialSecurityService {
 			map.put("userId", idCard);
 			map.put("createTime", Dates.currentTime());
 			map.put("data", dataMap);
+//			map = new Resttemplate().SendMessage(map, "http://192.168.3.16:8089/HSDC/person/socialSecurity");
         } catch (Exception e) {
             logger.warn("南通社保信息获取失败", e);
             e.printStackTrace();
@@ -145,19 +112,19 @@ public class NanTongSocialSecurityService {
         
         Map<String,Object> baseInfo = new HashMap<String, Object>();
 		
-		baseInfo.put("name", yangLaoBaseInfo.get(0).get(0));//姓名
-		baseInfo.put("identityCards", yangLaoBaseInfo.get(0).get(15));//公民身份号码
-		baseInfo.put("sex", yangLaoBaseInfo.get(0).get(1));//性别
+		baseInfo.put("name", yangLaoBaseInfo.get(0).get(1));//姓名
+		baseInfo.put("identityCards", yangLaoBaseInfo.get(0).get(16));//公民身份号码
+		baseInfo.put("sex", yangLaoBaseInfo.get(0).get(2));//性别
 		baseInfo.put("birthDate", "");//出生日期
 		baseInfo.put("nation", "");//民族
 		baseInfo.put("country", "");//国家
 		baseInfo.put("personalIdentity", "");//个人身份
 		baseInfo.put("workDate", "");//参加工作时间
 		baseInfo.put("residenceType", "");//户口性质
-		baseInfo.put("residenceAddr", yangLaoBaseInfo.get(0).get(16));//户口所在地地址
+		baseInfo.put("residenceAddr", yangLaoBaseInfo.get(0).get(17));//户口所在地地址
 		baseInfo.put("residencePostcodes","");//户口所在地邮政编码
-		baseInfo.put("contactAddress", yangLaoBaseInfo.get(0).get(17));//居住地(联系)地址
-		baseInfo.put("contactPostcodes", yangLaoBaseInfo.get(0).get(18));//居住地（联系）邮政编码
+		baseInfo.put("contactAddress", yangLaoBaseInfo.get(0).get(18));//居住地(联系)地址
+		baseInfo.put("contactPostcodes", yangLaoBaseInfo.get(0).get(19));//居住地（联系）邮政编码
 		baseInfo.put("queryMethod", "");//获取对账单方式
 		baseInfo.put("email", "");//电子邮件地址
 		baseInfo.put("educationalBackground", "");//文化程度
@@ -178,14 +145,13 @@ public class NanTongSocialSecurityService {
 		baseInfo.put("sentinelMedicalInstitutions4", "");//定点医疗机构 4
 		baseInfo.put("sentinelMedicalInstitutions5", "");//定点医疗机构 5
 		baseInfo.put("specialDisease", "");//是否患有特殊病
-		baseInfo.put("endowmentInsuranceAmount", yangLaoBaseInfo.get(0).get(11));//养老保险缴费余额
+		baseInfo.put("endowmentInsuranceAmount", yangLaoBaseInfo.get(0).get(12));//养老保险缴费余额
 		
 		//医保余额
 		request = new WebRequest(new URL("http://www.jsnt.lss.gov.cn:1002/query/person/personYILZH.html"));
         page = webClient.getPage(request);
-        System.err.println(page.asXml());
         yangLaoBaseInfo = table1(page.getElementsByTagName("table").get(8).asXml());
-        baseInfo.put("medicalInsuranceAmount", yangLaoBaseInfo.get(0).get(7));//医疗保险缴费余额
+        baseInfo.put("medicalInsuranceAmount", yangLaoBaseInfo.get(0).get(8));//医疗保险缴费余额
         
 		double unemploymentInsuranceAmount = this.getCal(unemploymentInsurance);
 		baseInfo.put("unemploymentInsuranceAmount", unemploymentInsuranceAmount);//失业保险缴费余额
@@ -248,7 +214,6 @@ public class NanTongSocialSecurityService {
          HtmlPage page = webClient.getPage(request);
          String tableXml = page.getElementsByTagName("table").get(8).asXml();
     	 List<List<String>> info = table1(tableXml);
-         System.out.println(page.asXml());
          String result = page.asText();
          //获取页数
          String[] split1 = result.split("当前1/");
@@ -264,7 +229,6 @@ public class NanTongSocialSecurityService {
         	 request.setRequestParameters(params);
         	 page = webClient.getPage(request);
         	 tableXml = page.getElementsByTagName("table").get(8).asXml();
-        	 System.out.println(tableXml);
         	 List<List<String>> table = table1(tableXml);
         	 for(List<String> item : table){
         		 info.add(item);
@@ -347,7 +311,6 @@ public class NanTongSocialSecurityService {
 				 String txt = tds.get(j).text().replace(" ", "").replace(" ","");  
 				 item.add(txt);
 			 }  
-			 System.out.println(item.toString());
 			 if(!item.toString().equals("[, , , , , , , ]") && !item.toString().equals("[, , , , , , , , , , , , , , , , , , , , , ]")){
 				 list.add(item);
 			 }
@@ -377,7 +340,7 @@ public class NanTongSocialSecurityService {
 					}
 					if(map.get("monthly_personal_income") != null){
 						if(!(map.get("monthly_personal_income")+"").equals("null")){
-							monthly_company_income = Double.parseDouble(map.get("monthly_personal_income")+"");
+							monthly_personal_income = Double.parseDouble(map.get("monthly_personal_income")+"");
 						}
 					}
 					count += month_count * (monthly_company_income + monthly_personal_income);
@@ -385,5 +348,6 @@ public class NanTongSocialSecurityService {
 			}
 			return count;
 		}
+		
     
 }
