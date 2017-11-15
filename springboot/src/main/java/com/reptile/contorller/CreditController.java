@@ -50,6 +50,16 @@ public class CreditController {
         return creditService.login(bean,request);
     }
 
+//    @ResponseBody
+//    @RequestMapping(value = "/Login.html",method = RequestMethod.POST)
+//    public Map<String,Object> Login(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("userPass")String userPass,@RequestParam("verifyCode")String verifyCode){
+//        FormBean bean=new FormBean();
+//        bean.setUserName(userName);
+//        bean.setUserPass(userPass);
+//        bean.setVerifyCode(verifyCode);
+//        return creditService.login(bean,request);
+//    }
+
     @ResponseBody
     @RequestMapping(value = "/getVerifyImage.jpg",method = RequestMethod.POST)
     public Map<String,Object> getVerifyImage(@RequestParam(value = "type",required = false) String type, HttpServletRequest request){

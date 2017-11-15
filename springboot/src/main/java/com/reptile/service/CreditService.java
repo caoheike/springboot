@@ -410,6 +410,13 @@ public class CreditService {
                     data.put("phone", applyPage.querySelector(".user_text").asText());
                     data.put("type", "phone");
                 } else {
+                    DomElement radiobutton3 = applyPage.getElementById("radiobutton3");
+                    if(radiobutton3==null){
+                        data.put("ResultInfo", "对不起，系统验证失败，请在官网进行相关验证后再来认证征信报告。");
+                        data.put("ResultCode", "0006");
+                        map.put("data", data);
+                        return map;
+                    }
                     applyPage.getElementById("radiobutton3").click();
                     applyPage = nextstep.click();
                     if (applyPage.asText().indexOf("已存在") != -1) {
