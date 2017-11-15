@@ -11,6 +11,7 @@ import com.reptile.model.FormBean;
 import com.reptile.service.socialSecurity.SocialSecurityService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class SocialSecurityController {
 
     @ResponseBody
     @RequestMapping(value = "/Login.html",method = RequestMethod.POST)
-    public Map<String,Object> Login(@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("cityCode")String cityCode){
+    public Map<String,Object> Login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
     	FormBean bean=new FormBean();
     	bean.setCityCode(cityCode);
     	bean.setUserId(idCard);

@@ -54,6 +54,7 @@ import com.reptile.util.CrawlerUtil;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -634,21 +635,22 @@ public class InterfaceController {
 //		// System.out.println("结束");
 //
 //	}
+	/**
+	 * 登陆
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws FailingHttpStatusCodeException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NotFoundException
+	 */
 	@ResponseBody
 	@RequestMapping(value = "tab.html", method = RequestMethod.POST)
 	public Map<String,Object> test(HttpServletRequest request, HttpServletResponse response)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 		String sessid=new CrawlerUtil().getUUID(); //生成UUid 用于区分浏览器
-		WebClient webClient = new WebClient();
-		 webClient.getOptions().setUseInsecureSSL(true);
-		 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
-		 webClient.getOptions().setTimeout(100000);
-		 webClient.getOptions().setCssEnabled(true);
-		 webClient.getOptions().setJavaScriptEnabled(true);
-		 webClient.setJavaScriptTimeout(100000); 
-		 webClient.getOptions().setRedirectEnabled(true);
-		 webClient.getOptions().setThrowExceptionOnScriptError(false);
-		 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-		 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+		WebClient webClient = new WebClientFactory().getWebClient();
 			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); // 此目录保存缩小后的关键图
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
 		  JSONObject jsonObject=JSONObject.fromObject(page.getContent());
@@ -696,6 +698,21 @@ public class InterfaceController {
 
 
 	}
+	/**
+	 * 获得详情
+	 * @param request
+	 * @param response
+	 * @param sessid
+	 * @param Token
+	 * @param idCard
+	 * @param UUID
+	 * @return
+	 * @throws FailingHttpStatusCodeException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NotFoundException
+	 */
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
