@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
@@ -21,10 +22,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
 
 @Service
 public class LYSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(LYSocialSecurityService.class);
+	
+	@Autowired
+	private application application;
 	
 	/**
 	 * 临沂社保登录并获取详情
@@ -106,8 +111,7 @@ public class LYSocialSecurityService {
         data.put("data", infoAll);
         data.put("city", cityCode);
         data.put("userId", idCard);
-//      data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");//上线
-        data = new Resttemplate().SendMessage(data,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
+        data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 		return data;
 	}
 	
