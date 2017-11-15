@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -95,6 +96,12 @@ public class HuBeiProviceService {
 		 Map<String,Object> map = new HashMap<String,Object>();
 		  HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-HUBEI");
+	        if (attribute == null) {
+	        	
+	            map.put("errorCode", "0001");
+	            map.put("errorInfo", "操作异常!");
+	            return map;
+	        } else {
 	        try {
 	        	
 	        	PushState.state(PhoneNume, "callLog",100);
@@ -196,6 +203,7 @@ public class HuBeiProviceService {
 				 map.put("errorInfo","服务繁忙，请稍后再试");
 				 map.put("errorCode","0002");
 			}
+	        }
 	        
 		return map;
 	}

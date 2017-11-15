@@ -1,9 +1,11 @@
 package com.reptile.service;
 
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -107,7 +110,8 @@ public class CEBService {
 			return map;
 			
 		}
-		public Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password){
+		public Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password,String UUID){
+			
 			PushState.state(UserCard, "bankBillFlow",100);
 			 Map<String, Object> map=new HashMap<String, Object>();
 			 Map<String,Object> data=new HashMap<String,Object>();
@@ -115,6 +119,7 @@ public class CEBService {
 				Object sessiondriver = session.getAttribute("sessionDriver-Ceb"+UserCard);//存在session 中的浏览器
 				final WebDriver driver = (WebDriver) sessiondriver;
 				if(sessiondriver==null){
+					PushSocket.push(map, UUID, "0001");
 					PushState.state(UserCard, "bankBillFlow",200);
 					logger.warn("连接超时！请重新获取验证码"+UserCard);
 					map.put("errorInfo","连接超时！请重新获取验证码");
@@ -130,6 +135,7 @@ public class CEBService {
 				loginform.findElement(ByClassName.className("login-style-bt")).click();
 				try {
 					driver.findElement(ByClassName.className("popup-dialog-message"));
+					PushSocket.push(map, UUID, "0001");
 					PushState.state(UserCard, "bankBillFlow",200);
 					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","操作异常请刷新重试");
@@ -137,6 +143,7 @@ public class CEBService {
 					driver.close();
 				} catch (Exception e) {
 					// TODO: handle exception
+					PushSocket.push(map, UUID, "0000");
 					System.out.println("点击成功");
 					Thread.sleep(2000);
 					driver.get(CabCardIndexpage);

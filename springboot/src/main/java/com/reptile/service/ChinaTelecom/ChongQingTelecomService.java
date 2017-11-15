@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -115,7 +116,7 @@ public class ChongQingTelecomService {
 		 * @return
 		 */
 	 
-	 public Map<String, Object> getDetail(HttpServletRequest request, String phoneNumber,String passWord,String code,String longitude,String latitude){
+	 public Map<String, Object> getDetail(HttpServletRequest request, String phoneNumber,String passWord,String code,String longitude,String latitude,String UUID){
 		 Map<String, Object> map = new HashMap<String, Object>();
 		  
 	        List<Map<String, Object>> arrayList=new ArrayList<Map<String,Object>>();
@@ -123,6 +124,7 @@ public class ChongQingTelecomService {
 	        Object attribute = session.getAttribute("driverGT");
 
 	        if (attribute == null) {
+	        	PushSocket.push(map, UUID, "0001");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信验证码!");
 	            return map;
@@ -155,7 +157,7 @@ public class ChongQingTelecomService {
 							 check.click();
 							 Thread.sleep(1000);
 						}catch (Exception e){
-							
+							PushSocket.push(map, UUID, "0001");
 								 map.put("errorCode", "0001");
 	    				         map.put("errorInfo", "验证码错误");	
 	    				         return map;
@@ -164,7 +166,8 @@ public class ChongQingTelecomService {
 					   
 					    
 					    
-					if(driver.getPageSource().contains("使用地点")){					
+					if(driver.getPageSource().contains("使用地点")){	
+						PushSocket.push(map, UUID, "0000");
 	        				System.out.println("查询成功");
 	        				 HttpClient httpClient = new HttpClient(); 
 	        				//==================获取cookie==========================================  

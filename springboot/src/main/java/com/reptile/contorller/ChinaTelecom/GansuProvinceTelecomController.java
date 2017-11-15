@@ -33,9 +33,9 @@ public class GansuProvinceTelecomController {
     @ResponseBody
     @RequestMapping(value = "GansuPhone", method = RequestMethod.POST)
     //甘肃电信获取通话详单
-    public Map<String, Object> GansuPhone(HttpServletRequest request,@RequestParam("Usercard") String Usercard,@RequestParam("UserNum") String UserNum,@RequestParam("UserPass") String UserPass,@RequestParam("catph") String catph,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude) {
+    public Map<String, Object> GansuPhone(HttpServletRequest request,@RequestParam("Usercard") String Usercard,@RequestParam("UserNum") String UserNum,@RequestParam("UserPass") String UserPass,@RequestParam("catph") String catph,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,String UUID) {
         
-    	return gansu.GansuPhone1(request,Usercard,UserNum,UserPass,catph,longitude,latitude);
+    	return gansu.GansuPhone1(request,Usercard,UserNum,UserPass,catph,longitude,latitude,UUID);
     }
 	
 	

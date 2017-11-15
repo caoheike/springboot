@@ -7,13 +7,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,7 +25,7 @@ import java.util.*;
 public class XiNingTelecomService {
     private Logger logger= LoggerFactory.getLogger(XiNingTelecomService.class);
     //青海省
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -30,10 +33,12 @@ public class XiNingTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             return map;
         } else {
+        	PushSocket.push(map, UUID, "0001");
             try {
                 WebClient webClient = (WebClient) attribute;
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10029&toStUrl=http://qh.189.cn/service/bill/fee.action?type=ticket&fastcode=00920926&cityCode=qh"));
