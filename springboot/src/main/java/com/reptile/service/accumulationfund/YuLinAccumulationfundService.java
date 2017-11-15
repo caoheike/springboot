@@ -85,8 +85,7 @@ public class YuLinAccumulationfundService {
 			    data.put("userId", idCard);
 			    data.put("insertTime", Dates.currentTime());
 			    //数据推送
-//			    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
-			    data = new Resttemplate().SendMessage(data,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+			    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
 	        }
 		} catch (Exception e) {
 			logger.warn("获取玉林公积金详情失败",e);

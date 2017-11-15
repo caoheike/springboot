@@ -132,8 +132,7 @@ public class BZHousingFundService {
 		    data.put("city", cityCode);
 		    data.put("userId", idCard);
 		    //数据推送
-//		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
-		    data = new Resttemplate().SendMessage(data,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
 		} catch (Exception e) {
 			logger.error("滨州市公积金查询失败",e);
 			data.put("errorCode", "0002");
