@@ -18,6 +18,7 @@ import javax.servlet.http.HttpUtils;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.reptile.util.ConstantInterface;
+
 import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import com.reptile.model.AccumulationFundInfo;
 import com.reptile.model.FormBean;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 
 /**
@@ -52,7 +54,7 @@ public class AccumulationFundService {
     private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
     private static CrawlerUtil crawlerutil=new CrawlerUtil();
     private Logger logger= LoggerFactory.getLogger(AccumulationFundService.class);
-    public Map<String,Object> login(FormBean bean, HttpServletRequest request){
+    public Map<String,Object> login(FormBean bean, HttpServletRequest request,String idCardNum){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
         try {
@@ -64,6 +66,7 @@ public class AccumulationFundService {
                 map.put("data",data);
                 return map;
             }
+            PushState.state(idCardNum, "accumulationFund", 100);
             HttpSession session = request.getSession();
             Object sessionWebClient = session.getAttribute("sessionWebClient-GJJ");
             Object sessionLoginPage = session.getAttribute("sessionLoginPage-GJJ");
@@ -131,6 +134,7 @@ public class AccumulationFundService {
                     detailsList.add(temp);
                 }
                 webClient.close();
+               
                 map.put("ResultInfo","查询成功");
                 map.put("ResultCode","0000");
                 data.put("info",info);
@@ -138,7 +142,7 @@ public class AccumulationFundService {
                 map.put("city",bean.getCityCode());
                 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
                 map.put("queryDate",sdf.format(new Date()).toString());
-                map.put("userId",bean.getUserId().toString());
+                map.put("userId",idCardNum);
                 map.put("userName",bean.getUserName().toString());
                 map.put("userPass",bean.getUserPass().toString());
                 map.put("data",data);
@@ -150,19 +154,23 @@ public class AccumulationFundService {
                 map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/accumulationFund");
 
                 if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
-                    map.put("errorInfo","查询成功");
+                	 PushState.state(idCardNum, "accumulationFund", 300);
+                    map.put("errorInfo","推送成功");
                     map.put("errorCode","0000");
                 }else{
-                    map.put("errorInfo","查询失败");
+                	 PushState.state(idCardNum, "accumulationFund", 200);
+                    map.put("errorInfo","推送失败");
                     map.put("errorCode","0001");
                 }
                 //ludangwei 2017/08/10
                 session.removeAttribute("sessionWebClient-GJJ");
                 session.removeAttribute("sessionLoginPage-GJJ");
             }else{
+            	 PushState.state(idCardNum, "accumulationFund", 200);
                 System.out.print("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
+        	 PushState.state(idCardNum, "accumulationFund", 200);
             logger.warn(e.getMessage()+"     mrlu");
             map.clear();
             data.clear();
@@ -199,7 +207,7 @@ public class AccumulationFundService {
             session.setAttribute("sessionWebClient-GJJ", webClient);
             session.setAttribute("sessionLoginPage-GJJ", loginPage);
 
-            data.put("imageUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
+            data.put("imagePath",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/verifyImages/"+fileName);
             data.put("ResultInfo","查询成功");
             data.put("ResultCode","0000");
             map.put("errorInfo","查询成功");

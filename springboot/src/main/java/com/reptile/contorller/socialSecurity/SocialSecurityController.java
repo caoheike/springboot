@@ -27,14 +27,14 @@ public class SocialSecurityController {
 
     @ResponseBody
     @RequestMapping(value = "/Login.html",method = RequestMethod.POST)
-    public Map<String,Object> Login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
+    public Map<String,Object> Login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
     	FormBean bean=new FormBean();
     	bean.setCityCode(cityCode);
     	bean.setUserId(idCard);
     	bean.setUserName(userName);
     	bean.setUserPass(passWord);
 
-        return socialSecurityService.login(bean);
+        return socialSecurityService.login(bean,idCardNum);
     }
 
 }

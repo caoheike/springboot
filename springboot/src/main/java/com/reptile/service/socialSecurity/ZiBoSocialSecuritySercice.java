@@ -106,7 +106,7 @@ public class ZiBoSocialSecuritySercice {
 	 
 	  
 	  
-	  public  Map<String, Object> getDetails(HttpServletRequest request,String idCard,String catpy){
+	  public  Map<String, Object> getDetails(HttpServletRequest request,String idCard,String catpy,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -177,7 +177,7 @@ public class ZiBoSocialSecuritySercice {
 					map.put("errorCode", "0000");
 					map.put("data", dateMap);
 					map.put("city", "");
-					map.put("userId", idCard);//TODO
+					map.put("userId", idCardNum);//TODO
 	                 map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
 					//map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
 		        	Thread.sleep(200);

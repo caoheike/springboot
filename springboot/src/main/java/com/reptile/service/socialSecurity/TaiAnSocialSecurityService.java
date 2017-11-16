@@ -42,7 +42,7 @@ public class TaiAnSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(TaiAnSocialSecurityService.class);
 	 @Autowired
 	  private application applications;
-	 public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode){
+	 public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 	      Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -153,7 +153,7 @@ public class TaiAnSocialSecurityService {
 								map.put("errorCode", "0000");
 								map.put("data", dateMap);
 								map.put("city", cityCode);//007
-								map.put("userId", idCard);//TODO
+								map.put("userId", idCardNum);//TODO
 								map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
 								//map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
 						  	

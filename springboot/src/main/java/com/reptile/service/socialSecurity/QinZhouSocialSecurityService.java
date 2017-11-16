@@ -32,6 +32,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Dates;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.JsonUtil;
@@ -91,7 +92,7 @@ public class QinZhouSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
-			String idCard, String passWord, String catpy, String cityCode) {
+			String idCard, String passWord, String catpy, String cityCode,String idCardNum) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		WebClient webClient = (WebClient)request.getSession().getAttribute("qinZhouWebClient");//从session中获得webClient
@@ -129,10 +130,11 @@ public class QinZhouSocialSecurityService {
 				//data
 				data.put("city", cityCode);
 				data.put("cityName", "钦州");
-				data.put("userId", idCard);
+				data.put("userId", idCardNum);
 				data.put("createTime", Dates.currentTime());
 				data.put("data", info);
-				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+				data = new Resttemplate().SendMessage(data,ConstantInterface.port+"/HSDC/person/socialSecurity");
+				//data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 			}else{
 				if(response.contains("错误的验证码！")){
 					data.put("errorInfo", "错误的验证码！");

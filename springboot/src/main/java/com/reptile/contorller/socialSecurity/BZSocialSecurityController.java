@@ -44,7 +44,7 @@ public class BZSocialSecurityController {
 	@ApiOperation(value = "滨州市社保：详情",notes = "参数：身份证,密码,验证码,城市编码")
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
-		return bzSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode);
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
+		return bzSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode,idCardNum);
 	}
 }

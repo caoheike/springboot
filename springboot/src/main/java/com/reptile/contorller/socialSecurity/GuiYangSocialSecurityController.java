@@ -26,7 +26,7 @@ public class GuiYangSocialSecurityController {
     @ApiOperation(value = "贵阳社保",notes = "参数，身份证，密码，城市编号")
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
-    public synchronized   Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard) throws Exception {
-        return service.getDetailMes(request,idCard.trim(),passWord.trim(),cityCode.trim());
+    public synchronized   Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard) throws Exception {
+        return service.getDetailMes(request,idCard.trim(),passWord.trim(),cityCode.trim(),idCardNum.trim());
     }
 }

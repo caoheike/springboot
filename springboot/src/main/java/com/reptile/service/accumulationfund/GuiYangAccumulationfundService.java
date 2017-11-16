@@ -64,7 +64,7 @@ public class GuiYangAccumulationfundService {
         return map;
     }
 
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         HttpSession session = request.getSession();
@@ -172,7 +172,7 @@ public class GuiYangAccumulationfundService {
                 logger.warn("贵阳住房公积金缴纳信息详情获取完成");
                 dataMap.put("item", detailMes);
                 map.put("data", dataMap);
-                map.put("userId", userCard);
+                map.put("userId", idCardNum);
                 map.put("city", cityCode);
                 map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
             } catch (Exception e) {

@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Dates;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -40,7 +41,7 @@ public class NanTongAccumulationfundService {
 	@Autowired
 	private application application;
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
@@ -97,12 +98,13 @@ public class NanTongAccumulationfundService {
                 dataMap.put("flows", this.parseFlows(itemList));
                 dataMap.put("loans", this.getLoans(webClient));
                 map.put("data", dataMap);
-                map.put("userId", idCard);
+                map.put("userId", idCardNum);
                 map.put("city", cityCode);
                 map.put("cityName", "南通");
                 map.put("insertTime", Dates.currentTime());
                 //数据推送
-                map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
+                //map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
+                map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
             } else {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "认证过程中出现未知错误");

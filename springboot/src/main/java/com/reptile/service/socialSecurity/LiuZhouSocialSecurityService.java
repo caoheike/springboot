@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -26,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -69,7 +71,7 @@ public class LiuZhouSocialSecurityService {
 			
 		return map;
 	 }
-	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String userName,String passWord,String cityCode ){
+	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String userName,String passWord,String cityCode,String idCardNum ){
 		 Map<String, Object> map = new HashMap<>();
 	        Map<String, Object> dataMap = new HashMap<>();
 	        HttpSession session = request.getSession();
@@ -90,7 +92,7 @@ public class LiuZhouSocialSecurityService {
 	    			Yzm.setValueAttribute(catpy);
 	    			Thread.sleep(2000);
 	    			HtmlPage nextPage= loginPage.getElementByName("btnLogin").click();
-	    			Thread.sleep(4000);
+	    			Thread.sleep(3000);
 	    			
 	    			HtmlDivision jiben=(HtmlDivision) nextPage.getByXPath("//*[@id='content']/div[2]/div[2]/div[1]").get(0);
 	    			Map<String,Object> data=new HashMap<String,Object>();
@@ -152,9 +154,11 @@ public class LiuZhouSocialSecurityService {
 	    			data.put("item", htmls);
 	    			lz.put("data", data);
 	    			lz.put("city", cityCode);
-	    			lz.put("userId", idCard);
+	    			lz.put("userId", idCardNum);
 	    			Resttemplate resttemplate = new Resttemplate();
-	    			map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/socialSecurity");	
+	    			//map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
+	    			map=resttemplate.SendMessage(lz,ConstantInterface.port+"/HSDC/person/socialSecurity");
+	    			
 	    			System.out.println(map);
 	    		} catch (Exception e) {
 	    			// TODO Auto-generated catch block

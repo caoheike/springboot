@@ -40,7 +40,7 @@ public class LYSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userName, String idCard,String cityCode) {
+			String userName, String idCard,String cityCode,String idCardNum) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
@@ -74,7 +74,7 @@ public class LYSocialSecurityService {
 	        }else{
 	        	data.put("errorCode", "0000");
 	        	data.put("errorInfo", "登录成功");
-	        	data = this.doGetDetail(request, idCard, cityCode,nextPage);
+	        	data = this.doGetDetail(request, idCard,idCardNum,cityCode,nextPage);
 	        }
 			
 		} catch (Exception e) {
@@ -99,7 +99,7 @@ public class LYSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
-			String idCard,String cityCode,HtmlPage nextPage) {
+			String idCard,String idCardNum,String cityCode,HtmlPage nextPage) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		HtmlTable table = (HtmlTable) nextPage.getElementsByTagName("table").get(0);
 		
@@ -110,7 +110,7 @@ public class LYSocialSecurityService {
         data.put("errorCode", "0000");
         data.put("data", infoAll);
         data.put("city", cityCode);
-        data.put("userId", idCard);
+        data.put("userId", idCardNum);
         data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 		return data;
 	}
