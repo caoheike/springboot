@@ -27,6 +27,15 @@ import java.util.*;
 public class ChinaBankDepositCardService {
     private Logger logger = LoggerFactory.getLogger(ChinaBankDepositCardService.class);
 
+    /**
+     * 中国银行储蓄卡账单获取
+     * @param request
+     * @param IDNumber
+     * @param cardNumber
+     * @param passWord
+     * @param userName
+     * @return
+     */
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName) {
         Map<String, Object> map = new HashMap<>();
         List<String> dataList = new ArrayList<>();

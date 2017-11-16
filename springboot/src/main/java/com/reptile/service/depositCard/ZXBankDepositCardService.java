@@ -30,6 +30,15 @@ import java.util.*;
 public class ZXBankDepositCardService {
     private Logger logger = LoggerFactory.getLogger(ZXBankDepositCardService.class);
 
+    /**
+     * 获取中信银行储蓄卡账单信息
+     * @param request
+     * @param IDNumber
+     * @param cardNumber
+     * @param userName
+     * @param passWord
+     * @return
+     */
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String userName, String passWord) {
         Map<String, Object> map = new HashMap<>();
         System.setProperty("webdriver.ie.driver", "C:\\Program Files (x86)\\iedriver\\IEDriverServer.exe");

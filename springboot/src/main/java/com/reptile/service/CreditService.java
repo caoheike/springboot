@@ -12,6 +12,7 @@ import com.reptile.model.Question;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONArray;
@@ -538,7 +539,7 @@ public class CreditService {
     }
 
     //查询信用报告
-    public Map<String, Object> queryCredit(HttpServletRequest request,String userId, String verifyCode) {
+    public Map<String, Object> queryCredit(HttpServletRequest request,String userId, String verifyCode,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
         try {
@@ -558,6 +559,9 @@ public class CreditService {
                     return map;
                 }
                 //end mrlu 2017-09-6
+
+                //推送长连接状态
+                PushSocket.push(map, UUID, "0000");
 
                 queryPage.getElementById("tradeCode").setAttribute("value", verifyCode);
                 queryPage.getElementById("radiobutton1").click();
