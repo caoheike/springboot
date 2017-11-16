@@ -59,7 +59,7 @@ public class talkFrame {
     			//session.getBasicRemote().sendObject(json1);
     		
 				//session.getBasicRemote().sendText(json1.toString());//链接成功
-    			System.out.println(msg.substring(0, msg.length()-1).toString()+",\"resultCode\": \"1111\"}");
+    			//System.out.println(msg.substring(0, msg.length()-1).toString()+",\"resultCode\": \"1111\"}");
 				session.getBasicRemote().sendText(msg.substring(0, msg.length()-1).toString()+",\"resultCode\":\"1111\"}");//链接成功
 				
 			} catch (Exception e) {

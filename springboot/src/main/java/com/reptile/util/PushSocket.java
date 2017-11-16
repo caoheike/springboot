@@ -26,7 +26,14 @@ public class PushSocket {
 //			mapData.put("resultCode", errorInfo);
 //			mapData.put("seq_id", seq_id);
 //			JSONObject json=JSONObject.fromObject(mapData);
-			se.getBasicRemote().sendText("{\"resultCode\":"+errorInfo+",\"seq_id\":"+seq_id+"}");
+			if(se!=null&&seq_id!=null){
+				if(seq_id.equals("hello")){
+					se.getBasicRemote().sendText("{\"resultCode\":\""+errorInfo+"\",\"seq_id\":\""+seq_id+"\"}");
+				}else{
+					se.getBasicRemote().sendText("{\"resultCode\":"+errorInfo+",\"seq_id\":"+seq_id+"}");	
+				}
+				
+			}
 		
 			//se.getBasicRemote().sendObject(json);
 			
