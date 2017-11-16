@@ -87,8 +87,8 @@ public class CreditController {
     @ResponseBody
     @CustomAnnotation
     @RequestMapping(value = "/queryCredit.html",method = RequestMethod.POST)
-    public Map<String,Object> queryCredit(HttpServletRequest request,String userId,String verifyCode){
-        return creditService.queryCredit(request,userId,verifyCode);
+    public Map<String,Object> queryCredit(HttpServletRequest request,@RequestParam("userId")String userId,@RequestParam("verifyCode")String verifyCode,@RequestParam("UUID")String UUID){
+        return creditService.queryCredit(request,userId,verifyCode,UUID);
     }
 
 }
