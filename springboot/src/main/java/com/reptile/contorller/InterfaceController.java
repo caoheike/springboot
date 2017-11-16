@@ -51,8 +51,10 @@ import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -463,10 +465,10 @@ public class InterfaceController {
 			@RequestParam("Usernumber") String Usernumber,
 			@RequestParam("UserPwd") String UserPwd,
 			@RequestParam("Usercard") String Usercard,
-			@RequestParam("lt") String lt, @RequestParam("code") String code)
+			@RequestParam("lt") String lt, @RequestParam("code") String code,@RequestParam("UUID")String UUID)
 			throws Exception {
 		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code,
-				lt, Usercard);
+				lt, Usercard,UUID);
 
 	}
 
@@ -633,21 +635,22 @@ public class InterfaceController {
 //		// System.out.println("结束");
 //
 //	}
+	/**
+	 * 登陆
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws FailingHttpStatusCodeException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NotFoundException
+	 */
 	@ResponseBody
 	@RequestMapping(value = "tab.html", method = RequestMethod.POST)
 	public Map<String,Object> test(HttpServletRequest request, HttpServletResponse response)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 		String sessid=new CrawlerUtil().getUUID(); //生成UUid 用于区分浏览器
-		WebClient webClient = new WebClient();
-		 webClient.getOptions().setUseInsecureSSL(true);
-		 webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
-		 webClient.getOptions().setTimeout(100000);
-		 webClient.getOptions().setCssEnabled(true);
-		 webClient.getOptions().setJavaScriptEnabled(true);
-		 webClient.setJavaScriptTimeout(100000); 
-		 webClient.getOptions().setRedirectEnabled(true);
-		 webClient.getOptions().setThrowExceptionOnScriptError(false);
-		 webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-		 webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+		WebClient webClient = new WebClientFactory().getWebClient();
 			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); // 此目录保存缩小后的关键图
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
 		  JSONObject jsonObject=JSONObject.fromObject(page.getContent());
@@ -695,9 +698,24 @@ public class InterfaceController {
 
 
 	}
+	/**
+	 * 获得详情
+	 * @param request
+	 * @param response
+	 * @param sessid
+	 * @param Token
+	 * @param idCard
+	 * @param UUID
+	 * @return
+	 * @throws FailingHttpStatusCodeException
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws NotFoundException
+	 */
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
-	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
+	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 	    System.out.println("---------------"+"");
 	    PushState.state(idCard, "TaoBao",100);
 	    Map<String, Object> map = new HashMap<String, Object>();
@@ -710,6 +728,7 @@ public class InterfaceController {
 	    if(jsonObject2.get("code").equals("10006")){
 	    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 	    System.out.println(pageinfo.asXml());
+	    PushSocket.push(map, UUID, "0000");
 	    map.put("errorCode", "0000");
 	    map.put("errorInfo", "成功");
 	    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
@@ -769,6 +788,7 @@ public class InterfaceController {
 	      
 	      
 	    }else if(jsonObject2.get("code").equals("10000")){
+	    	
 	      System.out.println("等待授权");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "等待授权");

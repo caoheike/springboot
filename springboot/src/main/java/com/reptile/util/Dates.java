@@ -32,4 +32,18 @@ public class Dates {
 		return mon;
 	}
 	
+	/**
+	 * 获取n年前为某年
+	 * @return
+	 */
+	public static String beforeYear(int n){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy");
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.YEAR, -n);
+		Date date = c.getTime();
+		String year = format.format(date);
+		return year;
+	}
+	
 }

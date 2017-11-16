@@ -6,9 +6,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+
 import net.sf.json.JSONArray;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -18,15 +21,14 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.json.JSONObject;
 import org.json.XML;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -208,7 +210,7 @@ public class ZXBankService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode,String UUID) {
 
         Map<String, Object> map = new HashMap<String, Object>();
         HttpSession session = request.getSession();
@@ -217,6 +219,7 @@ public class ZXBankService {
         Object zxImageCodeCook = session.getAttribute("zxCookies2");
 
         if (zxhttpClient == null || zxImageCodeCook == null) {
+        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             return map;
@@ -235,11 +238,13 @@ public class ZXBankService {
                 System.out.println(postM.getResponseBodyAsString());
 
                 if (!postM.getResponseBodyAsString().contains("校验成功")) {
+                	PushSocket.push(map, UUID, "0001");
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(postM.getResponseBodyAsString());
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("rtnMsg").toString());
                     return map;
                 }
+                PushSocket.push(map, UUID, "0000");
                 //成功进入信用卡信息页面
                 GetMethod getMethod = new GetMethod("https://creditcard.ecitic.com/citiccard/newonline/myaccount.do?func=mainpage");
                 getMethod.setRequestHeader("Cookie", coks);
@@ -248,6 +253,7 @@ public class ZXBankService {
                 System.out.println(getMethod.getResponseBodyAsString());
                 
                 if (getMethod.getResponseBodyAsString().contains("您还未绑卡，暂不支持业务办理")) {
+                	PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "您还未绑卡，暂不支持业务办理");
                     return map;

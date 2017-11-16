@@ -127,6 +127,7 @@ public class HuBeiProviceService {
 				  Map<String,Object>HUBEI=new HashMap<String,Object>();
 				  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				for (int i = 0; i < 3; i++) {
+					
 					Map<String,Object> detailed=new HashMap<String,Object>();
 					List<Map<String ,Object>> eachMonthList =new ArrayList<Map<String ,Object>>();					
 					List<NameValuePair> list3 = new ArrayList<NameValuePair>();
@@ -173,6 +174,7 @@ public class HuBeiProviceService {
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
+				
 				System.out.println(datalist);
 				HUBEI.put("data", datalist);
 				HUBEI.put("UserIphone", PhoneNume);
@@ -183,6 +185,7 @@ public class HuBeiProviceService {
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(HUBEI, applications.getSendip()+"/HSDC/message/telecomCallRecord");
 				if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+					
 			    	PushState.state(PhoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
@@ -196,6 +199,7 @@ public class HuBeiProviceService {
 				webClient.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 				PushState.state(PhoneNume, "callLog",200);
 				//---------------------------数据中心推送状态----------------------------------

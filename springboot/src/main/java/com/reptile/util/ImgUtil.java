@@ -1,13 +1,23 @@
 package com.reptile.util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
+
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.Augmenter;
 
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 
@@ -59,5 +69,57 @@ public class ImgUtil {
 		String filePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + verifyImagesPath + "/" + fileName;
 		return filePath;
 	}
+	
+	
+	/**
+	 * 返回打码后的验证码
+	 * @param element
+	 * @param driver
+	 * @param path 图片绝对地址
+	 * @param prefix 
+	 * @param suffix
+	 * @return
+	 * @throws Exception
+	 */
+	public static String saveImg(WebElement element, WebDriver driver,String path,String prefix,String suffix) throws Exception{
+		File file = new File(path + File.separator);
+		if (!file.exists()) {
+			file.mkdir();
+		}
+        BufferedImage bufferedImage = createElementImages(driver, element);
+		String fileName = prefix + System.currentTimeMillis()+"."+suffix;
+		ImageIO.write(bufferedImage, suffix, new File(file,fileName));
+		
+		Map<String, Object> imagev = MyCYDMDemo.Imagev(file + "/" +fileName);
+        String code = imagev.get("strResult").toString();//读取图片验证码
+		return code;
+	}
+		
+	
+	  /**
+	   * 截取验证码图片
+	   * @param driver
+	   * @param webElement
+	   * @return
+	   * @throws IOException
+	   */
+	  private static BufferedImage createElementImages(WebDriver driver,WebElement webElement)  
+	      throws IOException {  
+	    // 获得webElement的位置和大小。  
+	    Point location = webElement.getLocation();  
+	    Dimension size = webElement.getSize();  
+	    // 创建全屏截图。  
+	    BufferedImage originalImage =  ImageIO.read(new ByteArrayInputStream(takeScreenshot(driver)));  
+	    // 截取webElement所在位置的子图。  
+	    BufferedImage croppedImage = originalImage.getSubimage(  
+	        location.getX() - size.getWidth()/2 - 10,location.getY(), size.getWidth(), size.getHeight()); 	 
+	    return croppedImage;  
+	  }
+	  
+	  
+	  private static byte[] takeScreenshot(WebDriver driver) throws IOException {  
+	      WebDriver augmentedDriver = new Augmenter().augment(driver);  
+	    return ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.BYTES);  
+      } 
 	
 }

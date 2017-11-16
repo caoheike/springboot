@@ -169,8 +169,7 @@ public class BZSocialSecurityService {
             data.put("data", infoAll);
             data.put("city", cityCode);
             data.put("userId", userCard);
-//            data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");//上线
-            data = new Resttemplate().SendMessage(data,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
+            data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 		} catch (Exception e) {
 			logger.error("获取滨州市社保详情失败",e);
 			data.put("errorInfo", "系统繁忙，请稍后再试！");

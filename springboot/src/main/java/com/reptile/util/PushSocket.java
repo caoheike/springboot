@@ -16,7 +16,7 @@ public class PushSocket {
 	 * @param UUID
 	 * @param errorInfo
 	 */
-	public static void push(Map<String, Object> map,String UUID,String errorInfo){
+	public static Map<String, Object> push(Map<String, Object> map,String UUID,String errorInfo){
 		Map<String, Object> mapData=new HashMap<String, Object>();
 		Session se=	talkFrame.getWsUserMap().get(UUID);
 		String seq_id=talkFrame.getWsInfoMap().get(UUID);
@@ -35,6 +35,7 @@ public class PushSocket {
 			  map.put("errorInfo", "网络异常");
 			e.printStackTrace();
 		}
+		return map;
 		
 	}
 
