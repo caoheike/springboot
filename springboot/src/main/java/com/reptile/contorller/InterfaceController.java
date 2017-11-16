@@ -717,7 +717,6 @@ public class InterfaceController {
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 	    System.out.println("---------------"+"");
-	    PushState.state(idCard, "TaoBao",100);
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
 	    HttpSession session=request.getSession();
@@ -729,6 +728,7 @@ public class InterfaceController {
 	    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 	    System.out.println(pageinfo.asXml());
 	    PushSocket.push(map, UUID, "0000");
+	    PushState.state(idCard, "TaoBao",100);
 	    map.put("errorCode", "0000");
 	    map.put("errorInfo", "成功");
 	    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");

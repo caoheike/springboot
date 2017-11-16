@@ -46,7 +46,7 @@ public class YuLinAccumulationfundService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
-			String idCard, String passWord, String cityCode) {
+			String idCard, String passWord, String cityCode,String idCardNum) {
 		
 		Map<String, Object> data = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
@@ -82,7 +82,7 @@ public class YuLinAccumulationfundService {
 			    data.put("data", map);
 			    data.put("city", cityCode);
 			    data.put("cityName", "玉林");
-			    data.put("userId", idCard);
+			    data.put("userId", idCardNum);
 			    data.put("insertTime", Dates.currentTime());
 			    //数据推送
 			    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");

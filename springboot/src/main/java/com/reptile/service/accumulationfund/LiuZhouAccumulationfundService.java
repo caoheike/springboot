@@ -86,7 +86,7 @@ public class LiuZhouAccumulationfundService {
 			
 		return map;
 	 }
-	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String fundCard,String passWord,String cityCode ){
+	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String fundCard,String passWord,String cityCode,String idCardNum ){
 		 System.out.println("欢迎使用柳州攻击");
 		 	Map<String, Object> map = new HashMap<>();
 	        Map<String, Object> dataMap = new HashMap<>();
@@ -118,7 +118,7 @@ public class LiuZhouAccumulationfundService {
 					data.put("item",html2);
 					data.put("base",html1);
 					lz.put("city", cityCode);
-					lz.put("userId", idCard);
+					lz.put("userId", idCardNum);
 					lz.put("data", data);	
 					Resttemplate resttemplate = new Resttemplate();
 					map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/accumulationFund");

@@ -34,8 +34,8 @@ public class LiuZhouSocialSecurityController {
 	    @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
 	    @ResponseBody
 	    @ApiOperation(value = "柳州社保",notes = "参数：身份证,姓名，密码，图片验证码,城市编号")
-	    public Map<String,Object> getDeatilMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
+	    public Map<String,Object> getDeatilMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
 
-	        return service.getDeatilMes(request, idCard,catpy, userName,passWord,cityCode);
+	        return service.getDeatilMes(request, idCard,catpy, userName,passWord,cityCode,idCardNum);
 	    }
 }

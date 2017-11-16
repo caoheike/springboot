@@ -41,6 +41,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.gson.JsonObject;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -98,7 +99,7 @@ public class KunMingFundService {
 	   * 获取详单
 	   */
 	  
-	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
+	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -297,12 +298,12 @@ public class KunMingFundService {
 	               dateMap.put("item", dataL);
   	               map.put("data", dateMap);
 		          
-	               map.put("userId", idCard);
+	               map.put("userId", idCardNum);
                    map.put("city", cityCode);//004
                    map.put("errorCode", "0000");
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
-	              map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张浩敏
+	              map=resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");//张浩敏
 		          // map=resttemplate.SendMessage(map,applications.getSendip()+ "/HSDC/person/accumulationFund");//张浩敏
 		            	
 		               

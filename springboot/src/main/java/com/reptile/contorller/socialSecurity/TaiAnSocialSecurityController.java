@@ -23,8 +23,8 @@ public class TaiAnSocialSecurityController {
 	@ApiOperation(value = "1.泰安社保获取图形验证码", notes = "参数：省份证，密码，城市编号")
     @ResponseBody
     @RequestMapping(value = "TASDetail", method = RequestMethod.POST)
-	 public Map<String, Object> getImageCode(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
-		return service.getImageCode(request, idCard, passWord,  cityCode);
+	 public Map<String, Object> getImageCode(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
+		return service.getImageCode(request, idCard, passWord,  cityCode,idCardNum);
 		}
 //	@ApiOperation(value = "1.泰安社保获取详单", notes = "参数：身份证，图形验证码")
 //    @ResponseBody

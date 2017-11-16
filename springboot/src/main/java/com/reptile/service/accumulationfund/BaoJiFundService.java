@@ -34,7 +34,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 	@Autowired
 	private application application;
 	
-	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode){
+	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		WebClient webclient=new WebClientFactory().getWebClient();
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 Map<String, Object> dateMap = new HashMap<String, Object>();

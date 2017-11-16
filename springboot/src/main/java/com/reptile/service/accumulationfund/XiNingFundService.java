@@ -91,7 +91,7 @@ public class XiNingFundService {
 		return map;
 		  
 	  }
-	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
+	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -182,7 +182,7 @@ public class XiNingFundService {
 		                   dateMap.put("item", dataL);
 		  	               map.put("data", dateMap);
 				          
-			               map.put("userId", idCard);
+			               map.put("userId", idCardNum);
                            map.put("city", cityCode);//002
 //				           map.put("errorInfo", "查询成功");
 				           Resttemplate resttemplate = new Resttemplate();

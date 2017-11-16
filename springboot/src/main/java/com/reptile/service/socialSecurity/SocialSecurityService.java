@@ -8,6 +8,7 @@ import com.reptile.model.PersonAccount;
 import com.reptile.model.PersonInfo;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONObject;
@@ -35,8 +36,10 @@ public class SocialSecurityService {
     private final static String loginUrl="http://117.36.52.39/sxlssLogin.jsp";
     private final static String infoUrl="http://117.36.52.39/personInfoQuery.do";
     private final static String detailsUrl="http://117.36.52.39/personAccountQuery.do";
+   // private final static String detailsUrl="http://117.36.52.39/paymentQuery.do";
+    
     private Logger logger= LoggerFactory.getLogger(SocialSecurityService.class);
-    public Map<String,Object> login(FormBean bean){
+    public Map<String,Object> login(FormBean bean,String idCardNum){
         Map<String,Object> map=new HashMap<String,Object>();
         Map<String,Object> data=new HashMap<String,Object>();
         try {
@@ -56,7 +59,7 @@ public class SocialSecurityService {
             }catch (Exception e){
                 Scheduler.sendGet(Scheduler.getIp);
             }
-
+            PushState.state(idCardNum, "socialSecurity", 100);
             HtmlForm form = loginPage.getForms().get(0);
             HtmlTextInput userId = form.getInputByName("uname");
             HtmlTextInput userName = form.getInputByName("aac003");
@@ -84,13 +87,28 @@ public class SocialSecurityService {
             List<PersonAccount> accountList=new ArrayList<PersonAccount>();
             HtmlTable accountTable=(HtmlTable)detailsPage.getElementsByTagName("table").get(0);
             List<HtmlTableRow> accountRows=accountTable.getRows();
+            String payNum="";
             for (int i = 2; i < accountRows.size(); i++) {
                 PersonAccount pa=new PersonAccount();
+                
                 pa.setYear(accountTable.getCellAt(i, 0).asText().trim());
-                pa.setPayMonthNumber(accountTable.getCellAt(i, 1).asText().trim());
-                pa.setPayBaseNumber(accountTable.getCellAt(i, 2).asText().trim());
-                pa.setPersonPayAmount(accountTable.getCellAt(i, 3).asText().trim());
-                pa.setCompanyPayAmount(accountTable.getCellAt(i, 4).asText().trim());
+                payNum=  accountTable.getCellAt(i, 1).asText().trim();
+                pa.setPayMonthNumber(payNum);
+                if(payNum.equals("0")){
+                	
+               	 pa.setPayBaseNumber(accountTable.getCellAt(i, 2).asText().trim());
+                 pa.setPersonPayAmount(accountTable.getCellAt(i, 3).asText().trim());
+                 pa.setCompanyPayAmount(accountTable.getCellAt(i, 4).asText().trim());
+               }else{
+            	   
+            	   pa.setPayBaseNumber( Double.valueOf(accountTable.getCellAt(i, 2).asText().trim())/ Double.valueOf(payNum)+"");
+            	   pa.setPersonPayAmount(Double.valueOf(accountTable.getCellAt(i, 3).asText().trim())/ Double.valueOf(payNum)+"");
+            	   pa.setCompanyPayAmount(Double.valueOf(accountTable.getCellAt(i, 4).asText().trim())/ Double.valueOf(payNum)+"");
+               }
+              
+               // pa.setPayBaseNumber(accountTable.getCellAt(i, 2).asText().trim());
+               // 
+                //pa.setCompanyPayAmount(accountTable.getCellAt(i, 4).asText().trim());
                 pa.setLastYearPayMonthNumber(accountTable.getCellAt(i, 5).asText().trim());
                 accountList.add(pa);
             }
@@ -100,31 +118,35 @@ public class SocialSecurityService {
             map.put("ResultInfo","查询成功");
             map.put("ResultCode","0000");
             SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-            map.put("userId",bean.getUserId().toString());
+            map.put("userId",idCardNum);
             map.put("queryDate",sdf.format(new Date()).toString());
             map.put("data",data);
             map.put("city",bean.getCityCode());
 //            HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/socialSecurity", JSONObject.fromObject(map).toString());
             //ludangwei 2017-08-11
             Resttemplate resttemplate = new Resttemplate();
-          //  map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/socialSecurity");
-            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/socialSecurity");
+            map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/socialSecurity");
+            //map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/socialSecurity");
 
             if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
-                map.put("errorInfo","查询成功");
+            	PushState.state(idCardNum, "socialSecurity", 300);
+                map.put("errorInfo","推送成功");
                 map.put("errorCode","0000");
             }else{
-                map.put("errorInfo","查询失败");
+            	PushState.state(idCardNum, "socialSecurity", 200);
+                map.put("errorInfo","推送失败");
                 map.put("errorCode","0001");
             }
 
         }catch (NullPointerException e) {
+        	PushState.state(idCardNum, "socialSecurity", 200);
             logger.warn(e.getMessage()+"     mrlu");
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");
             map.put("errorInfo","服务器繁忙，请稍后再试！");
             map.put("errorCode","0001");
         } catch (Exception e) {
+        	PushState.state(idCardNum, "socialSecurity", 200);
             logger.warn(e.getMessage()+"     mrlu");
             map.clear();
             data.clear();

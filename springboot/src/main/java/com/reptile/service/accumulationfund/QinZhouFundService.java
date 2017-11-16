@@ -50,6 +50,7 @@ import org.springframework.stereotype.Service;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.google.common.base.Utf8;
 import com.reptile.model.NewAccumulation;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.GetMonth;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
@@ -62,7 +63,7 @@ public class QinZhouFundService {
 	  @Autowired
 	  private application applications;
 	  
-	  public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode){
+	  public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 
 		  Map<String,Object> dataMap=new HashMap<String, Object>();
 
@@ -226,15 +227,17 @@ public class QinZhouFundService {
 				     
 				      dataMap.put("loans",accumulation.getLoans());
 				      
-				      map.put("userId", idCard);
+				      map.put("userId", idCardNum);
+				      System.out.println(idCardNum);
 				      map.put("insertTime", sdf.format(new Date()));
 				      map.put("city", cityCode);
 				      map.put("cityName", "钦州市");
 				      
 				      map.put("data", dataMap);
 				      System.out.println(new JSONArray().fromObject(map));
-				      map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
-		    	  
+				     // map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+				      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
+				      
 		     	}catch(Exception e){
 		     		logger.warn("钦州住房公积金",e);
 		     		driver.findElements(By.className("hover_img")).get(2).click();

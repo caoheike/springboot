@@ -43,7 +43,7 @@ public class LYHousingFundService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userName, String passWord,String idCard,String cityCode) {
+			String userName, String passWord,String idCard,String cityCode,String idCardNum) {
 		
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
 		
@@ -70,7 +70,7 @@ public class LYHousingFundService {
 	        	data.put("errorCode", "0001");
 	        	data.put("errorInfo", "用户名或密码错误");
 	        }else{
-	        	data = this.doGetDetail(request, idCard, cityCode, passWord, webClient);
+	        	data = this.doGetDetail(request, idCard, cityCode, passWord, idCardNum,webClient);
 	        }
 	        
 		} catch (Exception e) {
@@ -93,7 +93,7 @@ public class LYHousingFundService {
 	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String passWord,WebClient webClient) {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String passWord,String idCardNum,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
 		
 		try {
@@ -135,7 +135,7 @@ public class LYHousingFundService {
 	        }else{
 	        	data.put("errorCode", "0000");
 	        	data.put("errorInfo", "查询成功"); 
-	        	data.put("userId", idCard);
+	        	data.put("userId", idCardNum);
 	        	data.put("city", cityCode);
 	        	data.put("data", map);
 	        }

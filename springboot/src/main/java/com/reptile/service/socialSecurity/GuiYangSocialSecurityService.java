@@ -25,7 +25,7 @@ import java.util.Map;
 public class GuiYangSocialSecurityService {
     private Logger log = LoggerFactory.getLogger(GuiYangSocialSecurityService.class);
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String password, String cityCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String password, String cityCode,String idCardNum) {
 
         String realPath = request.getServletContext().getRealPath("/imageCode");
         File file = new File(realPath);
@@ -110,7 +110,7 @@ public class GuiYangSocialSecurityService {
             dataMap.put("item", driver.getPageSource());
             map.put("data", dataMap);
             map.put("city", cityCode);
-            map.put("userId", userCard);
+            map.put("userId", idCardNum);
             log.warn("贵阳社保获取成功");
             map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/socialSecurity");
         } catch (Exception e) {

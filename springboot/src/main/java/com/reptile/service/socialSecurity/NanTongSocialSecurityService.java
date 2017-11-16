@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.Dates;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -35,7 +36,7 @@ public class NanTongSocialSecurityService {
     @Autowired
 	private application application;
     
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String socialCard, String passWord, String cityCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String socialCard, String passWord, String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
@@ -87,10 +88,11 @@ public class NanTongSocialSecurityService {
 			//data
 			map.put("city", cityCode);
 			map.put("cityName", "南通");
-			map.put("userId", idCard);
+			map.put("userId", idCardNum);
 			map.put("createTime", Dates.currentTime());
 			map.put("data", dataMap);
-			map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/socialSecurity");
+		//	map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/socialSecurity");
+		  map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/socialSecurity");
         } catch (Exception e) {
             logger.warn("南通社保信息获取失败", e);
             e.printStackTrace();
