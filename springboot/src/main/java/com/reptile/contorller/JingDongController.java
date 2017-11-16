@@ -23,10 +23,10 @@ public class JingDongController {
 	
 	@ApiOperation(value = "京东",notes = "参数：用户名、密码、验证码")
 	@ResponseBody
-	@RequestMapping(value = "doLogin", method = RequestMethod.POST)
-	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("telephone")String telephone,@RequestParam("passWord")String passWord,
+	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,
 				@RequestParam("idCard")String idCard){
-		return JingDongService.doGetDetail(request,telephone,passWord,idCard);
+		return JingDongService.doGetDetail(request,userName,passWord,idCard);
 		
 	}
 }

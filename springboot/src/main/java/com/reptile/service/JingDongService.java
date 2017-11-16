@@ -57,7 +57,7 @@ public class JingDongService {
         try {
 			//获取登录页面
 			driver.get("https://passport.jd.com/new/login.aspx");
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 			//使用账户登录
 			driver.findElementByLinkText("账户登录").click();
 			//用户名
@@ -72,11 +72,6 @@ public class JingDongService {
 				WebElement verifyImg = driver.findElementById("JD_Verification1");
 				//验证码图片路径
 				String path = request.getServletContext().getRealPath("/vecImageCode");
-				File file=new File(path);
-				if(!file.exists()){
-					file.mkdirs();
-				}
-				
 				String code = ImgUtil.saveImg(verifyImg, driver, path, "jd", "png");
 				driver.findElementById("authcode").sendKeys(code);
 			}
@@ -169,7 +164,7 @@ public class JingDongService {
 	
 	/**
 	 * 获取白条信息(白条额度、白条欠款)
-	 * @param webDriver
+	 * @param cookie
 	 * @return
 	 * @throws IOException 
 	 * @throws ParseException 
@@ -217,7 +212,7 @@ public class JingDongService {
 	
 	/**
 	 * 获取收货地址
-	 * @param webDriver
+	 * @param cookie
 	 * @return
 	 * @throws IOException 
 	 * @throws ParseException 
@@ -238,7 +233,7 @@ public class JingDongService {
 	
 	/**
 	 * 获取小金库信息（小金库额度）昨日收益
-	 * @param webDriver
+	 * @param cookie
 	 * @return
 	 * @throws IOException 
 	 * @throws ParseException 
@@ -268,7 +263,7 @@ public class JingDongService {
 	/**
 	 * 获取请求
 	 * @param url 地址
-	 * @param cookie 
+	 * @param headers 请求头 
 	 * @param params 参数
 	 * @throws ParseException
 	 * @throws IOException
