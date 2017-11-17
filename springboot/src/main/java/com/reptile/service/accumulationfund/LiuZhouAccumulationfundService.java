@@ -110,6 +110,7 @@ public class LiuZhouAccumulationfundService {
 					
 					try  
 			        {  
+						PushState.state(idCardNum, "accumulationFund",200);
 			            Alert alert = driver.switchTo().alert();  
 			            String str = alert.getText();  
 			            map.put("errorCode", "0001");
