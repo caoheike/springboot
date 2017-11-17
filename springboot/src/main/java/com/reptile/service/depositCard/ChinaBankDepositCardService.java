@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -53,24 +54,24 @@ public class ChinaBankDepositCardService {
         try {
             driver.get("https://ebsnew.boc.cn/boc15/login.html");
             List<WebElement> input = driver.findElementsByTagName("input");
-            input.get(0).sendKeys(cardNumber);                      //输入卡号
+            //输入卡号
+            input.get(0).sendKeys(cardNumber);
             Thread.sleep(2000);
             Actions actions = new Actions(driver);
             actions.sendKeys(Keys.TAB).build().perform();
             Thread.sleep(3000);
-
-            String msgContent = driver.findElement(By.id("msgContent")).getText();  //判断是否为有效卡号
+            //判断是否为有效卡号
+            String msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
                 driver.quit();
                 return map;
             }
-
+            //输入密码
             input = driver.findElementsByTagName("input");
-            input.get(4).sendKeys(passWord);                        //输入密码
+            input.get(4).sendKeys(passWord);
             Thread.sleep(1000);
-
             WebElement imageCode;
             try {
                 imageCode = driver.findElement(By.id("captcha_debitCard"));
@@ -80,22 +81,22 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
-
-            String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);  //识别验证码
-            input.get(5).sendKeys(code.toLowerCase());                                      //输入验证码
-
+            //识别验证码
+            String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
+            //输入验证码
+            input.get(5).sendKeys(code.toLowerCase());
+            //提交信息登录
             List<WebElement> elements = driver.findElements(By.className("btn"));
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getText().contains("查询")) {
                     System.out.println(i);
-                    elements.get(i).click();                                                 //提交信息登录
+                    elements.get(i).click();
                     break;
                 }
             }
-
             Thread.sleep(5000);
-
-            msgContent = driver.findElement(By.id("msgContent")).getText();                  //判断登录是否成功
+            //判断登录是否成功
+            msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
                 if (msgContent.contains("验证码输入错误")) {
                     map.put("errorCode", "0003");
@@ -107,82 +108,94 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
-
             logger.warn("中国银行储蓄卡登录成功");
-
+            //获取储蓄卡基本信息
             WebElement cardMain = driver.findElementById("cardMain");
-            map.put("baseMes", cardMain.getAttribute("innerHTML"));                             //储蓄卡基本信息
-
+            map.put("baseMes", cardMain.getAttribute("innerHTML"));
             logger.warn("中国银行储蓄卡基本信息获取成功");
-
-            List<WebElement> element = driver.findElements(By.className("tabs"));                   //切换至交易明细
-            for (int i = 0; i < element.size(); i++) {
-                if (element.get(i).getText().contains("交易明细")) {
-                    element.get(i).click();
-                }
-            }
-
-            WebElement debitCardTransDetail_table = null;
-            Thread.sleep(2000);
-            SimpleDateFormat sim = new SimpleDateFormat("yyyy/MM/dd");
-            Calendar cal = Calendar.getInstance();
-            String endTime = sim.format(cal.getTime());
-            cal.set(Calendar.DAY_OF_MONTH, 1);
-            String beginTime = sim.format(cal.getTime());
-            for (int i = 0; i < 6; i++) {                                                       //循环获取6个月的账单信息
-                driver.findElementsByClassName("input").get(0).clear();
-                driver.findElementsByClassName("input").get(0).sendKeys(beginTime);      //设置查询开始时间
-                driver.findElementsByClassName("input").get(1).clear();
-                driver.findElementsByClassName("input").get(1).sendKeys(endTime);        //设置查询结束时间
-                driver.findElementsByClassName("ml10").get(1).click();
-                List<WebElement> btn = driver.findElements(By.className("btn-r"));
-                for (int j = 0; j < btn.size(); j++) {
-                    if (btn.get(j).getText().equals("查询")) {
-                        btn.get(j).click();
-                    }
-                }
-                Thread.sleep(2000);
-                String msgContent1 = driver.findElementById("msgContent").getText();
-
-                //判断当月是否有账单信息
-                if (msgContent1.length() != 0) {
-                    driver.findElementsByClassName("btn-r").get(4).click();
-//                String str=  driver.findElementById("msgContent").getText();
-//                System.out.println(str);
-                } else {
-                    debitCardTransDetail_table = driver.findElementById("debitCardTransDetail_table");
-                    dataList.add(debitCardTransDetail_table.getAttribute("innerHTML"));
-                }
-                cal.add(Calendar.DAY_OF_MONTH, -1); //上月末
-                endTime = sim.format(cal.getTime());
-                cal.set(Calendar.DAY_OF_MONTH, 1);           //上月初
-                beginTime = sim.format(cal.getTime());
-            }
-
-            logger.warn("中国银行储蓄卡账单信息获取成功");
-
-            map.put("itemMes", dataList);
-            map = analyData(map);                           //解析获得的数据
-
+            //获取详单信息
+            dataList = getItemMes(dataList, driver);
             logger.warn("中国银行储蓄卡信息解析成功");
+            map.put("itemMes", dataList);
+            //解析获得的数据
+            map = analyData(map);
 
             map.put("IDNumber", IDNumber);
             map.put("cardNumber", cardNumber);
             map.put("userName", userName);
             map.put("bankName", "中国银行");
-            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");  //推送数据
-
+            //推送数据
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");
             logger.warn("中国银行储蓄卡账单信息推送完成");
             driver.quit();
         } catch (Exception e) {
-            map=new HashMap<>();
-            logger.warn("认证中guo储蓄卡出错", e);
+            map.clear();
+            logger.warn("认证中国储蓄卡出错", e);
             driver.quit();
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
         }
         return map;
     }
+
+    /**
+     *
+     * 获取账单详情信息
+     * @param dataList
+     * @param driver
+     * @return
+     * @throws InterruptedException
+     */
+
+    public  List<String> getItemMes(List<String> dataList, ChromeDriver driver) throws Exception {
+        //切换至交易明细
+        List<WebElement> element = driver.findElements(By.className("tabs"));
+        for (int i = 0; i < element.size(); i++) {
+            if (element.get(i).getText().contains("交易明细")) {
+                element.get(i).click();
+            }
+        }
+        WebElement debitCardTransDetail_table = null;
+        Thread.sleep(2000);
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy/MM/dd");
+        Calendar cal = Calendar.getInstance();
+        String endTime = sim.format(cal.getTime());
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        String beginTime = sim.format(cal.getTime());
+        //循环获取6个月的账单信息
+        for (int i = 0; i < 6; i++) {
+            //设置查询开始时间
+            driver.findElementsByClassName("input").get(0).clear();
+            driver.findElementsByClassName("input").get(0).sendKeys(beginTime);
+            //设置查询结束时间
+            driver.findElementsByClassName("input").get(1).clear();
+            driver.findElementsByClassName("input").get(1).sendKeys(endTime);
+            driver.findElementsByClassName("ml10").get(1).click();
+            List<WebElement> btn = driver.findElements(By.className("btn-r"));
+            for (int j = 0; j < btn.size(); j++) {
+                if (btn.get(j).getText().equals("查询")) {
+                    btn.get(j).click();
+                }
+            }
+            Thread.sleep(2000);
+            String msgContent1 = driver.findElementById("msgContent").getText();
+            //判断当月是否有账单信息
+            if (msgContent1.length() != 0) {
+                driver.findElementsByClassName("btn-r").get(4).click();
+            } else {
+                debitCardTransDetail_table = driver.findElementById("debitCardTransDetail_table");
+                dataList.add(debitCardTransDetail_table.getAttribute("innerHTML"));
+            }
+            //上月末
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            endTime = sim.format(cal.getTime());
+            //上月初
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            beginTime = sim.format(cal.getTime());
+        }
+        return dataList;
+    }
+
 
     /**
      * 解析从页面获取到的数据并封装
@@ -192,20 +205,23 @@ public class ChinaBankDepositCardService {
      */
     private Map<String, Object> analyData(Map<String, Object> paramMap) throws Exception {
         Map<String, Object> map = new HashMap<>();
-
-        List<String> itemMes = (List<String>) paramMap.get("itemMes");  //账单信息
-        String baseMes = paramMap.get("baseMes").toString();            //基本信息
+        //账单信息
+        List<String> itemMes = (List<String>) paramMap.get("itemMes");
+        //基本信息
+        String baseMes = paramMap.get("baseMes").toString();
 
         if (itemMes.size() == 0) {
             map.put("errorCode", "1001");
             map.put("errorInfo", "账单信息为空");
             return map;
         }
-        List billList;                                                   //解析后账单信息
-        Map<String, Object> baseMap;                             //解析后基本信息
+        List billList;
+        Map<String, Object> baseMap;
         try {
-            billList = analyBillMethod(itemMes);                         //解析账单信息
-            baseMap = analyBaseMes(baseMes);                     //解析基本信息
+            //解析账单信息
+            billList = analyBillMethod(itemMes);
+            //解析基本信息
+            baseMap = analyBaseMes(baseMes);
         } catch (Exception e) {
             logger.warn("数据解析失败", e);
             throw new Exception("数据解析失败");
