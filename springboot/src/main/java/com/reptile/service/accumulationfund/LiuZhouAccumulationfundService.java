@@ -44,7 +44,7 @@ public class LiuZhouAccumulationfundService {
 	  
 	 public Map<String,Object> loginImage(HttpServletRequest request){
 		 logger.warn("获取柳州公积金图片验证码");
-			System.setProperty("webdriver.ie.driver", "F:\\ie\\IEDriverServer.exe");
+			System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
 			WebDriver driver = new InternetExplorerDriver();
 		 driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			driver.get("http://www.lzzfgjj.com/login.jspx");
@@ -73,6 +73,7 @@ public class LiuZhouAccumulationfundService {
 				FileUtils.copyFile(screenshot, screenshotLocation);
 				session.setAttribute("sessionWebDriver-liuzhou", driver);
 				session.setAttribute("htmlPage-liuzhouloginform", loginform);
+				System.out.println(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/upload/" + filename);
 				data.put("imagePath",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/upload/" + filename);
 				//data.put("imagePath", "http://192.168.3.38:8080/upload/"+filename);
 	            map.put("errorCode", "0000");
@@ -140,7 +141,7 @@ public class LiuZhouAccumulationfundService {
 					map=resttemplate.SendMessage(lz,applications.getSendip()+"/HSDC/person/accumulationFund");
 					  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
-			                map.put("errorInfo","查询成功");
+			                map.put("errorInfo","推送成功");
 			                map.put("errorCode","0000");
 			                driver.close();
 			            }else{
@@ -148,12 +149,13 @@ public class LiuZhouAccumulationfundService {
 			            	PushState.state(idCardNum, "accumulationFund",200);
 			            	//---------------------数据中心推送状态----------------------
 			            	logger.warn("柳州公积金推送失败"+idCard);
-			                map.put("errorInfo","查询失败");
+			                map.put("errorInfo","推送失败");
 			                map.put("errorCode","0001");
 			            	driver.close();
 			            }
 			        }   
 	        	}catch(Exception e){
+	        		PushState.state(idCardNum, "accumulationFund",200);
 	        			driver.close();
 	        		 logger.warn("柳州公积金登录失败",e);
 	                 e.printStackTrace();
@@ -162,7 +164,7 @@ public class LiuZhouAccumulationfundService {
 	        	}
 	        	
 	        }else {
-	        	
+	        	PushState.state(idCardNum, "accumulationFund",200);
 	            logger.warn("柳州住房公积金登录过程中出错session异常 ");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "非法操作！");
