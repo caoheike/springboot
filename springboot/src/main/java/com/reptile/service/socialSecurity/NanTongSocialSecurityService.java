@@ -25,6 +25,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Dates;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -41,6 +42,7 @@ public class NanTongSocialSecurityService {
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
+        	PushState.state(idCardNum, "socialSecurity", 100);
             logger.warn("进入南通社保查询页面");
             HtmlPage page = webClient.getPage("http://www.jsnt.lss.gov.cn:1002/query/");
             String loginType = page.getElementById("loginType").getAttribute("value");
@@ -93,6 +95,15 @@ public class NanTongSocialSecurityService {
 			map.put("data", dataMap);
 		//	map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/socialSecurity");
 		  map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/socialSecurity");
+		  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+          	PushState.state(idCardNum, "socialSecurity", 300);
+          	map.put("errorInfo","推送成功");
+          	map.put("errorCode","0000");
+          }else{
+          	PushState.state(idCardNum, "socialSecurity", 200);
+          	map.put("errorInfo","推送失败");
+          	map.put("errorCode","0001");
+          }
         } catch (Exception e) {
             logger.warn("南通社保信息获取失败", e);
             e.printStackTrace();

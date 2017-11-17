@@ -42,6 +42,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -106,6 +107,7 @@ public class XiNingFundService {
 	            return map;
 	        } else { 
 		  try {
+			  PushState.state(idCardNum, "accumulationFund",100);
 			  WebClient webClient = (WebClient) client;
 				
 			 Thread.sleep(100);
@@ -139,6 +141,7 @@ public class XiNingFundService {
 		            map.put("errorInfo", alertList.get(0));
 		            return map;
 		        }else{
+		        	PushState.state(idCardNum, "accumulationFund",100);
 		        	//System.out.println(page1.asXml());
 		        	    WebRequest  request1 = new WebRequest(new URL("https://www.qhgjj.gov.cn/searchGrye.do"));
 						request1.setHttpMethod(HttpMethod.GET);
@@ -187,11 +190,25 @@ public class XiNingFundService {
 //				           map.put("errorInfo", "查询成功");
 				           Resttemplate resttemplate = new Resttemplate();
 //				           //
-			             map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
+			            // map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
+				         map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");  
+			             if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+						    	PushState.state(idCardNum, "accumulationFund",300);
+						    	map.put("errorInfo","查询成功");
+						    	map.put("errorCode","0000");
+					          
+					        }else{
+					        	//--------------------数据中心推送状态----------------------
+					        	PushState.state(idCardNum, "accumulationFund",200);
+					        	//---------------------数据中心推送状态----------------------
+					        	
+					            map.put("errorInfo","查询失败");
+					            map.put("errorCode","0001");
+					        	
+					        } 
+			              
 						    
-			              // map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");
-						    
-			  	         //===================推数据=====================    
+			  	       
 		 
 		        }
 	

@@ -36,6 +36,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -121,7 +122,7 @@ public class ZiBoSocialSecuritySercice {
 	            return map;
 	        } else { 
 		  try {
-			
+				PushState.state(idCardNum, "socialSecurity", 100);
 			  WebClient webClient = (WebClient) client;
 			 String usermm = (String) session.getAttribute("GMpassWord");//从session中获得GMpassWord
           
@@ -181,7 +182,15 @@ public class ZiBoSocialSecuritySercice {
 	                 map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
 					//map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
 		        	Thread.sleep(200);
-		        	
+		        	if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+			          	PushState.state(idCardNum, "socialSecurity", 300);
+			          	map.put("errorInfo","推送成功");
+			          	map.put("errorCode","0000");
+			          }else{
+			          	PushState.state(idCardNum, "socialSecurity", 200);
+			          	map.put("errorInfo","推送失败");
+			          	map.put("errorCode","0001");
+			          }
 		        	
 			    	
 			    }else{

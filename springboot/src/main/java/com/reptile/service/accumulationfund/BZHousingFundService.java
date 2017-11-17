@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -113,7 +117,7 @@ public class BZHousingFundService {
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String idCardNum,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		
+		  PushState.state(idCardNum, "accumulationFund", 100);
 		try {
 			WebRequest webRequest = new WebRequest(new URL("http://www.bzgjj.cn/usermain2.php"));
 			webRequest.setHttpMethod(HttpMethod.GET);
@@ -132,8 +136,19 @@ public class BZHousingFundService {
 		    data.put("city", cityCode);
 		    data.put("userId", idCardNum);
 		    //数据推送
-		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		    //data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
+		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+           	 PushState.state(idCardNum, "accumulationFund", 300);
+           	data.put("errorInfo","推送成功");
+           	data.put("errorCode","0000");
+           }else{
+           	 PushState.state(idCardNum, "accumulationFund", 200);
+           	data.put("errorInfo","推送失败");
+           	data.put("errorCode","0001");
+           }
 		} catch (Exception e) {
+			 PushState.state(idCardNum, "accumulationFund", 200);
 			logger.error("滨州市公积金查询失败",e);
 			data.put("errorCode", "0002");
 			data.put("errorInfo", "网络繁忙，请重试");

@@ -9,15 +9,19 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -52,6 +56,7 @@ public class TaiAnFundService {
 				  map.put("errorInfo", tip);
 				  
 			  }else{
+				  PushState.state(idCardNum, "accumulationFund",100);
 				  logger.warn("泰安市公积金基本数据获取中");
 				  //System.out.println("登陆成功");
 				  String zgzh=page1.getElementByName("zgzh").getAttribute("value");
@@ -125,9 +130,22 @@ public class TaiAnFundService {
 					map.put("data", dateMap);
 					map.put("city", cityCode);//007
 					map.put("userId", idCardNum);//TODO
-				    //map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
-					map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/accumulationFund");
-			 
+				    map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
+					//map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/accumulationFund");
+					 if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+					    	PushState.state(idCardNum, "accumulationFund",300);
+					    	map.put("errorInfo","查询成功");
+					    	map.put("errorCode","0000");
+				          
+				        }else{
+				        	//--------------------数据中心推送状态----------------------
+				        	PushState.state(idCardNum, "accumulationFund",200);
+				        	//---------------------数据中心推送状态----------------------
+				        	
+				            map.put("errorInfo","查询失败");
+				            map.put("errorCode","0001");
+				        	
+				        } 
 			  }
 		  }catch (Exception e) {
 			  logger.warn("泰安市公积金",e);

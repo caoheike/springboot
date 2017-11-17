@@ -34,6 +34,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -84,7 +85,7 @@ public class TaiAnSocialSecurityService {
 
 			
 			  try {
-				
+				  PushState.state(idCardNum, "socialSecurity", 100);
 				  
 				    List<NameValuePair> list1=new ArrayList<NameValuePair>();
 		            list1.add(new NameValuePair("method","doLogonAllowRepeat"));
@@ -156,7 +157,15 @@ public class TaiAnSocialSecurityService {
 								map.put("userId", idCardNum);//TODO
 								map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
 								//map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
-						  	
+								if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+						          	PushState.state(idCardNum, "socialSecurity", 300);
+						          	map.put("errorInfo","推送成功");
+						          	map.put("errorCode","0000");
+						          }else{
+						          	PushState.state(idCardNum, "socialSecurity", 200);
+						          	map.put("errorInfo","推送失败");
+						          	map.put("errorCode","0001");
+						          }
 						    }else{
 						    	logger.warn("泰安市社保信息获取工程中出错");
 						    	  map.put("errorCode", "0001");

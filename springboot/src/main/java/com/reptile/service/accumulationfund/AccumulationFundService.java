@@ -150,8 +150,8 @@ public class AccumulationFundService {
                 
                 //ludangwei 2017-08-11
                 Resttemplate resttemplate = new Resttemplate();
-              //  map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
-                map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/accumulationFund");
+               map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
+                //map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/accumulationFund");
 
                 if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
                 	 PushState.state(idCardNum, "accumulationFund", 300);

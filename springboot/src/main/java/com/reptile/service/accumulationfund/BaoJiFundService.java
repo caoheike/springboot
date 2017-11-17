@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.PushState;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
 
@@ -50,6 +51,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			  map.put("errorInfo", tip);
 			  return map;
 		  }else{
+			  PushState.state(idCardNum, "accumulationFund", 100);
 			  System.out.println("登陆成功");
 			  String zgzh=page1.getElementByName("zgzh").getAttribute("value");
 			  String sfzh=page1.getElementByName("sfzh").getAttribute("value");

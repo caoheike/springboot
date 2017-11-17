@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +26,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
@@ -49,23 +47,27 @@ public class LiuZhouSocialSecurityService {
 			try {
 				Imagepage = webclient.getPage("http://siquery.lzsrsj.com/siqg/VerifyCode.aspx?");
 				BufferedImage bufferedImage  = ImageIO.read(Imagepage.getInputStream());
-			 	String path=request.getSession().getServletContext().getRealPath("/upload") + "/";
-			 	System.out.println(path);
+				String path=request.getServletContext().getRealPath("/liuzhouImger");
 				File file=new File(path);
-				String findImage="lzsb"+System.currentTimeMillis()+".png";
+				if(!file.exists()){
+					file.mkdirs();
+				}
+				
+				String findImage="gd"+System.currentTimeMillis()+".png";
 				ImageIO.write(bufferedImage , "png", new File(file,findImage));
-				System.out.println(file);
+				 session.setAttribute("sessionWebClient-Cab", webclient);
+		       //  session.setAttribute("sessionLoginPage-Cab", loginPage);
+				 System.out.println(request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/liuzhouImger/"+findImage);
+				data.put("imagePath",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/liuzhouImger/"+findImage);
 				session.setAttribute("sessionwebclient-lzsb", webclient);
-				data.put("imagePath", "http://192.168.3.38:8080/upload/"+findImage);
 	            map.put("errorCode", "0000");
 	            map.put("errorInfo", "加载验证码成功");
 	            map.put("data", data);
 			}  catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				 logger.warn("柳州社保 ", e);
-		            map.put("errorCode", "0001");
-		            map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+				logger.warn("柳州社保 ", e);
+		        map.put("errorCode", "0001");
+		        map.put("errorInfo", "当前网络繁忙，请刷新后重试");
 			}
 		 	
 			
@@ -92,74 +94,88 @@ public class LiuZhouSocialSecurityService {
 	    			Yzm.setValueAttribute(catpy);
 	    			Thread.sleep(2000);
 	    			HtmlPage nextPage= loginPage.getElementByName("btnLogin").click();
-	    			Thread.sleep(3000);
+	    			Thread.sleep(4000);
 	    			
-	    			HtmlDivision jiben=(HtmlDivision) nextPage.getByXPath("//*[@id='content']/div[2]/div[2]/div[1]").get(0);
-	    			Map<String,Object> data=new HashMap<String,Object>();
-	    			data.put("base",jiben.asXml() );
-	    			HtmlPage minxiPage= webclient.getPage("http://siquery.lzsrsj.com/SIQG/grjfmx.aspx");
-	    			List<String> htmls =new ArrayList<String>();
-	    			Date date=new Date();
-	    			String year= new SimpleDateFormat("yyyy").format(date);
-	    			int years=Integer.parseInt(year);
-	    			for (int i = 0; i < 7; i++) {
-	    				System.out.println(years);
-//	    				List<String> html =new ArrayList<String>();
-	    				
-	    				HtmlTable xiandan= (HtmlTable) minxiPage.getElementById("ContentPlaceHolder1_grvGrjfmx");
-	    				String aa=xiandan.asXml();
-//	    				html.add(xiandan.asXml());
-	    				Thread.sleep(100);
-	    				
-	    				HtmlDivision mun= 	(HtmlDivision) minxiPage.getElementById("ContentPlaceHolder1_anpPaging");
-	    				System.out.println(minxiPage.asText());
-	    				String yemian= minxiPage.asXml();
-	    				boolean judge= yemian.contains("ContentPlaceHolder1_anpPaging");
-	    				System.out.println(judge);
-	    				Thread.sleep(100);
-	    				if(!judge){
-	    					  htmls.add(aa);
-	    					break;
-	    				} 
-	    				String muns= mun.asText();
-	    				String subStr = muns.substring(muns.indexOf("共")+1, muns.indexOf("页"));
-	    				int num=Integer.parseInt(subStr);
-	    				 minxiPage.getAnchorByText("下一页");
-	    				HtmlAnchor a=  minxiPage.getAnchorByText("下一页");
-	    				minxiPage= a.click();
-	    				for (int j = 1; j < num; j++) {
-	    					Thread.sleep(100);
-	    					a= minxiPage.getAnchorByText("下一页");
-	    					System.out.println("----------"+j+"----------");
-	    					System.out.println(a.asText());
-	    					xiandan= (HtmlTable) minxiPage.getElementById("ContentPlaceHolder1_grvGrjfmx");
-//	    					html.add(xiandan.asXml());
-	    					aa=aa+xiandan.asXml();
-	    					minxiPage=a.click();
-	    					Thread.sleep(2000);
-	    				}
-	    				System.out.println(years);
-	    				years--;
-	    				HtmlInput  fristyear= (HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtKssj");
-	    				fristyear.setValueAttribute(years+"-01");
-	    			    HtmlInput Endyear=	(HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtZzsj");
-	    			    Endyear.setValueAttribute(years+"-12");
-	    			    minxiPage=minxiPage.getElementById("ContentPlaceHolder1_btnQuery").click();
-	    			    htmls.add( aa);
-	    			    Thread.sleep(2000);
-	    			    if(minxiPage.asText().contains("对不起，当前年月范围没有查询到您的缴费明细！"))break;
+	    			try{
+	    				PushState.state(idCardNum, "socialSecurity", 100);
+	    				HtmlDivision jiben=(HtmlDivision) nextPage.getByXPath("//*[@id='content']/div[2]/div[2]/div[1]").get(0);
+		    			Map<String,Object> data=new HashMap<String,Object>();
+		    			data.put("base",jiben.asXml() );
+		    			HtmlPage minxiPage= webclient.getPage("http://siquery.lzsrsj.com/SIQG/grjfmx.aspx");
+		    			List<String> htmls =new ArrayList<String>();
+		    			Date date=new Date();
+		    			String year= new SimpleDateFormat("yyyy").format(date);
+		    			int years=Integer.parseInt(year);
+		    			for (int i = 0; i < 7; i++) {
+		    				System.out.println(years);
+//		    				List<String> html =new ArrayList<String>();
+		    				
+		    				HtmlTable xiandan= (HtmlTable) minxiPage.getElementById("ContentPlaceHolder1_grvGrjfmx");
+		    				String aa=xiandan.asXml();
+//		    				html.add(xiandan.asXml());
+		    				Thread.sleep(100);
+		    				
+		    				HtmlDivision mun= 	(HtmlDivision) minxiPage.getElementById("ContentPlaceHolder1_anpPaging");
+		    				System.out.println(minxiPage.asText());
+		    				String yemian= minxiPage.asXml();
+		    				boolean judge= yemian.contains("ContentPlaceHolder1_anpPaging");
+		    				System.out.println(judge);
+		    				Thread.sleep(100);
+		    				if(!judge){
+		    					  htmls.add(aa);
+		    					break;
+		    				} 
+		    				String muns= mun.asText();
+		    				String subStr = muns.substring(muns.indexOf("共")+1, muns.indexOf("页"));
+		    				int num=Integer.parseInt(subStr);
+		    				 minxiPage.getAnchorByText("下一页");
+		    				HtmlAnchor a=  minxiPage.getAnchorByText("下一页");
+		    				minxiPage= a.click();
+		    				for (int j = 1; j < num; j++) {
+		    					Thread.sleep(100);
+		    					a= minxiPage.getAnchorByText("下一页");
+		    					System.out.println("----------"+j+"----------");
+		    					System.out.println(a.asText());
+		    					xiandan= (HtmlTable) minxiPage.getElementById("ContentPlaceHolder1_grvGrjfmx");
+//		    					html.add(xiandan.asXml());
+		    					aa=aa+xiandan.asXml();
+		    					minxiPage=a.click();
+		    					Thread.sleep(2000);
+		    				}
+		    				System.out.println(years);
+		    				years--;
+		    				HtmlInput  fristyear= (HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtKssj");
+		    				fristyear.setValueAttribute(years+"-01");
+		    			    HtmlInput Endyear=	(HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtZzsj");
+		    			    Endyear.setValueAttribute(years+"-12");
+		    			    minxiPage=minxiPage.getElementById("ContentPlaceHolder1_btnQuery").click();
+		    			    htmls.add( aa);
+		    			    Thread.sleep(2000);
+		    			    if(minxiPage.asText().contains("对不起，当前年月范围没有查询到您的缴费明细！"))break;
+		    			}
+		    		
+		    			Map<String,Object> lz=new HashMap<String, Object>();
+		    			data.put("item", htmls);
+		    			lz.put("data", data);
+		    			lz.put("city", cityCode);
+		    			lz.put("userId", idCardNum);
+		    			Resttemplate resttemplate = new Resttemplate();
+		    			map=resttemplate.SendMessage(lz,applications.getSendip()+"/HSDC/person/socialSecurity");
+		    			if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+		                	PushState.state(idCardNum, "socialSecurity", 300);
+		                	map.put("errorInfo","推送成功");
+		                	map.put("errorCode","0000");
+		                }else{
+		                	PushState.state(idCardNum, "socialSecurity", 200);
+		                	map.put("errorInfo","推送失败");
+		                	map.put("errorCode","0001");
+		                }
+		    			System.out.println(map);
+	    			}catch(Exception e){
+	    				e.printStackTrace();
+		    			map.put("errorCode", "0001");
+		 	            map.put("errorInfo", "登录失败,请正确输入");
 	    			}
-	    		
-	    			Map<String,Object> lz=new HashMap<String, Object>();
-	    			data.put("item", htmls);
-	    			lz.put("data", data);
-	    			lz.put("city", cityCode);
-	    			lz.put("userId", idCardNum);
-	    			Resttemplate resttemplate = new Resttemplate();
-	    			//map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
-	    			map=resttemplate.SendMessage(lz,ConstantInterface.port+"/HSDC/person/socialSecurity");
-	    			
-	    			System.out.println(map);
 	    		} catch (Exception e) {
 	    			// TODO Auto-generated catch block
 	    			e.printStackTrace();

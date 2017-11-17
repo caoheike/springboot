@@ -36,6 +36,7 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.Dates;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.JsonUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -103,6 +104,7 @@ public class QinZhouSocialSecurityService {
 			return data;
 		}
 		try {
+			PushState.state(idCardNum, "socialSecurity", 300);
 			//封装请求参数
 			List<NameValuePair> list = new ArrayList<NameValuePair>();
 			list.add(new NameValuePair("j_username", idCard.trim()));
@@ -133,8 +135,17 @@ public class QinZhouSocialSecurityService {
 				data.put("userId", idCardNum);
 				data.put("createTime", Dates.currentTime());
 				data.put("data", info);
-				data = new Resttemplate().SendMessage(data,ConstantInterface.port+"/HSDC/person/socialSecurity");
-				//data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+				//data = new Resttemplate().SendMessage(data,ConstantInterface.port+"/HSDC/person/socialSecurity");
+				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+				 if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+			          	PushState.state(idCardNum, "socialSecurity", 300);
+			          	data.put("errorInfo","推送成功");
+			          	data.put("errorCode","0000");
+			          }else{
+			          	PushState.state(idCardNum, "socialSecurity", 200);
+			          	data.put("errorInfo","推送失败");
+			          	data.put("errorCode","0001");
+			          }
 			}else{
 				if(response.contains("错误的验证码！")){
 					data.put("errorInfo", "错误的验证码！");
