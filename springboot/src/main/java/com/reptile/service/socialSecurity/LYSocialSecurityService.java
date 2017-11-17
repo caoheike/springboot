@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -44,7 +45,7 @@ public class LYSocialSecurityService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
-			
+			PushState.state(idCardNum, "socialSecurity", 100);
 			//监控alert弹窗
 			List<String> alertList = new ArrayList<String>();
 			CollectingAlertHandler alert = new CollectingAlertHandler(alertList);
@@ -112,6 +113,16 @@ public class LYSocialSecurityService {
         data.put("city", cityCode);
         data.put("userId", idCardNum);
         data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+        
+        if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+        	PushState.state(idCardNum, "socialSecurity", 300);
+        	data.put("errorInfo","推送成功");
+        	data.put("errorCode","0000");
+        }else{
+        	PushState.state(idCardNum, "socialSecurity", 200);
+        	data.put("errorInfo","推送失败");
+        	data.put("errorCode","0001");
+        }
 		return data;
 	}
 	

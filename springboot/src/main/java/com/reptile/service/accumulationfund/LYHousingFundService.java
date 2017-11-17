@@ -21,8 +21,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -95,8 +97,8 @@ public class LYHousingFundService {
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String passWord,String idCardNum,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
-		
 		try {
+			PushState.state(idCardNum, "accumulationFund",100);
 			HtmlPage page = webClient.getPage("http://www.lyzfgjj.gov.cn/abc/index.asp");
 			Thread.sleep(500);
 			//获取登录表单
@@ -141,7 +143,25 @@ public class LYHousingFundService {
 	        }
 	        
 	        //数据推送
-		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		   // data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
+		   
+		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+		    	PushState.state(idCardNum, "accumulationFund",300);
+		    	data.put("errorInfo","查询成功");
+		    	data.put("errorCode","0000");
+              
+            }else{
+            	//--------------------数据中心推送状态----------------------
+            	PushState.state(idCardNum, "accumulationFund",200);
+            	//---------------------数据中心推送状态----------------------
+            	
+            	data.put("errorInfo","查询失败");
+            	data.put("errorCode","0001");
+            	
+            }
+		    
+		    
 		} catch (Exception e) {
 			logger.error("临沂市公积金查询失败",e);
 			data.put("errorCode", "0002");

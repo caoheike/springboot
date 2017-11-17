@@ -14,13 +14,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +44,8 @@ public class LiuZhouAccumulationfundService {
 	  
 	 public Map<String,Object> loginImage(HttpServletRequest request){
 		 logger.warn("获取柳州公积金图片验证码");
-		 System.setProperty("webdriver.ie.driver", "C:\\chromDriv\\chromedriver(1).exe");
-
-		 WebDriver driver = new InternetExplorerDriver();
+			System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+			WebDriver driver = new InternetExplorerDriver();
 		 driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			driver.get("http://www.lzzfgjj.com/login.jspx");
 			driver.navigate().refresh();
@@ -71,6 +73,7 @@ public class LiuZhouAccumulationfundService {
 				FileUtils.copyFile(screenshot, screenshotLocation);
 				session.setAttribute("sessionWebDriver-liuzhou", driver);
 				session.setAttribute("htmlPage-liuzhouloginform", loginform);
+				System.out.println(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/upload/" + filename);
 				data.put("imagePath",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/upload/" + filename);
 				//data.put("imagePath", "http://192.168.3.38:8080/upload/"+filename);
 	            map.put("errorCode", "0000");
@@ -87,7 +90,7 @@ public class LiuZhouAccumulationfundService {
 		return map;
 	 }
 	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String fundCard,String passWord,String cityCode,String idCardNum ){
-		 System.out.println("欢迎使用柳州攻击");
+		 System.out.println("欢迎使用柳州公积金");
 		 	Map<String, Object> map = new HashMap<>();
 	        Map<String, Object> dataMap = new HashMap<>();
 	        HttpSession session = request.getSession();
@@ -97,14 +100,28 @@ public class LiuZhouAccumulationfundService {
 	        WebElement loginform=(WebElement) loginforms;
 	        if (drivers != null && loginforms != null) {
 	        	try{
-	        		PushState.state(idCard, "accumulationFund",100);
+	        		PushState.state(idCardNum, "accumulationFund",100);
 	        		loginform.findElement(By.id("username")).sendKeys(idCard);
 					loginform.findElement(By.id("password")).sendKeys(passWord);
 					loginform.findElement(By.id("captcha")).sendKeys(catpy);
+					Thread.sleep(3000);
 					loginform.findElement(By.className("dengluanniu")).click();
+					Thread.sleep(3000);
 					
+					try  
+			        {  
+			            Alert alert = driver.switchTo().alert();  
+			            String str = alert.getText();  
+			            map.put("errorCode", "0001");
+		                 map.put("errorInfo", str);
+			            return map;  
+			        }     
+			        catch (NoAlertPresentException Ex)  
+			        {  
+			            
+			         
 					driver.get("http://www.lzzfgjj.com/grcx/grcx_grjbqk.jspx");
-					
+					Thread.sleep(3000);
 					WebElement table= driver.findElement(By.tagName("table"));
 					System.out.println(table.getText()); //公积金基本信息
 					
@@ -121,22 +138,25 @@ public class LiuZhouAccumulationfundService {
 					lz.put("userId", idCardNum);
 					lz.put("data", data);	
 					Resttemplate resttemplate = new Resttemplate();
-					map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+					map=resttemplate.SendMessage(lz,applications.getSendip()+"/HSDC/person/accumulationFund");
 					  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-					    	PushState.state(idCard, "accumulationFund",300);
-			                map.put("errorInfo","查询成功");
+					    	PushState.state(idCardNum, "accumulationFund",300);
+			                map.put("errorInfo","推送成功");
 			                map.put("errorCode","0000");
 			                driver.close();
 			            }else{
 			            	//--------------------数据中心推送状态----------------------
-			            	PushState.state(idCard, "accumulationFund",200);
+			            	PushState.state(idCardNum, "accumulationFund",200);
 			            	//---------------------数据中心推送状态----------------------
 			            	logger.warn("柳州公积金推送失败"+idCard);
-			                map.put("errorInfo","查询失败");
+			                map.put("errorInfo","推送失败");
 			                map.put("errorCode","0001");
 			            	driver.close();
 			            }
+			        }   
 	        	}catch(Exception e){
+	        		PushState.state(idCardNum, "accumulationFund",200);
+	        			driver.close();
 	        		 logger.warn("柳州公积金登录失败",e);
 	                 e.printStackTrace();
 	                 map.put("errorCode", "0001");
@@ -144,10 +164,13 @@ public class LiuZhouAccumulationfundService {
 	        	}
 	        	
 	        }else {
+	        	PushState.state(idCardNum, "accumulationFund",200);
 	            logger.warn("柳州住房公积金登录过程中出错session异常 ");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "非法操作！");
-	        }
+	            driver.close();
+	        } 
+	      
 		return map;
 		 
 	 }

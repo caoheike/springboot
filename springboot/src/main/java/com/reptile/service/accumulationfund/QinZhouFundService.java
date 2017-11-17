@@ -54,6 +54,7 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.GetMonth;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -79,7 +80,7 @@ public class QinZhouFundService {
 			driver.get("http://wangting.qzsgjj.com/wt-web/grlogin");	
 			driver.navigate().refresh();
 			try {
-			
+				PushState.state(idCardNum, "accumulationFund",100);
          //===========图形验证==========================
 			String path=request.getServletContext().getRealPath("/vecImageCode");
 	        System.setProperty("java.awt.headless", "true");
@@ -237,7 +238,21 @@ public class QinZhouFundService {
 				      System.out.println(new JSONArray().fromObject(map));
 				     // map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
 				      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
-				      
+				      if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+					    	PushState.state(idCardNum, "accumulationFund",300);
+					    	map.put("errorInfo","查询成功");
+					    	map.put("errorCode","0000");
+				          
+				        }else{
+				        	//--------------------数据中心推送状态----------------------
+				        	PushState.state(idCardNum, "accumulationFund",200);
+				        	//---------------------数据中心推送状态----------------------
+				        	
+				            map.put("errorInfo","查询失败");
+				            map.put("errorCode","0001");
+				        	
+				        } 
+				   
 		     	}catch(Exception e){
 		     		logger.warn("钦州住房公积金",e);
 		     		driver.findElements(By.className("hover_img")).get(2).click();
