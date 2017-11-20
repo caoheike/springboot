@@ -1,6 +1,5 @@
 package com.reptile.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,10 +50,11 @@ public class JingDongService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		//添加谷歌驱动
-        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
         
         ChromeDriver driver = new ChromeDriver();
         try {
+        	logger.warn("---------京东获取详情开始---------用户名：" + userName);
 			//获取登录页面
 			driver.get("https://passport.jd.com/new/login.aspx");
 			Thread.sleep(2000);
@@ -89,7 +89,9 @@ public class JingDongService {
 					data.put("errorInfo", text);
 					data.put("errorCode", "0001");
 				}
+				logger.warn("---------京东获取详情登录失败---------用户名：" + userName);
 			}else{
+				logger.warn("---------京东获取详情登录成功---------用户名：" + userName);
 				//登录成功
 				driver.findElementByLinkText("我的订单").click();
 				Thread.sleep(1000);
@@ -110,6 +112,7 @@ public class JingDongService {
 				map.put("smallGoldAmount", jinKuInfo.get("smallGoldAmount"));//小金库额度
 				
 				data.put("data", map);
+				logger.warn("---------京东获取详情成功---------用户名：" + userName);
 				 //数据推送
 				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/savings/eastOfBeijing");
 			}
@@ -138,25 +141,54 @@ public class JingDongService {
 	public List<Map<String,Object>> getOrderInfo(String cookie) throws ParseException, IOException{
 		Map<String,String> headers = new HashMap<String, String>();
 		headers.put("Cookie", cookie);//cookie加入请求头中
-		//请求近一年内的购买记录
+		//近两年的购买记录
+		List<Map<String,Object>> info = new ArrayList<Map<String,Object>>();
+		//请求参数
 		Map<String,String> params = new HashMap<String, String>();
-		params.put("search", "0");
-		params.put("d", "2");
-		params.put("s", "4096");
-		String result = this.request("https://order.jd.com/center/list.action",headers,params);
-		List<Map<String,Object>> currentYear = this.parseOrderInfo(result);
-		//请求去年的购买记录
-		params.clear();
-		params.put("search", "0");
-		params.put("d", Dates.beforeYear(1));
-		params.put("s", "4096");
-		result = this.request("https://order.jd.com/center/list.action",headers,params);
-		List<Map<String,Object>> beforeYear = this.parseOrderInfo(result);
-		//将今年信息跟去年信息合并
-		for (Map<String,Object> item: beforeYear) {
-			currentYear.add(item);
+		//请求近一年内的购买记录
+		int i = 1;
+		boolean flag = true;
+		while(flag){
+			params.clear();
+			params.put("page", i+"");
+			params.put("d", "2");
+			params.put("s", "4096");
+			String result = this.request("https://order.jd.com/center/list.action",headers,params);
+			
+			List<Map<String,Object>> item = this.parseOrderInfo(result);//解析每一页的数据
+			if(item != null && item.size() > 0){
+				//循环将数据
+				for (Map<String,Object> map : item) {
+					info.add(map);
+				}
+			}else{
+				flag = false;
+			}
+			i++;
 		}
-		return currentYear;
+		
+		//请求去年的购买记录
+		flag = true;
+		i = 1;
+		while(flag){
+			params.clear();
+			params.put("page", i+"");
+			params.put("d", Dates.beforeYear(1));
+			params.put("s", "4096");
+			String result = this.request("https://order.jd.com/center/list.action",headers,params);
+			
+			List<Map<String,Object>> item = this.parseOrderInfo(result);//解析每一页的数据
+			if(item != null && item.size() > 0){
+				//循环将数据
+				for (Map<String,Object> map : item) {
+					info.add(map);
+				}
+			}else{
+				flag = false;
+			}
+			i++;
+		}
+		return info;
 	}
 	
 	
@@ -184,7 +216,7 @@ public class JingDongService {
 			double whiteBarDedt = whiteBarAmount - availableLimit;
 			map.put("whiteBarAmount", whiteBarAmount);
 			map.put("whiteBarDedt", whiteBarDedt);
-		}
+		} 
 		return map;
 	}
 	
@@ -296,7 +328,7 @@ public class JingDongService {
 	 private  List<Map<String,Object>>  parseOrderInfo(String xml){ 
 		 
 		 List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-		 if(!xml.contains("最近没有下过订单哦")){
+		 if(!xml.contains("没有下过订单")){
 			 Document doc = Jsoup.parse(xml);
 			 Elements tbodys = doc.select("table").select("tbody");  
 			 

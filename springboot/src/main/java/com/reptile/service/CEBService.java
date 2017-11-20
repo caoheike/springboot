@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CEBService {
@@ -41,8 +42,9 @@ public class CEBService {
 			try {
 				driver.get(CabCardloginUrl);
 				driver.navigate().refresh();
+				 driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);//隐式等待
 				//login
-				Thread.sleep(3000);
+			
 				WebElement loginform= driver.findElement(By.id("login"));
 				
 				loginform.findElement(By.id("userName")).sendKeys(UserName);//输入用户名及密码
@@ -61,9 +63,7 @@ public class CEBService {
 				SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddhhmmss");
 				String filename="CEB//"+System.currentTimeMillis()+".png";
 				File screenshotLocation = new File("C://"+filename);
-				Thread.sleep(3000);
 				FileUtils.copyFile(screenshot, screenshotLocation);
-				Thread.sleep(3000);
 				System.out.println(screenshotLocation);
 				MyCYDMDemo dem=new MyCYDMDemo();
 				Map<String,Object> map1=dem.Imagev("C://"+filename);//图片验证，打码平台
@@ -73,12 +73,9 @@ public class CEBService {
 //				String catph= dem.getcode(filename);
 				loginform.findElement(By.id("yzmcode")).sendKeys(strResult);
 					//这一步走完后，图片验证码也输入完毕了，开始点击发送验证码
-				Thread.sleep(3000);
 				List<WebElement> button =	loginform.findElements(By.tagName("button"));
 				button.get(0).click();
 				try{
-					
-					Thread.sleep(3000);
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					System.out.println("报错！！！");
 					logger.info("光大银行登录时输入有误"+Usercard);
@@ -86,11 +83,6 @@ public class CEBService {
 					map.put("errorCode","0002");
 					System.out.println(map);
 					driver.close();
-					
-//					WindowsUtils.tryToKillByName("IEDriverServer.exe");
-//					System.out.println("---------IEDriverServer.exe---------");
-//			        WindowsUtils.tryToKillByName("iexplore.exe");
-//			    	System.out.println("---------iexplore.exe---------");
 				}catch(Exception e){
 					HttpSession session=request.getSession();//获得session
 					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
@@ -129,27 +121,23 @@ public class CEBService {
 				}
 			try {
 				WebElement loginform=	driver.findElement(By.id("login"));
-				Thread.sleep(3000);
 				loginform.findElement(By.id("verification-code")).sendKeys(Password);
-				Thread.sleep(2000);
 				loginform.findElement(ByClassName.className("login-style-bt")).click();
 				try {
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					PushSocket.push(map, UUID, "0001");
 					PushState.state(UserCard, "bankBillFlow",200);
 					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
-					map.put("errorInfo","操作异常请刷新重试");
+					map.put("errorInfo","短信验证码输入有误");
 					map.put("errorCode","0002");
 					driver.close();
 				} catch (Exception e) {
 					// TODO: handle exception
-					PushSocket.push(map, UUID, "0000");
 					System.out.println("点击成功");
-					Thread.sleep(2000);
 					driver.get(CabCardIndexpage);
 					System.out.println("开始进入个人中心");
-					Thread.sleep(5000);
 					WebElement table=  driver.findElement(ByClassName.className("tab_one"));
+					PushSocket.push(map, UUID, "0000");
 					List<WebElement> tr	=table.findElements(By.tagName("tr"));
 					List<String> html =new ArrayList<String>();
 					List<String> times=new ArrayList<String>();
@@ -160,12 +148,9 @@ public class CEBService {
 						String month= time.getText().replace("/", "").trim();
 						System.out.println(month);
 						times.add(month);
-						Thread.sleep(1000);
 					}
 					for (int i = 0; i < times.size(); i++) {
-						Thread.sleep(2000);
 						driver.get("https://xyk.cebbank.com/mycard/bill/billquerydetail.htm?statementDate="+times.get(i));
-						Thread.sleep(3000);
 						String detailedpage= driver.getPageSource();
 						html.add(detailedpage);
 					}

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,9 +54,10 @@ public class NingXiaTelecomService {
 	 * @param phoneNumber
 	 * @param servePwd
 	 * @return
+	 * @throws IOException 
 	 */
 
-	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd){
+	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd) {
 		 
 			Map<String, Object> map = new HashMap<String, Object>();
 			System.setProperty("webdriver.chrome.driver",
@@ -64,13 +69,14 @@ public class NingXiaTelecomService {
 			driver.get("http://login.189.cn/web/login");	
 			driver.navigate().refresh();
 			try {
-				Thread.sleep(500);
+			new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginForm")));
 			WebElement form = driver.findElement(By.id("loginForm"));
 
 			WebElement account = form.findElement(By.id("txtAccount"));
 			// account.clear();
 			account.sendKeys(phoneNumber);
-			Thread.sleep(500);
+			new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("txtShowPwd")));
+			//Thread.sleep(500);
 			//driver.switchTo().frame("name");
 			WebElement passWord = form.findElement(By.id("txtShowPwd"));
 			passWord.click();
@@ -102,18 +108,20 @@ public class NingXiaTelecomService {
 		      Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
 		      System.out.println(map1);
 		      String catph= (String) map1.get("strResult");
-		      Thread.sleep(2000);
+		      new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("txtCaptcha")));
 		      //================================
 		        WebElement loginBtn = driver.findElement(By.id("txtCaptcha"));
 		          loginBtn.sendKeys(catph);
-		        Thread.sleep(2000);
+		          new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginbtn")));
 		          WebElement loginBtns = driver.findElement(By.id("loginbtn"));
 		          loginBtns.click();
-		          Thread.sleep(2000);
+		          //Thread.sleep(2000);
+		          driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 			if(driver.getPageSource().contains("详单查询")){
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功");
 				}else{
+					//new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginbtn")));
 					String divErr = driver.findElement(By.id("divErr")).getText();
 					
 					map.put("errorCode", "0001");
@@ -125,7 +133,14 @@ public class NingXiaTelecomService {
 				e.printStackTrace();
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
+				
 				driver.close();
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}	
 		    request.getSession().setAttribute("driver", driver);//把driver放到session 
 		// driver.close();
@@ -135,6 +150,7 @@ public class NingXiaTelecomService {
 	  * 获取验证码
 	  * @param request
 	  * @return
+	 * @throws IOException 
 	  */
 	 public  Map<String,Object> ningXiaGetcode(HttpServletRequest request,String phoneNumber){
 		  
@@ -149,13 +165,14 @@ public class NingXiaTelecomService {
 		
 		 driver.get("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000501");	
 		 try {
-			 Thread.sleep(3000);
+			 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+			 //Thread.sleep(3000);
 		 	 driver.get("http://nx.189.cn/jt/bill/xd/?fastcode=10000501&cityCode=nx");	
-			 Thread.sleep(3000);
-			 
+			 //Thread.sleep(3000);
+		 	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("hqyzm")));
 			 driver.findElement(By.id("hqyzm")).click();//获取验证码
-			 Thread.sleep(500);
-			 
+			// Thread.sleep(500);
+			 new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id='myAlert3']/div[2]/div[1]"))); 
 			 String sendInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 			 if(sendInfo.contains(phoneNumber)){
 				map.put("errorCode", "0000");
@@ -167,8 +184,16 @@ public class NingXiaTelecomService {
 				 map.put("errorInfo", "验证码发送失败"); 
 			 }
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			 map.put("errorCode", "0001");
+			 map.put("errorInfo", "网络异常，请稍后"); 
 			e.printStackTrace();
+			driver.close();
+			try {
+				Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		} 
 		 request.getSession().setAttribute("driver1", driver);//把driver放到session
 		return map;
@@ -313,8 +338,16 @@ public class NingXiaTelecomService {
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}finally{
+					 driver.close();	
+					 try {
+						Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-		           driver.close();	 
+		           
 		return map;
 	 }
 

@@ -61,8 +61,6 @@ public class AccumulationFundService {
             if(!bean.verifyParams(bean)){
                 map.put("ResultInfo","提交数据有误,请刷新页面后重新输入!");
                 map.put("ResultCode","0001");
-                map.put("errorInfo","提交数据有误,请刷新页面后重新输入!");
-                map.put("errorCode","0001");
                 map.put("data",data);
                 return map;
             }
@@ -90,11 +88,19 @@ public class AccumulationFundService {
                 HtmlPage index=(HtmlPage)submit.click();
                 Thread.sleep(1000);
                 String str=index.asText();
+                System.out.println(index.getTitleText());
                 if(str.indexOf("身份证号码：")!=-1&&collectedAlerts.size()!=0){
                     map.put("ResultInfo",collectedAlerts.get(0));
                     map.put("ResultCode","0001");
-                    map.put("errorInfo",collectedAlerts.get(0));
-                    map.put("errorCode","0001");
+//                    map.put("errorInfo",collectedAlerts.get(0));
+//                    map.put("errorCode","0001");
+                    map.put("data",data);
+                    return map;
+                }else if(index.getTitleText()!=null&&index.getTitleText().contains("修改密码")){
+                	map.put("ResultInfo","请先登录官网修改密码");
+                    map.put("ResultCode","0001");
+//                    map.put("errorInfo",collectedAlerts.get(0));
+//                    map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
                 }

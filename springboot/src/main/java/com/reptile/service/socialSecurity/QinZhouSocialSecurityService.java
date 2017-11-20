@@ -104,7 +104,7 @@ public class QinZhouSocialSecurityService {
 			return data;
 		}
 		try {
-			PushState.state(idCardNum, "socialSecurity", 300);
+			PushState.state(idCardNum, "socialSecurity", 100);
 			//封装请求参数
 			List<NameValuePair> list = new ArrayList<NameValuePair>();
 			list.add(new NameValuePair("j_username", idCard.trim()));

@@ -206,11 +206,7 @@ public class XiNingFundService {
 					            map.put("errorCode","0001");
 					        	
 					        } 
-			              
-						    
-			  	       
-		 
-		        }
+	        }
 	
 	        
 		} catch (Exception e) {
