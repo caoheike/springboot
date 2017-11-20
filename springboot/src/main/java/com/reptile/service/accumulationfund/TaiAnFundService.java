@@ -35,7 +35,7 @@ public class TaiAnFundService {
 	 private Logger logger= LoggerFactory.getLogger(TaiAnFundService.class);
 	 @Autowired
 	  private application applications;
-	  private final static String detailUrl=" http://tagjj.com:7001/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
+	  private final static String detailUrl="http://tagjj.com:7001/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
 	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 Map<String, Object> dateMap = new HashMap<String, Object>();
