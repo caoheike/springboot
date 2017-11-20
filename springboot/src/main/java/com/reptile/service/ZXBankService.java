@@ -79,8 +79,6 @@ public class ZXBankService {
         } catch (Exception e) {
 
             logger.warn(e.getMessage() + " 获取中信验证码    mrlu",e);
-
-            e.printStackTrace();
             Scheduler.sendGet(Scheduler.getIp);
             map.put("errorInfo", "系统繁忙");
             map.put("errorCode", "0001");
@@ -117,12 +115,13 @@ public class ZXBankService {
                 String passWordSec = "";
                 if (alert.size() > 0 && alert.get(0).length() > 0) {
                     passWordSec = alert.get(0);
+                    webClient.close();
                 } else {
+                    webClient.close();
                     map.put("errorCode", "0002");
                     map.put("errorInfo", "页面加密出现故障");
                     return map;
                 }
-                System.out.println(passWordSec);
                 //通过同一cookie提交页面信息，认证账户信息
                 PostMethod post = new PostMethod("https://creditcard.ecitic.com/citiccard/ucweb/login.do?date=" + System.currentTimeMillis());
                 post.setRequestHeader("Cookie", cok);
@@ -130,7 +129,6 @@ public class ZXBankService {
                 RequestEntity entity = new StringRequestEntity(str, "text/html", "utf-8");
                 post.setRequestEntity(entity);
                 httpClient.executeMethod(post);
-                System.out.println(post.getResponseBodyAsString());
                 String result = post.getResponseBodyAsString();
                 if (!result.contains("验证成功")) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
@@ -157,8 +155,6 @@ public class ZXBankService {
             } catch (Exception e) {
 
                 logger.warn(e.getMessage() + "  登录中信   mrlu",e);
-
-                e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "系统繁忙");
             }
@@ -187,7 +183,6 @@ public class ZXBankService {
                 PostMethod postPhone = new PostMethod("https://creditcard.ecitic.com/citiccard/ucweb/sendSms.do?date=" + System.currentTimeMillis());
                 postPhone.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(postPhone);
-                System.out.println(postPhone.getResponseBodyAsString());
                 String result = postPhone.getResponseBodyAsString();
                 if (!result.contains("发送成功")) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
@@ -200,8 +195,6 @@ public class ZXBankService {
             } catch (Exception e) {
 
                 logger.warn(e.getMessage() + " 中信发送手机验证码    mrlu",e);
-
-                e.printStackTrace();
                 map.put("errorCode", "0003");
                 map.put("errorInfo", "系统繁忙");
             }
@@ -235,7 +228,6 @@ public class ZXBankService {
                 postM.setRequestEntity(entity1);
                 httpClient.executeMethod(postM);
                 postM.getParams().setContentCharset("utf-8");
-                System.out.println(postM.getResponseBodyAsString());
 
                 if (!postM.getResponseBodyAsString().contains("校验成功")) {
                 	PushSocket.push(map, UUID, "0001");
@@ -250,7 +242,6 @@ public class ZXBankService {
                 getMethod.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(getMethod);
                 getMethod.getParams().setContentCharset("utf-8");
-                System.out.println(getMethod.getResponseBodyAsString());
                 
                 if (getMethod.getResponseBodyAsString().contains("您还未绑卡，暂不支持业务办理")) {
                 	PushSocket.push(map, UUID, "0001");
@@ -263,7 +254,6 @@ public class ZXBankService {
                 PostMethod method = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/settingManage.do?func=getCreditLimit");
                 method.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(method);
-                System.out.println(method.getResponseBodyAsString());
                 String result = method.getResponseBodyAsString();
                 JSONObject jsonObject3 = XML.toJSONObject(result);
                 JSONObject response2 = (JSONObject) jsonObject3.get("response");
@@ -276,12 +266,10 @@ public class ZXBankService {
                 PostMethod postMethod = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/common.do?func=querySignCards");
                 postMethod.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(postMethod);
-                System.out.println(postMethod.getResponseBodyAsString());
 
                 //将得到的xml转换为json数据
                 String cardResult = postMethod.getResponseBodyAsString();
                 JSONObject jsonObject = XML.toJSONObject(cardResult);
-                System.out.println(jsonObject);
                 String response1 = jsonObject.get("response").toString();
                 net.sf.json.JSONObject jsonObject1 = net.sf.json.JSONObject.fromObject(response1);
                 net.sf.json.JSONArray cardlist1=new JSONArray();
@@ -313,7 +301,6 @@ public class ZXBankService {
                     NameValuePair param7 = new NameValuePair("startpos", "1");
                     postMethod1.setRequestBody(new NameValuePair[]{param1, param2, param3, param4, param5, param6, param7});
                     httpClient.executeMethod(postMethod1);
-                    System.out.println(postMethod1.getResponseBodyAsString());
 
                     JSONObject json = XML.toJSONObject(postMethod1.getResponseBodyAsString());
                     String response = json.get("response").toString();
@@ -359,13 +346,10 @@ public class ZXBankService {
                 mapTui.put("data", sendMap);
                 Resttemplate rs = new Resttemplate();
                 map = rs.SendMessage(mapTui, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
-                System.out.println(map);
 
             } catch (Exception e) {
 
                 logger.warn(e.getMessage() + "  中信获取账单   mrlu",e);
-
-                e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "查询出错");
             }

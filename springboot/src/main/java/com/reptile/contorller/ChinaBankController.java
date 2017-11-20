@@ -30,10 +30,10 @@ public class ChinaBankController {
     @ResponseBody
     @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("userCard") String userCard,
-                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID) throws Exception {
+                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID) {
 
         Map<String,Object> map=new HashMap<String,Object>();
-        synchronized (service){
+        synchronized (this){
             map= service.getDetailMes(request, userCard, cardNumber, userPwd,UUID);
         }
        return map;
