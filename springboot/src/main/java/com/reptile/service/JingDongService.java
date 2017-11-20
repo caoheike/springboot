@@ -50,10 +50,11 @@ public class JingDongService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		//添加谷歌驱动
-        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
         
         ChromeDriver driver = new ChromeDriver();
         try {
+        	logger.warn("---------京东获取详情开始---------用户名：" + userName);
 			//获取登录页面
 			driver.get("https://passport.jd.com/new/login.aspx");
 			Thread.sleep(2000);
@@ -88,7 +89,9 @@ public class JingDongService {
 					data.put("errorInfo", text);
 					data.put("errorCode", "0001");
 				}
+				logger.warn("---------京东获取详情登录失败---------用户名：" + userName);
 			}else{
+				logger.warn("---------京东获取详情登录成功---------用户名：" + userName);
 				//登录成功
 				driver.findElementByLinkText("我的订单").click();
 				Thread.sleep(1000);
@@ -109,6 +112,7 @@ public class JingDongService {
 				map.put("smallGoldAmount", jinKuInfo.get("smallGoldAmount"));//小金库额度
 				
 				data.put("data", map);
+				logger.warn("---------京东获取详情成功---------用户名：" + userName);
 				 //数据推送
 				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/savings/eastOfBeijing");
 			}
@@ -118,7 +122,7 @@ public class JingDongService {
             data.put("errorCode", "0002");
 		}finally{
 			if(driver != null){
-//				driver.quit();
+				driver.quit();
 			}
 		}
 		return data;
