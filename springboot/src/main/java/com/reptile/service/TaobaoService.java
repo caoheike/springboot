@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
-import org.sikuli.script.FindFailed;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -133,11 +132,11 @@ public class TaobaoService {
     }
 
 
-    public void sikuli(HttpServletRequest request,String userName,String password) throws FindFailed {
+    public void sikuli(HttpServletRequest request,String userName,String password)  {
 
     }
 
-    public static void main(String[] args) throws InterruptedException, FindFailed {
+    public static void main(String[] args) throws InterruptedException {
         new TaobaoService().loadTaoBao1(null, "wo_shipingzi", "wydm7510162");
     }
 }
