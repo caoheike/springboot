@@ -69,6 +69,8 @@ public class ZXBankDepositCardService {
                     file.mkdirs();
                 }
                 logger.warn("中信银行出现验证码");
+                driver.findElementByClassName("loginInputVerity").sendKeys("123");
+                driver.findElementByClassName("loginInputVerity").clear();
                 String code = RobotUntil.getImgFileByScreenshot(pinImg, driver, file);
                 driver.findElementByClassName("loginInputVerity").sendKeys(code);
             }catch (Exception e){

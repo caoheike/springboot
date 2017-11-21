@@ -3,6 +3,7 @@ package com.reptile.service;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.WebClientFactory;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -83,21 +84,21 @@ public class TaobaoService {
         ChromeDriver driver = new ChromeDriver(options);
 
         driver.get(loadUrl);
-//        Thread.sleep(2000);
-//        driver.findElementByLinkText("密码登录").click();
-//        driver.findElementByName("TPL_username").sendKeys(userAccount);
-//        Thread.sleep(1000);
-//        Actions actions = new Actions(driver);
-//        actions.sendKeys(Keys.TAB).build().perform();
-//        Thread.sleep(1000);
-//        actions.sendKeys(passWord).build().perform();
-//
-//        String attribute = driver.findElementById("nocaptcha").getAttribute("style");
-//        if (attribute != null && attribute.contains("display: block;")) {
-//            System.out.println("此处有滑动验证码");
-//            Thread.sleep(2000);
-//                drapSlide(driver, actions);
-//        }
+        Thread.sleep(2000);
+        driver.findElementByLinkText("密码登录").click();
+        driver.findElementByName("TPL_username").sendKeys(userAccount);
+        Thread.sleep(1000);
+        Actions actions = new Actions(driver);
+        actions.sendKeys(Keys.TAB).build().perform();
+        Thread.sleep(1000);
+        actions.sendKeys(passWord).build().perform();
+
+        String attribute = driver.findElementById("nocaptcha").getAttribute("style");
+        if (attribute != null && attribute.contains("display: block;")) {
+            System.out.println("此处有滑动验证码");
+            Thread.sleep(2000);
+                drapSlide(driver, actions);
+        }
 
 //        driver.findElementById("J_SubmitStatic").click();
 
@@ -137,6 +138,6 @@ public class TaobaoService {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new TaobaoService().loadTaoBao1(null, "wo_shipingzi", "wydm7510162");
+        new TaobaoService().loadTaoBao1(null, "路党伟", "wydm7510162");
     }
 }
