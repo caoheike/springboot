@@ -36,6 +36,6 @@ public class ChinaBankController {
         synchronized (this){
             map= service.getDetailMes(request, userCard, cardNumber, userPwd,UUID);
         }
-       return map;
+        return map;
     }
 }

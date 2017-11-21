@@ -58,7 +58,6 @@ public class GuangXiTelecomService {
                 session.setAttribute("GXDXHtmlPage", click1);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+" 广西发送手机验证码   mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
             }
@@ -76,7 +75,6 @@ public class GuangXiTelecomService {
         Object pages = session.getAttribute("GXDXHtmlPage");
 
         if (attribute == null) {
-        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
             return map;
@@ -138,11 +136,11 @@ public class GuangXiTelecomService {
                 map.put("UserIphone",phoneNumber);
                 map.put("longitude", longitude);//经度
                 map.put("latitude", latitude);//纬度
+                webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+" 广西获取详单信息   mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
             }

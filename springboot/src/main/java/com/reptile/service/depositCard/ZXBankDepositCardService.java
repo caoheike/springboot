@@ -48,7 +48,7 @@ public class ZXBankDepositCardService {
         try {
             logger.warn("登录中信银行网上银行");
             driver.get("https://i.bank.ecitic.com/perbank6/signIn.do");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             //输入账户名密码
             driver.findElementByName("logonNoCert").sendKeys(cardNumber);
             Actions actions = new Actions(driver);
@@ -234,7 +234,6 @@ public class ZXBankDepositCardService {
     private Map<String, Object> analyBaseMes(String baseMes) throws Exception {
         Map<String, Object> map = new HashMap<>();
         Document parse = Jsoup.parse(baseMes);
-        System.out.println(parse.text());
         Elements tbody = parse.getElementsByTag("tbody");
         Elements td = tbody.get(0).getElementsByTag("td");
 

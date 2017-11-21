@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,7 +30,10 @@ public class ChinaBankDepositCardController {
     @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String IDNumber, @RequestParam("cardNumber") String cardNumber,
                                             @RequestParam("passWord") String passWord, @RequestParam("userName") String userName) {
-
-        return service.getDetailMes(request, IDNumber, cardNumber, passWord, userName);
+        Map<String,Object> map=new HashMap<String,Object>();
+        synchronized (this){
+            map= service.getDetailMes(request, IDNumber, cardNumber, passWord, userName);
+        }
+        return map;
     }
 }
