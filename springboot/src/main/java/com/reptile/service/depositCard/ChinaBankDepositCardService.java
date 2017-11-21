@@ -69,10 +69,6 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
-            //输入密码
-            input = driver.findElementsByTagName("input");
-            input.get(4).sendKeys(passWord);
-            Thread.sleep(1000);
             WebElement imageCode;
             try {
                 imageCode = driver.findElement(By.id("captcha_debitCard"));
@@ -82,6 +78,11 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
+            //输入密码
+            input = driver.findElementsByTagName("input");
+            input.get(4).sendKeys(passWord);
+            Thread.sleep(1000);
+
             //识别验证码
             String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
             //输入验证码

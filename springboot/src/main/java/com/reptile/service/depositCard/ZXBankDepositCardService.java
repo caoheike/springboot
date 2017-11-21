@@ -2,6 +2,7 @@ package com.reptile.service.depositCard;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,7 +60,20 @@ public class ZXBankDepositCardService {
                 VirtualKeyBoard.KeyPress(passWord.charAt(i));
                 Thread.sleep(200);
             }
-
+            //判断是否存在验证码
+            try {
+                WebElement pinImg = driver.findElementById("pinImg");
+                String realPath = request.getServletContext().getRealPath("/verImageCode");
+                File file=new File(realPath);
+                if(!file.exists()){
+                    file.mkdirs();
+                }
+                logger.warn("中信银行出现验证码");
+                String code = RobotUntil.getImgFileByScreenshot(pinImg, driver, file);
+                driver.findElementByClassName("loginInputVerity").sendKeys(code);
+            }catch (Exception e){
+                logger.warn("中信银行未出现验证码",e);
+            }
             //登录
             driver.findElementById("logonButton").click();
             Thread.sleep(3000);
