@@ -33,6 +33,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,7 @@ import com.reptile.util.talkFrame;
 
 @Service
 public class NingXiaTelecomService {
+	private Logger logger= LoggerFactory.getLogger(NingXiaTelecomService.class);
 	@Autowired
 	private application application;
 	/**
@@ -118,19 +121,21 @@ public class NingXiaTelecomService {
 		          //Thread.sleep(2000);
 		          driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 			if(driver.getPageSource().contains("详单查询")){
+				logger.warn("宁夏电信，登陆成功");
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功");
 				}else{
 					//new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginbtn")));
 					String divErr = driver.findElement(By.id("divErr")).getText();
-					
+					logger.warn("宁夏电信",divErr);
 					map.put("errorCode", "0001");
 					map.put("errorInfo", divErr);
 					driver.close();
 				}
 		 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.warn("宁夏电信",e);
+				//e.printStackTrace();
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
 				
@@ -158,6 +163,7 @@ public class NingXiaTelecomService {
 		 
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 if(driver==null){
+			 logger.warn("宁夏电信未登录");
 	    	 map.put("errorCode", "0001");
 			 map.put("errorInfo", "请先登录!");
 			return map;
@@ -175,19 +181,28 @@ public class NingXiaTelecomService {
 			 new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id='myAlert3']/div[2]/div[1]"))); 
 			 String sendInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 			 if(sendInfo.contains(phoneNumber)){
+				 logger.warn("宁夏电信第二次发送验证码成功");
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "验证码发送成功");
 			  driver.findElement(By.id("btn_xieyi")).click();
 			  Thread.sleep(500);
 			 }else{
+				 logger.warn("宁夏电信第二次发送验证码失败");
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "验证码发送失败"); 
 			 }
 		} catch (InterruptedException e) {
+			logger.warn("宁夏电信网络异常，请稍后");
 			 map.put("errorCode", "0001");
 			 map.put("errorInfo", "网络异常，请稍后"); 
 			e.printStackTrace();
-			driver.close();
+//			try {
+//				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+//			} catch (IOException e2) {
+//				// TODO Auto-generated catch block
+//				e2.printStackTrace();
+//			}
+			//driver.close();
 			try {
 				Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 			} catch (IOException e1) {
@@ -213,12 +228,14 @@ public class NingXiaTelecomService {
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 if(driver==null){
+			 logger.warn("宁夏电信请先获取验证码");
 			 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
 			 return map; 
 		 }
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
            if(code==null||code.equals("")){
+        	   logger.warn("宁夏电信验证码不能为空");
         	   map.put("errorCode", "0001");
  			   map.put("errorInfo", "验证码不能为空");
  			  return map;
@@ -226,6 +243,7 @@ public class NingXiaTelecomService {
 		  driver.findElement(By.id("yzm")).sendKeys(code);
 		  String tipInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 		  if(tipInfo.contains("验证失败")){
+			  logger.warn("宁夏电信验证码错误");
 			//---------------推-------------------
 			  PushSocket.push(map, UUID, "0001");
 					//---------------推-------------------
@@ -234,7 +252,7 @@ public class NingXiaTelecomService {
 			  return map;
 		  }
 		
-		  
+		  logger.warn("宁夏电信数据获取中...");
 		//---------------推-------------------
 		  PushSocket.push(map, UUID, "0000");
 		//---------------推-------------------
@@ -319,6 +337,7 @@ public class NingXiaTelecomService {
 						 }
 						Thread.sleep(500);					 
 				} catch (Exception e) {
+					 logger.warn("宁夏电信",e);
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "网络连接异常");
 				} 
@@ -331,20 +350,23 @@ public class NingXiaTelecomService {
 		           map.put("flag", "13");
 		           map.put("errorCode", "0000");
 		           map.put("errorInfo", "查询成功");
+		           logger.warn("宁夏电信数据查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
 		           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
 		           try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
+					logger.warn("宁夏电信",e);
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}finally{
 					 driver.close();	
 					 try {
 						Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 					} catch (IOException e) {
+						logger.warn("宁夏电信",e);
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 		           
