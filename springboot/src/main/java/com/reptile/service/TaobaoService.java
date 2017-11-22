@@ -77,7 +77,7 @@ public class TaobaoService {
     }
 
     public Map<String, String> loadTaoBao1(HttpServletRequest request, String userAccount, String passWord) throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);

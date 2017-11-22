@@ -39,7 +39,7 @@ public class ChinaBankService {
             file.mkdirs();
         }
         Map<String, Object> map = new HashMap<String, Object>();
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);

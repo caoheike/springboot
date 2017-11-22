@@ -46,7 +46,7 @@ public class ChinaBankDepositCardService {
             file.mkdirs();
         }
         logger.warn("中国银行储蓄卡登录...");
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);
