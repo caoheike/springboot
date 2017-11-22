@@ -42,6 +42,7 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.CrawlerUtil;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
 
 /**
  * Created by HotWong on 2017/5/2 0002.
@@ -61,6 +62,8 @@ public class AccumulationFundService {
             if(!bean.verifyParams(bean)){
                 map.put("ResultInfo","提交数据有误,请刷新页面后重新输入!");
                 map.put("ResultCode","0001");
+                map.put("errorInfo","提交数据有误,请刷新页面后重新输入!");
+                map.put("errorCode","0001");
                 map.put("data",data);
                 return map;
             }
@@ -92,15 +95,15 @@ public class AccumulationFundService {
                 if(str.indexOf("身份证号码：")!=-1&&collectedAlerts.size()!=0){
                     map.put("ResultInfo",collectedAlerts.get(0));
                     map.put("ResultCode","0001");
-//                    map.put("errorInfo",collectedAlerts.get(0));
-//                    map.put("errorCode","0001");
+                    map.put("errorInfo",collectedAlerts.get(0));
+                    map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
                 }else if(index.getTitleText()!=null&&index.getTitleText().contains("修改密码")){
                 	map.put("ResultInfo","请先登录官网修改密码");
                     map.put("ResultCode","0001");
-//                    map.put("errorInfo",collectedAlerts.get(0));
-//                    map.put("errorCode","0001");
+                    map.put("errorInfo","请先登录官网修改密码");
+                    map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
                 }
@@ -201,11 +204,11 @@ public class AccumulationFundService {
                 file.mkdir();
             }
             String fileName=System.currentTimeMillis()+".jpg";
-
-            final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
-            webClient.getOptions().setCssEnabled(false);// 禁用css支持
-            webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
-            webClient.getOptions().setTimeout(8000); // 设置连接超时时间
+            final WebClient webClient=new WebClientFactory().getWebClient();
+           // final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
+//            webClient.getOptions().setCssEnabled(false);// 禁用css支持
+//            webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
+//            webClient.getOptions().setTimeout(8000); // 设置连接超时时间
             final HtmlPage loginPage = webClient.getPage(loginUrl);
             HtmlImage verifyCodeImagePage = (HtmlImage)loginPage.getByXPath("//img").get(20);
             BufferedImage bi=verifyCodeImagePage.getImageReader().read(0);
@@ -218,15 +221,19 @@ public class AccumulationFundService {
             data.put("ResultCode","0000");
             map.put("errorInfo","查询成功");
             map.put("errorCode","0000");
+            map.put("ResultInfo","查询成功");
+            map.put("ResultCode","0000");
         } catch (Exception e) {
             logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
-            Scheduler.sendGet(Scheduler.getIp);
+           // Scheduler.sendGet(Scheduler.getIp);
             System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");
             data.put("ResultCode","0002");
             map.put("errorInfo","服务器繁忙，请稍后再试！");
             map.put("errorCode","0002");
+            map.put("ResultInfo","服务器繁忙，请刷新页面后重试!");
+            map.put("ResultCode","0002");
         }
         map.put("data",data);
         return map;

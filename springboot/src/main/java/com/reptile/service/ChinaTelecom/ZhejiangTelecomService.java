@@ -107,6 +107,7 @@ public class ZhejiangTelecomService {
 		    Map<String, Object> map = new HashMap<String, Object>();
             //验证码	判断	=========================================  
 		    WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
+		    
 		    if(webClient==null){
 		    	logger.warn("浙江电信，请先获取验证码");
 		    	PushSocket.push(map, UUID, "0001");
@@ -114,7 +115,7 @@ public class ZhejiangTelecomService {
 			     map.put("errorInfo", "请先获取验证码");	
 				 return map;
 		    }
-		      
+		    try {  
 	        List<String>  alertList=new ArrayList<String>(); 
 	        CollectingAlertHandler head=new CollectingAlertHandler(alertList);
 	        webClient.setAlertHandler(head);
@@ -127,22 +128,16 @@ public class ZhejiangTelecomService {
 					.executeJavaScript(
 							"generateCdrType(2,\"18\","+phoneNumber+",\"574\",\"移动电话\",\"4-3LL8EAT\")")
 					.getNewPage();
-			try {
+			
 				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 			//System.out.println(choosePage.asXml());
 			HtmlInput randpsw = (HtmlInput) choosePage
 					.getElementByName("cdrCondition.randpsw");	
 			randpsw.setValueAttribute(code);//3.
-			try {
+			
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 			HtmlTextInput username = choosePage.getElementByName("username");
 			HtmlTextInput idcard = choosePage.getElementByName("idcard");
 			username.setValueAttribute(name);//1.
@@ -189,7 +184,7 @@ public class ZhejiangTelecomService {
 					}
 				    //}
 				} else { 
-					 logger.warn("浙江电信","暂无数据");
+					logger.warn("浙江电信","暂无数据");
 					PushSocket.push(map, UUID, "0001");
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
@@ -206,9 +201,16 @@ public class ZhejiangTelecomService {
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 			logger.warn("浙江电信","查询成功");
+			webClient.close();
 			Resttemplate resttemplate = new Resttemplate();
 	        map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 	
-		return map;
+		} catch (InterruptedException e) {
+			logger.warn("浙江电信",e);
+			map.put("errorCode", "0001");
+			map.put("errorInfo", "网络异常！");
+			//e.printStackTrace();
+			}
+	        return map;
 		
 	}
 	

@@ -152,6 +152,7 @@ public class GuiZhouTelecomService {
            map.put("errorCode", "0000");
            map.put("errorInfo", "查询成功");
            logger.warn("贵州电信数据获取成功");
+           webClient.close();
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
            

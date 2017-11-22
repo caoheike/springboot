@@ -129,8 +129,13 @@ public class NingXiaTelecomService {
 					String divErr = driver.findElement(By.id("divErr")).getText();
 					logger.warn("宁夏电信",divErr);
 					map.put("errorCode", "0001");
-					map.put("errorInfo", divErr);
-					driver.close();
+					if(divErr.contains("验证码")){
+						map.put("errorInfo", "网络繁忙，请稍后再试");
+					}else{
+						map.put("errorInfo", divErr);	
+					}
+					
+					//driver.close();
 				}
 		 
 			} catch (Exception e) {
@@ -139,7 +144,7 @@ public class NingXiaTelecomService {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
 				
-				driver.close();
+				//driver.close();
 				try {
 					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				} catch (IOException e1) {
@@ -196,13 +201,6 @@ public class NingXiaTelecomService {
 			 map.put("errorCode", "0001");
 			 map.put("errorInfo", "网络异常，请稍后"); 
 			e.printStackTrace();
-//			try {
-//				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
-//			} catch (IOException e2) {
-//				// TODO Auto-generated catch block
-//				e2.printStackTrace();
-//			}
-			//driver.close();
 			try {
 				Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 			} catch (IOException e1) {

@@ -1,6 +1,7 @@
 package com.reptile.service.ChinaTelecom;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -217,8 +218,17 @@ public class ChongQingTelecomService {
 					} catch (Exception e) {
 						map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
-				        driver.close();
+				       
 						e.printStackTrace();
+					}finally{
+						 driver.close();
+						 try {
+								Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+							} catch (IOException e) {
+								logger.warn("宁夏电信",e);
+								// TODO Auto-generated catch block
+								//e.printStackTrace();
+							}
 					}
 		        	
 		        }
@@ -237,7 +247,7 @@ public class ChongQingTelecomService {
 	 public Map<String, Object> chongQingLogin(HttpServletRequest request, String phoneNumber, String servePwd){
 			Map<String, Object> map = new HashMap<String, Object>();
 			System.setProperty("webdriver.chrome.driver",
-					"C:\\chromDriv\\chromedriver(1).exe");
+					"C:\\Program Files\\iedriver\\chromedriver.exe");
 			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");

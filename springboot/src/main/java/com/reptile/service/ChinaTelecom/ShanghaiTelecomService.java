@@ -233,6 +233,7 @@ public class ShanghaiTelecomService {
 	           map.put("flag", "11");  
 	           map.put("errorCode", "0000");
 	           map.put("errorInfo", "查询成功");
+	           webClient.close();
 	           Resttemplate resttemplate = new Resttemplate();
                map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 		 
 			}

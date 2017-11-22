@@ -26,8 +26,6 @@ public class QinZhouFundController {
 	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 		System.out.println(idCardNum);
 		return service.getImageCode(request, idCard, passWord,cityCode,idCardNum);
-		
 	}
-	
 
 }

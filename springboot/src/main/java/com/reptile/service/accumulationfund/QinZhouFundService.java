@@ -74,58 +74,49 @@ public class QinZhouFundService {
 				PushState.state(idCardNum, "accumulationFund",100);
          //===========图形验证==========================
 			String path=request.getServletContext().getRealPath("/vecImageCode");
-	        System.setProperty("java.awt.headless", "true");
 	        File file=new File(path);
 	        if(!file.exists()){
 	            file.mkdirs();
 	        }
 			  WebElement captchaImg = driver.findElement(By.id("captcha_img"));
 		      File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		      BufferedImage  fullImg = ImageIO.read(screenshot);
+		      BufferedImage  fullImg = ImageIO.read(screenshot);//全屏截图
 		      Point point = captchaImg.getLocation();//坐标
 		      int eleWidth = captchaImg.getSize().getWidth();//宽
 		      int eleHeight = captchaImg.getSize().getHeight();//高
 		      BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
-		          eleWidth, eleHeight);
-		      ImageIO.write(eleScreenshot, "png", screenshot);
-		     /* Date date=new Date();
-		      SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddhhmmss");*/
+		          eleWidth, eleHeight);//图形验证码截图
+		      
 		      String filename="qz"+System.currentTimeMillis()+".png";
-		     File screenshotLocation = new File("C:\\images\\"+filename);
+		      ImageIO.write(eleScreenshot, "png", new File(file ,filename));
 		      Thread.sleep(2000);
-		      FileUtils.copyFile(screenshot, screenshotLocation);
-		      
-		      
-		    Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
+		    
+		     Map<String,Object> map1=MyCYDMDemo.Imagev(file + "/" +filename);//图片验证，打码平台
 		     System.out.println(map1);
 		     String catph= (String) map1.get("strResult");
 		         WebElement userName=	 driver.findElement(By.id("username"));
-		         new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("in_password")));
-		        // Thread.sleep(100);
+		         Thread.sleep(100);
 		         userName.sendKeys(idCard);
 	        	WebElement password= driver.findElement(By.id("in_password"));
-	        	 //Thread.sleep(100);
-	        	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("captcha")));
+	        	 Thread.sleep(100);
 	        	 password.sendKeys(passWord);
 	        	WebElement captcha= driver.findElement(By.id("captcha"));
-	        	 //Thread.sleep(100);
-	        	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("gr_login")));
+	        	 Thread.sleep(100);	
 	        	captcha.sendKeys(catph);
-	        	
 	        	WebElement button=driver.findElement(By.id("gr_login"));
 	        	button.click();
-		       //Thread.sleep(1000);
+		        Thread.sleep(1000);
 	        	 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 		      if(driver.getPageSource().contains("欢迎您")){
 		    	  System.out.println("成功");
-		    	 // Thread.sleep(1000);
-		    	  new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.className("dk_more")));
+		    	 Thread.sleep(1000);
+		    	  //new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.className("dk_more")));
 		    	  logger.warn("钦州住房公积金登陆成功"); 
 		    	  try{
 		    	 // String grxx=driver.getPageSource().split("grzh=")[1].split(";")[0].split("'")[1];
 		    	 
 		    	  driver.findElement(By.className("dk_more")).click();
-		    	  //Thread.sleep(1000);
+		    	  Thread.sleep(1000);
 		    	  String mid=driver.getPageSource().split("jczqqccx")[1];
 		    	  Thread.sleep(1000);
                   String paramers=mid.split("params=")[1].split("\\>")[0];
@@ -143,13 +134,9 @@ public class QinZhouFundService {
 			 		 for (Cookie c : cookie) {   
 			 			 cookies.append(c.toString()+";");
 			 		 } 
-//		    	  WebElement baseInfo=  driver.findElement(By.name("jcrzhxxform"));
-//		    	  System.out.println(baseInfo);
-//		    	  map.put("baseInfo", baseInfo.getText());
-			 		HttpClient client = new HttpClient(); 
-		    	  
-			
-		 		 PostMethod post=new PostMethod("http://wangting.qzsgjj.com/wt-web/jcr/jcrkhxxcx_mh.service");
+
+			 	 HttpClient client = new HttpClient(); 
+		     	 PostMethod post=new PostMethod("http://wangting.qzsgjj.com/wt-web/jcr/jcrkhxxcx_mh.service");
 		 	  	 post.addRequestHeader("Accept","*/*");	
 		 	   	 post.addRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");		
 		 	   	 post.addRequestHeader("Cookie",cookies.toString()); 	
@@ -206,32 +193,28 @@ public class QinZhouFundService {
 				      accumulation.setBasicInfos(baseList);//基本信息
 				    //  accumulation.setData(dataInfo);//推送信息
 				      accumulation.setFlows(flowsName, resultsData);
-				     // dataMap.put("item", accumulation.getData());
-				      
-				      
-//				      List<String> dataInfo=new ArrayList<String>();//推送字段
-//				 	    dataInfo.add(idCard);
-//				 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-//				 	    dataInfo.add(sdf.format(new Date()));
-//				 	    dataInfo.add(cityCode);
-//				 	    dataInfo.add("泰安市");
-				      
 				      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 				      dataMap.put("basicInfos", accumulation.getBasicInfos());
 				      dataMap.put("flows", accumulation.getFlows());
 				     
 				      dataMap.put("loans",accumulation.getLoans());
-				      
 				      map.put("userId", idCardNum);
 				      System.out.println(idCardNum);
 				      map.put("insertTime", sdf.format(new Date()));
 				      map.put("city", cityCode);
 				      map.put("cityName", "钦州市");
-				      
 				      map.put("data", dataMap);
 				      System.out.println(new JSONArray().fromObject(map));
 				     // map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
 				      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
+				      driver.findElements(By.className("hover_img")).get(2).click();//关闭网页
+			     		try {
+							Thread.sleep(300);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			     		driver.findElement(By.name("logout_btn")).click();
 				      if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
 					    	map.put("errorInfo","查询成功");
@@ -288,10 +271,7 @@ public class QinZhouFundService {
 					                driver.close();
 					                return map;
 			    			 }
-			    			
-			    			 
-			    			 
-						}
+			 			}
 		    		   
 			    			PushState.state(idCardNum, "accumulationFund",200);
 			    		
@@ -301,7 +281,6 @@ public class QinZhouFundService {
 				                map.put("errorInfo", "该账号已在别处登陆") ;
 				                driver.close();
 				                return map;
-							 
 		    	  }
 		    	  
 		      }
@@ -314,10 +293,8 @@ public class QinZhouFundService {
                 map.put("errorInfo", "网络连接异常!");	
 				driver.close();
 			}	
-			driver.findElements(By.className("hover_img")).get(2).click();
-			 new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.name("logout_btn")));
-     		driver.findElement(By.name("logout_btn")).click();
-			driver.close();
+			
+     		
 	return map;	 
 		  
 	  }	  

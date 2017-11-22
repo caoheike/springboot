@@ -63,7 +63,6 @@ import com.reptile.model.UnicomBean;
 public class MobileService {
 
 	@Autowired
-
 	private application application;
 	private PushState PushState;
 	public Map<String, Object> mapWeb = new HashMap<String, Object>();
@@ -651,15 +650,7 @@ public class MobileService {
 					//session.setAttribute("webClientone", webClient);
                   // Thread.sleep(2000);
                    System.out.println("发送成功");
-                   
-//                   
-//					//---------------推测试-------------------
-//				Session se=	talkFrame.getWsUserMap().get(Useriphone);
-//				System.out.println(se);
-//				se.getBasicRemote().sendText("ssssssssssssssssssssssssss");
-//					//---------------推测试-------------------
-//					
-//					
+              				
 					
 				} else {
 					JSONObject json = JSONObject.fromObject(result.split("\\(")[1].split("\\)")[0]);
@@ -950,16 +941,15 @@ public class MobileService {
 //	}
 			try {
 				TextPage newPage = webClient.getPage(webRequest2);
+				Thread.sleep(1000);
 				//System.out.println(newPage.getContent());
 				JSONObject json3 = JSONObject.fromObject(newPage.getContent());
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
-//					//---------------推-------------------
+					//---------------推-------------------
 				   PushSocket.push(map, UUID, "0000");
 					//---------------推-------------------
-//					
-					
-					System.out.println("验证码成功，可查询");
+				    System.out.println("验证码成功，可查询");
 					PushState.state(Useriphone, "callLog", 100);
 //=======================获取详单================================================      		
 					webClient.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
@@ -1034,10 +1024,10 @@ public class MobileService {
 					if (resultCode.equals("01")) {
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "验证码已过期，请从新获取新的验证码");
-					} else if (resultCode.equals("02")) {
+					} else if (resultCode.equals("02")) {//验证码错误
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败");
-					} else if (resultCode.equals("03")) {
+					} else if (resultCode.equals("03")) {//sessionFail//session失效
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败,请稍后再试！");
 
