@@ -3,10 +3,6 @@ package com.reptile.service.accumulationfund;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +20,10 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.cookie.CookieSpec;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.log4j.net.SocketServer;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.OutputType;
@@ -42,17 +33,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.google.common.base.Utf8;
 import com.reptile.model.NewAccumulation;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.GetMonth;
-import com.reptile.util.ImgUtil;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -108,30 +99,33 @@ public class QinZhouFundService {
 		    Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
 		     System.out.println(map1);
 		     String catph= (String) map1.get("strResult");
-		      
-		      
 		         WebElement userName=	 driver.findElement(By.id("username"));
-		         Thread.sleep(100);
+		         new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("in_password")));
+		        // Thread.sleep(100);
 		         userName.sendKeys(idCard);
 	        	WebElement password= driver.findElement(By.id("in_password"));
-	        	 Thread.sleep(100);
+	        	 //Thread.sleep(100);
+	        	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("captcha")));
 	        	 password.sendKeys(passWord);
 	        	WebElement captcha= driver.findElement(By.id("captcha"));
-	        	 Thread.sleep(100);
+	        	 //Thread.sleep(100);
+	        	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("gr_login")));
 	        	captcha.sendKeys(catph);
 	        	
 	        	WebElement button=driver.findElement(By.id("gr_login"));
 	        	button.click();
-		       Thread.sleep(1000);
+		       //Thread.sleep(1000);
+	        	 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 		      if(driver.getPageSource().contains("欢迎您")){
 		    	  System.out.println("成功");
-		    	  Thread.sleep(1000);
+		    	 // Thread.sleep(1000);
+		    	  new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.className("dk_more")));
 		    	  logger.warn("钦州住房公积金登陆成功"); 
 		    	  try{
 		    	 // String grxx=driver.getPageSource().split("grzh=")[1].split(";")[0].split("'")[1];
 		    	 
 		    	  driver.findElement(By.className("dk_more")).click();
-		    	  Thread.sleep(1000);
+		    	  //Thread.sleep(1000);
 		    	  String mid=driver.getPageSource().split("jczqqccx")[1];
 		    	  Thread.sleep(1000);
                   String paramers=mid.split("params=")[1].split("\\>")[0];
@@ -317,17 +311,11 @@ public class QinZhouFundService {
 				PushState.state(idCardNum, "accumulationFund",200);
 				logger.warn("钦州住房公积金",e);
          		map.put("errorCode", "0001");
-                map.put("errorInfo", "网络连接异常!");
-				
+                map.put("errorInfo", "网络连接异常!");	
 				driver.close();
 			}	
 			driver.findElements(By.className("hover_img")).get(2).click();
-     		try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			 new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.name("logout_btn")));
      		driver.findElement(By.name("logout_btn")).click();
 			driver.close();
 	return map;	 

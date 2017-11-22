@@ -151,7 +151,7 @@ public class TaiAnFundService {
 			  logger.warn("泰安市公积金",e);
 			  map.put("errorCode", "0001");
               map.put("errorInfo", "网络连接异常!");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return map;
