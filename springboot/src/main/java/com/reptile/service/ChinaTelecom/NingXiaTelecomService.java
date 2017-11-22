@@ -64,7 +64,7 @@ public class NingXiaTelecomService {
 		 
 			Map<String, Object> map = new HashMap<String, Object>();
 			System.setProperty("webdriver.chrome.driver",
-					"C:\\Program Files\\iedriver\\chromedriver.exe");
+					"D:\\ie\\chromedriver.exe");
 			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");

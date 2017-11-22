@@ -204,8 +204,9 @@ public class AccumulationFundService {
                 file.mkdir();
             }
             String fileName=System.currentTimeMillis()+".jpg";
-            final WebClient webClient=new WebClientFactory().getWebClient();
-           // final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
+
+            final WebClient webClient = new WebClientFactory().getWebClient();
+//            final WebClient webClient = new WebClient(BrowserVersion.CHROME,Scheduler.ip,Scheduler.port);
 //            webClient.getOptions().setCssEnabled(false);// 禁用css支持
 //            webClient.getOptions().setThrowExceptionOnScriptError(false);// 忽略js异常
 //            webClient.getOptions().setTimeout(8000); // 设置连接超时时间
@@ -226,7 +227,9 @@ public class AccumulationFundService {
         } catch (Exception e) {
             logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
-           // Scheduler.sendGet(Scheduler.getIp);
+
+//            Scheduler.sendGet(Scheduler.getIp);
+
             System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");
             data.put("ResultCode","0002");

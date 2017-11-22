@@ -1,6 +1,7 @@
 package com.reptile.service.depositCard;
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import org.jsoup.Jsoup;
@@ -9,7 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -38,7 +38,7 @@ public class ChinaBankDepositCardService {
      * @param userName
      * @return
      */
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName,String UUID) {
         Map<String, Object> map = new HashMap<>();
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
@@ -47,7 +47,8 @@ public class ChinaBankDepositCardService {
             file.mkdirs();
         }
         logger.warn("中国银行储蓄卡登录...");
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\iedriver\\chromedriver.exe");
+        System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
+        System.out.println("~~");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);
@@ -111,7 +112,7 @@ public class ChinaBankDepositCardService {
             }
             logger.warn("中国银行储蓄卡登录成功");
             //--------------这里加推送状态
-
+            PushSocket.push(map, UUID, "0000");
             //获取储蓄卡基本信息
             WebElement cardMain = driver.findElementById("cardMain");
             map.put("baseMes", cardMain.getAttribute("innerHTML"));

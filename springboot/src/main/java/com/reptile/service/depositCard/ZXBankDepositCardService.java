@@ -44,7 +44,7 @@ public class ZXBankDepositCardService {
      */
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String userName, String passWord) {
         Map<String, Object> map = new HashMap<>();
-        System.setProperty("webdriver.ie.driver", "C:\\Program Files (x86)\\iedriver\\IEDriverServer.exe");
+        System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
         InternetExplorerDriver driver = new InternetExplorerDriver();
         driver.manage().window().maximize();
         try {
