@@ -1,11 +1,6 @@
 package com.reptile.service;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.WebClientFactory;
 import org.openqa.selenium.Keys;
@@ -89,6 +84,7 @@ public class TaobaoService {
         ChromeDriver driver = new ChromeDriver(options);
 
         driver.get(loadUrl);
+        Thread.sleep(2000);
         driver.findElementByLinkText("密码登录").click();
         driver.findElementByName("TPL_username").sendKeys(userAccount);
         Thread.sleep(1000);
@@ -96,23 +92,49 @@ public class TaobaoService {
         actions.sendKeys(Keys.TAB).build().perform();
         Thread.sleep(1000);
         actions.sendKeys(passWord).build().perform();
+
         String attribute = driver.findElementById("nocaptcha").getAttribute("style");
-        if(attribute != null && attribute.contains("display: block;")){
+        if (attribute != null && attribute.contains("display: block;")) {
             System.out.println("此处有滑动验证码");
-            driver.executeScript("var event = document.createEvent('MouseEvents');event.initMouseEvent('mousedown', true, true, document.defaultView,0,0,0,0,0, false, false, false, false, 11 ,null); nc_1_n1z.dispatchEvent(event);var event = document.createEvent('MouseEvents');event.initMouseEvent('mousemove', true, true, document.defaultView, 0,0,0, 290,290, false, false, false, false,0,null);nc_1_n1z.dispatchEvent(event);");
-            Thread.sleep(6000);
-
-//            WebElement nc_1_n1z = driver.findElementById("nc_1_n1z");
-//            actions.moveToElement(nc_1_n1z);
-//            actions.click();
-//            Thread.sleep(1000);
-
-            System.out.println(driver.getPageSource());
-            Thread.sleep(3000);
+            Thread.sleep(2000);
+                drapSlide(driver, actions);
         }
-        driver.findElementById("J_SubmitStatic").click();
+
+//        driver.findElementById("J_SubmitStatic").click();
 
         return null;
+    }
+
+    public void drapSlide(ChromeDriver driver, Actions actions) throws InterruptedException {
+        WebElement nc_1_n1z = driver.findElementById("nc_1_n1z");
+        actions.clickAndHold(nc_1_n1z);
+        int y=0;
+        int count=0;
+        while (true) {
+            y= (int)(Math.random()*24);
+            actions.moveByOffset(y, (int) Math.random()*5);
+            count=count+y;
+
+            Thread.sleep(100);
+            if (count > 234) {
+                y=258-count;
+                actions.moveByOffset(y, (int) Math.random()*5);
+                break;
+            }
+        }
+        actions.build().perform();
+
+        Thread.sleep(2000);
+        if (!driver.getPageSource().contains("验证通过")) {
+            driver.executeScript("noCaptcha.reset(1)");
+            Thread.sleep(1000);
+            drapSlide(driver, actions);
+        }
+    }
+
+
+    public void sikuli(HttpServletRequest request,String userName,String password)  {
+
     }
 
     public static void main(String[] args) throws InterruptedException {

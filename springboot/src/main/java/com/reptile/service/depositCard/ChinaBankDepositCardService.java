@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -50,13 +51,13 @@ public class ChinaBankDepositCardService {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);
-
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         try {
             driver.get("https://ebsnew.boc.cn/boc15/login.html");
             List<WebElement> input = driver.findElementsByTagName("input");
             //输入卡号
             input.get(0).sendKeys(cardNumber);
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             Actions actions = new Actions(driver);
             actions.sendKeys(Keys.TAB).build().perform();
             Thread.sleep(3000);
@@ -68,10 +69,6 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
-            //输入密码
-            input = driver.findElementsByTagName("input");
-            input.get(4).sendKeys(passWord);
-            Thread.sleep(1000);
             WebElement imageCode;
             try {
                 imageCode = driver.findElement(By.id("captcha_debitCard"));
@@ -81,6 +78,11 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
+            //输入密码
+            input = driver.findElementsByTagName("input");
+            input.get(4).sendKeys(passWord);
+            Thread.sleep(1000);
+
             //识别验证码
             String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
             //输入验证码
@@ -89,7 +91,6 @@ public class ChinaBankDepositCardService {
             List<WebElement> elements = driver.findElements(By.className("btn"));
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getText().contains("查询")) {
-                    System.out.println(i);
                     elements.get(i).click();
                     break;
                 }
@@ -109,6 +110,8 @@ public class ChinaBankDepositCardService {
                 return map;
             }
             logger.warn("中国银行储蓄卡登录成功");
+            //--------------这里加推送状态
+
             //获取储蓄卡基本信息
             WebElement cardMain = driver.findElementById("cardMain");
             map.put("baseMes", cardMain.getAttribute("innerHTML"));

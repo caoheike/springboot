@@ -107,7 +107,7 @@ public class NanTongAccumulationfundService {
                 //数据推送
                 //map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
                 map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
-                
+
     		    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
     		    	PushState.state(idCardNum, "accumulationFund",300);
     		    	map.put("errorInfo","查询成功");

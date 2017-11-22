@@ -51,7 +51,6 @@ public class HeNanTelecomService {
                 req.setHttpMethod(HttpMethod.GET);
                 HtmlPage pages=webClient.getPage(req);
                 Thread.sleep(1000);
-                System.out.println(pages.asXml());
                 req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
@@ -70,7 +69,6 @@ public class HeNanTelecomService {
                 req.setRequestParameters(list);
                 HtmlPage pagess= webClient.getPage(req);
                 Thread.sleep(1000);
-                System.out.println(pagess.asXml());
 
                 req = new WebRequest(new URL("http://ha.189.cn/service/bill/getRand.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
@@ -96,7 +94,6 @@ public class HeNanTelecomService {
 
                 XmlPage page = webClient.getPage(req);
                 Thread.sleep(1000);
-                System.out.println(page.asText());
                 String result = page.asText();
                 if (result.trim().contains("请等待30分钟后在发送")) {
                     String[] arr = result.trim().split("送");
@@ -110,7 +107,6 @@ public class HeNanTelecomService {
                 }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  广西发送手机验证码   mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络异常！");
             }
@@ -164,10 +160,7 @@ public class HeNanTelecomService {
                 Thread.sleep(1000);
                 String result = page2.asText();
 
-                System.out.println(page2.asXml());
-
                 if (result.contains("您输入的查询验证码错误或过期")) {
-                	PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
@@ -195,7 +188,6 @@ public class HeNanTelecomService {
                     page2 = webClient.getPage(req);
                     Thread.sleep(1000);
                     dataList.add(page2.asXml());
-
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
@@ -205,14 +197,13 @@ public class HeNanTelecomService {
                 map.put("latitude", latitude);//纬度
                 map.put("flag", "5");
                 map.put("data", dataList);
+                webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
 
                 System.out.println("河南电信拿到的数据条数：" + dataList.size());
             } catch (Exception e) {
-            	PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
