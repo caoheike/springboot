@@ -71,7 +71,6 @@ public class ShanDongTelecomService {
                 session.setAttribute("SDDXhtmlPage", page1);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取验证码  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -165,7 +164,6 @@ public class ShanDongTelecomService {
                 session.setAttribute("SDDXsendMesPage", easyDialogYesBtn);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东发送手机验证码  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -256,11 +254,11 @@ public class ShanDongTelecomService {
                 map.put("data", listData);
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "'查询成功'");
+                webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }

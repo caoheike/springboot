@@ -10,6 +10,7 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,17 +29,15 @@ public class JiangSuTelecomService {
         Map<String, Object> map = new HashMap<String, Object>();
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
-
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
-        	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
         	PushSocket.push(map, UUID, "0000");
+            WebClient webClient = (WebClient) attribute;
             try {
-                WebClient webClient = (WebClient) attribute;
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
@@ -65,7 +64,6 @@ public class JiangSuTelecomService {
                 request1.setRequestParameters(list);
                 UnexpectedPage page = webClient.getPage(request1);
                 dataList.add(page.getWebResponse().getContentAsString());
-                System.out.println(page.getWebResponse().getContentAsString());
                 Thread.sleep(500);
                 for (int i=0;i<5;i++){
 
@@ -88,7 +86,6 @@ public class JiangSuTelecomService {
                     request1.setRequestParameters(list);
                     page = webClient.getPage(request1);
                     dataList.add(page.getWebResponse().getContentAsString());
-                    System.out.println(page.getWebResponse().getContentAsString());
                     Thread.sleep(500);
                 }
                 map.put("data",dataList);
@@ -104,9 +101,12 @@ public class JiangSuTelecomService {
             } catch (Exception e) {
             	PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+            }finally {
+                if(webClient!=null){
+                    webClient.close();
+                }
             }
         }
         return map;

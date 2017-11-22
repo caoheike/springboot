@@ -257,9 +257,9 @@ public class XiZangTelecomService {
 		           map.put("errorCode", "0000");
 		           map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
-		           map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");//魏艳
+		         //  map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");//魏艳
 				    //map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");//胡献根	
-		           //map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
+		          map = resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/message/telecomCallRecord"); 
 	  	         //===================推数据=====================   
 	  	             
 	  	             

@@ -44,7 +44,6 @@ public class TelecomLoadVerificationService {
             UnexpectedPage page = webClient.getPage(request1);
             String result = page.getWebResponse().getContentAsString();
             JSONObject jsonObject = JSONObject.fromObject(result);
-            System.out.println(jsonObject.get("netId"));
             Iterator keys = jsonObject.keys();
             while (keys.hasNext()) {
                 String results = keys.next().toString();
@@ -52,15 +51,17 @@ public class TelecomLoadVerificationService {
                     mapdata.put(results, jsonObject.get(results));
                 }
             }
-            System.out.println(page.getWebResponse().getContentAsString());
             map.put("errorCode", "0000");
             map.put("errorInfo", "操作成功");
             map.put("data", mapdata);
         } catch (Exception e) {
-            logger.warn(e.getMessage() + "mrlu");
-            e.printStackTrace();
+            logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
+        }finally {
+            if(webClient!=null){
+                webClient.close();
+            }
         }
         return map;
     }
@@ -83,8 +84,6 @@ public class TelecomLoadVerificationService {
             UnexpectedPage page = webClient.getPage(request1);
             String result = page.getWebResponse().getContentAsString();
 
-            System.out.println(page.getWebResponse().getContentAsString());
-
 //            if (result.contains("true")) {
 //                map.put("errorCode", "0001");
 //                map.put("errorInfo", "密码错误3次，请休息一会再来！");
@@ -95,10 +94,13 @@ public class TelecomLoadVerificationService {
             map.put("errorInfo", "操作成功");
             map.put("data", jsonObject);
         } catch (Exception e) {
-
-            logger.warn(e.getMessage() + "mrlu");
+            logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
+        }finally {
+            if(webClient!=null){
+                webClient.close();
+            }
         }
         return map;
     }
@@ -106,9 +108,8 @@ public class TelecomLoadVerificationService {
     public Map<String, String> loadGlobalDX(HttpServletRequest request, String userName, String servePwd) {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
+        WebClient webClient = new WebClientFactory().getWebClient();
         try {
-
-            WebClient webClient = new WebClientFactory().getWebClient();
             HtmlPage page = webClient.getPage("http://login.189.cn/web/login");
             page.getElementById("txtAccount").focus();
             page.getElementById("txtAccount").setAttribute("value", userName);
@@ -116,14 +117,14 @@ public class TelecomLoadVerificationService {
             page.getElementById("txtPassword").setAttribute("value", servePwd);
 
             String realPath = request.getServletContext().getRealPath("/imageFile");
-            File file=new File(realPath);
-            if(!file.exists()){
+            File file = new File(realPath);
+            if (!file.exists()) {
                 file.mkdirs();
             }
-            String fileName="loadImageCode"+System.currentTimeMillis()+".png";
+            String fileName = "loadImageCode" + System.currentTimeMillis() + ".png";
             HtmlImage imgCaptcha = (HtmlImage) page.getElementById("imgCaptcha");
-            BufferedImage read =   imgCaptcha.getImageReader().read(0);
-            ImageIO.write(read,"png",new File(file,fileName));
+            BufferedImage read = imgCaptcha.getImageReader().read(0);
+            ImageIO.write(read, "png", new File(file, fileName));
             Map<String, Object> imagev = MyCYDMDemo.Imagev(realPath + "/" + fileName);
             String code = imagev.get("strResult").toString();
             HtmlInput txtCaptcha = (HtmlInput) page.getElementById("txtCaptcha");
@@ -133,25 +134,25 @@ public class TelecomLoadVerificationService {
             Thread.sleep(2000);
             if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
-                if(divErr.contains("验证码")){
+                if (divErr.contains("验证码")) {
                     map.put("errorCode", "0008");
                     map.put("errorInfo", "服务器繁忙，请刷新后重试");
-                }else{
+                } else {
                     map.put("errorCode", "0007");
                     map.put("errorInfo", divErr);
                 }
+                webClient.close();
             } else {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "登陆成功");
                 session.setAttribute("GBmobile-webclient", webClient);
             }
-
         } catch (Exception e) {
+            webClient.close();
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage() + "mrlu");
+            logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
-            e.printStackTrace();
         }
         return map;
     }

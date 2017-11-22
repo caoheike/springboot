@@ -14,7 +14,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,8 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.reptile.util.Dates;
+import com.reptile.util.DriverUtil;
 import com.reptile.util.ImgUtil;
 import com.reptile.util.JsonUtil;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
@@ -54,76 +55,87 @@ public class JingDongService {
         
         ChromeDriver driver = new ChromeDriver();
         try {
-        	logger.warn("---------京东获取详情开始---------用户名：" + userName);
+        	logger.warn("---------京东--------详情获取开始---------用户名：" + userName);
 			//获取登录页面
 			driver.get("https://passport.jd.com/new/login.aspx");
-			Thread.sleep(2000);
-			//使用账户登录
-			driver.findElementByLinkText("账户登录").click();
-			//用户名
-			driver.findElementById("loginname").sendKeys(userName);
-			//密码
-			driver.findElementById("nloginpwd").sendKeys(passWord);
-			Thread.sleep(1000);
-			//页面上是否有验证码
-			WebElement authcode = driver.findElementById("o-authcode");
-			String display = authcode.getCssValue("display");
-			if(!display.equals("none")){
-				WebElement verifyImg = driver.findElementById("JD_Verification1");
-				//验证码图片路径
-				String path = request.getServletContext().getRealPath("/vecImageCode");
-				String code = ImgUtil.saveImg(verifyImg, driver, path, "jd", "png");
-				driver.findElementById("authcode").sendKeys(code);
-			}
-			//登录
-			driver.findElementByLinkText("登    录").click();
-			Thread.sleep(2000);
-			
-			//判断是否登录，若为true，则没有登录
-			if(elementFlag(driver, "class", "msg-error") && !driver.findElementByClassName("msg-error").getText().equals("")){
-				String text = driver.findElementByClassName("msg-error").getText();
-				if(text.contains("验证码")){
-					data.put("errorInfo", "系统繁忙，请稍后再试！");
-		            data.put("errorCode", "0002");
-				}else{
-					data.put("errorInfo", text);
-					data.put("errorCode", "0001");
+			//若出现账户登录
+			if(DriverUtil.waitByClassName("login-form", driver, 15)){
+				//使用账户登录
+				driver.findElementByLinkText("账户登录").click();
+				//用户名
+				driver.findElementById("loginname").sendKeys(userName);
+				//密码
+				driver.findElementById("nloginpwd").sendKeys(passWord);
+				//判断2秒内页面上是否有验证码
+				if(DriverUtil.VisibilityById("o-authcode", driver, 2)){
+					WebElement verifyImg = driver.findElementById("JD_Verification1");
+					//验证码图片路径
+					String path = request.getServletContext().getRealPath("/vecImageCode");
+					String code = ImgUtil.saveImg(verifyImg, driver, path, "jd", "png");
+					driver.findElementById("authcode").sendKeys(code);
 				}
-				logger.warn("---------京东获取详情登录失败---------用户名：" + userName);
+				//登录
+				driver.findElementByLinkText("登    录").click();
+				//判断msg-error是否会出现
+				if(DriverUtil.VisibilityByClassName("msg-error", driver, 2)){
+					
+					String text = driver.findElementByClassName("msg-error").getText().replace("\n", "。");
+					if(text.contains("验证码")){
+						data.put("errorInfo", "系统繁忙，请稍后再试！");
+						data.put("errorCode", "0002");
+					}else{
+						data.put("errorInfo", text);
+						data.put("errorCode", "0001");
+					}
+					logger.warn("---------京东---------登录失败---------用户名：" + userName);
+					
+				}else if(DriverUtil.waitByLinkText("我的订单", driver, 6)){
+					logger.warn("---------京东--------登录成功---------用户名：" + userName);
+					
+					String cookie = this.GetCookie(driver);
+					
+					Map<String,Object> map = new HashMap<String, Object>();
+					map.put("purchaseRecord", this.getOrderInfo(cookie)); //购买记录
+					map.put("shippingAddress", this.getAddressInfo(cookie)); //收获地址
+					map.put("smallWhiteGrade", this.getScoreInfo(cookie)); //小白信用
+					map.put("cardNumber", idCard); //身份证
+					
+					Map<String, Object> baiTiaoInfo = this.getBaiTiaoInfo(cookie); 
+					map.put("whiteBarDedt", baiTiaoInfo.get("whiteBarDedt")); //白条额度
+					map.put("whiteBarAmount", baiTiaoInfo.get("whiteBarAmount"));//白条欠款
+					
+					Map<String, Object> jinKuInfo = this.getJinKuInfo(cookie); 
+					map.put("yesterdayEarnings", jinKuInfo.get("yesterdayEarnings")); //今日收益
+					map.put("smallGoldAmount", jinKuInfo.get("smallGoldAmount"));//小金库额度
+					
+					data.put("data", map);
+					logger.warn("---------京东--------详情获取成功---------用户名：" + userName);
+					//数据推送
+					data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/savings/eastOfBeijing");
+					logger.warn("---------京东--------推送状态为---------" + data.toString());
+					//状态推送
+					if( map !=null && "0000".equals(map.get("ResultCode"))){
+						PushState.state(idCard, "eastOfBeijing", 300);
+	                    map.put("errorInfo","推送成功");
+	                    map.put("errorCode","0000");
+	                }else{
+                	    PushState.state(idCard, "eastOfBeijing", 200);
+	                    map.put("errorInfo","推送失败");
+	                    map.put("errorCode","0001");
+	                }
+					
+				}else{
+					throw new Exception();
+				}
 			}else{
-				logger.warn("---------京东获取详情登录成功---------用户名：" + userName);
-				//登录成功
-				driver.findElementByLinkText("我的订单").click();
-				Thread.sleep(1000);
-				String cookie = this.GetCookie(driver);
-				
-				Map<String,Object> map = new HashMap<String, Object>();
-				map.put("purchaseRecord", this.getOrderInfo(cookie)); //购买记录
-				map.put("shippingAddress", this.getAddressInfo(cookie)); //收获地址
-				map.put("smallWhiteGrade", this.getScoreInfo(cookie)); //小白信用
-				map.put("cardNumber", idCard); //身份证
-				
-				Map<String, Object> baiTiaoInfo = this.getBaiTiaoInfo(cookie); 
-				map.put("whiteBarDedt", baiTiaoInfo.get("whiteBarDedt")); //白条额度
-				map.put("whiteBarAmount", baiTiaoInfo.get("whiteBarAmount"));//白条欠款
-				
-				Map<String, Object> jinKuInfo = this.getJinKuInfo(cookie); 
-				map.put("yesterdayEarnings", jinKuInfo.get("yesterdayEarnings")); //今日收益
-				map.put("smallGoldAmount", jinKuInfo.get("smallGoldAmount"));//小金库额度
-				
-				data.put("data", map);
-				logger.warn("---------京东获取详情成功---------用户名：" + userName);
-				 //数据推送
-				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/savings/eastOfBeijing");
+				throw new Exception();
 			}
 		} catch (Exception e) {
-			logger.warn("京东获取详情失败！",e);
+			logger.warn("-----------京东获取详情失败！--------------",e);
 			data.put("errorInfo", "系统繁忙，请稍后再试！");
             data.put("errorCode", "0002");
 		}finally{
-			if(driver != null){
-				driver.quit();
-			}
+			DriverUtil.close(driver);
 		}
 		return data;
 	}
@@ -397,7 +409,7 @@ public class JingDongService {
 	 * @param eleName
 	 * @return
 	 */
-	public static Boolean elementFlag(WebDriver driver,String type,String eleName){
+	/*public static Boolean elementFlag(WebDriver driver,String type,String eleName){
 		try {
 			if(type.equals("id")){
 				driver.findElement(By.id(eleName));
@@ -408,7 +420,7 @@ public class JingDongService {
 			return false;
 		}
 		return true;
-	}
+	}*/
 	
 	
 	/**

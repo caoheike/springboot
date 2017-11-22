@@ -46,7 +46,8 @@ public class CreditService {
     private final static String ApplyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
     private final static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
     private final static String verifyCodeImageUrl = "https://ipcrs.pbccrc.org.cn/imgrc.do?a=" + System.currentTimeMillis();
-    private Logger logger= LoggerFactory.getLogger(CreditService.class);
+    private Logger logger = LoggerFactory.getLogger(CreditService.class);
+
     public Map<String, Object> getVerifyImage(String type, HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
@@ -59,24 +60,8 @@ public class CreditService {
                 file.mkdir();
             }
             String fileName = System.currentTimeMillis() + ".jpg";
-//            if(sessionWebClient!=null && sessionLoginPage!=null && (type==null || !type.equals("reg"))){
-//                final WebClient webClient = (WebClient)sessionWebClient;
-//                UnexpectedPage verifyCodeImagePage;
-//                try{
-//                    verifyCodeImagePage = webClient.getPage(verifyCodeImageUrl);
-//                }catch(Exception e){
-//                    verifyCodeImagePage=null;
-//                }
-//                if(verifyCodeImagePage==null){
-//                    data.put("ResultInfo","服务器繁忙,请重新获取验证码!");
-//                    data.put("ResultCode","0001");
-//                    map.put("data",data);
-//                    return map;
-//                }
-//                BufferedImage bi= ImageIO.read(verifyCodeImagePage.getInputStream());
-//                ImageIO.write(bi, "JPG", new File(file,fileName));
-//            }else{
-            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
+//            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
+            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
             webClient.setJavaScriptTimeout(20000);
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
             webClient.getOptions().setJavaScriptEnabled(true); // 启用JS解释器，默认为true
@@ -90,15 +75,7 @@ public class CreditService {
             webClient.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8");
             HtmlPage loginPage = null;
 
-            try {
-                loginPage = webClient.getPage(loginUrl);
-            } catch (Exception e) {
-                Scheduler.sendGet(Scheduler.getIp);
-                logger.warn("mrlu  征信前往登录页面",e);
-                data.put("ResultInfo", "系统繁忙，请稍后再试！");
-                data.put("ResultCode", "0002");
-                return data;
-            }
+            loginPage = webClient.getPage(loginUrl);
 
             if (type != null && type.equals("reg")) {
                 HtmlForm userForm = loginPage.getFormByName("userForm");
@@ -114,15 +91,16 @@ public class CreditService {
                 request.getSession().setAttribute("sessionLoginPage-ZX", loginPage);
             }
             request.getSession().setAttribute("sessionWebClient-ZX", webClient);
-//            }
             data.put("imageUrl", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/verifyImages/" + fileName);
             data.put("ResultInfo", "查询成功");
             data.put("ResultCode", "0000");
-        } catch (IOException e) {
+        } catch (Exception e) {
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage()+"  获取征信验证码   mrlu",e);
+            logger.warn(e.getMessage() + "  获取征信验证码   mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
+            map.put("errorCode","0001");
+            map.put("errorInfo","系统繁忙，请稍后再试！");
         }
         map.put("data", data);
         return map;
@@ -145,7 +123,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 征信发送手机验证码    mrlu",e);
+            logger.warn(e.getMessage() + " 征信发送手机验证码    mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -183,7 +161,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 征信发送注册短信验证码    mrlu",e);
+            logger.warn(e.getMessage() + " 征信发送注册短信验证码    mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -237,7 +215,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 征信注册补充信息    mrlu",e);
+            logger.warn(e.getMessage() + " 征信注册补充信息    mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -281,10 +259,8 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 征信预注册    mrlu",e);
-            e.printStackTrace();
+            logger.warn(e.getMessage() + " 征信预注册    mrlu", e);
             data.put("ResultInfo", "验证码错误，请重新输入！");
-//            data.put("ResultInfo",e.getMessage()==null?e:e.getMessage());
             data.put("ResultCode", "0002");
         }
         map.put("data", data);
@@ -328,7 +304,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 提交信息    mrlu",e);
+            logger.warn(e.getMessage() + " 提交信息    mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
@@ -358,12 +334,12 @@ public class CreditService {
                     form.getInputByName("loginname").setValueAttribute(bean.getUserName());
                 } catch (Exception e) {
                     loginPage.cleanUp();
-                    webClient.close();
                     request.getSession().setAttribute("sessionWebClient-ZX", null);
                     request.getSession().setAttribute("sessionLoginPage-ZX", null);
                     data.put("ResultInfo", "服务器繁忙或登录超时,请重新登录!");
                     data.put("ResultCode", "0002");
                     map.put("data", data);
+                    webClient.close();
                     return map;
                 }
                 form.getInputByName("password").setValueAttribute(bean.getUserPass());
@@ -376,6 +352,7 @@ public class CreditService {
                     data.put("ResultInfo", error.asText().trim());
                     data.put("ResultCode", "0001");
                     map.put("data", data);
+                    webClient.close();
                     return map;
                 }
 
@@ -388,6 +365,7 @@ public class CreditService {
                     data.put("ResultInfo", "信用已生成，请直接查询信用。");
                     data.put("ResultCode", "0003");
                     map.put("data", data);
+                    webClient.close();
                     return map;
                 }
                 List<HtmlCheckBoxInput> list = applyPage.getByXPath("//input[@type='checkbox']");
@@ -404,7 +382,7 @@ public class CreditService {
                     }
                     data.put("ResultCode", "0004");
                     map.put("data", data);
-                    System.out.println("征信登录返回数据-----" + map.toString());
+                    webClient.close();
                     return map;
                 }
                 if (resultStr.indexOf("手机动态码") != -1) {
@@ -413,10 +391,11 @@ public class CreditService {
                     data.put("type", "phone");
                 } else {
                     DomElement radiobutton3 = applyPage.getElementById("radiobutton3");
-                    if(radiobutton3==null){
+                    if (radiobutton3 == null) {
                         data.put("ResultInfo", "对不起，系统验证失败，请在官网进行相关验证后再来认证征信报告。");
                         data.put("ResultCode", "0006");
                         map.put("data", data);
+                        webClient.close();
                         return map;
                     }
                     applyPage.getElementById("radiobutton3").click();
@@ -455,7 +434,7 @@ public class CreditService {
                 throw new Exception("服务器繁忙，请刷新页面后重试!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+"  登录征信   mrlu",e);
+            logger.warn(e.getMessage() + "  登录征信   mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -486,7 +465,6 @@ public class CreditService {
                     data.put("ResultInfo", "您已提交申请，验证结果会在24小时内发送到您手机！");
                     data.put("ResultCode", "0000");
                     map.put("data", data);
-                    System.out.println("问题提交返回数据---" + map.toString());
                     return map;
                 }
                 applyPage = nextstep.click();
@@ -520,8 +498,7 @@ public class CreditService {
 //                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
                     }
                 } catch (Exception e) {
-                    logger.warn(e.getMessage()+" 获取征信问题    mrlu",e);
-                    System.out.println("征信问题及答案-推送失败!" + e.getMessage());
+                    logger.warn(e.getMessage() + " 获取征信问题    mrlu", e);
                 }
                 applyPage.cleanUp();
                 questionPage.cleanUp();
@@ -531,7 +508,7 @@ public class CreditService {
                 throw new Exception("您已超时，请重新登录!");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 征信    mrlu",e);
+            logger.warn(e.getMessage() + " 征信    mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");
         }
@@ -540,7 +517,7 @@ public class CreditService {
     }
 
     //查询信用报告
-    public Map<String, Object> queryCredit(HttpServletRequest request,String userId, String verifyCode,String UUID) {
+    public Map<String, Object> queryCredit(HttpServletRequest request, String userId, String verifyCode, String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
         try {
@@ -552,7 +529,8 @@ public class CreditService {
                 //判断3个选项中个人信用报告是否可选
                 NamedNodeMap radiobutton1 = queryPage.getElementById("radiobutton1").getAttributes();
                 Node aClass = radiobutton1.getNamedItem("disabled");
-                if(aClass!=null){
+                if (aClass != null) {
+                    webClient.close();
                     map.put("ResultInfo", "信用报告未生成！");
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", "信用报告未生成！");
@@ -598,20 +576,22 @@ public class CreditService {
                         Resttemplate temp = new Resttemplate();
                         map = temp.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port + "/HSDC/person/creditInvestigation");
 
-                        if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
-                            map.put("errorInfo","查询成功");
-                            map.put("errorCode","0000");
-                        }else{
-                            map.put("errorInfo",map.get("ResultInfo"));
-                            map.put("errorCode","0001");
+                        if (map != null && "0000".equals(map.get("ResultCode").toString())) {
+                            map.put("errorInfo", "查询成功");
+                            map.put("errorCode", "0000");
+
+                        } else {
+                            map.put("errorInfo", map.get("ResultInfo"));
+                            map.put("errorCode", "0001");
                         }
+                        webClient.close();
                     } catch (Exception e) {
-                        logger.warn(e.getMessage()+" 查询征信报告推送异常    mrlu",e);
-                        System.out.println("征信报告推送失败!" + e.getMessage());
+                        logger.warn(e.getMessage() + " 查询征信报告推送异常    mrlu", e);
                         map.put("ResultInfo", "系统繁忙，请稍后再试！");
                         map.put("ResultCode", "0002");
                         map.put("errorInfo", "系统繁忙，请稍后再试！");
                         map.put("errorCode", "0002");
+                        webClient.close();
                     }
                 }
             } else {
@@ -621,8 +601,7 @@ public class CreditService {
                 map.put("errorCode", "0002");
             }
         } catch (Exception e) {
-            logger.warn(e.getMessage()+" 查询征信报告    mrlu",e);
-            e.printStackTrace();
+            logger.warn(e.getMessage() + " 查询征信报告    mrlu", e);
             map.put("ResultInfo", "系统繁忙，请稍后再试！");
             map.put("ResultCode", "0002");
             map.put("errorInfo", "系统繁忙，请稍后再试！");

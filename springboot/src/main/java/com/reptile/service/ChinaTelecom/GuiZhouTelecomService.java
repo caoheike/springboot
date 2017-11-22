@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import com.reptile.util.application;
 
 @Service
 public class GuiZhouTelecomService {
+	 private Logger logger= LoggerFactory.getLogger(GuiZhouTelecomService.class);
 	@Autowired
 	private application application;
 	/**
@@ -31,6 +34,7 @@ public class GuiZhouTelecomService {
 	     Object attribute = request.getSession().getAttribute("GBmobile-webclient");//从session中获得webClient
 	     WebClient webClient=(WebClient)attribute; 
 	     if(webClient==null){
+	    	 logger.warn("贵州电信","请先登录!");
 	    	 map.put("errorCode", "0001");
 			 map.put("errorInfo", "请先登录!");
 			 return map;
@@ -46,14 +50,17 @@ public class GuiZhouTelecomService {
 	    	 HtmlButtonInput button= (HtmlButtonInput) ifrPage.getElementById("getcheckcode");
 	    	 button.click();//发送验证码
 	    	 Thread.sleep(500);
-	    	 if(button.getAttribute("value").contains("发送次数过多")){	
+	    	 if(button.getAttribute("value").contains("发送次数过多")){
+	    		 logger.warn("贵州电信","发送次数过多，请稍后重试");
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "发送次数过多，请稍后重试");
 				 return map;
 			   }else if(button.getAttribute("value").contains("秒后可重新获取")){
+				   logger.warn("贵州电信","验证码已发送!");
 	    		 map.put("errorCode", "0000");
 	             map.put("errorInfo", "验证码已发送!");
 			 }else{
+				 logger.warn("贵州电信","网络连接异常");
 				 map.put("errorCode", "0001");
 		         map.put("errorInfo", "网络连接异常");
 			 }
@@ -62,6 +69,7 @@ public class GuiZhouTelecomService {
 			
 			
 		} catch (Exception e) {
+			logger.warn("贵州电信",e);
 			map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常");
 		}
@@ -80,6 +88,7 @@ public class GuiZhouTelecomService {
 	        WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
 	        if(webClient==null){
 	        	PushSocket.push(map, UUID, "0001");
+	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
 				 return map;
@@ -91,7 +100,7 @@ public class GuiZhouTelecomService {
 			ifrPage.getElementById("checkcode").setAttribute("value", code);//输入验证码
 			List<DomElement>  radio=ifrPage.getElementsByName("ACCTMONTH");//获取月份复选框//System.out.println(radio.get(0).asXml());
 			HtmlButtonInput button= ifrPage.getElementByName("input");
-			
+			logger.warn("贵州电信数据获取中...");
              for(int i=0;i<radio.size();i++){//六个月数据
             	 Map<String, Object> dmap = new HashMap<String, Object>();
         	 try {
@@ -119,17 +128,18 @@ public class GuiZhouTelecomService {
 		      	    dataList.add(dmap);
             	 }
 			} catch (Exception e) {
+				logger.warn("贵州电信",e);
 				PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
-				e.printStackTrace();
+				//e.printStackTrace();
 				return map;
 			}
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.warn("贵州电信",e);
+						//e.printStackTrace();
 					}
        }    
              PushSocket.push(map, UUID, "0000");
@@ -141,6 +151,7 @@ public class GuiZhouTelecomService {
            map.put("flag", "10");
            map.put("errorCode", "0000");
            map.put("errorInfo", "查询成功");
+           logger.warn("贵州电信数据获取成功");
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
            
@@ -148,6 +159,7 @@ public class GuiZhouTelecomService {
            
            System.out.println(map);
            if(map.get("errorCode").equals("0003")){
+        	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
            }

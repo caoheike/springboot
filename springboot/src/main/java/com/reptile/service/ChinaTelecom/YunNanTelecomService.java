@@ -40,7 +40,6 @@ public class YunNanTelecomService {
                 Thread.sleep(1000);
                 HtmlPage page1 = webClient.getPage("http://yn.189.cn/service/jt/bill/qry_mainjt.jsp?SERV_NO=SHQD1&fastcode=01941229&cityCode=yn");
                 Thread.sleep(2000);
-                System.out.println(page1.asXml());
 
                 HtmlDivision contentInfo = (HtmlDivision) page1.getElementById("contentInfo");
                 HtmlPage motoText = null;
@@ -51,19 +50,14 @@ public class YunNanTelecomService {
                         if (onclick.contains(phoneNumber)) {
                             HtmlPage page = input.get(i).click();
                             Thread.sleep(2000);
-                            System.out.println(page.asXml());
                             motoText = (HtmlPage) page.executeJavaScript("postValidCode()").getNewPage();
                             Thread.sleep(2000);
-                            System.out.println(motoText.asXml());
                         }
                     }
                 } else {
                     motoText = (HtmlPage) page1.executeJavaScript("postValidCode()").getNewPage();
                     Thread.sleep(2000);
                 }
-
-
-                System.out.println(motoText.asXml());
 
                 String popup = "";
                 if (motoText.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().size() == 3) {
@@ -84,13 +78,11 @@ public class YunNanTelecomService {
                 HtmlAnchor popup1 = (HtmlAnchor) motoText.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().get(2).getChildNodes().get(0);
                 HtmlPage click1 = popup1.click();
                 Thread.sleep(1000);
-                System.out.println(click1.asXml());
 
                 session.setAttribute("yunNanWebClient", webClient);
                 session.setAttribute("yunNanHtmlPage", click1);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南电信发送手机验证码  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
             }
@@ -120,7 +112,6 @@ public class YunNanTelecomService {
 
                 HtmlPage resultPage = (HtmlPage) htmlPage.executeJavaScript("doPwValid()").getNewPage();
                 Thread.sleep(4000);
-                System.out.println(resultPage.asXml());
 
                 String areaCode = resultPage.getElementByName("AREA_CODE").getAttribute("value");
 
@@ -157,7 +148,6 @@ public class YunNanTelecomService {
                     webRequest.setAdditionalHeader("Referer", "http://yn.189.cn/service/jt/bill/actionjt/ifr_bill_detailslist_em_new.jsp");
                     HtmlPage page2 = webClient.getPage(webRequest);
                     Thread.sleep(2000);
-                    System.out.println(page2.asXml());
 
                     dataList.add(page2.asXml());
                     try {
@@ -172,7 +162,6 @@ public class YunNanTelecomService {
                         }
                     } catch (Exception e) {
                         logger.warn(e.getMessage()+"  云南循环获取详单出错  mrlu",e);
-                        e.printStackTrace();
                     }
                     calendar.add(Calendar.MONTH, -1);
                 }
@@ -182,14 +171,11 @@ public class YunNanTelecomService {
                 map.put("UserIphone", phoneNumber);
                 map.put("longitude", longitude);//经度
                 map.put("latitude", latitude);//纬度
+                webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
-
-                System.out.println(dataList.size());
-                System.out.println(dataList.toString());
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
             }
@@ -214,7 +200,6 @@ public class YunNanTelecomService {
         webRequest.setAdditionalHeader("Referer", "http://yn.189.cn/service/jt/bill/actionjt/ifr_bill_detailslist_em_new.jsp");
         HtmlPage page2 = webClient.getPage(webRequest);
         Thread.sleep(Math.round(3000));
-        System.out.println(page2.asXml());
 
         dataList.add(page2.asXml());
     }

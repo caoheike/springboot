@@ -26,7 +26,7 @@ import java.util.*;
 
 @Service
 public class ChengduTelecomService {
-    private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
+    private Logger logger = LoggerFactory.getLogger(ChengduTelecomService.class);
 
 //    public Map<String, Object> getImageCode(HttpServletRequest request) {
 //        Map<String, Object> map = new HashMap<String, Object>();
@@ -62,8 +62,6 @@ public class ChengduTelecomService {
 //    }
 
 
-
-
     public Map<String, String> sendPhoneCode(HttpServletRequest request) {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
@@ -80,7 +78,6 @@ public class ChengduTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/v6/xdcx?fastcode=20000326&cityCode=sc"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-
                 if (!page1.asText().contains("手机验证码")) {
                     map.put("errorCode", "0007");
                     map.put("errorInfo", "操作异常！");
@@ -90,7 +87,6 @@ public class ChengduTelecomService {
                 String endTime = page1.getElementById("ywblendtime").getAttribute("value");
                 String sendPhone = "http://sc.189.cn/service/billDetail/sendSMSAjax.jsp?dateTime1=" + beginTime + "&dateTime2=" + endTime;
                 UnexpectedPage page = webClient.getPage(sendPhone);
-                System.out.println(page.getWebResponse().getContentAsString());
                 String result = page.getWebResponse().getContentAsString();
                 if (!result.contains("成功")) {
                     JSONObject jsonObject = JSONObject.fromObject(result);
@@ -105,8 +101,7 @@ public class ChengduTelecomService {
                 }
 
             } catch (Exception e) {
-                logger.warn("成都发送手机验证码mrlu",e);
-                e.printStackTrace();
+                logger.warn("成都发送手机验证码mrlu", e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -115,8 +110,8 @@ public class ChengduTelecomService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request,String phoneNumber,String phoneCode,
-                                            String servePwd,String longitude,String latitude,String UUID) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String phoneCode,
+                                            String servePwd, String longitude, String latitude, String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List list = new ArrayList();
@@ -124,13 +119,12 @@ public class ChengduTelecomService {
         Object attribute = session.getAttribute("SCmobile-webclient2");
 
         if (attribute == null) {
-           PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
             return map;
         } else {
+            WebClient webClient = (WebClient) attribute;
             try {
-                WebClient webClient = (WebClient) attribute;
                 String beginTime = session.getAttribute("SCmobile-benginTime").toString();
                 String endTime = session.getAttribute("SCmobile-EndTime").toString();
                 byte[] bytes = Base64.encodeBase64(phoneCode.getBytes());
@@ -140,17 +134,16 @@ public class ChengduTelecomService {
                 String result = page.asText();
                 JSONObject jsonObject = JSONObject.fromObject(result);
 
-                String record=null;
+                String record = null;
                 if (jsonObject.get("retCode") == null || !"0".equals(jsonObject.get("retCode").toString())) {
-                    if(!result.contains("没有查询到相应记录")){
-                    	 PushSocket.push(map, UUID, "0001");
+                    if (!result.contains("没有查询到相应记录")) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         return map;
                     }
-                }else{
-                	 PushSocket.push(map, UUID, "0000");
-                    record= jsonObject.get("json").toString();
+                } else {
+                    PushSocket.push(map, UUID, "0000");
+                    record = jsonObject.get("json").toString();
                     list.add(record);
                 }
 
@@ -174,7 +167,7 @@ public class ChengduTelecomService {
                     getMes = "http://sc.189.cn/service/billDetail/detailQuery.jsp?startTime=" + startTime + "&endTime=" + lastsTime + "&qryType=21&randomCode=" + secretCode;
                     page = webClient.getPage(getMes);
                     result = page.asText();
-                    if(!result.contains("没有查询到相应记录")){
+                    if (!result.contains("没有查询到相应记录")) {
                         jsonObject = JSONObject.fromObject(result);
                         record = jsonObject.get("json").toString();
                         list.add(record);
@@ -184,14 +177,13 @@ public class ChengduTelecomService {
                 dataMap.put("UserPassword", servePwd);
                 dataMap.put("longitude", longitude);//经度
                 dataMap.put("latitude", latitude);//纬度
-                dataMap.put("flag","1");
+                dataMap.put("flag", "1");
                 dataMap.put("data", list);
-                Resttemplate resttemplate=new Resttemplate();
-                map = resttemplate.SendMessage(dataMap, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
-                System.out.println(list);
+                webClient.close();
+                Resttemplate resttemplate = new Resttemplate();
+                map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
-                logger.warn("成都获取详情mrlu",e);
-                e.printStackTrace();
+                logger.warn("成都获取详情mrlu", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
             }

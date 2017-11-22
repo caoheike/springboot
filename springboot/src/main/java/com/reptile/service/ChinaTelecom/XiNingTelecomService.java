@@ -38,13 +38,11 @@ public class XiNingTelecomService {
             map.put("errorInfo", "操作异常!");
             return map;
         } else {
-        	PushSocket.push(map, UUID, "0001");
+            WebClient webClient = (WebClient) attribute;
             try {
-                WebClient webClient = (WebClient) attribute;
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10029&toStUrl=http://qh.189.cn/service/bill/fee.action?type=ticket&fastcode=00920926&cityCode=qh"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-                System.out.println(page1.asXml());
 
 
 //                WebRequest webRequest = new WebRequest(new URL("http://qh.189.cn/service/bill/feeDetailrecordList.action"));
@@ -70,12 +68,10 @@ public class XiNingTelecomService {
                 Calendar calendar = Calendar.getInstance();
                 Date time = calendar.getTime();
                 String beginTime = simple.format(time); //当前时间
-                System.out.println(beginTime);
 
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 Date endTimes = calendar.getTime();
                 String endTime = simple.format(endTimes); //月初时间
-                System.out.println(endTime);
 
                 try {
                     for (int j = 0; j < 3; j++) {
@@ -110,16 +106,12 @@ public class XiNingTelecomService {
                         }
                         calendar.add(Calendar.DAY_OF_MONTH, -1);
                         beginTime = simple.format(calendar.getTime());
-                        System.out.println(simple.format(calendar.getTime()));
-
                         calendar.set(Calendar.DAY_OF_MONTH, 1);
                         endTime = simple.format(calendar.getTime());
-                        System.out.println(simple.format(calendar.getTime()));
                     }
                 } catch (Exception e) {
                     logger.warn(e.getMessage()+"  青海获取过程中ip被封  mrlu",e);
                     Scheduler.sendGet(Scheduler.getIp);
-                    e.printStackTrace();
                 }
                 map.put("data", dataList);
                 map.put("flag", "2");
@@ -130,10 +122,13 @@ public class XiNingTelecomService {
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
             } catch (Exception e) {
-                e.printStackTrace();
                 logger.warn(e.getMessage()+"  青海获取详单  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+            }finally {
+                if(webClient!=null){
+                    webClient.close();
+                }
             }
         }
         return map;
