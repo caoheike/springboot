@@ -1,29 +1,6 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
@@ -33,13 +10,23 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class KunMingFundService {
 	  private Logger logger= LoggerFactory.getLogger(KunMingFundService.class);
-	  @Autowired
-	  private application applications; 
 	  /**
 	   * 获取图形验证码
 	   * */
@@ -296,7 +283,6 @@ public class KunMingFundService {
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
 	              map=resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");//张浩敏
-		          // map=resttemplate.SendMessage(map,applications.getSendip()+ "/HSDC/person/accumulationFund");//张浩敏
 	              if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 	                	 PushState.state(idCardNum, "accumulationFund", 300);
 	                    map.put("errorInfo","推送成功");

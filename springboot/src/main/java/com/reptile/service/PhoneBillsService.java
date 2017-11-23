@@ -6,13 +6,9 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
-import com.reptile.util.talkFrame;
-
 import net.sf.json.JSONObject;
-
 import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -40,7 +34,6 @@ public class PhoneBillsService {
         HttpSession session = request.getSession();
 
         WebClient webClient = new WebClientFactory().getWebClient();
-//        WebClient webClient=new WebClient(BrowserVersion.CHROME);
         webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setTimeout(90000);

@@ -1,39 +1,27 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByXPath;
-import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class LiuZhouAccumulationfundService {
@@ -128,7 +116,7 @@ public class LiuZhouAccumulationfundService {
 					lz.put("userId", idCardNum);
 					lz.put("data", data);	
 					Resttemplate resttemplate = new Resttemplate();
-					map=resttemplate.SendMessage(lz,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+					map=resttemplate.SendMessage(lz,ConstantInterface.port+"/HSDC/person/accumulationFund");
 					  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
 			                map.put("errorInfo","查询成功");

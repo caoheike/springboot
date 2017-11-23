@@ -1,69 +1,41 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.gargoylesoftware.htmlunit.UnexpectedPage;
+import com.reptile.model.NewAccumulation;
+import com.reptile.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.reptile.model.NewAccumulation;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.GetMonth;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class QinZhouFundService {
 	 private Logger logger= LoggerFactory.getLogger(QinZhouFundService.class);
-	  @Autowired
-	  private application applications;
 	  
 	  public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 
 		  Map<String,Object> dataMap=new HashMap<String, Object>();
 
 			Map<String, Object> map = new HashMap<String, Object>();
-			 List<Object> dataList = new ArrayList<Object>();
-			 HttpSession session = request.getSession();
 			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
-			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
+
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");
 			WebDriver driver = new ChromeDriver(options);
@@ -204,7 +176,6 @@ public class QinZhouFundService {
 				      map.put("cityName", "钦州市");
 				      map.put("data", dataMap);
 				      System.out.println(new JSONArray().fromObject(map));
-				     // map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
 				      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
 				      driver.findElements(By.className("hover_img")).get(2).click();//关闭网页
 			     		try {

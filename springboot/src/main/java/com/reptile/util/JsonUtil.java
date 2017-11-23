@@ -1,10 +1,9 @@
 package com.reptile.util;
 
-import java.util.Iterator;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.util.Iterator;
 
 public class JsonUtil {
 	

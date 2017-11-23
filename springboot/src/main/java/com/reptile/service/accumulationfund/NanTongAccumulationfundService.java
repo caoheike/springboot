@@ -1,25 +1,5 @@
 package com.reptile.service.accumulationfund;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -27,20 +7,25 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.Dates;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import com.reptile.util.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class NanTongAccumulationfundService {
 
     private Logger logger = LoggerFactory.getLogger(NanTongAccumulationfundService.class);
-    
-	@Autowired
-	private application application;
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
@@ -105,7 +90,6 @@ public class NanTongAccumulationfundService {
                 map.put("cityName", "南通");
                 map.put("insertTime", Dates.currentTime());
                 //数据推送
-                //map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
                 map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
 
     		    if(map!=null&&"0000".equals(map.get("errorCode").toString())){

@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class ConstructionService {
 	@Autowired
 	  private application applications;
-	  private PushState PushState;
 	  private Logger logger= LoggerFactory.getLogger(ConstructionService.class);
 	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass,String UUID){
 		  Map<String,Object>map=new HashMap<String,Object>();

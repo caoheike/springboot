@@ -9,14 +9,12 @@ import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;

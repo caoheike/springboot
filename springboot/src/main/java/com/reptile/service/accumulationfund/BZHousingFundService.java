@@ -1,47 +1,27 @@
 package com.reptile.service.accumulationfund;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
-
 @Service
 public class BZHousingFundService {
 	
 	private Logger logger = LoggerFactory.getLogger(BZHousingFundService.class);
-	
-	@Autowired
-	private application application;
-	
+
 	/**
 	 * 登录并获取详情
 	 * @param request
@@ -136,7 +116,6 @@ public class BZHousingFundService {
 		    data.put("city", cityCode);
 		    data.put("userId", idCardNum);
 		    //数据推送
-		    //data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
 		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
 		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
            	 PushState.state(idCardNum, "accumulationFund", 300);

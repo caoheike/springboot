@@ -1,15 +1,4 @@
 package com.reptile.service.ChinaTelecom;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -18,6 +7,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class GuiZhouTelecomService {
@@ -155,9 +154,6 @@ public class GuiZhouTelecomService {
            webClient.close();
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
-           
-          // map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord"); 
-           
            System.out.println(map);
            if(map.get("errorCode").equals("0003")){
         	   logger.warn("贵州电信查询失败，稍后再试！！");

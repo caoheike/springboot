@@ -2,22 +2,17 @@ package com.reptile.service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.Option;
 import com.reptile.model.Question;
-import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +22,8 @@ import org.w3c.dom.Node;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-
-
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +37,7 @@ public class CreditService {
     private final static String loginUrl = "https://ipcrs.pbccrc.org.cn/page/login/loginreg.jsp";
     private final static String ApplyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
     private final static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
-    private final static String verifyCodeImageUrl = "https://ipcrs.pbccrc.org.cn/imgrc.do?a=" + System.currentTimeMillis();
+
     private Logger logger = LoggerFactory.getLogger(CreditService.class);
 
     public Map<String, Object> getVerifyImage(String type, HttpServletRequest request) {

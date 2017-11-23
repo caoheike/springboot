@@ -1,40 +1,21 @@
 package com.reptile.service.accumulationfund;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
 @Service
 public class LYHousingFundService {
 	private Logger logger = LoggerFactory.getLogger(LYHousingFundService.class);
-	
-	@Autowired
-	private application application;
-	
 	/**
 	 * 临沂公积金登录并获取详情
 	 * @param request
@@ -143,7 +124,6 @@ public class LYHousingFundService {
 	        }
 	        
 	        //数据推送
-		   // data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
 		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
 		   
 		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){

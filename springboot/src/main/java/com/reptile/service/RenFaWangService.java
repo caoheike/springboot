@@ -1,5 +1,22 @@
 package com.reptile.service;
 
+import com.gargoylesoftware.htmlunit.TextPage;
+import com.gargoylesoftware.htmlunit.UnexpectedPage;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.springboot.Scheduler;
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,36 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.reptile.springboot.Scheduler;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.reptile.util.CrawlerUtil;
-import com.reptile.util.Resttemplate;
 
 @Service
 public class RenFaWangService {
@@ -55,8 +42,6 @@ public class RenFaWangService {
 	public Map<String, Object> getImageCode(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		Map<String, Object> mapData = new HashMap<String, Object>();
-		Map<String, Object> infoMap = new HashMap<String, Object>();
-
 		WebClient webClient = new WebClientFactory().getWebClient();
 
 		String verifyImages = request.getSession().getServletContext()

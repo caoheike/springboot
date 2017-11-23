@@ -1,28 +1,14 @@
 package com.reptile.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -32,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -249,7 +236,7 @@ public class CCBService {
 		                    baseMes.put("openBranch", openBranch);
 		                    baseMes.put("openTime", openTime);
 		                	Resttemplate resttemplate = new Resttemplate();
-		                    map=resttemplate.SendMessage(ccb,"http://192.168.3.16:8089/HSDC/savings/authentication");
+		                    map=resttemplate.SendMessage(ccb,ConstantInterface.port+"/HSDC/savings/authentication");
 		                    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 						    	PushState.state(IDNumber, "savings",300);
 				                map.put("errorInfo","查询成功");

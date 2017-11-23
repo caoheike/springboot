@@ -4,24 +4,16 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.UnhandledAlertException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;

@@ -1,7 +1,6 @@
 package com.reptile.service;
 
 import com.reptile.util.*;
-
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -26,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 public class CEBService {
 	 @Autowired
 	  private application applications;
-	  private PushState PushState;
 	  private Logger logger= LoggerFactory.getLogger(CEBService.class);
 	  private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址

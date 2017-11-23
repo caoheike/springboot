@@ -1,41 +1,27 @@
 package com.reptile.service.socialSecurity;
 
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.Dates;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import com.reptile.util.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class NanTongSocialSecurityService {
     private Logger logger = LoggerFactory.getLogger(NanTongSocialSecurityService.class);
 
-    @Autowired
-    private application application;
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String socialCard, String passWord, String cityCode, String idCardNum) {
         Map<String, Object> map = new HashMap<>();
@@ -93,7 +79,6 @@ public class NanTongSocialSecurityService {
             map.put("userId", idCardNum);
             map.put("createTime", Dates.currentTime());
             map.put("data", dataMap);
-            //	map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/socialSecurity");
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/person/socialSecurity");
             if (map != null && "0000".equals(map.get("errorCode").toString())) {
                 PushState.state(idCardNum, "socialSecurity", 300);

@@ -9,9 +9,7 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
-
 import net.sf.json.JSONArray;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;

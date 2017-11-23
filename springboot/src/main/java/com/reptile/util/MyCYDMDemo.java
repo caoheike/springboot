@@ -1,11 +1,10 @@
 package com.reptile.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyCYDMDemo {
 

@@ -1,19 +1,4 @@
 package com.reptile.service.ChinaTelecom;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.lang.Object;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -21,11 +6,19 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.service.accumulationfund.QinZhouFundService;
 import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 @Service
 public class ShanghaiTelecomService {
 	private Logger logger= LoggerFactory.getLogger(ShanghaiTelecomService.class);

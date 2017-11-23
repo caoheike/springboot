@@ -1,25 +1,18 @@
 package com.reptile.util;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import org.openqa.selenium.*;
+import org.openqa.selenium.remote.Augmenter;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
-
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.Augmenter;
-
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 public class ImgUtil {
 		

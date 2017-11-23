@@ -6,7 +6,6 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

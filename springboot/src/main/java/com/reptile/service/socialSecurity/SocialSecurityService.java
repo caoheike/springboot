@@ -1,6 +1,5 @@
 package com.reptile.service.socialSecurity;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
@@ -11,23 +10,13 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
-
 import net.sf.json.JSONObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 
 /**
  * Created by HotWong on 2017/5/2 0002.
@@ -128,7 +117,7 @@ public class SocialSecurityService {
             //ludangwei 2017-08-11
             Resttemplate resttemplate = new Resttemplate();
             map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/socialSecurity");
-            //map = resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.16:8089/HSDC/person/socialSecurity");
+
 
             if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
             	PushState.state(idCardNum, "socialSecurity", 300);

@@ -9,7 +9,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;

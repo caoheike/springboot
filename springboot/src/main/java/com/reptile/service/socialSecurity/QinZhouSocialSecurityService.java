@@ -1,20 +1,16 @@
 package com.reptile.service.socialSecurity;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -24,22 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.Dates;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.JsonUtil;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 @Service
 public class QinZhouSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(QinZhouSocialSecurityService.class);
@@ -135,7 +120,6 @@ public class QinZhouSocialSecurityService {
 				data.put("userId", idCardNum);
 				data.put("createTime", Dates.currentTime());
 				data.put("data", info);
-				//data = new Resttemplate().SendMessage(data,ConstantInterface.port+"/HSDC/person/socialSecurity");
 				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
 				 if(data!=null&&"0000".equals(data.get("errorCode").toString())){
 			          	PushState.state(idCardNum, "socialSecurity", 300);
