@@ -1,46 +1,30 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.model.AccumulationFlows;
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
+import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.reptile.model.AccumulationFlows;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 @Service
-public class NingBoAccumulationfundService {	
-	@Autowired 
-	private application applicat;
+public class NingBoAccumulationfundService {
     private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
+
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取宁波公积金图片验证码");
         Map<String, Object> map = new HashMap<>();
@@ -77,7 +61,7 @@ public class NingBoAccumulationfundService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
@@ -89,12 +73,14 @@ public class NingBoAccumulationfundService {
         Object htmlPage = session.getAttribute("htmlPage-ningbo");
 
         if (htmlWebClient != null && htmlPage != null) {
+        	PushState.state(idCardNum, "accumulationFund",100);
             HtmlPage page = (HtmlPage) htmlPage;
             WebClient webClient = (WebClient) htmlWebClient;
             List<String> alert=new ArrayList<>();
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             webClient.setAlertHandler(alertHandler);
             try {
+            	
                 page.getElementById("cardno").setAttribute("value",userCard);
                 page.getElementById("perpwd").setAttribute("value",password);
                 page.getElementById("verify").setAttribute("value",imageCode);
@@ -263,7 +249,22 @@ public class NingBoAccumulationfundService {
         map.put("data", dataMap);   
         
         Resttemplate resttemplate=new Resttemplate();
-        map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
+        map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/socialSecurity");
+        
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+	    	PushState.state(idCardNum, "accumulationFund",300);
+	    	map.put("errorInfo","查询成功");
+	    	map.put("errorCode","0000");
+          
+        }else{
+        	//--------------------数据中心推送状态----------------------
+        	PushState.state(idCardNum, "accumulationFund",200);
+        	//---------------------数据中心推送状态----------------------
+        	
+            map.put("errorInfo","查询失败");
+            map.put("errorCode","0001");
+        	
+        }
         return map;
     }
 	

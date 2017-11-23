@@ -1,47 +1,31 @@
 package com.reptile.service.ChinaTelecom;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 
 @Service
 public class ChongQingTelecomService {
 	private Logger logger= LoggerFactory.getLogger(ChongQingTelecomService.class);
-	 @Autowired
-	  private application applications;
 	   /**
 		 * 重庆电信获取验证码
 		 * @param request
@@ -217,8 +201,17 @@ public class ChongQingTelecomService {
 					} catch (Exception e) {
 						map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
-				        driver.close();
+				       
 						e.printStackTrace();
+					}finally{
+						 driver.close();
+						 try {
+								Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+							} catch (IOException e) {
+								logger.warn("宁夏电信",e);
+								// TODO Auto-generated catch block
+								//e.printStackTrace();
+							}
 					}
 		        	
 		        }
@@ -236,8 +229,7 @@ public class ChongQingTelecomService {
 	 */
 	 public Map<String, Object> chongQingLogin(HttpServletRequest request, String phoneNumber, String servePwd){
 			Map<String, Object> map = new HashMap<String, Object>();
-			System.setProperty("webdriver.chrome.driver",
-					"C:\\chromDriv\\chromedriver(1).exe");
+			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");

@@ -1,36 +1,24 @@
 package com.reptile.service.ChinaTelecom;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.GetMonth;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 @Service
 public class XiZangTelecomService {
@@ -256,10 +244,9 @@ public class XiZangTelecomService {
 		           map.put("flag", " ");
 		           map.put("errorCode", "0000");
 		           map.put("errorInfo", "查询成功");
+		           webClient.close();
 		           Resttemplate resttemplate = new Resttemplate();
-		           map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");//魏艳
-				    //map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");//胡献根	
-		           //map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
+		          map = resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/message/telecomCallRecord"); 
 	  	         //===================推数据=====================   
 	  	             
 	  	             

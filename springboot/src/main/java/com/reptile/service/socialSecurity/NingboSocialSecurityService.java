@@ -1,43 +1,30 @@
 package com.reptile.service.socialSecurity;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.reptile.model.SecurityBean;
 import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
-import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class NingboSocialSecurityService {
@@ -82,7 +69,7 @@ public class NingboSocialSecurityService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         Map<String, Object> loansdata = new HashMap<>();
@@ -105,6 +92,7 @@ public class NingboSocialSecurityService {
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             webClient.setAlertHandler(alertHandler);
             try {
+            	PushState.state(idCardNum, "socialSecurity", 100);
                 page.getElementById("loginid").setAttribute("value",userCard);
                 page.getElementById("pwd").setAttribute("value",password);
                 page.getElementById("yzm").setAttribute("value",imageCode);
@@ -195,8 +183,19 @@ public class NingboSocialSecurityService {
         map.put("city", "010");
         map.put("userId", userCard);
         map.put("createTime", today);
-        /*Resttemplate resttemplate=new Resttemplate();
-        map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");*/
+        Resttemplate resttemplate=new Resttemplate();
+        map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+          	PushState.state(idCardNum, "socialSecurity", 300);
+          	map.put("errorInfo","推送成功");
+          	map.put("errorCode","0000");
+          }else{
+          	PushState.state(idCardNum, "socialSecurity", 200);
+          	map.put("errorInfo","推送失败");
+          	map.put("errorCode","0001");
+          }
+        
+        
         return map;
     }
     public List<Object> getYangLaoInfo(WebClient webClient) throws Exception{

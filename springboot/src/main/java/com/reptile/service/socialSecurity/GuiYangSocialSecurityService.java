@@ -2,6 +2,7 @@ package com.reptile.service.socialSecurity;
 
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class GuiYangSocialSecurityService {
     private Logger log = LoggerFactory.getLogger(GuiYangSocialSecurityService.class);
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String password, String cityCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String password, String cityCode,String idCardNum) {
 
         String realPath = request.getServletContext().getRealPath("/imageCode");
         File file = new File(realPath);
@@ -38,7 +39,7 @@ public class GuiYangSocialSecurityService {
         InternetExplorerDriver driver = null;
         try {
             log.warn("登录贵阳社保");
-            System.setProperty("webdriver.ie.driver", "C:\\Program Files\\iedriver\\IEDriverServer.exe");
+            System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
             driver = new InternetExplorerDriver();
             driver.manage().window().maximize();
             driver.get("http://118.112.188.109/nethall/login.jsp");
@@ -76,6 +77,7 @@ public class GuiYangSocialSecurityService {
                 driver.close();
                 return map;
             }
+            PushState.state(idCardNum, "socialSecurity", 100);
             log.warn("获取贵阳社保基本信息");
             WebElement if_00 = driver.findElementById("if_00");
             driver.switchTo().frame(if_00);
@@ -110,9 +112,20 @@ public class GuiYangSocialSecurityService {
             dataMap.put("item", driver.getPageSource());
             map.put("data", dataMap);
             map.put("city", cityCode);
-            map.put("userId", userCard);
+            map.put("userId", idCardNum);
             log.warn("贵阳社保获取成功");
             map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/socialSecurity");
+            
+            if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+            	PushState.state(idCardNum, "socialSecurity", 300);
+            	map.put("errorInfo","推送成功");
+            	map.put("errorCode","0000");
+            }else{
+            	PushState.state(idCardNum, "socialSecurity", 200);
+            	map.put("errorInfo","推送失败");
+            	map.put("errorCode","0001");
+            }
+            
         } catch (Exception e) {
             log.warn("贵阳社保获取失败", e);
             e.printStackTrace();

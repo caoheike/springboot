@@ -1,25 +1,5 @@
 package com.reptile.service.accumulationfund;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -27,24 +7,32 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.reptile.util.Dates;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import com.reptile.util.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class NanTongAccumulationfundService {
 
     private Logger logger = LoggerFactory.getLogger(NanTongAccumulationfundService.class);
-    
-	@Autowired
-	private application application;
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard, String userName, String passWord, String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
+        	PushState.state(idCardNum, "accumulationFund",100);
             logger.warn("登录南通住房公积金网");
 //            String str = "http://58.221.92.98:8080/searchPersonLogon.do?spidno=" + idCard + "&spname=" + URLEncoder.encode(userName) + "&sppassword=" + passWord;
 
@@ -97,12 +85,27 @@ public class NanTongAccumulationfundService {
                 dataMap.put("flows", this.parseFlows(itemList));
                 dataMap.put("loans", this.getLoans(webClient));
                 map.put("data", dataMap);
-                map.put("userId", idCard);
+                map.put("userId", idCardNum);
                 map.put("city", cityCode);
                 map.put("cityName", "南通");
                 map.put("insertTime", Dates.currentTime());
                 //数据推送
-                map = new Resttemplate().SendMessage(map,application.getSendip()+"/HSDC/person/accumulationFund");
+                map = new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
+
+    		    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+    		    	PushState.state(idCardNum, "accumulationFund",300);
+    		    	map.put("errorInfo","查询成功");
+    		    	map.put("errorCode","0000");
+                  
+                }else{
+                	//--------------------数据中心推送状态----------------------
+                	PushState.state(idCardNum, "accumulationFund",200);
+                	//---------------------数据中心推送状态----------------------
+                	
+                    map.put("errorInfo","查询失败");
+                    map.put("errorCode","0001");
+                	
+                }
             } else {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "认证过程中出现未知错误");

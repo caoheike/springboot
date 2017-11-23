@@ -25,8 +25,8 @@ public class NanTongSocialSecurityController {
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "获取社保详情",notes = "参数：身份证号,社保卡号，密码")
-    public Map<String,Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard) {
-        return service.getDetailMes(request,idCard.trim(),socialCard.trim(),passWord.trim(), cityCode.trim());
+    public Map<String,Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard) {
+        return service.getDetailMes(request,idCard.trim(),socialCard.trim(),passWord.trim(), cityCode.trim(),idCardNum.trim());
     }
 
 }

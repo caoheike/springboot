@@ -1,11 +1,15 @@
 package com.reptile.service.accumulationfund;
 
-import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import org.jsoup.Jsoup;
@@ -64,7 +68,7 @@ public class GuiYangAccumulationfundService {
         return map;
     }
 
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         HttpSession session = request.getSession();
@@ -94,6 +98,7 @@ public class GuiYangAccumulationfundService {
 //                webRequest.setRequestParameters(list);
 //                XmlPage logon = webClient.getPage(webRequest);//登录贵阳住房公积金网站
 //                Thread.sleep(5000);
+            	PushState.state(idCardNum, "accumulationFund", 100);
                 page.getElementById("IdCard").setAttribute("value",userCard);
                 page.getElementById("PassWord").setAttribute("value",password);
                 page.getElementById("Ed_Confirmation").setAttribute("value",imageCode);
@@ -102,6 +107,7 @@ public class GuiYangAccumulationfundService {
                 System.out.println(alert.size());
                 logger.warn("登录贵阳住房公积金:"+alert.size());
                 if(alert.size()>0){
+                	PushState.state(idCardNum, "accumulationFund", 200);
                     map.put("errorCode", "0005");
                     map.put("errorInfo", alert.get(0));
                     return map;
@@ -114,6 +120,7 @@ public class GuiYangAccumulationfundService {
                 Thread.sleep(3000);
                 System.out.println(page1.asXml());
                 if(page1.asXml().contains("此网页使用了框架，但您的浏览器不支持框架")){
+                	PushState.state(idCardNum, "accumulationFund", 200);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", "认证失败，请重新认证");
                     return map;
@@ -172,10 +179,20 @@ public class GuiYangAccumulationfundService {
                 logger.warn("贵阳住房公积金缴纳信息详情获取完成");
                 dataMap.put("item", detailMes);
                 map.put("data", dataMap);
-                map.put("userId", userCard);
+                map.put("userId", idCardNum);
                 map.put("city", cityCode);
                 map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
+                if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+               	 PushState.state(idCardNum, "accumulationFund", 300);
+                   map.put("errorInfo","推送成功");
+                   map.put("errorCode","0000");
+               }else{
+               	 PushState.state(idCardNum, "accumulationFund", 200);
+                   map.put("errorInfo","推送失败");
+                   map.put("errorCode","0001");
+               }
             } catch (Exception e) {
+            	PushState.state(idCardNum, "accumulationFund", 200);
                 logger.warn("贵阳住房公积金获取失败",e);
                 e.printStackTrace();
                 map.put("errorCode", "0001");
@@ -184,6 +201,7 @@ public class GuiYangAccumulationfundService {
                 webClient.close();
             }
         } else {
+        	PushState.state(idCardNum, "accumulationFund", 200);
             logger.warn("贵阳住房公积金登录过程中出错 ");
             map.put("errorCode", "0001");
             map.put("errorInfo", "非法操作！");

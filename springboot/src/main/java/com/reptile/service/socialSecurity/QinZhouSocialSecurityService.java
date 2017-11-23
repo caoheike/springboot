@@ -1,20 +1,16 @@
 package com.reptile.service.socialSecurity;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -24,20 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.Dates;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.JsonUtil;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 @Service
 public class QinZhouSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(QinZhouSocialSecurityService.class);
@@ -91,7 +78,7 @@ public class QinZhouSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
-			String idCard, String passWord, String catpy, String cityCode) {
+			String idCard, String passWord, String catpy, String cityCode,String idCardNum) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		WebClient webClient = (WebClient)request.getSession().getAttribute("qinZhouWebClient");//从session中获得webClient
@@ -102,6 +89,7 @@ public class QinZhouSocialSecurityService {
 			return data;
 		}
 		try {
+			PushState.state(idCardNum, "socialSecurity", 100);
 			//封装请求参数
 			List<NameValuePair> list = new ArrayList<NameValuePair>();
 			list.add(new NameValuePair("j_username", idCard.trim()));
@@ -129,10 +117,19 @@ public class QinZhouSocialSecurityService {
 				//data
 				data.put("city", cityCode);
 				data.put("cityName", "钦州");
-				data.put("userId", idCard);
+				data.put("userId", idCardNum);
 				data.put("createTime", Dates.currentTime());
 				data.put("data", info);
 				data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+				 if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+			          	PushState.state(idCardNum, "socialSecurity", 300);
+			          	data.put("errorInfo","推送成功");
+			          	data.put("errorCode","0000");
+			          }else{
+			          	PushState.state(idCardNum, "socialSecurity", 200);
+			          	data.put("errorInfo","推送失败");
+			          	data.put("errorCode","0001");
+			          }
 			}else{
 				if(response.contains("错误的验证码！")){
 					data.put("errorInfo", "错误的验证码！");

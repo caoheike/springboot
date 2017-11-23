@@ -1,12 +1,12 @@
 package com.reptile.util;
 
 import net.sf.json.JSONObject;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -22,8 +22,6 @@ import java.util.Map;
 @Aspect
 public class AopClass {
     private Logger logger = LoggerFactory.getLogger(AopClass.class);
-    @Autowired
-	private static application applications;
     @Pointcut("@annotation(com.reptile.util.CustomAnnotation)")
     public void pointCut() {
     }

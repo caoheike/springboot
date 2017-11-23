@@ -1,77 +1,41 @@
 package com.reptile.service;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.reptile.model.MobileBean;
+import com.reptile.model.TelecomBean;
+import com.reptile.model.UnicomBean;
+import com.reptile.util.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
-
-import com.reptile.util.*;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.gargoylesoftware.htmlunit.xml.XmlPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.model.MobileBean;
-import com.reptile.model.TelecomBean;
-import com.reptile.model.UnicomBean;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 @Service("mobileService")
 public class MobileService {
 
 	@Autowired
-
 	private application application;
-	private PushState PushState;
-	public Map<String, Object> mapWeb = new HashMap<String, Object>();
+
 	private Logger logger = Logger.getLogger(MobileService.class);
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
-	//private static htmlUtil htmlUtil = new htmlUtil();
-	//final List collectedAlerts = new ArrayList();
-
 	MobileBean mobileBean = new MobileBean();
 	Resttemplate resttemplate = new Resttemplate();
 
@@ -651,15 +615,7 @@ public class MobileService {
 					//session.setAttribute("webClientone", webClient);
                   // Thread.sleep(2000);
                    System.out.println("发送成功");
-                   
-//                   
-//					//---------------推测试-------------------
-//				Session se=	talkFrame.getWsUserMap().get(Useriphone);
-//				System.out.println(se);
-//				se.getBasicRemote().sendText("ssssssssssssssssssssssssss");
-//					//---------------推测试-------------------
-//					
-//					
+              				
 					
 				} else {
 					JSONObject json = JSONObject.fromObject(result.split("\\(")[1].split("\\)")[0]);
@@ -950,16 +906,15 @@ public class MobileService {
 //	}
 			try {
 				TextPage newPage = webClient.getPage(webRequest2);
+				Thread.sleep(1000);
 				//System.out.println(newPage.getContent());
 				JSONObject json3 = JSONObject.fromObject(newPage.getContent());
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
-//					//---------------推-------------------
+					//---------------推-------------------
 				   PushSocket.push(map, UUID, "0000");
 					//---------------推-------------------
-//					
-					
-					System.out.println("验证码成功，可查询");
+				    System.out.println("验证码成功，可查询");
 					PushState.state(Useriphone, "callLog", 100);
 //=======================获取详单================================================      		
 					webClient.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
@@ -1034,10 +989,10 @@ public class MobileService {
 					if (resultCode.equals("01")) {
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "验证码已过期，请从新获取新的验证码");
-					} else if (resultCode.equals("02")) {
+					} else if (resultCode.equals("02")) {//验证码错误
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败");
-					} else if (resultCode.equals("03")) {
+					} else if (resultCode.equals("03")) {//sessionFail//session失效
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败,请稍后再试！");
 
@@ -1420,7 +1375,7 @@ public class MobileService {
 
 	}
 
-	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard,String UUID) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		List listinfo = new ArrayList();
 
 		//--------------------数据中心推送状态----------------------
@@ -1448,6 +1403,7 @@ public class MobileService {
 
 			//  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
 			if (!pages.asText().contains("您输入的用户名或密码有误") && !pages.asText().contains("图片验证码输入有误")) {
+				PushSocket.push(map, UUID, "0000");
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)

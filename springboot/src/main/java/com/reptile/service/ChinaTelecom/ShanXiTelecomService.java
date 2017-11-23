@@ -8,16 +8,12 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-import com.reptile.util.talkFrame;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
-
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -47,9 +43,8 @@ public class ShanXiTelecomService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
+            WebClient webClient = (WebClient) attribute;
             try {
-                WebClient webClient = (WebClient) attribute;
-
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
                 WebRequest webRequest = new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
 
@@ -72,7 +67,6 @@ public class ShanXiTelecomService {
                 webRequest.setHttpMethod(HttpMethod.POST);
                 webRequest.setRequestParameters(reqParamsinfo);
                 HtmlPage Infopage = webClient.getPage(webRequest);
-                System.out.print(Infopage.asXml());
                 if(!Infopage.asXml().contains("无话单记录")){
                     dataList.add(Infopage.asXml());
                 }
@@ -96,7 +90,6 @@ public class ShanXiTelecomService {
                     webRequest.setHttpMethod(HttpMethod.POST);
                     webRequest.setRequestParameters(reqParamsinfo);
                     Infopage = webClient.getPage(webRequest);
-                    System.out.print(Infopage.asXml());
                     Thread.sleep(1000);
                     if(!Infopage.asXml().contains("无话单记录")){
                         dataList.add(Infopage.asXml());
@@ -116,18 +109,17 @@ public class ShanXiTelecomService {
                     Resttemplate resttemplate=new Resttemplate();
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 }else{
-                	//---------------推-------------------
-                	 PushSocket.push(map, UUID, "0001");
-    					//---------------推-------------------
                     map.put("errorCode", "0005");
                     map.put("errorInfo", "业务办理失败！");
                 }
-
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+            }finally {
+                if(webClient!=null){
+                    webClient.close();
+                }
             }
         }
         return map;

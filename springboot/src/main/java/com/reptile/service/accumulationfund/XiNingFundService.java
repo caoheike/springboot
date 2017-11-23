@@ -1,47 +1,32 @@
 package com.reptile.service.accumulationfund;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -86,12 +71,12 @@ public class XiNingFundService {
 	        	logger.warn("西宁住房公积金",e);
          		map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-    			e.printStackTrace();
+    			//e.printStackTrace();
 			}
 		return map;
 		  
 	  }
-	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
+	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -106,6 +91,7 @@ public class XiNingFundService {
 	            return map;
 	        } else { 
 		  try {
+			  PushState.state(idCardNum, "accumulationFund",100);
 			  WebClient webClient = (WebClient) client;
 				
 			 Thread.sleep(100);
@@ -139,6 +125,7 @@ public class XiNingFundService {
 		            map.put("errorInfo", alertList.get(0));
 		            return map;
 		        }else{
+		        	PushState.state(idCardNum, "accumulationFund",100);
 		        	//System.out.println(page1.asXml());
 		        	    WebRequest  request1 = new WebRequest(new URL("https://www.qhgjj.gov.cn/searchGrye.do"));
 						request1.setHttpMethod(HttpMethod.GET);
@@ -182,25 +169,35 @@ public class XiNingFundService {
 		                   dateMap.put("item", dataL);
 		  	               map.put("data", dateMap);
 				          
-			               map.put("userId", idCard);
+			               map.put("userId", idCardNum);
                            map.put("city", cityCode);//002
 //				           map.put("errorInfo", "查询成功");
 				           Resttemplate resttemplate = new Resttemplate();
 //				           //
-			             map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
-						    
-			              // map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");
-						    
-			  	         //===================推数据=====================    
-		 
-		        }
+			            // map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
+				         map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");  
+			             if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+						    	PushState.state(idCardNum, "accumulationFund",300);
+						    	map.put("errorInfo","查询成功");
+						    	map.put("errorCode","0000");
+					          
+					        }else{
+					        	//--------------------数据中心推送状态----------------------
+					        	PushState.state(idCardNum, "accumulationFund",200);
+					        	//---------------------数据中心推送状态----------------------
+					        	
+					            map.put("errorInfo","查询失败");
+					            map.put("errorCode","0001");
+					        	
+					        } 
+	        }
 	
 	        
 		} catch (Exception e) {
 			 logger.warn("西宁住房公积金",e);
 			map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	        }
 		return map;

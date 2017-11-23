@@ -1,38 +1,21 @@
 package com.reptile.service.accumulationfund;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
 @Service
 public class LYHousingFundService {
 	private Logger logger = LoggerFactory.getLogger(LYHousingFundService.class);
-	
-	@Autowired
-	private application application;
-	
 	/**
 	 * 临沂公积金登录并获取详情
 	 * @param request
@@ -43,7 +26,7 @@ public class LYHousingFundService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userName, String passWord,String idCard,String cityCode) {
+			String userName, String passWord,String idCard,String cityCode,String idCardNum) {
 		
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
 		
@@ -70,7 +53,7 @@ public class LYHousingFundService {
 	        	data.put("errorCode", "0001");
 	        	data.put("errorInfo", "用户名或密码错误");
 	        }else{
-	        	data = this.doGetDetail(request, idCard, cityCode, passWord, webClient);
+	        	data = this.doGetDetail(request, idCard, cityCode, passWord, idCardNum,webClient);
 	        }
 	        
 		} catch (Exception e) {
@@ -93,10 +76,10 @@ public class LYHousingFundService {
 	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String passWord,WebClient webClient) {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String passWord,String idCardNum,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息封装
-		
 		try {
+			PushState.state(idCardNum, "accumulationFund",100);
 			HtmlPage page = webClient.getPage("http://www.lyzfgjj.gov.cn/abc/index.asp");
 			Thread.sleep(500);
 			//获取登录表单
@@ -135,13 +118,30 @@ public class LYHousingFundService {
 	        }else{
 	        	data.put("errorCode", "0000");
 	        	data.put("errorInfo", "查询成功"); 
-	        	data.put("userId", idCard);
+	        	data.put("userId", idCardNum);
 	        	data.put("city", cityCode);
 	        	data.put("data", map);
 	        }
 	        
 	        //数据推送
-		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
+		   
+		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+		    	PushState.state(idCardNum, "accumulationFund",300);
+		    	data.put("errorInfo","查询成功");
+		    	data.put("errorCode","0000");
+              
+            }else{
+            	//--------------------数据中心推送状态----------------------
+            	PushState.state(idCardNum, "accumulationFund",200);
+            	//---------------------数据中心推送状态----------------------
+            	
+            	data.put("errorInfo","查询失败");
+            	data.put("errorCode","0001");
+            	
+            }
+		    
+		    
 		} catch (Exception e) {
 			logger.error("临沂市公积金查询失败",e);
 			data.put("errorCode", "0002");

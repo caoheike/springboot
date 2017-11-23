@@ -35,7 +35,7 @@ public class LYHousingFundController {
 	@ApiOperation(value = "临沂市住房公积金：详情",notes = "参数：用户名,密码,身份证号，城市编码")
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
-	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
-		return lyHouseFundService.doLogin(request, userName, passWord, idCard, cityCode);
+	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
+		return lyHouseFundService.doLogin(request, userName, passWord, idCard, cityCode,idCardNum);
 	}
 }

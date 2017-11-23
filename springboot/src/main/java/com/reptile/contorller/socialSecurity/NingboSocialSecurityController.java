@@ -33,9 +33,9 @@ public class NingboSocialSecurityController {
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "贵阳社保",notes = "参数：身份证，密码，图片验证码")
-    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
+    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("idCardNum")String idCardNum,@RequestParam("passWord")String passWord,
                                            @RequestParam("imageCode")String imageCode){
 
-        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),imageCode.trim());
+        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),imageCode.trim(),idCardNum.trim());
     }
 }

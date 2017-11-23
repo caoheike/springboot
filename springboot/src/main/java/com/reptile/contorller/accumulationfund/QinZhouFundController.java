@@ -23,10 +23,9 @@ public class QinZhouFundController {
 	@ApiOperation(value = "1.钦州公积金获取", notes = "参数：身份证号，密码，城市编号")
     @ResponseBody
     @RequestMapping(value = "QZFlogin", method = RequestMethod.POST)
-	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
-		return service.getImageCode(request, idCard, passWord,cityCode);
-		
+	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
+		System.out.println(idCardNum);
+		return service.getImageCode(request, idCard, passWord,cityCode,idCardNum);
 	}
-	
 
 }

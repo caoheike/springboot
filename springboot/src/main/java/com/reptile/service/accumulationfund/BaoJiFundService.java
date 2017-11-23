@@ -1,20 +1,5 @@
 package com.reptile.service.accumulationfund;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -24,8 +9,22 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.PushState;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class BaoJiFundService {
@@ -34,7 +33,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 	@Autowired
 	private application application;
 	
-	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode){
+	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		WebClient webclient=new WebClientFactory().getWebClient();
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 Map<String, Object> dateMap = new HashMap<String, Object>();
@@ -50,6 +49,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			  map.put("errorInfo", tip);
 			  return map;
 		  }else{
+			  PushState.state(idCardNum, "accumulationFund", 100);
 			  System.out.println("登陆成功");
 			  String zgzh=page1.getElementByName("zgzh").getAttribute("value");
 			  String sfzh=page1.getElementByName("sfzh").getAttribute("value");

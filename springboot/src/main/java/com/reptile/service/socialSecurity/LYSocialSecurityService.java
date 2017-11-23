@@ -1,28 +1,22 @@
 package com.reptile.service.socialSecurity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class LYSocialSecurityService {
@@ -40,11 +34,11 @@ public class LYSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userName, String idCard,String cityCode) {
+			String userName, String idCard,String cityCode,String idCardNum) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
-			
+			PushState.state(idCardNum, "socialSecurity", 100);
 			//监控alert弹窗
 			List<String> alertList = new ArrayList<String>();
 			CollectingAlertHandler alert = new CollectingAlertHandler(alertList);
@@ -74,7 +68,7 @@ public class LYSocialSecurityService {
 	        }else{
 	        	data.put("errorCode", "0000");
 	        	data.put("errorInfo", "登录成功");
-	        	data = this.doGetDetail(request, idCard, cityCode,nextPage);
+	        	data = this.doGetDetail(request, idCard,idCardNum,cityCode,nextPage);
 	        }
 			
 		} catch (Exception e) {
@@ -99,7 +93,7 @@ public class LYSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
-			String idCard,String cityCode,HtmlPage nextPage) {
+			String idCard,String idCardNum,String cityCode,HtmlPage nextPage) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		HtmlTable table = (HtmlTable) nextPage.getElementsByTagName("table").get(0);
 		
@@ -110,8 +104,18 @@ public class LYSocialSecurityService {
         data.put("errorCode", "0000");
         data.put("data", infoAll);
         data.put("city", cityCode);
-        data.put("userId", idCard);
+        data.put("userId", idCardNum);
         data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+        
+        if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+        	PushState.state(idCardNum, "socialSecurity", 300);
+        	data.put("errorInfo","推送成功");
+        	data.put("errorCode","0000");
+        }else{
+        	PushState.state(idCardNum, "socialSecurity", 200);
+        	data.put("errorInfo","推送失败");
+        	data.put("errorCode","0001");
+        }
 		return data;
 	}
 	

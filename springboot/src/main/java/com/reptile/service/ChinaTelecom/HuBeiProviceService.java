@@ -1,32 +1,25 @@
 package com.reptile.service.ChinaTelecom;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
-import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class HuBeiProviceService {
@@ -127,6 +120,7 @@ public class HuBeiProviceService {
 				  Map<String,Object>HUBEI=new HashMap<String,Object>();
 				  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				for (int i = 0; i < 3; i++) {
+					
 					Map<String,Object> detailed=new HashMap<String,Object>();
 					List<Map<String ,Object>> eachMonthList =new ArrayList<Map<String ,Object>>();					
 					List<NameValuePair> list3 = new ArrayList<NameValuePair>();
@@ -173,6 +167,7 @@ public class HuBeiProviceService {
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
+				
 				System.out.println(datalist);
 				HUBEI.put("data", datalist);
 				HUBEI.put("UserIphone", PhoneNume);
@@ -183,6 +178,7 @@ public class HuBeiProviceService {
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(HUBEI, applications.getSendip()+"/HSDC/message/telecomCallRecord");
 				if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+					
 			    	PushState.state(PhoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
@@ -196,6 +192,7 @@ public class HuBeiProviceService {
 				webClient.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 				PushState.state(PhoneNume, "callLog",200);
 				//---------------------------数据中心推送状态----------------------------------

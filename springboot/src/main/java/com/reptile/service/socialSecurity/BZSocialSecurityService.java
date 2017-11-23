@@ -1,34 +1,19 @@
 package com.reptile.service.socialSecurity;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 @Service
 public class BZSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(BZSocialSecurityService.class);
@@ -79,7 +64,7 @@ public class BZSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userCard, String passWord,String userCode,String cityCode) {
+			String userCard, String passWord,String userCode,String cityCode,String idCardNum) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		try {
 			WebClient webClient = (WebClient)request.getSession().getAttribute("binZhouWebClient");//从session中获得webClient
@@ -90,6 +75,7 @@ public class BZSocialSecurityService {
 	            data.put("errorCode", "0002");
 	            return data;
 			}
+			PushState.state(idCardNum, "socialSecurity", 100);
 			//监控alert弹窗
 			List<String> alertList = new ArrayList<String>();
 			CollectingAlertHandler alert = new CollectingAlertHandler(alertList);
@@ -116,7 +102,7 @@ public class BZSocialSecurityService {
 			
 			String response = webRequest("http://222.134.45.172:8002/hsp/logon.do", ValueList, HttpMethod.POST, webClient);
 			if(response.contains("__usersession_uuid")){
-				data = this.doGetDetail(request, userCard, cityCode, webClient);
+				data = this.doGetDetail(request, userCard, cityCode,idCardNum ,webClient);
 			}else{
 				data.put("errorInfo", response);
 	            data.put("errorCode", "0001");
@@ -138,7 +124,7 @@ public class BZSocialSecurityService {
 	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> doGetDetail(HttpServletRequest request,String userCard,String cityCode,WebClient webClient)  {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String userCard,String cityCode,String idCardNum,WebClient webClient)  {
 		Map<String, Object> data = new HashMap<String, Object>();
 		Map<String, Object> infoAll = new HashMap<String, Object>();
 		
@@ -168,8 +154,19 @@ public class BZSocialSecurityService {
             data.put("errorCode", "0000");
             data.put("data", infoAll);
             data.put("city", cityCode);
-            data.put("userId", userCard);
+            data.put("userId", idCardNum);
             data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
+            if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+            	PushState.state(idCardNum, "socialSecurity", 300);
+            	data.put("errorInfo","推送成功");
+            	data.put("errorCode","0000");
+            }else{
+            	PushState.state(idCardNum, "socialSecurity", 200);
+            	data.put("errorInfo","推送失败");
+            	data.put("errorCode","0001");
+            }
+            
+            
 		} catch (Exception e) {
 			logger.error("获取滨州市社保详情失败",e);
 			data.put("errorInfo", "系统繁忙，请稍后再试！");

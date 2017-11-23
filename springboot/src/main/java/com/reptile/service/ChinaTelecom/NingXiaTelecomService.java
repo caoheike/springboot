@@ -1,47 +1,33 @@
 package com.reptile.service.ChinaTelecom;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.Session;
-
+import com.reptile.util.*;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.reptile.util.GetMonth;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushSocket;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.RobotUntil;
-import com.reptile.util.application;
-import com.reptile.util.talkFrame;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NingXiaTelecomService {
+	private Logger logger= LoggerFactory.getLogger(NingXiaTelecomService.class);
 	@Autowired
 	private application application;
 	/**
@@ -50,27 +36,27 @@ public class NingXiaTelecomService {
 	 * @param phoneNumber
 	 * @param servePwd
 	 * @return
+	 * @throws IOException 
 	 */
 
-	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd){
+	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd) {
 		 
 			Map<String, Object> map = new HashMap<String, Object>();
-			System.setProperty("webdriver.chrome.driver",
-					"C:\\Program Files\\iedriver\\chromedriver.exe");
-			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
+			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");
 			WebDriver driver = new ChromeDriver(options);
 			driver.get("http://login.189.cn/web/login");	
 			driver.navigate().refresh();
 			try {
-				Thread.sleep(500);
+			new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginForm")));
 			WebElement form = driver.findElement(By.id("loginForm"));
 
 			WebElement account = form.findElement(By.id("txtAccount"));
 			// account.clear();
 			account.sendKeys(phoneNumber);
-			Thread.sleep(500);
+			new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("txtShowPwd")));
+			//Thread.sleep(500);
 			//driver.switchTo().frame("name");
 			WebElement passWord = form.findElement(By.id("txtShowPwd"));
 			passWord.click();
@@ -102,30 +88,46 @@ public class NingXiaTelecomService {
 		      Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);//图片验证，打码平台
 		      System.out.println(map1);
 		      String catph= (String) map1.get("strResult");
-		      Thread.sleep(2000);
+		      new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("txtCaptcha")));
 		      //================================
 		        WebElement loginBtn = driver.findElement(By.id("txtCaptcha"));
 		          loginBtn.sendKeys(catph);
-		        Thread.sleep(2000);
+		          new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginbtn")));
 		          WebElement loginBtns = driver.findElement(By.id("loginbtn"));
 		          loginBtns.click();
-		          Thread.sleep(2000);
+		          //Thread.sleep(2000);
+		          driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 			if(driver.getPageSource().contains("详单查询")){
+				logger.warn("宁夏电信，登陆成功");
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功");
 				}else{
+					//new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("loginbtn")));
 					String divErr = driver.findElement(By.id("divErr")).getText();
-					
+					logger.warn("宁夏电信",divErr);
 					map.put("errorCode", "0001");
-					map.put("errorInfo", divErr);
-					driver.close();
+					if(divErr.contains("验证码")){
+						map.put("errorInfo", "网络繁忙，请稍后再试");
+					}else{
+						map.put("errorInfo", divErr);	
+					}
+					
+					//driver.close();
 				}
 		 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.warn("宁夏电信",e);
+				//e.printStackTrace();
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
-				driver.close();
+				
+				//driver.close();
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}	
 		    request.getSession().setAttribute("driver", driver);//把driver放到session 
 		// driver.close();
@@ -135,6 +137,7 @@ public class NingXiaTelecomService {
 	  * 获取验证码
 	  * @param request
 	  * @return
+	 * @throws IOException 
 	  */
 	 public  Map<String,Object> ningXiaGetcode(HttpServletRequest request,String phoneNumber){
 		  
@@ -142,6 +145,7 @@ public class NingXiaTelecomService {
 		 
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 if(driver==null){
+			 logger.warn("宁夏电信未登录");
 	    	 map.put("errorCode", "0001");
 			 map.put("errorInfo", "请先登录!");
 			return map;
@@ -149,26 +153,37 @@ public class NingXiaTelecomService {
 		
 		 driver.get("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000501");	
 		 try {
-			 Thread.sleep(3000);
+			 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+			 //Thread.sleep(3000);
 		 	 driver.get("http://nx.189.cn/jt/bill/xd/?fastcode=10000501&cityCode=nx");	
-			 Thread.sleep(3000);
-			 
+			 //Thread.sleep(3000);
+		 	new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.id("hqyzm")));
 			 driver.findElement(By.id("hqyzm")).click();//获取验证码
-			 Thread.sleep(500);
-			 
+			// Thread.sleep(500);
+			 new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id='myAlert3']/div[2]/div[1]"))); 
 			 String sendInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 			 if(sendInfo.contains(phoneNumber)){
+				 logger.warn("宁夏电信第二次发送验证码成功");
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "验证码发送成功");
 			  driver.findElement(By.id("btn_xieyi")).click();
 			  Thread.sleep(500);
 			 }else{
+				 logger.warn("宁夏电信第二次发送验证码失败");
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "验证码发送失败"); 
 			 }
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			logger.warn("宁夏电信网络异常，请稍后");
+			 map.put("errorCode", "0001");
+			 map.put("errorInfo", "网络异常，请稍后"); 
 			e.printStackTrace();
+			try {
+				Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		} 
 		 request.getSession().setAttribute("driver1", driver);//把driver放到session
 		return map;
@@ -188,12 +203,14 @@ public class NingXiaTelecomService {
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 if(driver==null){
+			 logger.warn("宁夏电信请先获取验证码");
 			 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
 			 return map; 
 		 }
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
            if(code==null||code.equals("")){
+        	   logger.warn("宁夏电信验证码不能为空");
         	   map.put("errorCode", "0001");
  			   map.put("errorInfo", "验证码不能为空");
  			  return map;
@@ -201,6 +218,7 @@ public class NingXiaTelecomService {
 		  driver.findElement(By.id("yzm")).sendKeys(code);
 		  String tipInfo =driver.findElement(By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 		  if(tipInfo.contains("验证失败")){
+			  logger.warn("宁夏电信验证码错误");
 			//---------------推-------------------
 			  PushSocket.push(map, UUID, "0001");
 					//---------------推-------------------
@@ -209,7 +227,7 @@ public class NingXiaTelecomService {
 			  return map;
 		  }
 		
-		  
+		  logger.warn("宁夏电信数据获取中...");
 		//---------------推-------------------
 		  PushSocket.push(map, UUID, "0000");
 		//---------------推-------------------
@@ -294,6 +312,7 @@ public class NingXiaTelecomService {
 						 }
 						Thread.sleep(500);					 
 				} catch (Exception e) {
+					 logger.warn("宁夏电信",e);
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "网络连接异常");
 				} 
@@ -306,15 +325,26 @@ public class NingXiaTelecomService {
 		           map.put("flag", "13");
 		           map.put("errorCode", "0000");
 		           map.put("errorInfo", "查询成功");
+		           logger.warn("宁夏电信数据查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
 		           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
 		           try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
+					logger.warn("宁夏电信",e);
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+				}finally{
+					 driver.close();	
+					 try {
+						Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+					} catch (IOException e) {
+						logger.warn("宁夏电信",e);
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
 				}
-		           driver.close();	 
+		           
 		return map;
 	 }
 

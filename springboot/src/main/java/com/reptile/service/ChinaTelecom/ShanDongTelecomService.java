@@ -9,7 +9,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -71,7 +69,6 @@ public class ShanDongTelecomService {
                 session.setAttribute("SDDXhtmlPage", page1);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取验证码  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -165,7 +162,6 @@ public class ShanDongTelecomService {
                 session.setAttribute("SDDXsendMesPage", easyDialogYesBtn);
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东发送手机验证码  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -256,11 +252,11 @@ public class ShanDongTelecomService {
                 map.put("data", listData);
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "'查询成功'");
+                webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
-                e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }

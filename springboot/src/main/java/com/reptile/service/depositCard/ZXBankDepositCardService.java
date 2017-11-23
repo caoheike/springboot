@@ -2,27 +2,21 @@ package com.reptile.service.depositCard;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.RobotUntil;
 import com.reptile.util.winIO.VirtualKeyBoard;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.UnhandledAlertException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,15 +24,25 @@ import java.util.*;
 public class ZXBankDepositCardService {
     private Logger logger = LoggerFactory.getLogger(ZXBankDepositCardService.class);
 
+    /**
+     * 获取中信银行储蓄卡账单信息
+     *
+     * @param request
+     * @param IDNumber
+     * @param cardNumber
+     * @param userName
+     * @param passWord
+     * @return
+     */
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String userName, String passWord) {
         Map<String, Object> map = new HashMap<>();
-        System.setProperty("webdriver.ie.driver", "C:\\Program Files (x86)\\iedriver\\IEDriverServer.exe");
+        System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
         InternetExplorerDriver driver = new InternetExplorerDriver();
         driver.manage().window().maximize();
         try {
             logger.warn("登录中信银行网上银行");
             driver.get("https://i.bank.ecitic.com/perbank6/signIn.do");
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             //输入账户名密码
             driver.findElementByName("logonNoCert").sendKeys(cardNumber);
             Actions actions = new Actions(driver);
@@ -48,11 +52,25 @@ public class ZXBankDepositCardService {
                 VirtualKeyBoard.KeyPress(passWord.charAt(i));
                 Thread.sleep(200);
             }
-
+            //判断是否存在验证码
+            try {
+                WebElement pinImg = driver.findElementById("pinImg");
+                String realPath = request.getServletContext().getRealPath("/verImageCode");
+                File file=new File(realPath);
+                if(!file.exists()){
+                    file.mkdirs();
+                }
+                logger.warn("中信银行出现验证码");
+                driver.findElementByClassName("loginInputVerity").sendKeys("123");
+                driver.findElementByClassName("loginInputVerity").clear();
+                String code = RobotUntil.getImgFileByScreenshot(pinImg, driver, file);
+                driver.findElementByClassName("loginInputVerity").sendKeys(code);
+            }catch (Exception e){
+                logger.warn("中信银行未出现验证码",e);
+            }
             //登录
             driver.findElementById("logonButton").click();
             Thread.sleep(3000);
-
             //判断是否登录成功
             try {
                 WebElement errorReason = driver.findElementByClassName("errorReason");
@@ -63,7 +81,7 @@ public class ZXBankDepositCardService {
                 return map;
             } catch (NoSuchElementException e) {
                 logger.warn("登录成功");
-            }catch (UnhandledAlertException e){
+            } catch (UnhandledAlertException e) {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "账号或密码格式不正确！");
                 driver.quit();
@@ -72,46 +90,9 @@ public class ZXBankDepositCardService {
             logger.warn("获取账单详情...");
             //获取类似于tooken的标识
             String EMP_SID = driver.findElementByName("infobarForm").findElement(By.name("EMP_SID")).getAttribute("value");
-            //将mainframe切换到详单页面
-            driver.executeScript("document.getElementById(\"mainframe\").src=\"https://i.bank.ecitic.com/perbank6/pb1310_account_detail_query.do?EMP_SID=" + EMP_SID + "\" ");
-            Thread.sleep(2000);
-            WebElement mainframe = driver.findElementById("mainframe");
-            driver.switchTo().frame(mainframe);
-            Thread.sleep(1000);
-
-            driver.findElement(By.id("spacilOpenDiv")).click();  //打开自定义查询
-
-            //移除时间输入框的readOnly属性
-            driver.executeScript("document.getElementById('beginDate').removeAttribute('readonly');document.getElementById('endDate').removeAttribute('readonly');");
-            driver.findElement(By.id("beginDate")).clear();
-            driver.findElement(By.id("endDate")).clear();
-
-            //查询开始时间，结束时间（当前时间前两天）设置
-            SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DAY_OF_MONTH, -2);
-            String endTime = sim.format(cal.getTime());
-            cal.set(Calendar.DAY_OF_MONTH, 1);
-            String beginTime = sim.format(cal.getTime());
-
-            //循环获取6个月的账单信息
+            //获取账单详情
             List<String> dataList = new ArrayList<>();
-            for (int i = 0; i < 6; i++) {
-                driver.findElement(By.id("beginDate")).clear();
-                driver.findElement(By.id("endDate")).clear();
-                driver.findElement(By.id("beginDate")).sendKeys(beginTime);
-                driver.findElement(By.id("endDate")).sendKeys(endTime);
-                driver.findElementById("searchButton").click();
-                Thread.sleep(1000);
-
-                String attribute = driver.findElementById("resultTable1").getAttribute("innerHTML");
-                dataList.add(attribute);
-
-                cal.add(Calendar.DAY_OF_MONTH, -1); //上月末
-                endTime = sim.format(cal.getTime());
-                cal.set(Calendar.DAY_OF_MONTH, 1);           //上月初
-                beginTime = sim.format(cal.getTime());
-            }
+            dataList = getItemMes(driver, EMP_SID, dataList);
             map.put("itemMes", dataList);
             logger.warn("获取账单详情成功");
             logger.warn("获取基本信息");
@@ -126,17 +107,67 @@ public class ZXBankDepositCardService {
             map.put("userName", userName);
             map.put("bankName", "中信银行");
             logger.warn("中信银行数据推送...");
-            map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");  //推送数据
+            //推送数据
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/savings/authentication");
             logger.warn("中信银行数据推送成功");
             driver.quit();//关闭浏览器
         } catch (Exception e) {
             driver.quit();
             logger.warn("中信银行认证失败", e);
-            map=new HashMap<>();
+            map.clear();
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络请求异常，请稍后再试");
         }
         return map;
+    }
+
+    /**
+     * 获取账单详情
+     * @param driver
+     * @param EMP_SID
+     * @param dataList
+     * @return
+     * @throws Exception
+     */
+    public List<String> getItemMes(InternetExplorerDriver driver, String EMP_SID, List<String> dataList) throws Exception {
+        //将mainframe切换到详单页面
+        driver.executeScript("document.getElementById(\"mainframe\").src=\"https://i.bank.ecitic.com/perbank6/pb1310_account_detail_query.do?EMP_SID=" + EMP_SID + "\" ");
+        Thread.sleep(2000);
+        WebElement mainframe = driver.findElementById("mainframe");
+        driver.switchTo().frame(mainframe);
+        Thread.sleep(1000);
+        //打开自定义查询
+        driver.findElement(By.id("spacilOpenDiv")).click();
+        //移除时间输入框的readOnly属性
+        driver.executeScript("document.getElementById('beginDate').removeAttribute('readonly');document.getElementById('endDate').removeAttribute('readonly');");
+        driver.findElement(By.id("beginDate")).clear();
+        driver.findElement(By.id("endDate")).clear();
+        //查询开始时间，结束时间（当前时间前两天）设置
+        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -2);
+        String endTime = sim.format(cal.getTime());
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        String beginTime = sim.format(cal.getTime());
+        //循环获取6个月的账单信息
+        for (int i = 0; i < 6; i++) {
+            driver.findElement(By.id("beginDate")).clear();
+            driver.findElement(By.id("endDate")).clear();
+            driver.findElement(By.id("beginDate")).sendKeys(beginTime);
+            driver.findElement(By.id("endDate")).sendKeys(endTime);
+            driver.findElementById("searchButton").click();
+            Thread.sleep(1000);
+
+            String attribute = driver.findElementById("resultTable1").getAttribute("innerHTML");
+            dataList.add(attribute);
+            //上月末
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            endTime = sim.format(cal.getTime());
+            //上月初
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            beginTime = sim.format(cal.getTime());
+        }
+        return dataList;
     }
 
     /**
@@ -212,7 +243,6 @@ public class ZXBankDepositCardService {
     private Map<String, Object> analyBaseMes(String baseMes) throws Exception {
         Map<String, Object> map = new HashMap<>();
         Document parse = Jsoup.parse(baseMes);
-        System.out.println(parse.text());
         Elements tbody = parse.getElementsByTag("tbody");
         Elements td = tbody.get(0).getElementsByTag("td");
 

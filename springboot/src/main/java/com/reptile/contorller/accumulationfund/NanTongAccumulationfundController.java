@@ -25,8 +25,8 @@ public class NanTongAccumulationfundController {
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "获取公积金详情",notes = "参数：身份证，用户名，密码，城市id")
-    public Map<String,Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard ){
+    public Map<String,Object> getDetailMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 
-        return service.getDetailMes(request,idCard.trim(),userName.trim(),passWord.trim(),cityCode.trim());
+        return service.getDetailMes(request,idCard.trim(),userName.trim(),passWord.trim(),cityCode.trim(),idCardNum.trim());
     }
 }

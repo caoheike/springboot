@@ -1,31 +1,21 @@
 package com.reptile.service.ChinaTelecom;
 
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.Dates;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
+import com.reptile.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Service
@@ -124,9 +114,8 @@ public class GansuProvinceService {
 					Gansu.put("flag", 6);
 					Gansu.put("UserPassword", UserPass);
 					System.out.println(Gansu);
-					//http://192.168.3.35:8080/HSDC/message/telecomCallRecord
 					Resttemplate resttemplate = new Resttemplate();
-					map=resttemplate.SendMessage(Gansu,"http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
+					map=resttemplate.SendMessage(Gansu, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
 					 
 					if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 						PushSocket.push(map, UUID, "0000");

@@ -1,17 +1,4 @@
 package com.reptile.service.ChinaTelecom;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.lang.Object;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,8 +10,18 @@ import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 @Service
 public class ShanghaiTelecomService {
+	private Logger logger= LoggerFactory.getLogger(ShanghaiTelecomService.class);
 	@Autowired
 	private application application;
 	
@@ -37,6 +34,7 @@ public class ShanghaiTelecomService {
 	     Object attribute = request.getSession().getAttribute("GBmobile-webclient");//从session中获得webClient
 	     WebClient webClient=(WebClient)attribute;
 	     if(webClient==null){
+	    	 logger.warn("上海电信--请先登录!");
 	    	 map.put("errorCode", "0001");
 			map.put("errorInfo", "请先登录!");
 			return map;
@@ -46,9 +44,11 @@ public class ShanghaiTelecomService {
    		    HtmlPage codePage=webClient.getPage("http://service.sh.189.cn/service/query/detail");
    		    HtmlPage sendCodePage=(HtmlPage) codePage.executeJavaScript("javascript:sendCode()").getNewPage() ;//发送验证码
    		    if( sendCodePage.getElementById("step_hint").asXml().contains("验证码已发送")){
+   		     logger.warn("上海电信，验证码已经发送成功");
    		     map.put("errorInfo", "验证码已经发送成功");
     		 map.put("errorCode", "0000");
    		    }else{
+   		     logger.warn("上海电信",sendCodePage.getElementById("step_hint").asText());
    		     map.put("errorInfo", sendCodePage.getElementById("step_hint").asText());
     		 map.put("errorCode", "0001");
    		    }
@@ -56,7 +56,12 @@ public class ShanghaiTelecomService {
    		    request.getSession().setAttribute("webClient", webClient);
    		   
 	     } catch (Exception e) {
-			e.printStackTrace();
+	    	 logger.warn("上海电信",e);
+	    	map.put("errorCode", "0001");
+			map.put("errorInfo", "网络异常!");
+				
+	    	
+			//e.printStackTrace();
 		}
 		return map;
    }
@@ -74,6 +79,7 @@ public class ShanghaiTelecomService {
 		 WebClient  webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
 		 if(webClient==null){
 			 PushSocket.push(map, UUID, "0001");
+			 logger.warn("上海电信未获取验证码");
 	    	 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
 			 return map;
@@ -81,17 +87,20 @@ public class ShanghaiTelecomService {
 	     HtmlPage sendCodePage=(HtmlPage) request.getSession().getAttribute("sendCodePage");
 	     HtmlTextInput input_code=(HtmlTextInput) sendCodePage.getElementById("input_code");
 		 input_code.setAttribute("value", code);//输入验证码
+		 
 		  try {
 			HtmlPage detailPage=webClient.getPage("http://service.sh.189.cn/service/service/authority/query/billdetail/validate.do?input_code="+code+"&selDevid="+phoneNumber+"&flag=nocw&checkCode=验证码");
 			String a=detailPage.getWebResponse().getContentAsString();
 			if(a.contains("ME10001")){
 				PushSocket.push(map, UUID, "0001");
+				logger.warn("上海电信","输入的验证码错误！");
 				map.put("errorCode", "0001");
 		        map.put("errorInfo", "输入的验证码错误！");
 		        return map;
 			}else{
 				PushSocket.push(map, UUID, "0000");
-			Thread.sleep(1000);
+				logger.warn("上海电信数据获取中...");
+			  Thread.sleep(1000);
 			 //1.选择月份
 	   		   //====================================== his===================================
 	   		    Date date=new Date();
@@ -149,6 +158,7 @@ public class ShanghaiTelecomService {
 						 dataList.add(dmap);
 						//map.put(GetMonth.beforMonth(year,mon,i+1),);
 					}else{
+						logger.warn("上海电信暂无数据");
 						map.put("errorCode", "0001");
 				        map.put("errorInfo", "暂无数据");
 					}
@@ -182,7 +192,6 @@ public class ShanghaiTelecomService {
 					     //System.out.println(click.asText());//获取成功
 						
 				         pageEndNum=new Integer(succ.asText().split("\",\"sumTime")[0].split("sumRow\":\"")[1]);
-				     	
 				         List<NameValuePair> nowList1 = new ArrayList<NameValuePair>();
 					        nowList1.add(new NameValuePair("begin","0"));
 					        nowList1.add(new NameValuePair("end",pageEndNum+""));
@@ -204,25 +213,28 @@ public class ShanghaiTelecomService {
 							dmap1.put("item",str);
 							dataList.add(dmap1);
 					}else{
+						logger.warn("上海电信暂无数据");
 						map.put("errorCode", "0001");
 				        map.put("errorInfo", "暂无数据");
 					}
-					
+				logger.warn("上海电信数据获取成功");	
 			   map.put("data", dataList);
 			   map.put("UserPassword", servePwd);
 	           map.put("UserIphone", phoneNumber);
 	           map.put("longitude", longitude);
-				map.put("latitude", latitude);
+			   map.put("latitude", latitude);
 	           map.put("flag", "11");  
 	           map.put("errorCode", "0000");
 	           map.put("errorInfo", "查询成功");
+	           webClient.close();
 	           Resttemplate resttemplate = new Resttemplate();
                map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 		 
 			}
 		  } catch (Exception e) {
+			  logger.warn("上海电信",e);
 			  map.put("errorCode", "0001");
 	          map.put("errorInfo", "网络连接异常!");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}    
 		return map;
 	}

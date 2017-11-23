@@ -32,8 +32,8 @@ public class GuiYangAccumulationfundController {
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码，图片验证码，城市编号")
-    public Map<String,Object> getDeatilMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
+    public Map<String,Object> getDeatilMes(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 
-        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),catpy.trim(),cityCode.trim());
+        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),catpy.trim(),cityCode.trim(),idCardNum.trim());
     }
 }

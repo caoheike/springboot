@@ -1,17 +1,13 @@
 package com.reptile.util;
 
+import net.sf.json.JSONObject;
+import org.springframework.stereotype.Component;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-
-import net.sf.json.JSONObject;
-
-import org.java_websocket.WebSocket;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +55,7 @@ public class talkFrame {
     			//session.getBasicRemote().sendObject(json1);
     		
 				//session.getBasicRemote().sendText(json1.toString());//链接成功
-    			System.out.println(msg.substring(0, msg.length()-1).toString()+",\"resultCode\": \"1111\"}");
+    			//System.out.println(msg.substring(0, msg.length()-1).toString()+",\"resultCode\": \"1111\"}");
 				session.getBasicRemote().sendText(msg.substring(0, msg.length()-1).toString()+",\"resultCode\":\"1111\"}");//链接成功
 				
 			} catch (Exception e) {

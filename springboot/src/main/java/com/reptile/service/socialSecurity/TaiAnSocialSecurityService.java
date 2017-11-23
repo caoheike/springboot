@@ -1,48 +1,33 @@
 package com.reptile.service.socialSecurity;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 @Service
 public class TaiAnSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(TaiAnSocialSecurityService.class);
 	 @Autowired
 	  private application applications;
-	 public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode){
+	 public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 	      Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -84,7 +69,7 @@ public class TaiAnSocialSecurityService {
 
 			
 			  try {
-				
+				  PushState.state(idCardNum, "socialSecurity", 100);
 				  
 				    List<NameValuePair> list1=new ArrayList<NameValuePair>();
 		            list1.add(new NameValuePair("method","doLogonAllowRepeat"));
@@ -153,10 +138,17 @@ public class TaiAnSocialSecurityService {
 								map.put("errorCode", "0000");
 								map.put("data", dateMap);
 								map.put("city", cityCode);//007
-								map.put("userId", idCard);//TODO
+								map.put("userId", idCardNum);//TODO
 								map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
-								//map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/socialSecurity");
-						  	
+								if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+						          	PushState.state(idCardNum, "socialSecurity", 300);
+						          	map.put("errorInfo","推送成功");
+						          	map.put("errorCode","0000");
+						          }else{
+						          	PushState.state(idCardNum, "socialSecurity", 200);
+						          	map.put("errorInfo","推送失败");
+						          	map.put("errorCode","0001");
+						          }
 						    }else{
 						    	logger.warn("泰安市社保信息获取工程中出错");
 						    	  map.put("errorCode", "0001");

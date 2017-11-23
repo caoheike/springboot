@@ -1,43 +1,27 @@
 package com.reptile.service.accumulationfund;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.reptile.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
-
 @Service
 public class BZHousingFundService {
 	
 	private Logger logger = LoggerFactory.getLogger(BZHousingFundService.class);
-	
-	@Autowired
-	private application application;
-	
+
 	/**
 	 * 登录并获取详情
 	 * @param request
@@ -48,7 +32,7 @@ public class BZHousingFundService {
 	 * @return
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
-			String userName, String passWord,String idCard,String cityCode) {
+			String userName, String passWord,String idCard,String cityCode,String idCardNum) {
 		
 		Map<String, Object> data = new HashMap<String, Object>();//返回信息
 		
@@ -87,7 +71,7 @@ public class BZHousingFundService {
 	        		data.put("errorInfo", list.get(0));
 	        	}
 	        }else{
-	        	data = this.doGetDetail(request, idCard, cityCode, webClient);
+	        	data = this.doGetDetail(request, idCard, cityCode,idCardNum,webClient);
 	        }
 	        
 		} catch (Exception e) {
@@ -111,9 +95,9 @@ public class BZHousingFundService {
 	 * @param webClient
 	 * @return
 	 */
-	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,WebClient webClient) {
+	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String idCardNum,WebClient webClient) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		
+		  PushState.state(idCardNum, "accumulationFund", 100);
 		try {
 			WebRequest webRequest = new WebRequest(new URL("http://www.bzgjj.cn/usermain2.php"));
 			webRequest.setHttpMethod(HttpMethod.GET);
@@ -130,10 +114,20 @@ public class BZHousingFundService {
 		    data.put("errorInfo", "查询成功"); 
 		    data.put("data", map);
 		    data.put("city", cityCode);
-		    data.put("userId", idCard);
+		    data.put("userId", idCardNum);
 		    //数据推送
-		    data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/accumulationFund");
+		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
+		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+           	 PushState.state(idCardNum, "accumulationFund", 300);
+           	data.put("errorInfo","推送成功");
+           	data.put("errorCode","0000");
+           }else{
+           	 PushState.state(idCardNum, "accumulationFund", 200);
+           	data.put("errorInfo","推送失败");
+           	data.put("errorCode","0001");
+           }
 		} catch (Exception e) {
+			 PushState.state(idCardNum, "accumulationFund", 200);
 			logger.error("滨州市公积金查询失败",e);
 			data.put("errorCode", "0002");
 			data.put("errorInfo", "网络繁忙，请重试");

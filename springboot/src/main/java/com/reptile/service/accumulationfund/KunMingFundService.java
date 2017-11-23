@@ -1,56 +1,32 @@
 package com.reptile.service.accumulationfund;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
+import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.htmlparser.tags.Html;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.google.gson.JsonObject;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
-import com.reptile.util.application;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class KunMingFundService {
 	  private Logger logger= LoggerFactory.getLogger(KunMingFundService.class);
-	  @Autowired
-	  private application applications; 
 	  /**
 	   * 获取图形验证码
 	   * */
@@ -98,7 +74,7 @@ public class KunMingFundService {
 	   * 获取详单
 	   */
 	  
-	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode){
+	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> dateMap = new HashMap<String, Object>();
 		  List<Object> dataList = new ArrayList<Object>();
@@ -107,13 +83,14 @@ public class KunMingFundService {
 
 	        Object client = session.getAttribute("KM-WebClient");
 	        if (client == null) {
+	        	PushState.state(idCardNum, "accumulationFund", 200);
 	        	logger.warn("昆明住房公积金未获取图形验证码");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取图形验证码");
 	            return map;
 	        } else { 
 		  try {
-			 
+			  PushState.state(idCardNum, "accumulationFund", 100);
 			  WebClient webClient = (WebClient) client;
 			 String url="http://222.172.223.90:8081/kmnbp/per.login";
 			 WebRequest requests = new WebRequest(new URL(url));
@@ -135,11 +112,13 @@ public class KunMingFundService {
 			String tip=page1.asXml();
 			System.out.println(tip);
 			if(tip.contains("操作失败")){
+				PushState.state(idCardNum, "accumulationFund", 200);
 				logger.warn("昆明住房公积金获取失败--"+page1.executeJavaScript("$('.text').text()").getJavaScriptResult());
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", page1.executeJavaScript("$('.text').text()").getJavaScriptResult());
 	            //System.out.println();
 			}else{
+				
 				if(tip.contains("公积金基本信息查询")){
 					  logger.warn("昆明住房公积金基本信息获取中");
 					   WebRequest  request1 = new WebRequest(new URL("http://222.172.223.90:8081/kmnbp/init.summer?_PROCID=70000013"));
@@ -226,6 +205,7 @@ public class KunMingFundService {
 		   			 UnexpectedPage pages1 = webClient.getPage(request3);	
 		   			
 		   			 if(alertList!=null&&alertList.size()>0){
+		   				PushState.state(idCardNum, "accumulationFund", 200);
 		   				logger.warn("昆明住房公积金获取过程中失败--",alertList.get(0)); 
 				        	map.put("errorCode", "0001");
 				            map.put("errorInfo", alertList.get(0));
@@ -297,16 +277,24 @@ public class KunMingFundService {
 	               dateMap.put("item", dataL);
   	               map.put("data", dateMap);
 		          
-	               map.put("userId", idCard);
+	               map.put("userId", idCardNum);
                    map.put("city", cityCode);//004
                    map.put("errorCode", "0000");
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
-	              map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张浩敏
-		          // map=resttemplate.SendMessage(map,applications.getSendip()+ "/HSDC/person/accumulationFund");//张浩敏
-		            	
+	              map=resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");//张浩敏
+	              if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+	                	 PushState.state(idCardNum, "accumulationFund", 300);
+	                    map.put("errorInfo","推送成功");
+	                    map.put("errorCode","0000");
+	                }else{
+	                	 PushState.state(idCardNum, "accumulationFund", 200);
+	                    map.put("errorInfo","推送失败");
+	                    map.put("errorCode","0001");
+	                } 	
 		               
 				}else{
+					 PushState.state(idCardNum, "accumulationFund", 200);
 					logger.warn("昆明住房公积金获取失败");
 					map.put("errorCode", "0001");
 		            map.put("errorInfo", "网络连接异常!");
@@ -318,7 +306,7 @@ public class KunMingFundService {
 			
 			
 		}catch (Exception e) {
-			
+			PushState.state(idCardNum, "accumulationFund", 200);
 			logger.warn("昆明住房公积金获取失败",e);
 			map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常!");
