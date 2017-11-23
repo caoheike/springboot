@@ -45,7 +45,7 @@ public class ConstructionService {
 					PushState.state(UserCard, "bankBillFlow",200);
 					driver.close();
 					map.clear();
-					logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
+//					logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
 					map.put("errorInfo","账号或卡号与账户类型不匹配");
 					map.put("errorCode","0002");
 					return map;
@@ -100,11 +100,9 @@ public class ConstructionService {
 
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
-		            	logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
+		            	logger.warn("建设推送失败"+UserCode+map);
 		            	PushState.state(UserCard, "bankBillFlow",200);
 		            	//---------------------数据中心推送状态----------------------
-		                map.put("errorInfo","推送失败");
-		                map.put("errorCode","0001");
 		            	driver.close();
 
 		            }
