@@ -13,17 +13,21 @@ public class QuitDriverService {
 		 HttpSession session = request.getSession();
 		 Object drivers = session.getAttribute(driverName);
 	     WebDriver driver =(WebDriver) drivers;
+	     String dName=    driver.getClass().getName();
 	     if(driver!=null){
 	    	 driver.close();
-	            try {
-					Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
-					return true;
-				} catch (IOException e) {
-					 
+	    	 try {
+	    	 if(dName.contains("ChromeDriver")){
+	    		Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");		
+	 	     }else{
+				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");   
+	         }
+	    	 return true;
+	    	 } catch (IOException e) {
+					System.out.println("driver关闭过程中出错");
 					e.printStackTrace();
-				} 
-	     }
-		return false;
-		
-	} 
+		     }
+	     } 
+	     return false;
+}
 }
