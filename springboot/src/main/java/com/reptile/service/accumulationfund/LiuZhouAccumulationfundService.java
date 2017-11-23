@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.reptile.util.ConstantInterface;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -44,7 +45,7 @@ public class LiuZhouAccumulationfundService {
 	  
 	 public Map<String,Object> loginImage(HttpServletRequest request){
 		 	logger.warn("获取柳州公积金图片验证码");
-			System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 			WebDriver driver = new InternetExplorerDriver();
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			driver.get("http://www.lzzfgjj.com/login.jspx");

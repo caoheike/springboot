@@ -2,6 +2,7 @@ package com.reptile.service;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.WebClientFactory;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -78,7 +79,7 @@ public class TaobaoService {
     }
 
     public Map<String, String> loadTaoBao1(HttpServletRequest request, String userAccount, String passWord) throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
+        System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);

@@ -1,10 +1,6 @@
 package com.reptile.service;
 
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import com.reptile.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
@@ -36,7 +32,7 @@ public class CEBService {
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
 		public Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
 			 Map<String, Object> map=new HashMap<String, Object>();
-			 System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+			 System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 
 			 WebDriver driver = new InternetExplorerDriver();
 			try {
@@ -204,7 +200,7 @@ public class CEBService {
 			  HttpSession session = request.getSession();
 			  Map<String,Object> data=new HashMap<String,Object>();
 			  Map<String,Object> map=new HashMap<String,Object>();
-			 System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+			 System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 			 WebDriver driver = new InternetExplorerDriver();
 				driver.get(CabCardloginUrl);
 				driver.navigate().refresh();

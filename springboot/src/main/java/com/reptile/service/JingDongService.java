@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.reptile.util.*;
 import org.apache.http.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,14 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.reptile.util.Dates;
-import com.reptile.util.DriverUtil;
-import com.reptile.util.ImgUtil;
-import com.reptile.util.JsonUtil;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.SimpleHttpClient;
-import com.reptile.util.application;
 @Service
 public class JingDongService {
 	private Logger logger= LoggerFactory.getLogger(JingDongService.class);
@@ -51,7 +44,7 @@ public class JingDongService {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		//添加谷歌驱动
-        System.setProperty("webdriver.chrome.driver", "D:\\ie\\chromedriver.exe");
+        System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
         
         ChromeDriver driver = new ChromeDriver();
         try {

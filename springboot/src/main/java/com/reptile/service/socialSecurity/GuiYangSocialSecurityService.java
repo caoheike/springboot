@@ -41,7 +41,7 @@ public class GuiYangSocialSecurityService {
         InternetExplorerDriver driver = null;
         try {
             log.warn("登录贵阳社保");
-            System.setProperty("webdriver.ie.driver", "C:\\Program Files\\iedriver\\IEDriverServer.exe");
+            System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
             driver = new InternetExplorerDriver();
             driver.manage().window().maximize();
             driver.get("http://118.112.188.109/nethall/login.jsp");

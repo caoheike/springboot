@@ -246,9 +246,7 @@ public class ChongQingTelecomService {
 	 */
 	 public Map<String, Object> chongQingLogin(HttpServletRequest request, String phoneNumber, String servePwd){
 			Map<String, Object> map = new HashMap<String, Object>();
-			System.setProperty("webdriver.chrome.driver",
-
-					"D:\\ie\\chromedriver.exe");
+			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");

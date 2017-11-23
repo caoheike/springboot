@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.reptile.util.ConstantInterface;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,11 +48,9 @@ public class CCBService {
 			Map<String, Object> map=new HashMap<String, Object>();
 			Map<String,Object> data=new HashMap<String,Object>();
 			
-			System.setProperty("webdriver.chrome.driver", "D:/ie/chromedriver.exe");
+			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
 			WebDriver driver = new ChromeDriver();
-			
-//			System.setProperty("webdriver.ie.driver", "F:\\ie\\IEDriverServer.exe");
-//			WebDriver driver = new InternetExplorerDriver();
+
 			driver.get(CEBlogin);
 			driver.navigate().refresh();
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待

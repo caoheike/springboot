@@ -618,23 +618,6 @@ public class InterfaceController {
 
 	}
 
-//	@RequestMapping(value = "bankQuery", method = RequestMethod.GET)
-//	public void bankQuery(HttpServletRequest request,
-//			HttpServletResponse response)
-//			throws FailingHttpStatusCodeException, MalformedURLException,
-//			IOException, InterruptedException {
-//		System.setProperty("webdriver.ie.driver", "D:/ie/IEDriverServer.exe");
-//		WebDriver driver = new InternetExplorerDriver();
-//		driver.get("https://ebsnew.boc.cn/boc15/login.html");
-//
-//		// WebElement txtbox = driver.findElement(By.id("txt_username_79443"));
-//		// txtbox.sendKeys("a");
-//		// Actions action = new Actions(driver);
-//		// action.contextClick();// 鼠标右键在当前停留的位置做单击操作
-//		// action.sendKeys(Keys.TAB);
-//		// System.out.println("结束");
-//
-//	}
 	/**
 	 * 登陆
 	 * @param request

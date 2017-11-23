@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.reptile.util.*;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.FileUtils;
@@ -45,11 +46,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
 
 @Service
 public class HebeiProvinceService {
@@ -63,7 +59,7 @@ public class HebeiProvinceService {
 		 */
 	public static Map<String,Object> HebeiUsercard1(HttpServletRequest request,String Usernum,String UserPass,String Username,String Usercode){
 		Map<String,Object> map=new HashMap<String,Object>();
-		System.setProperty("webdriver.ie.driver", "D:\\ie\\IEDriverServer.exe");
+		System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 		WebDriver driver = new InternetExplorerDriver();
 		driver.get("http://login.189.cn/web/login");
 		driver.navigate().refresh();

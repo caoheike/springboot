@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.Session;
 
+import com.reptile.util.*;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -38,14 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.reptile.util.GetMonth;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.PushSocket;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.RobotUntil;
-import com.reptile.util.application;
-import com.reptile.util.talkFrame;
-
 @Service
 public class NingXiaTelecomService {
 	private Logger logger= LoggerFactory.getLogger(NingXiaTelecomService.class);
@@ -63,9 +56,7 @@ public class NingXiaTelecomService {
 	 public Map<String, Object> ningXiaLogin(HttpServletRequest request, String phoneNumber, String servePwd) {
 		 
 			Map<String, Object> map = new HashMap<String, Object>();
-			System.setProperty("webdriver.chrome.driver",
-					"D:\\ie\\chromedriver.exe");
-			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
+			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");
 			WebDriver driver = new ChromeDriver(options);

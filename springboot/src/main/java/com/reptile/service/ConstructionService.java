@@ -1,9 +1,6 @@
 package com.reptile.service;
 
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import com.reptile.util.*;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -31,7 +28,7 @@ public class ConstructionService {
 	  public Map<String,Object> check(HttpServletRequest request,String UserCard,String UserCode,String CodePass,String UUID){
 		  Map<String,Object>map=new HashMap<String,Object>();
 		  System.out.println(Thread.currentThread().getName());  
-			System.setProperty("webdriver.chrome.driver", "D:/ie/chromedriver.exe");
+			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
 			WebDriver driver = new ChromeDriver();
 			driver.get("http://creditcard.ccb.com/tran/WCCMainPlatV5?CCB_IBSVersion=V5&SERVLET_NAME=WCCMainPlatV5&TXCODE=NE3050");
 			try {

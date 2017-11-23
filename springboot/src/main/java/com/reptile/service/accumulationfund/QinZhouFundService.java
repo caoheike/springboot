@@ -62,8 +62,7 @@ public class QinZhouFundService {
 			Map<String, Object> map = new HashMap<String, Object>();
 			 List<Object> dataList = new ArrayList<Object>();
 			 HttpSession session = request.getSession();
-			System.setProperty("webdriver.chrome.driver",
-					"D:\\ie\\chromedriver.exe");
+			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 			//C:\\Program Files\\iedriver\\chromedriver.exe  正式上用这个
 			ChromeOptions options = new ChromeOptions();
 	        options.addArguments("start-maximized");
