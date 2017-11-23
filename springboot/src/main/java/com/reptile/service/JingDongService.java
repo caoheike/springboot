@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.reptile.util.*;
 import org.apache.http.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +22,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.Dates;
+import com.reptile.util.DriverUtil;
+import com.reptile.util.ImgUtil;
+import com.reptile.util.JsonUtil;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.SimpleHttpClient;
+import com.reptile.util.application;
 
 @Service
 public class JingDongService {
@@ -74,8 +83,8 @@ public class JingDongService {
 					
 					String text = driver.findElementByClassName("msg-error").getText().replace("\n", "。");
 					if(text.contains("验证码")){
-						data.put("errorInfo", "系统繁忙，请稍后再试！");
-						data.put("errorCode", "0002");
+						data = doGetDetail(request, userName, passWord, idCard);
+						return data;
 					}else{
 						data.put("errorInfo", text);
 						data.put("errorCode", "0001");
@@ -107,14 +116,12 @@ public class JingDongService {
 					data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/savings/eastOfBeijing");
 					logger.warn("---------京东--------推送状态为---------" + data.toString());
 					//状态推送
-					if( map !=null && "0000".equals(map.get("ResultCode"))){
+					if( data != null && "0000".equals(data.get("ResultCode"))){
 						PushState.state(idCard, "eastOfBeijing", 300);
-	                    map.put("errorInfo","推送成功");
-	                    map.put("errorCode","0000");
+						data.put("errorInfo","推送成功");
+						data.put("errorCode","0000");
 	                }else{
                 	    PushState.state(idCard, "eastOfBeijing", 200);
-	                    map.put("errorInfo","推送失败");
-	                    map.put("errorCode","0001");
 	                }
 					
 				}else{
