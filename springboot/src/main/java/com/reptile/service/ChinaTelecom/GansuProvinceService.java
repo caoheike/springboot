@@ -127,8 +127,6 @@ public class GansuProvinceService {
 			            	//--------------------数据中心推送状态----------------------
 			            	PushState.state(UserNum, "callLog",200);
 			            	//---------------------数据中心推送状态----------------------
-			                map.put("errorInfo","短信验证码错误");
-			                map.put("errorCode","0001");
 			          }
 					webClient.close();
 					} catch (Exception e) {

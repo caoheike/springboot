@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -100,7 +101,13 @@ public class HebeiProvinceService {
 				e.printStackTrace();
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "服务异常！请重新尝试发送验证码");
-				driver.close();
+				driver.close(); 
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		}
 		return map;
 		
@@ -167,13 +174,13 @@ public class HebeiProvinceService {
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
 	                driver.close();
+	                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 	         }else{
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(Usernum, "callLog",200);
 	            	//---------------------数据中心推送状态----------------------
-	                map.put("errorInfo","响应异常,请重试");
-	                map.put("errorCode","0001");
 	                driver.close();
+	                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 	          }
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -182,6 +189,12 @@ public class HebeiProvinceService {
 			 map.put("errorInfo","服务繁忙，请稍后再试");
 			 map.put("errorCode","0002");
 			 driver.close();
+			 try {
+				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		}
 		return map;

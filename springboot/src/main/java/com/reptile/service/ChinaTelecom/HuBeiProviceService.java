@@ -186,8 +186,6 @@ public class HuBeiProviceService {
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(PhoneNume, "callLog",200);
 	            	//---------------------数据中心推送状态----------------------
-	                map.put("errorInfo","响应异常,请重试");
-	                map.put("errorCode","0001");
 	          }
 				webClient.close();
 			} catch (Exception e) {

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,7 @@ public class CEBService {
 			try {
 				driver.get(CabCardloginUrl);
 				driver.navigate().refresh();
-				 driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);//隐式等待
+				 driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);//隐式等待
 				//login
 			
 				WebElement loginform= driver.findElement(By.id("login"));
@@ -76,6 +77,7 @@ public class CEBService {
 					map.put("errorCode","0002");
 					System.out.println(map);
 					driver.close();
+					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 				}catch(Exception e){
 					HttpSession session=request.getSession();//获得session
 					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
@@ -84,8 +86,6 @@ public class CEBService {
 					System.out.println(map);
 				}
 			} catch (Exception e) {
-				WindowsUtils.tryToKillByName("IEDriverServer.exe");
-		        WindowsUtils.tryToKillByName("iexplore.exe");
 				e.printStackTrace();
 				logger.info("光大银行登录时发送验证码失败"+Usercard);
 				map.put("errorInfo","服务繁忙！请稍后再试");
@@ -110,6 +110,12 @@ public class CEBService {
 					map.put("errorInfo","连接超时！请重新获取验证码");
 					map.put("errorCode","0002");
 					driver.close();
+					 try {
+						Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					return map;
 				}
 			try {
@@ -118,12 +124,14 @@ public class CEBService {
 				loginform.findElement(ByClassName.className("login-style-bt")).click();
 				try {
 					driver.findElement(ByClassName.className("popup-dialog-message"));
+					Thread.sleep(2000);
 					PushSocket.push(map, UUID, "0001");
 					PushState.state(UserCard, "bankBillFlow",200);
 					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","短信验证码输入有误");
 					map.put("errorCode","0002");
 					driver.close();
+					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 				} catch (Exception e) {
 					// TODO: handle exception
 					System.out.println("点击成功");
@@ -161,19 +169,26 @@ public class CEBService {
 				    	PushState.state(UserCard, "bankBillFlow",300);
 		                map.put("errorInfo","查询成功");
 		                map.put("errorCode","0000");
+		                driver.close();
+		                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
 		            	PushState.state(UserCard, "bankBillFlow",200);
 		            	//---------------------数据中心推送状态----------------------
 		            	logger.warn("光大银行账单推送失败"+UserCard);
-		                map.put("errorInfo","查询失败");
-		                map.put("errorCode","0001");
 		            	driver.close();
+		            	 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }
 				}
 				
 			} catch (Exception e) {
 				driver.close();
+				 try {
+					Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				//---------------------------数据中心推送状态----------------------------------
 				PushState.state(UserCard, "bankBillFlow",200);
 				//---------------------------数据中心推送状态----------------------------------
@@ -185,57 +200,7 @@ public class CEBService {
 			}
 			
 			return map;
-			
-		}
 		
-		
-		
-		
-		
-		//获取图片验证码
-		public Map<String, Object> CEBImage(HttpServletRequest request) {
-			  HttpSession session = request.getSession();
-			  Map<String,Object> data=new HashMap<String,Object>();
-			  Map<String,Object> map=new HashMap<String,Object>();
-			 System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
-			 WebDriver driver = new InternetExplorerDriver();
-				driver.get(CabCardloginUrl);
-				driver.navigate().refresh();
-			// TODO Auto-generated method stub
-				try {
-					Thread.sleep(3000);
-					WebElement loginform= driver.findElement(By.id("login"));
-					List<WebElement> Image =	loginform.findElements(By.tagName("img"));
-					WebElement captchaImg=Image.get(0);
-					File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-					BufferedImage  fullImg = ImageIO.read(screenshot);
-					Point point = captchaImg.getLocation();
-					int eleWidth = captchaImg.getSize().getWidth();
-					int eleHeight = captchaImg.getSize().getHeight();
-					BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
-						   eleWidth, eleHeight);
-					ImageIO.write(eleScreenshot, "png", screenshot);
-					String filename="CEB//"+System.currentTimeMillis()+".png";
-					File screenshotLocation = new File(request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+filename);
-					Thread.sleep(3000);
-					FileUtils.copyFile(screenshot, screenshotLocation);
-					data.put("ImagerUrl",request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+filename);
-					data.put("ResultInfo","查询成功");
-					data.put("ResultCode","0000");
-					map.put("errorInfo","查询成功");
-					map.put("errorCode","0000");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					 e.printStackTrace();
-					 map.clear();
-					data.put("ResultInfo","请重新刷新图片！");
-					data.put("ResultCode","0002");
-					map.put("errorInfo","请重新刷新图片");
-					map.put("errorCode","0002");
-				}
-	
-				 map.put("data",data);
-				return map;
+
 		}
 }

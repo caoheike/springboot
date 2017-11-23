@@ -186,6 +186,7 @@ public class GuiYangAccumulationfundService {
                	 PushState.state(idCardNum, "accumulationFund", 300);
                    map.put("errorInfo","推送成功");
                    map.put("errorCode","0000");
+                   
                }else{
                	 PushState.state(idCardNum, "accumulationFund", 200);
                    map.put("errorInfo","推送失败");

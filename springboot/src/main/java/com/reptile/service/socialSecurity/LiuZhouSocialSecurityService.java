@@ -52,11 +52,13 @@ public class LiuZhouSocialSecurityService {
 	            map.put("errorCode", "0000");
 	            map.put("errorInfo", "加载验证码成功");
 	            map.put("data", data);
+	            
 			}  catch (Exception e) {
 				e.printStackTrace();
 				logger.warn("柳州社保 ", e);
 		        map.put("errorCode", "0001");
 		        map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+		        webclient.close();
 			}
 		 	
 			
@@ -67,8 +69,8 @@ public class LiuZhouSocialSecurityService {
 	        Map<String, Object> dataMap = new HashMap<>();
 	        HttpSession session = request.getSession();
 	        Object webclients = session.getAttribute("sessionwebclient-lzsb");
+	        WebClient webclient=(WebClient) webclients;
 	        if (webclients != null ) {
-	        	WebClient webclient=(WebClient) webclients;
 	        	try {
 	    			HtmlPage loginPage=  webclient.getPage("http://siquery.lzsrsj.com/siqg/grdl.aspx");
 	    			HtmlTextInput sfzh= (HtmlTextInput) loginPage.getElementById("txtSfzh");
@@ -86,7 +88,6 @@ public class LiuZhouSocialSecurityService {
 	    			Thread.sleep(4000);
 	    			
 	    			try{
-	    				PushState.state(idCardNum, "socialSecurity", 100);
 	    				HtmlDivision jiben=(HtmlDivision) nextPage.getByXPath("//*[@id='content']/div[2]/div[2]/div[1]").get(0);
 		    			Map<String,Object> data=new HashMap<String,Object>();
 		    			data.put("base",jiben.asXml() );
@@ -116,6 +117,7 @@ public class LiuZhouSocialSecurityService {
 		    				} 
 		    				String muns= mun.asText();
 		    				String subStr = muns.substring(muns.indexOf("共")+1, muns.indexOf("页"));
+		    				PushState.state(idCardNum, "socialSecurity", 100);
 		    				int num=Integer.parseInt(subStr);
 		    				 minxiPage.getAnchorByText("下一页");
 		    				HtmlAnchor a=  minxiPage.getAnchorByText("下一页");
@@ -156,25 +158,27 @@ public class LiuZhouSocialSecurityService {
 		                	map.put("errorCode","0000");
 		                }else{
 		                	PushState.state(idCardNum, "socialSecurity", 200);
-		                	map.put("errorInfo","推送失败");
-		                	map.put("errorCode","0001");
+		                	webclient.close();
 		                }
 		    			System.out.println(map);
 	    			}catch(Exception e){
 	    				e.printStackTrace();
 		    			map.put("errorCode", "0001");
 		 	            map.put("errorInfo", "登录失败,请正确输入");
+		 	            webclient.close();
 	    			}
 	    		} catch (Exception e) {
 	    			// TODO Auto-generated catch block
 	    			e.printStackTrace();
 	    			map.put("errorCode", "0001");
 	 	            map.put("errorInfo", "获取失败");
+	 	           webclient.close();
 	    		}
 	        }else {
 	            logger.warn("柳州社保登录过程中出错session异常 ");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "非法操作！");
+	            webclient.close();
 	        }
 		 return map;
 		 

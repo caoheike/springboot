@@ -1,9 +1,20 @@
 package com.reptile.service;
 
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.application;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
+
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,10 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.application;
+
 
 
 @Service
@@ -241,16 +254,16 @@ public class CCBService {
 						    	PushState.state(IDNumber, "savings",300);
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
-//				                PushSocket.push(map, UUID, "0000");
+				                PushSocket.push(map, UUID, "0000");
+				                driver.close();
+				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				                
 				            }else{
 				            	PushState.state(IDNumber, "savings",200);
 				            	logger.warn("建设银行数据推送失败"+IDNumber);
-				                map.put("errorInfo","网络异常");
-				                map.put("errorCode","0001");
-//				                PushSocket.push(map, UUID, "0001");
+				                PushSocket.push(map, UUID, "0001");
 				                driver.close();
-//				                driver.quit();
+				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				            	return map;
 				            }
 			                 break;  
@@ -268,10 +281,22 @@ public class CCBService {
 					 map.put("errorCode","0002");
 //					 driver.quit();
 					  driver.close();
+					  try {
+						Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					 return map;  
 			    }
 //			    driver.quit();
 			    driver.close();
+			    try {
+					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			    return map;  
 			}
 }

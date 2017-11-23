@@ -69,14 +69,16 @@ public class LiuZhouAccumulationfundService {
 	            map.put("data", data);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				 logger.warn("柳州住房公积金 ", e);
+				 	logger.warn("柳州住房公积金 ", e);
 		            map.put("errorCode", "0001");
 		            map.put("errorInfo", "当前网络繁忙，请刷新后重试");
 		            e.printStackTrace();
+		            driver.close();
 			}
 			
 		return map;
 	 }
+	 
 	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String fundCard,String passWord,String cityCode,String idCardNum ){
 		 System.out.println("欢迎使用柳州公积金");
 		 	Map<String, Object> map = new HashMap<>();
@@ -102,7 +104,6 @@ public class LiuZhouAccumulationfundService {
 		                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		                return map;
 					}
-					PushState.state(idCardNum, "accumulationFund",100);
 					String html1= driver.getPageSource();
 					Map<String,Object> data=new HashMap<String,Object>();
 					driver.get("http://www.lzzfgjj.com/grcx/grcx_grzmmx.jspx");
@@ -116,6 +117,7 @@ public class LiuZhouAccumulationfundService {
 					lz.put("userId", idCardNum);
 					lz.put("data", data);	
 					Resttemplate resttemplate = new Resttemplate();
+					PushState.state(idCardNum, "accumulationFund",100);
 					map=resttemplate.SendMessage(lz,ConstantInterface.port+"/HSDC/person/accumulationFund");
 					  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
@@ -128,8 +130,6 @@ public class LiuZhouAccumulationfundService {
 			            	PushState.state(idCardNum, "accumulationFund",200);
 			            	//---------------------数据中心推送状态----------------------
 			            	logger.warn("柳州公积金推送失败"+idCard);
-			                map.put("errorInfo","查询失败");
-			                map.put("errorCode","0001");
 			            	driver.close();
 			            	Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 			            }
