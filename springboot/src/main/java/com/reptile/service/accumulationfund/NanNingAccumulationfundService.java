@@ -1,6 +1,5 @@
 package com.reptile.service.accumulationfund;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,16 +59,14 @@ public class NanNingAccumulationfundService {
                 map.put("errorInfo", alert.get(0));
                 return map;
             }
-           // HtmlPage posthtml = webClient.getPage("http://www.nngjj.com/web/dynamic/gjjquery/gjjquery$geren");//账户明细查询页
             System.out.println(posthtml.asText());
-            //Thread.sleep(2000);
             if(posthtml.asText().indexOf("职工住房公积金基本情况")==-1){
             	logger.warn("宁波住房公积金获取失败");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
             }else{
             	/*
-            	 * 基本信息12
+            	 * 基本信息
             	 */
             	HtmlTable mytable = (HtmlTable) posthtml.getElementsByTagName("table").get(11);
             	String companyName = mytable.getElementsByTagName("td").get(15).getTextContent();
