@@ -63,10 +63,11 @@ public class LiuZhouAccumulationfundService {
 				session.setAttribute("sessionWebDriver-liuzhou", driver);
 				session.setAttribute("htmlPage-liuzhouloginform", loginform);
 				data.put("imagePath",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/upload/" + filename);
+				data.put("driverName", "sessionWebDriver-liuzhou");
 				//data.put("imagePath", "http://192.168.3.38:8080/upload/"+filename);
 	            map.put("errorCode", "0000");
 	            map.put("errorInfo", "加载验证码成功");
-	            map.put("driverName", "sessionWebDriver-liuzhou");
+	           // map.put("driverName", "sessionWebDriver-liuzhou");
 	            map.put("data", data);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
