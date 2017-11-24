@@ -66,6 +66,7 @@ public class LiuZhouAccumulationfundService {
 				//data.put("imagePath", "http://192.168.3.38:8080/upload/"+filename);
 	            map.put("errorCode", "0000");
 	            map.put("errorInfo", "加载验证码成功");
+	            map.put("driverName", "sessionWebDriver-liuzhou");
 	            map.put("data", data);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
