@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
 import com.reptile.model.Option;
 import com.reptile.model.Question;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
 import com.reptile.util.PushSocket;
@@ -52,8 +53,8 @@ public class CreditService {
                 file.mkdir();
             }
             String fileName = System.currentTimeMillis() + ".jpg";
-//            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
-            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
+            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
+//            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
             webClient.setJavaScriptTimeout(20000);
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
             webClient.getOptions().setJavaScriptEnabled(true); // 启用JS解释器，默认为true
@@ -87,7 +88,7 @@ public class CreditService {
             data.put("ResultInfo", "查询成功");
             data.put("ResultCode", "0000");
         } catch (Exception e) {
-//            Scheduler.sendGet(Scheduler.getIp);
+            Scheduler.sendGet(Scheduler.getIp);
             logger.warn(e.getMessage() + "  获取征信验证码   mrlu", e);
             data.put("ResultInfo", "系统繁忙，请稍后再试！");
             data.put("ResultCode", "0002");

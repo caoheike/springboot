@@ -289,14 +289,6 @@ public class CCBService {
 					}
 					 return map;  
 			    }
-//			    driver.quit();
-			    driver.close();
-			    try {
-					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			    return map;  
 			}
 }
