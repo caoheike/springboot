@@ -52,7 +52,7 @@ public class LiuZhouAccumulationfundService {
 				int eleHeight = captchaImg.getSize().getHeight();
 				File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 				fullImg = ImageIO.read(screenshot);
-				BufferedImage eleScreenshot= fullImg.getSubimage(point.getX()-9, point.getY(),
+				BufferedImage eleScreenshot= fullImg.getSubimage(point.getX()-6, point.getY(),
 						eleWidth, eleHeight);
 				ImageIO.write(eleScreenshot, "png", screenshot);
 				String filename="lz"+System.currentTimeMillis()+".png";
