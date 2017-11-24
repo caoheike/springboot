@@ -1,6 +1,8 @@
 package com.reptile.service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -9,7 +11,8 @@ import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 @Service
 public class QuitDriverService {
-	public boolean driverClose(HttpServletRequest request,String driverName) {
+	public Map<String, String> driverClose(HttpServletRequest request,String driverName) {
+		Map<String, String> map=new HashMap< String, String>();
 		 HttpSession session = request.getSession();
 		 Object drivers = session.getAttribute(driverName);
 	     WebDriver driver =(WebDriver) drivers;
@@ -22,12 +25,14 @@ public class QuitDriverService {
 	 	     }else{
 				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");   
 	         }
-	    	 return true;
+	    	 map.put("errorCode", "0000");
+	    	 return map;
 	    	 } catch (IOException e) {
 					System.out.println("driver关闭过程中出错");
 					e.printStackTrace();
 		     }
 	     } 
-	     return false;
+	     map.put("errorCode", "0001");
+	     return map;
 }
 }

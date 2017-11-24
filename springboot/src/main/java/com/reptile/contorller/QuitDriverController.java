@@ -2,6 +2,8 @@ package com.reptile.contorller;
 
 import io.swagger.annotations.ApiOperation;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class QuitDriverController {
 	    @RequestMapping(value = "driverClose",method = RequestMethod.POST)
 	    @ResponseBody
 	    @ApiOperation(value = "关闭driver",notes = "")
-	    public boolean driverClose(HttpServletRequest request,@RequestParam("driverName")String driverName){
+	    public Map<String, String> driverClose(HttpServletRequest request,@RequestParam("driverName")String driverName){
 
 	         return service.driverClose(request,driverName);
 	    }
