@@ -532,8 +532,6 @@ public class CreditService {
                 }
                 //end mrlu 2017-09-6
 
-                //推送长连接状态
-                PushSocket.push(map, UUID, "0000");
 
                 queryPage.getElementById("tradeCode").setAttribute("value", verifyCode);
                 queryPage.getElementById("radiobutton1").click();
@@ -544,6 +542,8 @@ public class CreditService {
                     map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("errorCode", "0001");
                 } else {
+                    //推送长连接状态
+                    PushSocket.push(map, UUID, "0000");
                     HtmlTable table = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(1);
                     HtmlTable tableTime = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(0);
                     String realName = table.getCellAt(0, 0).asText();
