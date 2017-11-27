@@ -32,7 +32,7 @@ public class NanTongAccumulationfundService {
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
-        	PushState.state(idCardNum, "accumulationFund",100);
+        	
             logger.warn("登录南通住房公积金网");
 //            String str = "http://58.221.92.98:8080/searchPersonLogon.do?spidno=" + idCard + "&spname=" + URLEncoder.encode(userName) + "&sppassword=" + passWord;
 
@@ -74,6 +74,7 @@ public class NanTongAccumulationfundService {
                 String format = sim.format(instance.getTime());
                 int years = Integer.parseInt(format);
                 List<String> itemList = new ArrayList<>();
+                PushState.state(idCardNum, "accumulationFund",100);
                 logger.warn("获取详细缴纳信息");
                 for (int i = 0; i < 3; i++) {
                     HtmlPage page1 = webClient.getPage("http://58.221.92.98:8080/searchGrmx.do?year=" + years);

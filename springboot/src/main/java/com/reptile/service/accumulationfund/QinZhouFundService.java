@@ -42,7 +42,7 @@ public class QinZhouFundService {
 			driver.get("http://wangting.qzsgjj.com/wt-web/grlogin");	
 			driver.navigate().refresh();
 			try {
-				PushState.state(idCardNum, "accumulationFund",100);
+				
          //===========图形验证==========================
 			String path=request.getServletContext().getRealPath("/vecImageCode");
 	        File file=new File(path);
@@ -79,7 +79,8 @@ public class QinZhouFundService {
 		        Thread.sleep(1000);
 	        	 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 		      if(driver.getPageSource().contains("欢迎您")){
-		    	  System.out.println("成功");
+		    	  PushState.state(idCardNum, "accumulationFund",100);
+		    	  //System.out.println("成功");
 		    	 Thread.sleep(1000);
 		    	  //new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.className("dk_more")));
 		    	  logger.warn("钦州住房公积金登陆成功"); 
@@ -215,14 +216,14 @@ public class QinZhouFundService {
 		      }else{
 		    	  WebElement username_tip=	 driver.findElement(By.id("username_tip"));
 		    	  if(username_tip.getText()!=null&&(username_tip.getText().contains("不")||username_tip.getText().contains("错")||username_tip.getText().contains("无"))){
-		    			PushState.state(idCardNum, "accumulationFund",200);
+		    			//PushState.state(idCardNum, "accumulationFund",200);
 		    		  logger.warn("钦州住房公积金"+username_tip.getText());
 		         		map.put("errorCode", "0001");
 		                map.put("errorInfo", username_tip.getText()) ;
 		                driver.close();
 		                return map;
 		    	  }else{
-		    			PushState.state(idCardNum, "accumulationFund",200);
+		    			//PushState.state(idCardNum, "accumulationFund",200);
 		    		  WebElement pwd_tip=	 driver.findElement(By.id("pwd_tip"));
 			    		 if (pwd_tip.getText()!=null&&(pwd_tip.getText().contains("不")||pwd_tip.getText().contains("错"))) {
 			    			
@@ -243,7 +244,7 @@ public class QinZhouFundService {
 			    			 }
 			 			}
 		    		   
-			    			PushState.state(idCardNum, "accumulationFund",200);
+			    			//PushState.state(idCardNum, "accumulationFund",200);
 			    		
 							    logger.warn("钦州住房公积金 该账号已在别处登陆");
 			  				  
@@ -257,7 +258,7 @@ public class QinZhouFundService {
 	      Thread.sleep(2000);
 		      
 			} catch (Exception e) {
-				PushState.state(idCardNum, "accumulationFund",200);
+				//PushState.state(idCardNum, "accumulationFund",200);
 				logger.warn("钦州住房公积金",e);
          		map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");	
