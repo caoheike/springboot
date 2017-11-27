@@ -2,6 +2,7 @@ package com.reptile.service;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.reptile.model.FormBean;
@@ -358,8 +359,19 @@ public class CreditService {
                     data.put("ResultInfo", "信用已生成，请直接查询信用。");
                     data.put("ResultCode", "0003");
                     map.put("data", data);
-                    webClient.close();
                     return map;
+                }
+                if(resultStr.contains("处理中")){
+                    HtmlPage page = webClient.getPage(queryUrl);
+                    NamedNodeMap nextstep = page.getElementById("nextstep").getAttributes();
+                    Node disabled = nextstep.getNamedItem("disabled");
+                    if(disabled==null){
+                        request.getSession().setAttribute("user", bean);
+                        data.put("ResultInfo", "信用已生成，请直接查询信用。");
+                        data.put("ResultCode", "0003");
+                        map.put("data", data);
+                        return map;
+                    }
                 }
                 List<HtmlCheckBoxInput> list = applyPage.getByXPath("//input[@type='checkbox']");
                 for (int i = 0; i < list.size(); i++) {
