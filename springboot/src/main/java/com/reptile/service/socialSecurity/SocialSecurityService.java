@@ -50,7 +50,6 @@ public class SocialSecurityService {
             }catch (Exception e){
                 Scheduler.sendGet(Scheduler.getIp);
             }
-            PushState.state(idCardNum, "socialSecurity", 100);
             HtmlForm form = loginPage.getForms().get(0);
             HtmlTextInput userId = form.getInputByName("uname");
             HtmlTextInput userName = form.getInputByName("aac003");
@@ -65,6 +64,7 @@ public class SocialSecurityService {
             if(result.indexOf("公民身份证号码")!=-1){
                 throw new NullPointerException("身份证号码或姓名不正确，请重新输入!");
             }
+            PushState.state(idCardNum, "socialSecurity", 100);
             HtmlPage infoPage = webClient.getPage(infoUrl);
             HtmlTable infoTable=(HtmlTable)infoPage.getElementsByTagName("table").get(0);
             PersonInfo person=new PersonInfo();
@@ -130,14 +130,14 @@ public class SocialSecurityService {
             }
 
         }catch (NullPointerException e) {
-        	PushState.state(idCardNum, "socialSecurity", 200);
+        	//PushState.state(idCardNum, "socialSecurity", 200);
             logger.warn(e.getMessage()+"     mrlu");
             map.put("ResultInfo","服务器繁忙，请稍后再试！");
             map.put("ResultCode","0001");
             map.put("errorInfo","服务器繁忙，请稍后再试！");
             map.put("errorCode","0001");
         } catch (Exception e) {
-        	PushState.state(idCardNum, "socialSecurity", 200);
+        	//PushState.state(idCardNum, "socialSecurity", 200);
             logger.warn(e.getMessage()+"     mrlu");
             map.clear();
             data.clear();

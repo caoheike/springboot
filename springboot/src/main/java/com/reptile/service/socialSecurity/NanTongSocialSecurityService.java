@@ -28,7 +28,7 @@ public class NanTongSocialSecurityService {
         Map<String, Object> dataMap = new HashMap<>();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
-            PushState.state(idCardNum, "socialSecurity", 100);
+           
             logger.warn("进入南通社保查询页面");
             HtmlPage page = webClient.getPage("http://www.jsnt.lss.gov.cn:1002/query/");
             String loginType = page.getElementById("loginType").getAttribute("value");
@@ -54,6 +54,7 @@ public class NanTongSocialSecurityService {
             }
 
             logger.warn("南通社保登录成功");
+            PushState.state(idCardNum, "socialSecurity", 100);
             String substring = result.substring(2, result.length() - 2);
             String[] split = substring.split("\\|");
             String userid = split[1];

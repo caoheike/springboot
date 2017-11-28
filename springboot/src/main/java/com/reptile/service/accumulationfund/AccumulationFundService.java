@@ -44,7 +44,6 @@ public class AccumulationFundService {
                 map.put("data",data);
                 return map;
             }
-            PushState.state(idCardNum, "accumulationFund", 100);
             HttpSession session = request.getSession();
             Object sessionWebClient = session.getAttribute("sessionWebClient-GJJ");
             Object sessionLoginPage = session.getAttribute("sessionLoginPage-GJJ");
@@ -84,6 +83,7 @@ public class AccumulationFundService {
                     map.put("data",data);
                     return map;
                 }
+                PushState.state(idCardNum, "accumulationFund", 100);
                 HtmlPage detailsPage = webClient.getPage(detailsUrl);
                 HtmlPage infoPage = webClient.getPage(infoUrl);
                 HtmlTable infoTable=(HtmlTable)infoPage.getElementsByTagName("form").get(0).getElementsByTagName("table").get(0);
