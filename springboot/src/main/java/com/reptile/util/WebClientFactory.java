@@ -15,9 +15,9 @@ public class WebClientFactory {
     public WebClient getWebClient() {
         webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
         webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setTimeout(90000);
+        webClient.getOptions().setTimeout(30000);
         webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.setJavaScriptTimeout(40000);
+        webClient.setJavaScriptTimeout(30000);
         webClient.getOptions().setRedirectEnabled(true);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);

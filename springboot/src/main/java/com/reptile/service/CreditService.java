@@ -62,7 +62,7 @@ public class CreditService {
             webClient.getOptions().setCssEnabled(false);// 禁用css支持
             webClient.getOptions().setUseInsecureSSL(true);
             webClient.getOptions().setThrowExceptionOnScriptError(false);// js运行错误时，是否抛出异常
-            webClient.getOptions().setTimeout(30000); // 设置连接超时时间，这里是30S。如果为0，则无限期等待
+            webClient.getOptions().setTimeout(10000); // 设置连接超时时间，这里是30S。如果为0，则无限期等待
             webClient.getCookieManager().setCookiesEnabled(true);
             webClient.addRequestHeader("Host", "ipcrs.pbccrc.org.cn");
             webClient.addRequestHeader("Referer", "https://ipcrs.pbccrc.org.cn/");
