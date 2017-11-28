@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.socialSecurity.NingboSocialSecurityService;
+import com.reptile.service.socialSecurity.ChongQingSocialSecurityService;
 
 @Controller
-@RequestMapping("NingboSocialSecurityController")
-public class NingboSocialSecurityController {
+@RequestMapping("ChongQingSocialSecurityController")
+public class ChongQingSocialSecurityController {
 	@Autowired
-    private NingboSocialSecurityService service;
+    private ChongQingSocialSecurityService service;
 
     @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
     @ResponseBody
@@ -31,11 +31,12 @@ public class NingboSocialSecurityController {
 
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "贵阳社保",notes = "参数：身份证，密码，图片验证码")
+    @ApiOperation(value = "重庆社保",notes = "参数：身份证，密码，图片验证码")
     public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
-            @RequestParam("catpy")String catpy, @RequestParam("idCardNum")String idCardNum, @RequestParam("userName") String userName, @RequestParam("cityCode")String cityCode,
-            @RequestParam("socialCard")String socialCard){
+                                           @RequestParam("imageCode")String imageCode, @RequestParam("idCardNum")String idCardNum, @RequestParam("userName") String userName, @RequestParam("cityCode")String cityCode,
+                                           @RequestParam("socialCard")String socialCard){
 
-        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),catpy.trim(),idCardNum.trim());
+        return service.getQueryDeatil(request, idCard.trim(), passWord.trim(),imageCode.trim(),idCardNum.trim());
     }
+   
 }

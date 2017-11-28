@@ -8,14 +8,19 @@ import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
+
 import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +28,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 @Service
 public class NingBoAccumulationfundService {
+	@Autowired 
+	private application applicat;
     private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
-
+    
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取宁波公积金图片验证码");
         Map<String, Object> map = new HashMap<>();
@@ -68,6 +75,8 @@ public class NingBoAccumulationfundService {
         Map<String, Object> loansdata = new HashMap<>();
         List<Object> beanList=new ArrayList<Object>();
         Date date=new Date();
+        List<String> alert=new ArrayList<>();
+        CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
         HttpSession session = request.getSession();
         Object htmlWebClient = session.getAttribute("htmlWebClient-ningbo");
         Object htmlPage = session.getAttribute("htmlPage-ningbo");
@@ -76,30 +85,34 @@ public class NingBoAccumulationfundService {
         	PushState.state(idCardNum, "accumulationFund",100);
             HtmlPage page = (HtmlPage) htmlPage;
             WebClient webClient = (WebClient) htmlWebClient;
-            List<String> alert=new ArrayList<>();
-            CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+            
             webClient.setAlertHandler(alertHandler);
-            try {
-            	
+            try {           	
                 page.getElementById("cardno").setAttribute("value",userCard);
                 page.getElementById("perpwd").setAttribute("value",password);
                 page.getElementById("verify").setAttribute("value",imageCode);
-                HtmlPage logon = page.getElementById("sub").click();
-                Thread.sleep(5000);
+                HtmlPage loginHtml = page.getElementById("sub").click();
+                Thread.sleep(2000);
+                HtmlPage posthtml1 = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");//账户明细查询页
+                Thread.sleep(3000);
                 System.out.println(alert.size());
                 logger.warn("登录宁波住房公积金:"+alert.size());
                 if(alert.size()>0){
+                	if(alert.get(0).equals("密码错误，请核对!")){
+                		map.put("errorInfo", "密码输入错误，请重新获取图片验证码后填入正确密码！");
+                	}else if(alert.get(0).equals("验证码不正确")){
+                		map.put("errorInfo", "验证码不正确,请重新获取图片验证码！");
+                	}else{
+                		map.put("errorInfo", alert.get(0));
+                	}
+                	logger.warn(alert.get(0));
                     map.put("errorCode", "0005");
                     map.put("errorInfo", alert.get(0));
                     return map;
-                }
+                }          
                 HtmlPage posthtml = webClient.getPage("http://www.nbgjj.com/perdetail.jhtml");//账户明细查询页
-                Thread.sleep(2000);
-                if(posthtml.asText().indexOf("提供近三个自然年个人明细查询")==-1){
-                	logger.warn("宁波住房公积金获取失败");
-                    map.put("errorCode", "0001");
-                    map.put("errorInfo", "当前网络繁忙，请刷新后重试");
-                }else{
+                Thread.sleep(3000);
+                if(posthtml.asText().indexOf("提供近三个自然年个人明细查询")!=-1){
                 	Calendar c = Calendar.getInstance();
                 	
             		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM-dd" );
@@ -118,7 +131,7 @@ public class NingBoAccumulationfundService {
             		if(resultHtml.asText().indexOf("条记录")==-1){
             			logger.warn("宁波住房公积金账户明细获取失败");
                         map.put("errorCode", "0001");
-                        map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+                        map.put("errorInfo", "当前网络繁忙，请刷新后重试");                     
             		}else {
             			AccumulationFlows flows = new AccumulationFlows();
             			HtmlTable posttable = (HtmlTable) resultHtml.getElementById("queryTable");
@@ -232,28 +245,30 @@ public class NingBoAccumulationfundService {
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+                return map;
             }finally {
                 webClient.close();
             }
         } else {
             logger.warn("宁波住房公积金登录过程中出错 ");
             map.put("errorCode", "0001");
-            map.put("errorInfo", "非法操作！");
+            map.put("errorInfo", "非法操作！请确认验证码是否正确！");
+            return map;
         }
         SimpleDateFormat sdf =  new SimpleDateFormat( "yyyyMMdd hh:mm:ss" );
 		String today = sdf.format(date);
         map.put("insertTime", today);
         map.put("cityName", "宁波市");
         map.put("city", "011");
-        map.put("userId", userCard);
+        map.put("userId", idCardNum);
         map.put("data", dataMap);   
         
         Resttemplate resttemplate=new Resttemplate();
-        map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/socialSecurity");
+        map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
         
         if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 	    	PushState.state(idCardNum, "accumulationFund",300);
-	    	map.put("errorInfo","查询成功");
+	    	map.put("errorInfo","推送成功");
 	    	map.put("errorCode","0000");
           
         }else{
@@ -261,7 +276,7 @@ public class NingBoAccumulationfundService {
         	PushState.state(idCardNum, "accumulationFund",200);
         	//---------------------数据中心推送状态----------------------
         	
-            map.put("errorInfo","查询失败");
+            map.put("errorInfo","推送失败");
             map.put("errorCode","0001");
         	
         }

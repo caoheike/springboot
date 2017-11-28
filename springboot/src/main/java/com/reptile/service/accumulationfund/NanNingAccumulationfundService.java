@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.reptile.model.AccumulationFlows;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -35,7 +37,7 @@ public class NanNingAccumulationfundService {
     private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 	DecimalFormat df= new DecimalFormat("#.00");
 	Date date=new Date();
-    public Map<String, Object> getDeatilMes(HttpServletRequest request,String userCard, String password) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request,String userCard, String password,String idCardNum) {
         logger.warn("获取南宁公积金数据");
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> datamap = new HashMap<>();
@@ -45,6 +47,7 @@ public class NanNingAccumulationfundService {
         WebClient webClient = new WebClientFactory().getWebClient();
         HtmlPage page = null;
         try {
+        	PushState.state(idCardNum, "accumulationFund", 100);
         	List<String> alert=new ArrayList<>();
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             page = webClient.getPage("http://www.nngjj.com/web/");
@@ -188,6 +191,16 @@ public class NanNingAccumulationfundService {
         
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+          	 PushState.state(idCardNum, "accumulationFund", 300);
+              map.put("errorInfo","推送成功");
+              map.put("errorCode","0000");
+              
+          }else{
+          	 PushState.state(idCardNum, "accumulationFund", 200);
+              map.put("errorInfo","推送失败");
+              map.put("errorCode","0001");
+          }
         return map;
     }
 }

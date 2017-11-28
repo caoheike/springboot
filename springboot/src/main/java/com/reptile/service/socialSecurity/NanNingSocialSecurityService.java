@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.reptile.model.SecurityBean;
 import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
@@ -39,7 +41,7 @@ public class NanNingSocialSecurityService {
 	List<String> alert=new ArrayList<>();
 	DecimalFormat df= new DecimalFormat("#.00");
     CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
-	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String accountNum) {
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String accountNum,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
     	Map<String,Object> baseInfo = new HashMap<String, Object>();
@@ -51,6 +53,7 @@ public class NanNingSocialSecurityService {
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
         try {
+        	PushState.state(idCardNum, "socialSecurity", 100);
         	//登录页面
 			driver.get("http://222.216.5.212:8060/Cas/login?service=http://222.216.5.212:8081/siweb/userlogin.do?method=begin_dl");	
 
@@ -69,6 +72,7 @@ public class NanNingSocialSecurityService {
             	logger.warn("南宁社保登录失败");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+                return map;
             }
             WebElement nextlogon = driver.findElement(By.id("text1"));
             nextlogon.sendKeys(accountNum);
@@ -243,6 +247,17 @@ public class NanNingSocialSecurityService {
         map.put("createTime", today);
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
+        
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+          	PushState.state(idCardNum, "socialSecurity", 300);
+          	map.put("errorInfo","推送成功");
+          	map.put("errorCode","0000");
+          }else{
+          	PushState.state(idCardNum, "socialSecurity", 200);
+          	map.put("errorInfo","推送失败");
+          	map.put("errorCode","0001");
+          }
+        
         return map;
 	}
 	

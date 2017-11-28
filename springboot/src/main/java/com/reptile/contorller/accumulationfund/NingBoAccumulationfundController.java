@@ -32,9 +32,11 @@ public class NingBoAccumulationfundController {
     @RequestMapping(value = "getDeatilMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "贵阳住房公积金",notes = "参数：身份证，密码，图片验证码")
-    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard,@RequestParam("idCardNum")String idCardNum, @RequestParam("passWord")String passWord,
-                                           @RequestParam("imageCode")String imageCode){
+    public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard")String idCard,
+    		@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,
+    		@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,
+    		@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
 
-        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),imageCode.trim(),idCardNum.trim());
+        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),catpy.trim(),idCardNum.trim());
     }
 }

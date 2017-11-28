@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.reptile.model.AccumulationFlows;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
@@ -71,7 +72,7 @@ public class TaiZhouAccumulationfundService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode) {
+    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
@@ -89,6 +90,7 @@ public class TaiZhouAccumulationfundService {
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             webClient.setAlertHandler(alertHandler);
             try {
+            	PushState.state(idCardNum, "accumulationFund", 100);
                 page.getElementById("sfzh").setAttribute("value",userCard);
                 page.getElementById("pswd").setAttribute("value",password);
                 HtmlInput codeinput = (HtmlInput) page.getElementById("code");
@@ -189,6 +191,16 @@ public class TaiZhouAccumulationfundService {
         
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+          	 PushState.state(idCardNum, "accumulationFund", 300);
+              map.put("errorInfo","推送成功");
+              map.put("errorCode","0000");
+              
+          }else{
+          	 PushState.state(idCardNum, "accumulationFund", 200);
+              map.put("errorInfo","推送失败");
+              map.put("errorCode","0001");
+          }
         return map;
     
     }

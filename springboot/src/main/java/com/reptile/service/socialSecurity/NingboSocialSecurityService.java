@@ -96,21 +96,29 @@ public class NingboSocialSecurityService {
                 page.getElementById("loginid").setAttribute("value",userCard);
                 page.getElementById("pwd").setAttribute("value",password);
                 page.getElementById("yzm").setAttribute("value",imageCode);
-                HtmlPage logon = page.getElementById("btnLogin").click();
-                Thread.sleep(5000);
-                System.out.println(alert.size());
-                logger.warn("登录宁波住房公积金:"+alert.size());
-                if(alert.size()>0){
-                    map.put("errorCode", "0005");
-                    map.put("errorInfo", alert.get(0));
+                HtmlPage pageLogin = page.getElementById("btnLogin").click();
+                Thread.sleep(2000);
+                String errorInfo = pageLogin.getElementById("errDiv").getTextContent();  
+                System.out.println(errorInfo);
+                if(!"请妥善保管好您的用户名和密码，谨防泄露！".equals(errorInfo)){
+                	logger.warn(errorInfo);
+                	if(errorInfo.contains("账号或者密码不正确")){
+                		 map.put("errorInfo", "账号或者密码不正确，请重新刷获取图形验证码");	
+                	}else if(errorInfo.contains("验证码输入错误")){
+                		 map.put("errorInfo", "验证码输入错误，请重新刷新获取图形验证码");
+                	}else{
+                		map.put("errorInfo",errorInfo);
+                	}
+                    map.put("errorCode", "0001");
                     return map;
                 }
                 HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-grxx.jsp");
                 Thread.sleep(2000);
                 if(basicInfos.asText().indexOf("个人信息")==-1){
-                	logger.warn("宁波社保基本信息获取失败");
+                	logger.warn("宁波社保基本信息获取失败！");
                     map.put("errorCode", "0001");
-                    map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+                    map.put("errorInfo", "宁波社保基本信息获取失败！");
+                    return map;
                 }
                 String idcard = basicInfos.getElementById("sfz").getTextContent();
                 String birthday = idcard .substring(6,10)+"."+idcard .substring(10,12)+"."+idcard .substring(12,14);
@@ -167,13 +175,15 @@ public class NingboSocialSecurityService {
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
+                return map;
             }finally {
                 webClient.close();
             }
         } else {
             logger.warn("宁波社保登录过程中出错 ");
             map.put("errorCode", "0001");
-            map.put("errorInfo", "非法操作！");
+            map.put("errorInfo", "非法操作！请确认验证码是否正确！");
+            return map;
         }
         
         SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy年MM月dd日  hh:mm:ss" );
@@ -181,7 +191,7 @@ public class NingboSocialSecurityService {
         map.put("data", dataMap);
         map.put("cityName", "宁波");
         map.put("city", "010");
-        map.put("userId", userCard);
+        map.put("userId", idCardNum);
         map.put("createTime", today);
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
