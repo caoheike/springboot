@@ -69,6 +69,8 @@ public class CEBService {
 					//这一步走完后，图片验证码也输入完毕了，开始点击发送验证码
 				List<WebElement> button =	loginform.findElements(By.tagName("button"));
 				button.get(0).click();
+				Map<String,Object> data=new HashMap<String,Object>();
+
 				try{
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					System.out.println("报错！！！");
@@ -79,10 +81,13 @@ public class CEBService {
 					driver.close();
 					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 				}catch(Exception e){
+
 					HttpSession session=request.getSession();//获得session
 					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
+					data.put("driverName", "sessionDriver-Ceb"+Usercard);
 					map.put("errorInfo","动态密码发送成功");
 					map.put("errorCode","0000");
+					map.put("data",data);
 					System.out.println(map);
 				}
 			} catch (Exception e) {
