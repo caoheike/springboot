@@ -17,22 +17,23 @@ public class QuitDriverService {
 		 Object drivers = session.getAttribute(driverName);
 	     WebDriver driver =(WebDriver) drivers;
 	     String dName=    driver.getClass().getName();
-	     if(driver!=null){
-	    	 driver.close();
-	    	 try {
-	    	 if(dName.contains("ChromeDriver")){
-	    		Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");		
-	 	     }else{
-				Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");   
-	         }
-	    	 map.put("errorCode", "0000");
-	    	 return map;
-	    	 } catch (IOException e) {
-					System.out.println("driver关闭过程中出错");
-					e.printStackTrace();
-		     }
-	     } 
-	     map.put("errorCode", "0001");
+		if(driver!=null){
+			try {
+				if(dName.contains("ChromeDriver")){
+					driver.close();
+					Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				}else{
+					driver.quit();
+					Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+				}
+				map.put("errorCode", "0000");
+				return map;
+			} catch (IOException e) {
+				System.out.println("driver关闭过程中出错");
+				e.printStackTrace();
+			}
+		}
+		map.put("errorCode", "0001");
 	     return map;
 }
 }
