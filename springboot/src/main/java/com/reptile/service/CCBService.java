@@ -83,7 +83,7 @@ public class CCBService {
 	        	return map;  
 	        }
 	        PushState.state(IDNumber, "savings",100);
-//	        PushSocket.push(map, UUID, "0000");
+
 	        driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
 	        WebElement name= driver.findElement(ByClassName.className("msg_welcome"));//用户名
 	        String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));//户名
@@ -98,6 +98,7 @@ public class CCBService {
 	        String openBranch = null;//开户网点
 	        String openTime = null;//开户时间
 	    	try {
+				PushSocket.push(map, UUID, "0000");
 	        	 driver.switchTo().frame("txmainfrm");//第一级的frame
 				 driver.switchTo().frame("result");//第2级的frame
 				 driver.switchTo().frame("result");//第3级的frame,可点击页面元素
