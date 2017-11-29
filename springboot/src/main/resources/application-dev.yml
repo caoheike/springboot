@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8081
 
 manInfo:
-    ip: 192.168.3.38
-    sendip: http://192.168.3.16:8089
+    ip: 117.34.70.214
+    sendip: http://117.34.70.217:8080
     port: 8080
     
     
