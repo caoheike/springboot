@@ -35,6 +35,8 @@
     <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.6" level="project" />
     <orderEntry type="library" name="Maven: javax:javaee-api:7.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.6" level="project" />
+    <orderEntry type="library" name="Maven: javax:javaee-api:7.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:3.5-FINAL" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.5-FINAL" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:ooxml-schemas:1.0" level="project" />
