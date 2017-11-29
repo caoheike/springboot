@@ -169,14 +169,12 @@ public class CEBService {
 				    	PushState.state(UserCard, "bankBillFlow",300);
 		                map.put("errorInfo","查询成功");
 		                map.put("errorCode","0000");
-		                driver.close();
 		                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
 		            	PushState.state(UserCard, "bankBillFlow",200);
 		            	//---------------------数据中心推送状态----------------------
 		            	logger.warn("光大银行账单推送失败"+UserCard);
-		            	driver.close();
 		            	 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }
 				}

@@ -83,22 +83,22 @@ public class CCBService {
 	        	return map;  
 	        }
 	        PushState.state(IDNumber, "savings",100);
-//	        PushSocket.push(map, UUID, "0000");
 	        driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
-	        WebElement name= driver.findElement(ByClassName.className("msg_welcome"));//用户名
-	        String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));//户名
-	        System.out.println(userName);
-	        driver.findElement(By.id("per1")).click();//点击账户查询
-	        try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-	        String accountType = null;//开户状态
-	        String openBranch = null;//开户网点
-	        String openTime = null;//开户时间
-	    	try {
-	        	 driver.switchTo().frame("txmainfrm");//第一级的frame
+		  WebElement name= driver.findElement(ByClassName.className("msg_welcome"));//用户名
+		  String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));//户名
+		  System.out.println(userName);
+		  driver.findElement(By.id("per1")).click();//点击账户查询
+		  try {
+			  Thread.sleep(2000);
+		  } catch (InterruptedException e) {
+			  e.printStackTrace();
+		  }
+		  String accountType = null;//开户状态
+		  String openBranch = null;//开户网点
+		  String openTime = null;//开户时间
+		  try {
+			  PushSocket.push(map, UUID, "0000");
+			  driver.switchTo().frame("txmainfrm");//第一级的frame
 				 driver.switchTo().frame("result");//第2级的frame
 				 driver.switchTo().frame("result");//第3级的frame,可点击页面元素
 				 Document page= Jsoup.parse(driver.getPageSource());
@@ -254,7 +254,7 @@ public class CCBService {
 						    	PushState.state(IDNumber, "savings",300);
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
-				                PushSocket.push(map, UUID, "0000");
+				              //  PushSocket.push(map, UUID, "0000");
 				                driver.close();
 				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				                
