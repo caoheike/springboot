@@ -100,16 +100,23 @@ public class NingboSocialSecurityService {
                 Thread.sleep(2000);
                 String errorInfo = pageLogin.getElementById("errDiv").getTextContent();  
                 System.out.println(errorInfo);
-                if(!"请妥善保管好您的用户名和密码，谨防泄露！".equals(errorInfo)){
+                if(!errorInfo.contains("请妥善保管好")){
                 	logger.warn(errorInfo);
                 	if(errorInfo.contains("账号或者密码不正确")){
-                		 map.put("errorInfo", "账号或者密码不正确，请重新刷获取图形验证码");	
+                		 map.put("errorCode", "0005");
+                		 map.put("errorInfo", "账号或者密码不正确！");	
                 	}else if(errorInfo.contains("验证码输入错误")){
-                		 map.put("errorInfo", "验证码输入错误，请重新刷新获取图形验证码");
+                		 map.put("errorCode", "0005");
+                		 map.put("errorInfo", "验证码输入错误！");
+                	}else if(errorInfo.contains("E1001")){
+               		 map.put("errorCode", "0005");
+               		 map.put("errorInfo", "证件号错误！");
                 	}else{
+                		map.put("errorCode", "0001");
                 		map.put("errorInfo",errorInfo);
                 	}
-                    map.put("errorCode", "0001");
+                	
+                    
                     return map;
                 }
                 HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-grxx.jsp");

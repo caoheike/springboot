@@ -75,19 +75,19 @@ public class NingBoAccumulationfundService {
         Map<String, Object> loansdata = new HashMap<>();
         List<Object> beanList=new ArrayList<Object>();
         Date date=new Date();
-        List<String> alert=new ArrayList<>();
-        CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+        
         HttpSession session = request.getSession();
         Object htmlWebClient = session.getAttribute("htmlWebClient-ningbo");
         Object htmlPage = session.getAttribute("htmlPage-ningbo");
-
         if (htmlWebClient != null && htmlPage != null) {
         	PushState.state(idCardNum, "accumulationFund",100);
             HtmlPage page = (HtmlPage) htmlPage;
             WebClient webClient = (WebClient) htmlWebClient;
             
-            webClient.setAlertHandler(alertHandler);
             try {           	
+            	List<String> alert=new ArrayList<>();//alert监控
+                CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+                webClient.setAlertHandler(alertHandler);
                 page.getElementById("cardno").setAttribute("value",userCard);
                 page.getElementById("perpwd").setAttribute("value",password);
                 page.getElementById("verify").setAttribute("value",imageCode);
@@ -99,15 +99,16 @@ public class NingBoAccumulationfundService {
                 logger.warn("登录宁波住房公积金:"+alert.size());
                 if(alert.size()>0){
                 	if(alert.get(0).equals("密码错误，请核对!")){
-                		map.put("errorInfo", "密码输入错误，请重新获取图片验证码后填入正确密码！");
+                		map.put("errorCode", "0005");
+                		map.put("errorInfo", "密码输入错误！请重新输入");
                 	}else if(alert.get(0).equals("验证码不正确")){
-                		map.put("errorInfo", "验证码不正确,请重新获取图片验证码！");
+                		map.put("errorCode", "0005");
+                		map.put("errorInfo", "验证码不正确！");
                 	}else{
+                		map.put("errorCode", "0001");
                 		map.put("errorInfo", alert.get(0));
                 	}
-                	logger.warn(alert.get(0));
-                    map.put("errorCode", "0005");
-                    map.put("errorInfo", alert.get(0));
+                	logger.warn(alert.get(0));                   
                     return map;
                 }          
                 HtmlPage posthtml = webClient.getPage("http://www.nbgjj.com/perdetail.jhtml");//账户明细查询页
@@ -169,11 +170,7 @@ public class NingBoAccumulationfundService {
                 }
                 HtmlPage basicInfoshtml = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");//基本信息查询页
                 Thread.sleep(2000);
-                if(basicInfoshtml.asText().indexOf("账户机构")==-1){
-                	logger.warn("宁波住房公积金基本信息获取失败");
-                    map.put("errorCode", "0001");
-                    map.put("errorInfo", "当前网络繁忙，请刷新后重试");
-                }else{
+                if(basicInfoshtml.asText().indexOf("账户机构")!=-1){
                 	HtmlTable table = (HtmlTable) basicInfoshtml.getElementById("queryTable");
                 	DomNodeList tdList = table.getElementsByTagName("td");
                 	String companyName = basicInfoshtml.getElementById("unitaccname").getTextContent().substring(5);
@@ -205,9 +202,7 @@ public class NingBoAccumulationfundService {
                 	data.put("balance", table.getElementsByTagName("td").get(11).getTextContent());
                 	//BasicInfos.setBalance(table.getElementsByTagName("td").get(11).getTextContent());//余额
                 	data.put("status", table.getElementsByTagName("td").get(13).getTextContent());
-                	//BasicInfos.setStatus(table.getElementsByTagName("td").get(13).getTextContent());//状态
-                	
-	    			
+                	//BasicInfos.setStatus(table.getElementsByTagName("td").get(13).getTextContent());//状态          
                 	dataMap.put("basicInfos", data);
                 }
                 
