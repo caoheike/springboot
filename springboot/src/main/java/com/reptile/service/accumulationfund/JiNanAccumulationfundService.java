@@ -211,7 +211,7 @@ public class JiNanAccumulationfundService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "当前网络繁忙，请刷新后重试");
         }finally {
-        	driver.close();	 
+        	driver.quit();	 
         }
         SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy年MM月dd日  hh:mm:ss" );
 		String today = sdf.format(date);
