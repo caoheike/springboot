@@ -69,6 +69,7 @@ public class CEBService {
 					//这一步走完后，图片验证码也输入完毕了，开始点击发送验证码
 				List<WebElement> button =	loginform.findElements(By.tagName("button"));
 				button.get(0).click();
+				Thread.sleep(1000);
 				try{
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					System.out.println("报错！！！");
@@ -79,6 +80,7 @@ public class CEBService {
 					driver.close();
 					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 				}catch(Exception e){
+					logger.warn("光大银行出错啦",e);
 					HttpSession session=request.getSession();//获得session
 					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
 					Map<String,Object> data=new HashMap<String,Object>();
