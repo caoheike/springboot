@@ -86,10 +86,11 @@ public class TaiZhouAccumulationfundService {
         if (htmlWebClient != null && htmlPage != null) {
             HtmlPage page = (HtmlPage) htmlPage;
             WebClient webClient = (WebClient) htmlWebClient;
-            List<String> alert=new ArrayList<>();
-            CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
-            webClient.setAlertHandler(alertHandler);
+            
             try {
+            	List<String> alert=new ArrayList<>();
+                CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+                webClient.setAlertHandler(alertHandler);
             	PushState.state(idCardNum, "accumulationFund", 100);
                 page.getElementById("sfzh").setAttribute("value",userCard);
                 page.getElementById("pswd").setAttribute("value",password);
@@ -186,7 +187,7 @@ public class TaiZhouAccumulationfundService {
         map.put("insertTime", today);
         map.put("cityName", "台州市");
         map.put("city", "015");
-        map.put("userId", userCard);
+        map.put("userId", idCardNum);
         map.put("data", dataMap);   
         
         Resttemplate resttemplate=new Resttemplate();

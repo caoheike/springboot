@@ -50,6 +50,7 @@ public class NanNingAccumulationfundService {
         	PushState.state(idCardNum, "accumulationFund", 100);
         	List<String> alert=new ArrayList<>();
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+            webClient.setAlertHandler(alertHandler);
             page = webClient.getPage("http://www.nngjj.com/web/");
             page.getElementById("idcard").setAttribute("value",userCard);
             page.getElementById("password").setAttribute("value",password);
@@ -60,6 +61,7 @@ public class NanNingAccumulationfundService {
             if(alert.size()>0){           	
                 map.put("errorCode", "0005");
                 map.put("errorInfo", alert.get(0));
+                alert.remove(0);
                 return map;
             }
             System.out.println(posthtml.asText());
@@ -174,7 +176,7 @@ public class NanNingAccumulationfundService {
                 }
             }
         }catch (Exception e) {
-            logger.warn("宁波住房公积金获取失败",e);
+            logger.warn("南宁住房公积金获取失败",e);
             e.printStackTrace();
             map.put("errorCode", "0001");
             map.put("errorInfo", "当前网络繁忙，请刷新后重试");
@@ -186,7 +188,7 @@ public class NanNingAccumulationfundService {
         map.put("insertTime", today);
         map.put("cityName", "南宁市");
         map.put("city", "013");
-        map.put("userId", userCard);
+        map.put("userId", idCardNum);
         map.put("data", datamap);
         
         Resttemplate resttemplate=new Resttemplate();

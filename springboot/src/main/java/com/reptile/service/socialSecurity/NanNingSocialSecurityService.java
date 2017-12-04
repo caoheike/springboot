@@ -13,9 +13,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 
-
-
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,9 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.reptile.model.SecurityBean;
 import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
+import com.reptile.util.DriverUtil;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -38,10 +35,8 @@ public class NanNingSocialSecurityService {
 	private application applicat;
 	private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 	Date date=new Date();
-	List<String> alert=new ArrayList<>();
 	DecimalFormat df= new DecimalFormat("#.00");
-    CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
-	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String accountNum,String idCardNum) {
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String socialCard,String idCardNum) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
     	Map<String,Object> baseInfo = new HashMap<String, Object>();
@@ -64,37 +59,55 @@ public class NanNingSocialSecurityService {
 			passWord.sendKeys(password);
 			WebElement button = driver.findElement(By.id("loginButton"));
 			button.click();
-            Thread.sleep(1000);            
+            Thread.sleep(1000);
+            boolean isFind = DriverUtil.waitById("status11",driver,5);//错误提示
+            if(isFind==true){
+            	String errorInfo = driver.findElement(By.id("status11")).getText();
+            	logger.warn(errorInfo);
+                map.put("errorCode", "0001");
+                map.put("errorInfo", errorInfo);
+                return map;
+            }
             //输入社保账号页面
             driver.get("http://222.216.5.212:8081/siweb/userlogin.do?method=begin_dl");
             Thread.sleep(500);
             if(!driver.getPageSource().contains("请输入个人编号或社保卡")){
-            	logger.warn("南宁社保登录失败");
+            	logger.warn("当前网络繁忙，请刷新后重试");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
                 return map;
             }
             WebElement nextlogon = driver.findElement(By.id("text1"));
-            nextlogon.sendKeys(accountNum);
+            nextlogon.sendKeys(socialCard);
             WebElement lastlogon = driver.findElement(By.id("button1"));
             lastlogon.click();
+            if(driver.getPageSource().contains("您录入的个人编号、社保卡号、医保卡号有误，不能登录")){
+            	logger.warn("社保账号错误，请重试！");
+                map.put("errorCode", "0001");
+                map.put("errorInfo", "社保账号错误，请重试！");
+                return map;
+            }
             
             Thread.sleep(1000);
            //再次确认社保账号页面，有的账号没有这个页面
-            if(driver.getPageSource().contains("个人编号")){
+            if(driver.findElement(By.id("dl_title"))!=null){//
             	WebElement grbh1 = driver.findElement(By.id("grbh1"));
             	String grbh3 = grbh1.getAttribute("value");
             	WebElement grbh2 = driver.findElement(By.id("grbh2"));
             	String grbh4 = grbh2.getAttribute("value");
-            	if(accountNum.equals(grbh3)){
+            	if(socialCard.equals(grbh3)){
             		WebElement radio1 = driver.findElement(By.id("radio1"));
             		radio1.click();
             		Thread.sleep(3000);
-            	}
-            	if(accountNum.equals(grbh4)){
+            	}else if(socialCard.equals(grbh4)){
             		WebElement radio2 = driver.findElement(By.id("radio2"));
             		radio2.click();
             		Thread.sleep(3000);
+            	}else{
+            		logger.warn("社保账号错误，请重试！");
+                    map.put("errorCode", "0001");
+                    map.put("errorInfo", "社保账号错误，请重试！");
+                    return map;
             	}
             }
             /*
@@ -220,7 +233,7 @@ public class NanNingSocialSecurityService {
             /*
              * 基本信息
              */
-            baseInfo = getBaseInfo(userCard,endowmentInsuranceAmount,unemploymentInsuranceAmount, maternityInsuranceAmount, accidentInsuranceAmount,Double.valueOf(medicalInsuranceAmount));
+            baseInfo = getBaseInfo(endowmentInsuranceAmount,unemploymentInsuranceAmount, maternityInsuranceAmount, accidentInsuranceAmount,Double.valueOf(medicalInsuranceAmount));
             dataMap.put("personalInfo", baseInfo);
     		dataMap.put("endowmentInsurance", yanglaoList);
     		dataMap.put("medicalInsurance", yiliaoList);
@@ -236,19 +249,19 @@ public class NanNingSocialSecurityService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "当前网络繁忙，请刷新后重试");
         }finally {
-        	driver.close();	 
+        	driver.quit(); 
         }
         SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy年MM月dd日  hh:mm:ss" );
 		String today = sdf.format(date);
         map.put("data", dataMap);
         map.put("cityName", "南宁");
         map.put("city", "013");
-        map.put("userId", userCard);
+        map.put("userId", idCardNum);
         map.put("createTime", today);
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
         
-        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        /*if(map!=null&&"0000".equals(map.get("errorCode").toString())){
           	PushState.state(idCardNum, "socialSecurity", 300);
           	map.put("errorInfo","推送成功");
           	map.put("errorCode","0000");
@@ -257,7 +270,7 @@ public class NanNingSocialSecurityService {
           	map.put("errorInfo","推送失败");
           	map.put("errorCode","0001");
           }
-        
+        */
         return map;
 	}
 	
@@ -352,7 +365,7 @@ public class NanNingSocialSecurityService {
 		 }		
 		 return newlist;
 	 }
-	 public Map<String,Object> getBaseInfo(String userCard,Double endowmentInsurance,
+	 public Map<String,Object> getBaseInfo(Double endowmentInsurance,
 			 							   Double unemploymentInsurance,Double maternityInsurance,Double accidentInsurance,
 			 							   Double medicalInsurance) throws Exception{
 	    	Map<String,Object> baseInfo = new HashMap<String, Object>();
@@ -377,7 +390,7 @@ public class NanNingSocialSecurityService {
 			baseInfo.put("phoneNo", "");//参保人手机
 			baseInfo.put("income", "");//申报月均工资收入（元）
 			baseInfo.put("documentType", "");//证件类型
-			baseInfo.put("documentNumber", userCard);//证件号码
+			baseInfo.put("documentNumber", "");//证件号码
 			baseInfo.put("bankName", "");//委托代发银行名称
 			baseInfo.put("bankNumber", "");//委托代发银行账号
 			baseInfo.put("paymentPersonnelCategory", "");//缴费人员类别
