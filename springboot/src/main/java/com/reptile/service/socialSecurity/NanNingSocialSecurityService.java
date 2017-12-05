@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.reptile.model.SecurityBean;
 import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
 import com.reptile.util.DriverUtil;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -36,7 +37,7 @@ public class NanNingSocialSecurityService {
 	private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 	Date date=new Date();
 	DecimalFormat df= new DecimalFormat("#.00");
-	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String socialCard,String idCardNum) {
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String socialCard,String idCardNum,String UUID) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
     	Map<String,Object> baseInfo = new HashMap<String, Object>();
@@ -109,6 +110,7 @@ public class NanNingSocialSecurityService {
                     return map;
             	}
             }
+            PushSocket.push(dataMap, UUID, "0000");
         	PushState.state(idCardNum, "socialSecurity", 100);
             /*
         	 *获取医辽余额页面                               

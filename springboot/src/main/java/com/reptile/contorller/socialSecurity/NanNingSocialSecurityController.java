@@ -26,8 +26,8 @@ public class NanNingSocialSecurityController {
     @ApiOperation(value = "贵阳社保",notes = "参数：身份证，密码，公积金账号")
     public Map<String,Object> getDeatilMes(HttpServletRequest request, @RequestParam("idCard") String idCard, @RequestParam("passWord")String passWord,
              @RequestParam("idCardNum")String idCardNum, @RequestParam("userName") String userName, @RequestParam("cityCode")String cityCode,
-            @RequestParam("socialCard")String socialCard){
+            @RequestParam("socialCard")String socialCard,@RequestParam("UUID")String UUID){
 
-        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),socialCard.trim(),idCardNum.trim());
+        return service.getDeatilMes(request, idCard.trim(), passWord.trim(),socialCard.trim(),idCardNum.trim(),UUID.trim());
     }
 }
