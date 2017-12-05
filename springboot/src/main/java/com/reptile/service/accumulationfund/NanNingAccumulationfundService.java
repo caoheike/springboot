@@ -47,7 +47,6 @@ public class NanNingAccumulationfundService {
         WebClient webClient = new WebClientFactory().getWebClient();
         HtmlPage page = null;
         try {
-        	PushState.state(idCardNum, "accumulationFund", 100);
         	List<String> alert=new ArrayList<>();
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             webClient.setAlertHandler(alertHandler);
@@ -73,6 +72,7 @@ public class NanNingAccumulationfundService {
             	/*
             	 * 基本信息
             	 */
+            	PushState.state(idCardNum, "accumulationFund", 100);
             	HtmlTable mytable = (HtmlTable) posthtml.getElementsByTagName("table").get(11);
             	String companyName = mytable.getElementsByTagName("td").get(15).getTextContent();
             	String company = mytable.getElementsByTagName("td").get(19).getTextContent();
@@ -84,8 +84,8 @@ public class NanNingAccumulationfundService {
             	data.put("userCard", userCard);
             	data.put("personDepositAmount", person);//个人缴费金额
             	data.put("personFundAccount", userCard);//个人公积金账号
-            	data.put("baseDeposit", "");//缴费基数
-            	data.put("personFundCard", "");//个人公积金卡号
+            	data.put("baseDeposit", null);//缴费基数
+            	data.put("personFundCard", null);//个人公积金卡号
             	data.put("companyRatio", String.valueOf(companybi));//公司缴费比例
             	data.put("personRatio", String.valueOf(personbi));//个人缴费比例
             	data.put("companyFundAccount", mytable.getElementsByTagName("td").get(7).getTextContent());//公司公积金账号

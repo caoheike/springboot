@@ -80,7 +80,6 @@ public class NingBoAccumulationfundService {
         Object htmlWebClient = session.getAttribute("htmlWebClient-ningbo");
         Object htmlPage = session.getAttribute("htmlPage-ningbo");
         if (htmlWebClient != null && htmlPage != null) {
-        	PushState.state(idCardNum, "accumulationFund",100);
             HtmlPage page = (HtmlPage) htmlPage;
             WebClient webClient = (WebClient) htmlWebClient;
             
@@ -110,7 +109,8 @@ public class NingBoAccumulationfundService {
                 	}
                 	logger.warn(alert.get(0));                   
                     return map;
-                }          
+                }      
+            	PushState.state(idCardNum, "accumulationFund",100);
                 HtmlPage posthtml = webClient.getPage("http://www.nbgjj.com/perdetail.jhtml");//账户明细查询页
                 Thread.sleep(3000);
                 if(posthtml.asText().indexOf("提供近三个自然年个人明细查询")!=-1){

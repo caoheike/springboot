@@ -48,7 +48,6 @@ public class NanNingSocialSecurityService {
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
         try {
-        	PushState.state(idCardNum, "socialSecurity", 100);
         	//登录页面
 			driver.get("http://222.216.5.212:8060/Cas/login?service=http://222.216.5.212:8081/siweb/userlogin.do?method=begin_dl");	
 
@@ -90,7 +89,7 @@ public class NanNingSocialSecurityService {
             
             Thread.sleep(1000);
            //再次确认社保账号页面，有的账号没有这个页面
-            if(driver.findElement(By.id("dl_title"))!=null){//
+            if(DriverUtil.waitById("dl_title",driver,5)){//
             	WebElement grbh1 = driver.findElement(By.id("grbh1"));
             	String grbh3 = grbh1.getAttribute("value");
             	WebElement grbh2 = driver.findElement(By.id("grbh2"));
@@ -110,6 +109,7 @@ public class NanNingSocialSecurityService {
                     return map;
             	}
             }
+        	PushState.state(idCardNum, "socialSecurity", 100);
             /*
         	 *获取医辽余额页面                               
         	*/
@@ -140,6 +140,8 @@ public class NanNingSocialSecurityService {
             SecurityBean gongshang = null;
             SecurityBean shengyu = null;
             
+            
+
             for(int i=1;i<=yeshu;i++){
             	WebElement tdtable = driver.findElement(By.id("unieap_grid_View_0"));  
             	List<WebElement> tdlist = tdtable.findElements(By.tagName("td"));
@@ -213,10 +215,11 @@ public class NanNingSocialSecurityService {
             /*
              * 余额
              */
+             
             double endowmentInsuranceAmount = getSum(yanglaoList);//养老保险缴费余额
             double unemploymentInsuranceAmount = getSum(shiyeList);//失业保险缴费余额
             double maternityInsuranceAmount = getSum(shengyuList);//生育保险缴费余额
-            double accidentInsuranceAmount = getSum(yanglaoList);//工伤保险缴费余额
+            double accidentInsuranceAmount = getSum(gongshList);//工伤保险缴费余额
 
             
         	/*
@@ -258,10 +261,10 @@ public class NanNingSocialSecurityService {
         map.put("city", "013");
         map.put("userId", idCardNum);
         map.put("createTime", today);
-        Resttemplate resttemplate=new Resttemplate();
+       /* Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
         
-        /*if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
           	PushState.state(idCardNum, "socialSecurity", 300);
           	map.put("errorInfo","推送成功");
           	map.put("errorCode","0000");
@@ -269,8 +272,8 @@ public class NanNingSocialSecurityService {
           	PushState.state(idCardNum, "socialSecurity", 200);
           	map.put("errorInfo","推送失败");
           	map.put("errorCode","0001");
-          }
-        */
+          }*/
+        
         return map;
 	}
 	
@@ -319,6 +322,9 @@ public class NanNingSocialSecurityService {
 						 String personal_income1;
 						 String personal_income2;	
 						 monthCount = (monthCount+1)/2;
+						 if(monthCount>12) {
+							 monthCount = 12;
+						 }
 						 if(i==list.size()-1){
 							 personal_income1 = list.get(i).getMonthly_personal_income();		 					 
 							 personal_income2 = list.get(i-1).getMonthly_personal_income();			
@@ -330,12 +336,13 @@ public class NanNingSocialSecurityService {
 						 String base_number = df.format(personal_income/0.379);
 						 newSecurityBean.setYear(list.get(i-1).getYear());
 						 newSecurityBean.setMonth_count(String.valueOf(monthCount));
-						 newSecurityBean.setMonthly_personal_income(String.valueOf(personal_income));
+						 newSecurityBean.setMonthly_personal_income(df.format(personal_income));
 						 newSecurityBean.setBase_number(base_number);
 						 newSecurityBean.setType("缴存");
 						 newSecurityBean.setLast_pay_date(list.get(i-1).getLast_pay_date());	
 						 newSecurityBean.setCompany_name(list.get(i-1).getCompany_name());
 						 newlist.add(newSecurityBean);
+						 monthCount = 0;
 					 }else if(list.get(i).getYear().equals(list.get(i-1).getYear())){
 						 monthCount = monthCount+1;	
 					 }
@@ -344,19 +351,23 @@ public class NanNingSocialSecurityService {
 				 if(i<list.size()){
 					 	
 					 if(!list.get(i).getYear().equals(list.get(i-1).getYear())||i==list.size()-1){
-						 monthCount = monthCount+1;			
+						 monthCount = monthCount+1;	
+						 if(monthCount>12) {
+							 monthCount = 12;
+						 }
 						 SecurityBean newSecurityBean = new SecurityBean();
 						 String personal_income1 = list.get(i-1).getMonthly_personal_income();
 						 Double personal_income = Double.valueOf(personal_income1);
 						 String base_number = df.format(personal_income/0.379);
 						 newSecurityBean.setYear(list.get(i-1).getYear());
 						 newSecurityBean.setMonth_count(String.valueOf(monthCount));
-						 newSecurityBean.setMonthly_personal_income(String.valueOf(personal_income));
+						 newSecurityBean.setMonthly_personal_income(df.format(personal_income));
 						 newSecurityBean.setBase_number(base_number);
 						 newSecurityBean.setType("缴存");
 						 newSecurityBean.setLast_pay_date(list.get(i-1).getLast_pay_date());	
 						 newSecurityBean.setCompany_name(list.get(i-1).getCompany_name());
 						 newlist.add(newSecurityBean);
+						 monthCount = 0;
 					 }else if(list.get(i).getYear().equals(list.get(i-1).getYear())){
 						 monthCount = monthCount+1;	
 					 }
@@ -413,7 +424,7 @@ public class NanNingSocialSecurityService {
 			baseInfo.put("medicalInsuranceAmount", medicalInsurance);//医疗保险缴费余额
 			//总额
 			double totalAmount = unemploymentInsurance + endowmentInsurance + maternityInsurance + accidentInsurance + medicalInsurance;
-			baseInfo.put("totalAmount", totalAmount);
+			baseInfo.put("totalAmount", df.format(totalAmount));
 			
 			return baseInfo;
 		

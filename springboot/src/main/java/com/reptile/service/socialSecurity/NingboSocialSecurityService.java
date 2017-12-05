@@ -92,7 +92,6 @@ public class NingboSocialSecurityService {
             CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
             webClient.setAlertHandler(alertHandler);
             try {
-            	PushState.state(idCardNum, "socialSecurity", 100);
                 page.getElementById("loginid").setAttribute("value",userCard);
                 page.getElementById("pwd").setAttribute("value",password);
                 page.getElementById("yzm").setAttribute("value",imageCode);
@@ -119,6 +118,7 @@ public class NingboSocialSecurityService {
                     
                     return map;
                 }
+            	PushState.state(idCardNum, "socialSecurity", 100);
                 HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-grxx.jsp");
                 Thread.sleep(2000);
                 if(basicInfos.asText().indexOf("个人信息")==-1){
@@ -163,10 +163,13 @@ public class NingboSocialSecurityService {
         		baseInfo.put("sentinelMedicalInstitutions5", "");//定点医疗机构 5
         		baseInfo.put("specialDisease", "");//是否患有特殊病       		      
         		yanglaoList = getYangLaoInfo(webClient);//获取养老List
-        		baseInfo.put("endowmentInsuranceAmount",yanglaoList.get(yanglaoList.size()-1));
+        		Double endowmentInsuranceAmount = (Double) yanglaoList.get(yanglaoList.size()-1);
+        		baseInfo.put("endowmentInsuranceAmount",endowmentInsuranceAmount);
         		yanglaoList.remove(yanglaoList.size()-1);//去掉list中养老余额
         		yiliaoList = getYiLiaoList(webClient);//获取医疗List
-        		baseInfo.put("medicalInsuranceAmount",yiliaoList.get(yiliaoList.size()-1));
+        		Double medicalInsuranceAmount = (Double) yiliaoList.get(yiliaoList.size()-1);
+        		baseInfo.put("medicalInsuranceAmount",medicalInsuranceAmount);
+        		
         		yiliaoList.remove(yiliaoList.size()-1);//去掉list中医疗余额
         		baseInfo.put("unemploymentInsuranceAmount", "");//失业保险缴费余额
         		baseInfo.put("maternityInsuranceAmount", "");//生育保险缴费余额
@@ -177,6 +180,7 @@ public class NingboSocialSecurityService {
         		dataMap.put("unemploymentInsurance", shiyeList);
             	dataMap.put("accidentInsurance", gongshList);
             	dataMap.put("maternityInsurance", shengyuList);
+            	dataMap.put("totalAmount", df.format(endowmentInsuranceAmount+medicalInsuranceAmount));
             }catch (Exception e) {
                 logger.warn("宁波社保获取失败",e);
                 e.printStackTrace();
