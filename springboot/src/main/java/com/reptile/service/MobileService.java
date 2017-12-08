@@ -1095,9 +1095,9 @@ public class MobileService {
 				map.put("UserIphone", TelecomBean.getUserPhone());
 				map.put("UserPassword", TelecomBean.getUserPassword());
 				map.put("flag", "0");
-				map = resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/telecomCallRecord");
-//					    	map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/callRecordTelecom");
-				//map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
+				
+				 map=resttemplate.SendMessage(map, 	application.getSendip()+"/HSDC/authcode/callRecordTelecom");
+				
 			} else {
 				if (htmlform.asText().contains("请输入验证码")) {
 					map.put("errorCode", "0001");
@@ -1625,9 +1625,6 @@ public class MobileService {
 			logger.info(application.getIp()+application.getPort()+"/upload"+fileName);
 			logger.info(request.getSession().getServletContext().getRealPath("/upload") + "/");
 			return map;
-			
-
 		}
-		
-		
+
 }

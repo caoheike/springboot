@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +22,7 @@ public class BaoJiFundController {
     @ResponseBody
     @RequestMapping(value = "BaoJilogin", method = RequestMethod.POST)
 	public Map<String, Object> login(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
-		return service.login(request, idCard, passWord,cityCode,idCardNum);
-				
+		return service.login(request, idCard, passWord,cityCode,idCardNum);		
 	}
 
 }

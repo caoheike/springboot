@@ -14,7 +14,6 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
@@ -33,7 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @Service
 public class BaoJiFundService {
 private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
@@ -47,7 +44,7 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 		 Map<String, Object> dataMap = new HashMap<String, Object>();
 		
 		try {
-			HtmlPage loginPage= webclient.getPage("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/index.jsp");
+			webclient.getPage("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/index.jsp");
 			WebRequest request1 =new WebRequest(new URL("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/login_hidden.jsp?pass="+passWord+"&zh="+idCard));
 			request1.setHttpMethod(HttpMethod.GET);//提交方式
 		 HtmlPage page1=	webclient.getPage(request1);
@@ -112,7 +109,6 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 				  int seleNum=select.getChildElementCount();
 				  try{
 				  for (int i = 1; i < seleNum; i++) {
-					   String da="";
 					   Thread.sleep(500);
 					   detailPage=getPages2(webclient, url, select.getOption(i).asText(), select.getOption(i).asText(), "1", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
 					   Thread.sleep(500);
@@ -154,10 +150,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			        	//--------------------数据中心推送状态----------------------
 			        	PushState.state(idCardNum, "accumulationFund",200);
 			        	//---------------------数据中心推送状态----------------------
-			        	
 			            map.put("errorInfo","查询失败");
 			            map.put("errorCode","0001");
-			        	
 			        } 
 				  }catch (Exception e) {
 						logger.warn("宝鸡市公积金",e);
@@ -279,10 +273,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			  basicInfos.put("personDepositAmount", basicInfosList.get(14).replace(",", "").replace("元", "").trim());//个人缴费金额
 			  basicInfos.put("companyDepositAmount",basicInfosList.get(12).replace(",", "").replace("元", "").trim());//公司缴费金额
 			  basicInfos.put("balance",basicInfosList.get(19).replace(",", "").replace("元", "").trim());//余额
-			  basicInfos.put("lastDepositDate", basicInfosList.get(20).trim());//最后缴费日期
-			  
+			  basicInfos.put("lastDepositDate", basicInfosList.get(20).trim());//最后缴费日期	  
 			return basicInfos;
-        	
         }
      /**   
       * 流水明细解析
