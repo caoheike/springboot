@@ -3,7 +3,6 @@ package com.reptile.contorller;
 import com.reptile.service.ChinaBankService;
 import com.reptile.util.CustomAnnotation;
 
-import groovy.util.ObservableMap;
 import io.swagger.annotations.ApiOperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
