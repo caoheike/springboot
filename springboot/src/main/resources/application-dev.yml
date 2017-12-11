@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 
 manInfo:
     ip: 117.34.70.214
