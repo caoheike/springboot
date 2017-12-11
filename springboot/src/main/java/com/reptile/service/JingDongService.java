@@ -99,6 +99,14 @@ public class JingDongService {
 					Map<String,Object> map = new HashMap<String, Object>();
 					map.put("purchaseRecord", this.getOrderInfo(cookie)); //购买记录
 					map.put("shippingAddress", this.getAddressInfo(cookie)); //收获地址
+					map.put("creditData", this.getBasicInfo(cookie)); //资产总览
+					map.put("baiTiaoInfo", this.getBaiTiaoInfo(cookie)); //白条信息
+					map.put("jinKuInfo", this.getJinKuInfo(cookie)); //小金库
+					map.put("jtDetailList", this.getJtDetailList(cookie)); //金条明细
+					
+					
+				/*	map.put("purchaseRecord", this.getOrderInfo(cookie)); //购买记录
+					map.put("shippingAddress", this.getAddressInfo(cookie)); //收获地址
 					map.put("smallWhiteGrade", this.getScoreInfo(cookie)); //小白信用
 					map.put("cardNumber", idCard); //身份证
 					
@@ -109,7 +117,7 @@ public class JingDongService {
 					Map<String, Object> jinKuInfo = this.getJinKuInfo(cookie); 
 					map.put("yesterdayEarnings", jinKuInfo.get("yesterdayEarnings")); //今日收益
 					map.put("smallGoldAmount", jinKuInfo.get("smallGoldAmount"));//小金库额度
-					
+				*/					
 					data.put("data", map);
 					logger.warn("---------京东--------详情获取成功---------用户名：" + userName);
 					//数据推送
@@ -203,34 +211,277 @@ public class JingDongService {
 		return info;
 	}
 	
-	
-	
-	
 	/**
-	 * 获取白条信息(白条额度、白条欠款)
+	 * 获取京东白条信息
 	 * @param cookie
 	 * @return
 	 * @throws IOException 
 	 * @throws ParseException 
 	 */
 	public Map<String,Object> getBaiTiaoInfo(String cookie) throws ParseException, IOException{
+		Map<String,Object> datas = new HashMap<String,Object>();
+		datas.put("billList", this.getBaiTiaoBillList(cookie));//已出账单
+		datas.put("notOutAccount", this.getBaiTiaoNotOutAccount(cookie));//未出账单
+		datas.put("billRepayment", this.getBaiTiaoBillRepayment(cookie));//还款流水
+		datas.put("refundList", this.getBaiTiaoRefundList(cookie));//退款记录
+		datas.put("billConsumeList", this.getBaiTiaoBillConsumeList(cookie));//消费明细
+		datas.put("scoreInfo", this.getBaiTiaoScoreInfo(cookie));//白条信用分
+		return datas;
+	}
+	
+		
+	 /**
+	 * 获取白条已出账单
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public List<String> getBaiTiaoBillList(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/getBillList";//请求地址
+		
 		Map<String,String> headers = new HashMap<String, String>();
 		headers.put("Cookie", cookie);//cookie加入请求头中
 		headers.put("Host", "baitiao.jd.com");
-		String result = SimpleHttpClient.post("https://baitiao.jd.com/v3/ious/getBtPrivilege", new HashMap<String, Object>(), headers);
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("pageNum", "1");
+		params.put("pageSize", "10");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
 		String isSuccess = JsonUtil.getJsonValue1(result, "isSuccess").toString();
 		
-		Map<String,Object> map = new HashMap<String, Object>();
+		List<String> list = new ArrayList<String>();
+		
 		if(isSuccess.equals("true")){
-			double whiteBarAmount = Double.parseDouble(JsonUtil.getJsonValue1(result, "creditLimit")+"");//白条额度
-			double availableLimit = Double.parseDouble(JsonUtil.getJsonValue1(result, "availableLimit")+"");//可用额度
-			//白条欠款 = 白条额度 - 可用额度
-			double whiteBarDedt = whiteBarAmount - availableLimit;
-			map.put("whiteBarAmount", whiteBarAmount);
-			map.put("whiteBarDedt", whiteBarDedt);
+			
+			list.add(result);
+			
+			if(JsonUtil.getJsonValue1(result, "totalCount") != null){
+				//获取账单总条数
+				int totalCount = (int) JsonUtil.getJsonValue1(result, "totalCount");
+				//若账单总条数大于10，需要拿到其余几页的信息
+				if(totalCount > 10){
+					
+					int totalPage = totalCount/10 + 1;
+					
+					for (int i = 2; i <= totalPage; i++) {
+						
+						params.clear();
+						params.put("pageNum", i);
+						params.put("pageSize", "10");
+						
+						list.add(SimpleHttpClient.post(url,params , headers));
+					}
+				}
+			}
 		} 
-		return map;
+		return list;
 	}
+	
+	/**
+	 * 获取白条未出账单
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public String getBaiTiaoNotOutAccount(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/queryNotOutAccount";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		return result;
+	}
+	
+	/**
+	 * 获取白条未出账单明细
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public String getBaiTiaoOrderDetail(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/getBillOrderDetail";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("billId", "");
+		params.put("billType", "0");
+		params.put("isNotAcount", "1");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		return result;
+	}
+	
+	
+	
+	
+	/**
+	 * 获取白条还款流水
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public List<String> getBaiTiaoBillRepayment(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/billRepayment";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("pageNum", "1");
+		params.put("pageSize", "10");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		String isSuccess = JsonUtil.getJsonValue1(result, "isSuccess").toString();
+		
+		List<String> list = new ArrayList<String>();
+		
+		if(isSuccess.equals("true")){
+			
+			list.add(result);
+			
+			if(JsonUtil.getJsonValue1(result, "totalPage") != null){
+				//获取账单总条数
+				int totalPage = (int) JsonUtil.getJsonValue1(result, "totalPage");
+				//若账单总条数大于10，需要拿到其余几页的信息
+				if(totalPage > 1){
+					
+					for (int i = 2; i <= totalPage; i++) {
+						
+						params.clear();
+						params.put("pageNum", i);
+						params.put("pageSize", "10");
+						
+						list.add(SimpleHttpClient.post(url , params , headers));
+					}
+				}
+			}
+		} 
+		return list;
+	}
+	
+	
+	/**
+	 * 获取白条退款记录
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public List<String> getBaiTiaoRefundList(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/queryRefundList";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("pageNum", "1");
+		params.put("pageSize", "10");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		String isSuccess = JsonUtil.getJsonValue1(result, "isSuccess").toString();
+		
+		List<String> list = new ArrayList<String>();
+		if(isSuccess.equals("true")){
+			
+			list.add(result);
+			
+			if(JsonUtil.getJsonValue1(result, "totalPage") != null){
+				//获取账单总条数
+				int totalPage = (int) JsonUtil.getJsonValue1(result, "totalPage");
+				//若账单总条数大于10，需要拿到其余几页的信息
+				if(totalPage > 1){
+					
+					for (int i = 2; i <= totalPage; i++) {
+						
+						params.clear();
+						params.put("pageNum", i);
+						params.put("pageSize", "10");
+						
+						list.add(SimpleHttpClient.post(url , params , headers));
+					}
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	
+	
+	/**
+	 * 获取白条消费明细
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public List<String> getBaiTiaoBillConsumeList(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/billConsumeList";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("pageNum", "1");
+		params.put("pageSize", "10");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		String isSuccess = JsonUtil.getJsonValue1(result, "isSuccess").toString();
+		
+		List<String> list = new ArrayList<String>();
+		
+		if(isSuccess.equals("true")){
+			
+			list.add(result);
+			
+			if(JsonUtil.getJsonValue1(result, "pageCount") != null){
+				//获取账单总条数
+				int pageCount = (int) JsonUtil.getJsonValue1(result, "pageCount");
+				//若账单总条数大于10，需要拿到其余几页的信息
+				if(pageCount > 1){
+					
+					for (int i = 2; i <= pageCount; i++) {
+						
+						params.clear();
+						params.put("pageNum", i);
+						params.put("pageSize", "10");
+						
+						list.add(SimpleHttpClient.post(url , params , headers));
+					}
+				}
+			}
+		}
+		
+		return list;
+	}
+	
 	
 	
 	
@@ -242,7 +493,7 @@ public class JingDongService {
 	 * @throws IOException 
 	 * @throws ParseException 
 	 */
-	public String getScoreInfo(String cookie) throws ParseException, IOException{
+	public String getBaiTiaoScoreInfo(String cookie) throws ParseException, IOException{
 		Map<String,String> headers = new HashMap<String, String>();
 		headers.put("Cookie", cookie);//cookie加入请求头中
 		headers.put("Host", "baitiao.jd.com");
@@ -282,13 +533,13 @@ public class JingDongService {
 	 * @throws IOException 
 	 * @throws ParseException 
 	 */
-	public Map<String,Object> getJinKuInfo(String cookie) throws ParseException, IOException{
+	public String getJinKuInfo(String cookie) throws ParseException, IOException{
 		Map<String,String> headers = new HashMap<String, String>();
 		headers.put("Cookie", cookie);//cookie加入请求头中
 		headers.put("Host", "jinku.jd.com");
 		String result = SimpleHttpClient.post("https://jinku.jd.com/xjk/account", new HashMap<String, Object>(), headers);
 		
-		Map<String,Object> map = new HashMap<String, Object>();
+	/*	Map<String,Object> map = new HashMap<String, Object>();
 		if(!result.contains("\"accountResult\":null")){
 			//小金库总额
 			double total = Double.parseDouble(JsonUtil.getJsonValue1(result, "total")+"");
@@ -296,10 +547,77 @@ public class JingDongService {
 			//今日收益
 			double preIncome = Double.parseDouble(JsonUtil.getJsonValue1(result, "preIncome")+"");
 			map.put("yesterdayEarnings", preIncome);
+		}*/
+		return result;
+	}
+	/**
+	 * 获取金条明细
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public List<String> getJtDetailList(String cookie) throws ParseException, IOException{
+		
+		String url = "https://baitiao.jd.com/v3/ious/getJtDetailList";//请求地址
+		
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "baitiao.jd.com");
+		
+		//请求入参
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("pageNum", "1");
+		params.put("pageSize", "10");
+		params.put("funCode", "ALL");
+		
+		String result = SimpleHttpClient.post(url,params , headers);
+		String isSuccess = JsonUtil.getJsonValue1(result, "isSuccess").toString();
+		
+		List<String> list = new ArrayList<String>();
+		
+		if(isSuccess.equals("true")){
+			
+			list.add(result);
+			
+			if(JsonUtil.getJsonValue1(result, "pageCount") != null){
+				//获取账单总条数
+				int pageCount = (int) JsonUtil.getJsonValue1(result, "pageCount");
+				//若账单总条数大于10，需要拿到其余几页的信息
+				if(pageCount > 1){
+					
+					for (int i = 2; i <= pageCount; i++) {
+						
+						params.clear();
+						params.put("pageNum", i);
+						params.put("pageSize", "10");
+						params.put("funCode", "ALL");
+						
+						list.add(SimpleHttpClient.post(url , params , headers));
+					}
+				}
+			}
 		}
-		return map;
+		return list;
 	}
 	
+	
+	/**
+	 * 获取白条基本信息和金条基本信息（totalDebt：总负债，creditLimit ：白条总额度，availableLimit：京东白条可用额度；
+	 *	creditWaitPay：白条待还款，creditWaitPayPercent ：占负债比重，creditWaitPaySeven ：近七日还款）
+	 * @param cookie
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public String getBasicInfo(String cookie) throws ParseException, IOException{
+		Map<String,String> headers = new HashMap<String, String>();
+		headers.put("Cookie", cookie);//cookie加入请求头中
+		headers.put("Host", "trade.jr.jd.com");
+		headers.put("Referer", "https://trade.jr.jd.com/centre/browse.action");
+		String str = this.request("https://trade.jr.jd.com/async/creditData.action", headers, null);
+		return str;
+	}
 	
 	
 	
@@ -444,5 +762,15 @@ public class JingDongService {
 	   	}
 		return str; 	
 	}
+	
+	
+
+
+
+
+
+
+
+
 	
 }
