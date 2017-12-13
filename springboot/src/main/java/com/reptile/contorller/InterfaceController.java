@@ -699,25 +699,29 @@ public class InterfaceController {
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-	    System.out.println("---------------"+"");
+			System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
+	    PushSocket.pushnew(map, UUID, "1000","登录中");
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 	    System.out.println(pages.getContent());
 	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
-	    if(jsonObject2.get("code").equals("10006")){
-	    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
-	    System.out.println(pageinfo.asXml());
-	    PushSocket.push(map, UUID, "0000");
-	    PushState.state(idCard, "TaoBao",100);
-	    map.put("errorCode", "0000");
-	    map.put("errorInfo", "成功");
-	    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
-	    HtmlTable  table= pagev.querySelector(".tbl-main");
-	    System.out.println(table.asXml()+"收货地址");
 	    
+	    if(jsonObject2.get("code").equals("10006")){
+		    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
+		    System.out.println(pageinfo.asXml());
+		    PushSocket.pushnew(map, UUID, "2000","登录成功");
+		    PushState.state(idCard, "TaoBao",100);
+		    Thread.sleep(2000);
+		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
+		    map.put("errorCode", "0000");
+		    map.put("errorInfo", "成功");
+		    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
+		    HtmlTable  table= pagev.querySelector(".tbl-main");
+		    System.out.println(table.asXml()+"收货地址");
+		    
 	    //现在开始爬取 支付宝信息
 	      WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
 	       List<NameValuePair> lists=new ArrayList<NameValuePair>();
@@ -732,7 +736,7 @@ public class InterfaceController {
 	       requests.setRequestParameters(lists);
 	       HtmlPage pageinfos= webClient.getPage(requests);
 	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
-	      
+	       PushSocket.pushnew(map, UUID, "6000","获取数据成功");
 	       data.put("info",table.asXml() );
 	       data.put("page",pageinfoss.asXml() );
 	       map.put("data", data);
@@ -745,18 +749,21 @@ public class InterfaceController {
 				PushState.state(idCard, "TaoBao", 300);
 				map.put("errorInfo", "查询成功");
 				map.put("errorCode", "0000");
+				 PushSocket.pushnew(map, UUID, "8000","淘宝查询成功");
 			}else{
 				//--------------------数据中心推送状态----------------------
 				PushState.state(idCard, "TaoBao",200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorInfo","查询失败");
 				map.put("errorCode","0001");
+				 PushSocket.pushnew(map, UUID, "9000","淘宝查询失败");
 			}
 	    }else if(jsonObject2.get("code").equals("10004")){
 	      PushState.state(idCard, "TaoBao",200);
 	      System.out.println("二维码过期");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "二维码过期");
+	      PushSocket.pushnew(map, UUID, "3000","登录失败");
 	    }else if(jsonObject2.get("code").equals("10001")) {
 	      if(map.size()==0){
 	        map.put("errorCode", "0001");
