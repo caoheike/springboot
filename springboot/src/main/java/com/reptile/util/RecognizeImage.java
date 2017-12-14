@@ -13,6 +13,9 @@ import java.util.HashMap;
  * 识别图片中的问题
  */
 public class RecognizeImage {
+    private static String appId="10532232";
+    private static String appKey="ckA04dT4pQA9Y3yuugnxpdEi";
+    private static String appTokken="76lDHL1dH8GEBZvSm0ElqQNFcn4AYD2P";
 
     /**
      * 二值化图片 方便图片更容易辨认
@@ -54,7 +57,7 @@ public class RecognizeImage {
      * @return
      */
     public static JSONObject recognizeImage(String filePath){
-        AipOcr aipOcr=new AipOcr("10532232", "ckA04dT4pQA9Y3yuugnxpdEi", "76lDHL1dH8GEBZvSm0ElqQNFcn4AYD2P");
+        AipOcr aipOcr=new AipOcr(appId, appKey, appTokken);
         // 可选：设置网络连接参数
         aipOcr.setConnectionTimeoutInMillis(2000);
         aipOcr.setSocketTimeoutInMillis(60000);
