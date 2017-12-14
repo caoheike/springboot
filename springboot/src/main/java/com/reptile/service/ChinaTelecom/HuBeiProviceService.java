@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
@@ -85,18 +86,25 @@ public class HuBeiProviceService {
 	        }
 		return map;
 	}
-	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass,String longitude,String latitude){
+	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass,String longitude,String latitude, String UUID){
 		 Map<String,Object> map = new HashMap<String,Object>();
-		  HttpSession session = request.getSession();
+		 PushSocket.pushnew(map, UUID, "1000","登录中");
+		 try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		 HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-HUBEI");
 	        if (attribute == null) {
 	        	
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
+	            PushSocket.pushnew(map, UUID, "3000","登录失败");
 	            return map;
 	        } else {
 	        try {
-	        	
 	        	PushState.state(PhoneNume, "callLog",100);
 	        	WebClient webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));
@@ -119,8 +127,13 @@ public class HuBeiProviceService {
 				System.out.println(stat2);				
 				  Map<String,Object>HUBEI=new HashMap<String,Object>();
 				  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
-				for (int i = 0; i < 3; i++) {
+				  
+					PushSocket.pushnew(map, UUID, "2000","登录成功");
+					Thread.sleep(2000);
+					PushSocket.pushnew(map, UUID, "5000","获取数据中");
+					for (int i = 0; i < 3; i++) {
 					
+					 
 					Map<String,Object> detailed=new HashMap<String,Object>();
 					List<Map<String ,Object>> eachMonthList =new ArrayList<Map<String ,Object>>();					
 					List<NameValuePair> list3 = new ArrayList<NameValuePair>();
@@ -134,6 +147,7 @@ public class HuBeiProviceService {
 					requests3.setRequestParameters(list3);
 					HtmlPage back3=webClient.getPage(requests3);
 					String Phonedetailed=back3.asText();
+					
 					if(Phonedetailed.indexOf(PhoneCode)!=-1){
 		     			map.put("errorCode", "0002");
 		     			map.put("errorInfo", "获取数据为空!");
@@ -167,8 +181,11 @@ public class HuBeiProviceService {
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
-				
-				System.out.println(datalist);
+					if(datalist.size()>0) {
+	                	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+	                }else {
+	                	PushSocket.pushnew(map, UUID, "7000","数据获取失败");
+	                }
 				HUBEI.put("data", datalist);
 				HUBEI.put("UserIphone", PhoneNume);
 				map.put("longitude", longitude);
@@ -182,9 +199,11 @@ public class HuBeiProviceService {
 			    	PushState.state(PhoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
+	                PushSocket.pushnew(map, UUID, "8000","认证成功");
 	         }else{
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(PhoneNume, "callLog",200);
+	            	PushSocket.pushnew(map, UUID, "9000","认证失败");
 	            	//---------------------数据中心推送状态----------------------
 	          }
 				webClient.close();

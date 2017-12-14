@@ -70,22 +70,25 @@ public class GansuProvinceService {
 	 }
 	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy,String longitude,String latitude,String UUID){
 		   Map<String,Object> map = new HashMap<String,Object>();
+		   PushSocket.pushnew(map, UUID, "1000","登录中");
 		   HttpSession session = request.getSession();
-		   
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
-	        	PushSocket.push(map, UUID, "0001");
+	        	PushSocket.pushnew(map, UUID, "3000","登录失败");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
 	        } else {
+	        	try {
 	        	PushState.state(UserNum, "bankBillFlow",100);
-	        	  WebClient webClient = (WebClient) attribute;
-	        	  WebRequest request1;
-	          Map<String,Object>data=new HashMap<String,Object>();
-	        	  Map<String,Object>Gansu=new HashMap<String,Object>();
-	        	  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
-				try {
+	        	PushSocket.pushnew(map, UUID, "2000","登录成功");
+	        	Thread.sleep(2000);
+	        	PushSocket.pushnew(map, UUID, "5000","数据获取中");
+	        	WebClient webClient = (WebClient) attribute;
+	        	WebRequest request1;
+	            Map<String,Object>data=new HashMap<String,Object>();
+	        	Map<String,Object>Gansu=new HashMap<String,Object>();
+	        	List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 					
 					PushState.state(UserNum, "callLog",100);
 					String num="4:"+UserNum;
@@ -107,6 +110,11 @@ public class GansuProvinceService {
 						datalist.add(data);
 						Thread.sleep(5000);
 					}
+					if(datalist.size()>0) {
+						PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+					}else {
+						PushSocket.pushnew(map, UUID, "7000","数据获取失败");
+					}
 					Gansu.put("data", datalist);
 					Gansu.put("UserIphone", UserNum);
 					map.put("longitude", longitude);
@@ -118,12 +126,14 @@ public class GansuProvinceService {
 					map=resttemplate.SendMessage(Gansu, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
 					 
 					if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-						PushSocket.push(map, UUID, "0000");
+						//PushSocket.push(map, UUID, "0000");
 					    	PushState.state(UserNum, "callLog",300);
 			                map.put("errorInfo","查询成功");
 			                map.put("errorCode","0000");
+			                PushSocket.pushnew(map, UUID, "8000","认证成功");
 			         }else{
-			        	 PushSocket.push(map, UUID, "0001");
+			        	 //PushSocket.push(map, UUID, "0001");
+			        	 PushSocket.pushnew(map, UUID, "9000","认证失败");
 			            	//--------------------数据中心推送状态----------------------
 			            	PushState.state(UserNum, "callLog",200);
 			            	//---------------------数据中心推送状态----------------------
@@ -137,11 +147,8 @@ public class GansuProvinceService {
 						 map.put("errorInfo","服务繁忙，请稍后再试");
 						 map.put("errorCode","0002");
 				}
-		
-				
 	        }
 	      
 		 return map;
-		 
 	 }
 }

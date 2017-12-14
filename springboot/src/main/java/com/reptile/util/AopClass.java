@@ -96,6 +96,7 @@ public class AopClass {
     public Map<String, Object> beforeTuiSong(String className, String argsName) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, String> dataMap = new HashMap<String, String>();
+        System.out.println(className);
         if (className.contains("TelecomController") || className.contains("PhoneBillsController") || className.contains("GlobalUnicomController")) {
             dataMap.put("approveName", "callLog");
         }

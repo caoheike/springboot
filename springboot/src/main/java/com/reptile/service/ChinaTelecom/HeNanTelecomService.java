@@ -114,14 +114,22 @@ public class HeNanTelecomService {
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("HNwebClient");
         Object pag = session.getAttribute("HeNanHtmlPage");
         if (attribute == null) {
-        	PushSocket.push(map, UUID, "0001");
+        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushSocket.pushnew(map, UUID, "3000","登录失败");
             return map;
         } else {
             try {
@@ -161,9 +169,13 @@ public class HeNanTelecomService {
                 if (result.contains("您输入的查询验证码错误或过期")) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
+                    PushSocket.pushnew(map, UUID, "3000","登录失败");
                     return map;
                 }
-                PushSocket.push(map, UUID, "0000");
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","数据获取中");
+                //PushSocket.push(map, UUID, "0000");
                 for (int i = 0; i < 6; i++) {
                     req = new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                     req.setHttpMethod(HttpMethod.POST);
@@ -189,6 +201,11 @@ public class HeNanTelecomService {
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
+                if(dataList.size()>0) {
+                	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+                }else {
+                	PushSocket.pushnew(map, UUID, "7000","数据获取失败");
+                }
                 map.put("UserIphone", phoneNumber);
                 map.put("UserPassword", serverPwd);
                 map.put("longitude", longitude);//经度
@@ -198,7 +215,12 @@ public class HeNanTelecomService {
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
-
+				if(map.get("errorCode").equals("0000")) {
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
+				}
+				
                 System.out.println("河南电信拿到的数据条数：" + dataList.size());
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);

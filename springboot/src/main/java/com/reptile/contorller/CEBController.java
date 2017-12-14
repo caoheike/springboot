@@ -31,7 +31,7 @@ public class CEBController {
 		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：用户账号(身份证),短信验证码")
 		@ResponseBody
 		@RequestMapping(value="CEBlogin",method=RequestMethod.POST)
-		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password,@RequestParam("UUID")String UUID) throws Exception{
-			return ceb.CEBlogin2(request,UserCard,Password,UUID);
+		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
+			return ceb.CEBlogin2(request,UserCard,Password,UUID,timeCnt);
 		}
 }

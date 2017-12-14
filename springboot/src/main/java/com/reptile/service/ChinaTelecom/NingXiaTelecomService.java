@@ -202,10 +202,12 @@ public class NingXiaTelecomService {
 		 
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
+		 PushSocket.pushnew(map, UUID, "1000","登录中");
 		 if(driver==null){
 			 logger.warn("宁夏电信请先获取验证码");
 			 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
+		     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 			 return map; 
 		 }
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
@@ -213,6 +215,7 @@ public class NingXiaTelecomService {
         	   logger.warn("宁夏电信验证码不能为空");
         	   map.put("errorCode", "0001");
  			   map.put("errorInfo", "验证码不能为空");
+ 			  PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
  			  return map;
               }
 		  driver.findElement(By.id("yzm")).sendKeys(code);
@@ -224,12 +227,21 @@ public class NingXiaTelecomService {
 					//---------------推-------------------
 			  map.put("errorCode", "0001");
 			  map.put("errorInfo", "验证码错误");
+			  PushSocket.pushnew(map, UUID, "3000","验证码错误");
 			  return map;
 		  }
-		
+		  PushSocket.pushnew(map, UUID, "2000","登录成功");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			PushSocket.pushnew(map, UUID, "5000","数据获取中");
+		  
 		  logger.warn("宁夏电信数据获取中...");
 		//---------------推-------------------
-		  PushSocket.push(map, UUID, "0000");
+		  //PushSocket.push(map, UUID, "0000");
 		//---------------推-------------------
 		//==================获取cookie==========================================  
 		 Set<Cookie> cookie=driver.manage().getCookies();
@@ -317,6 +329,11 @@ public class NingXiaTelecomService {
 					map.put("errorInfo", "网络连接异常");
 				} 
 				}
+				 if(dataList.size()>0) {
+	                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+	                }else {
+	                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+	                }
 				   map.put("data", dataList);
 		           map.put("UserPassword",servePwd );
 		           map.put("UserIphone", phoneNumber);
@@ -328,6 +345,11 @@ public class NingXiaTelecomService {
 		           logger.warn("宁夏电信数据查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
 		           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
+		           if(map.get("errorCode").equals("0000")) {
+						PushSocket.pushnew(map, UUID, "8000","认证成功");
+					}else {
+						PushSocket.pushnew(map, UUID, "9000","认证失败");
+					}
 		           try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {

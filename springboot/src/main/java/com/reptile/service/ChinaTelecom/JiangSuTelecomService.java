@@ -24,6 +24,13 @@ public class JiangSuTelecomService {
     private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("GBmobile-webclient");
@@ -31,10 +38,14 @@ public class JiangSuTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-        } else {
-        	PushSocket.push(map, UUID, "0000");
-            WebClient webClient = (WebClient) attribute;
+            PushSocket.pushnew(map, UUID, "3000","操作异常!");       
+            } else {
+        	//PushSocket.push(map, UUID, "0000");
+            	PushSocket.pushnew(map, UUID, "2000","登录成功");
+            	WebClient webClient = (WebClient) attribute;
             try {
+            	Thread.sleep(2000);
+            	PushSocket.pushnew(map, UUID, "5000","获取数据中"); 
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
@@ -85,6 +96,11 @@ public class JiangSuTelecomService {
                     dataList.add(page.getWebResponse().getContentAsString());
                     Thread.sleep(500);
                 }
+                if(dataList.size()>0) {
+                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+                }else {
+                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+                }
                 map.put("data",dataList);
                 map.put("errorCode","0000");
                 map.put("errorInfo","成功");
@@ -95,6 +111,11 @@ public class JiangSuTelecomService {
                 map.put("latitude", latitude);//纬度
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
+            	if(map.get("errorCode").equals("0000")) {
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
+				}
             } catch (Exception e) {
             	PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);

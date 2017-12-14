@@ -24,7 +24,8 @@ public class ConstructionController {
 	@ApiOperation(value = "建设银行信用卡", notes = "参数：用户账号(身份证),银行账号,查询密码")
 	@ResponseBody
 	@RequestMapping(value="Construction",method=RequestMethod.POST)
-	public Map<String,Object> Construction(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserCode") String UserCode,@RequestParam("CodePass") String CodePass,@RequestParam("UUID")String UUID) throws Exception{
-		return con.check(request, UserCard, UserCode, CodePass,UUID);
+	public Map<String,Object> Construction(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserCode") String UserCode,
+											@RequestParam("CodePass") String CodePass,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
+		return con.check(request, UserCard, UserCode, CodePass,UUID,timeCnt);
 	}
 }

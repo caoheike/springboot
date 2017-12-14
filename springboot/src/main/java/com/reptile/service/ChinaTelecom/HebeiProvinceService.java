@@ -142,6 +142,7 @@ public class HebeiProvinceService {
 				List<WebElement> as= driver.findElements(By.className("pub_btn_s"));
 				as.get(1).click();
 				Thread.sleep(5000);
+				
 				PushState.state(Usernum, "callLog",100);
 				List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				System.out.println("开始获取详单");

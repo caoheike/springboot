@@ -641,7 +641,8 @@ public class MobileService {
 	}
 
 	/**
-	 * 登陆
+	 * 联通登陆
+	 * @param uUID 
 	 */
 
 	public Map<String, Object> UnicomLogin(HttpServletRequest request, String Useriphone, String password,
@@ -697,7 +698,6 @@ public class MobileService {
 
 						}
 						request1 = new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17207654655044488388_" + System.currentTimeMillis() + "&req_time=" + System.currentTimeMillis() + "&redirectURL=http://www.10010.com&userName=" + Useriphone + "&password=" + password + "&pwdType=01&productType=01&verifyCode=" + catpy + "&uvc=" + uvc + "&redirectType=01&rememberMe=1&verifyCKCode=" + code + "&_=" + System.currentTimeMillis()));
-
 					} else {
 
 						System.out.println("图形验证码 错误");
@@ -732,7 +732,6 @@ public class MobileService {
 				if (isTrueCk.equals("true")) {
 					//===========不需要图形验证码,需要短信===========================
 					request1 = new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17209863190566662376_" + System.currentTimeMillis() + "&req_time=" + System.currentTimeMillis() + "&redirectURL=http://www.10010.com&userName=" + Useriphone + "&password=" + password + "&pwdType=01&productType=01&redirectType=01&rememberMe=1&verifyCKCode=" + code + "&_=" + System.currentTimeMillis()));
-
 				} else {
 					//===========不需要图形验证码,不需要短信(不会发生)===========================
 					request1 = new WebRequest(new URL("https://uac.10010.com/portal/Service/MallLogin?callback=jQuery17209863190566662376_" + System.currentTimeMillis() + "&req_time=" + System.currentTimeMillis() + "&redirectURL=http://www.10010.com&userName=" + Useriphone + "&password=" + password + "&pwdType=01&productType=01&redirectType=01&rememberMe=1&_=" + System.currentTimeMillis()));
@@ -773,6 +772,7 @@ public class MobileService {
 			map.put("errorInfo", "0001");
 			map.put("errorInfo", "网络异常");
 			System.out.println(e);
+			
 		}
 		return map;
 
@@ -874,9 +874,13 @@ public class MobileService {
 	 * 联通通话详单
 	 */
 
-	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, String UserPassword, String code, String longitude, String latitude,String UUID) {
-
+	public Map<String, Object> getDetial(HttpServletRequest request, String Useriphone, 
+			String UserPassword, String code, String longitude, String latitude,String UUID) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			PushSocket.pushnew(map, UUID, "1000","登录中");
+			Thread.sleep(2000);
+		
 		List listsy = new ArrayList();
 		String info = "";
 		HttpSession session = request.getSession();
@@ -890,7 +894,6 @@ public class MobileService {
 		//System.out.println("验证码发送成功");
 		//=======================确定验证码===============================================
 		String verCode = "http://iservice.10010.com/e3/static/query/verificationSubmit?_=" + System.currentTimeMillis() + "&accessURL=http://iservice.10010.com/e4/query/bill/call_dan-iframe.html?menuCode=000100030001&menuid=000100030001";
-		try {
 			WebRequest webRequest2 = new WebRequest(new URL(verCode));
 			webRequest2.setHttpMethod(HttpMethod.POST);
 			List<NameValuePair> paramer2 = new ArrayList<NameValuePair>();
@@ -912,11 +915,12 @@ public class MobileService {
 				String resultCode = json3.get("flag").toString();
 				if (resultCode.equals("00")) {
 					//---------------推-------------------
-				   PushSocket.push(map, UUID, "0000");
+					PushSocket.pushnew(map, UUID, "2000","登录成功");
 					//---------------推-------------------
 				    System.out.println("验证码成功，可查询");
 					PushState.state(Useriphone, "callLog", 100);
-//=======================获取详单================================================      		
+//=======================获取详单================================================ 
+					PushSocket.pushnew(map, UUID, "5000","获取数据中");
 					webClient.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 					webClient.addRequestHeader("Accept-Encoding", "gzip, deflate");
 					webClient.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8");
@@ -956,6 +960,12 @@ public class MobileService {
 						dataMap.put("item", chekpages.getContent());
 						listsy.add(dataMap);
 					}
+					if(listsy.size()==0) {
+						PushSocket.pushnew(map, UUID, "7000","数据获取失败");
+					}else {
+						PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+					}
+					
 					map.put("errorCode", "0000");
 					map.put("errorInfo", "查询成功");
 					map.put("data", listsy);
@@ -971,6 +981,7 @@ public class MobileService {
 						PushState.state(Useriphone, "callLog", 300);
 						map.put("errorInfo", "推送成功");
 						map.put("errorCode", "0000");
+						PushSocket.pushnew(map, UUID, "8000","认证成功");
 					} else {
 						// PushSocket.push(map, UUID, "0001");
 						//--------------------数据中心推送状态----------------------
@@ -978,30 +989,36 @@ public class MobileService {
 						//---------------------数据中心推送状态---------------------
 						map.put("errorInfo", "推送失败");
 						map.put("errorCode", "0001");
+						PushSocket.pushnew(map, UUID, "9000","认证失败");
+						
 					}
 				} else {
 					
 					//---------------推-------------------
-					   PushSocket.push(map, UUID, "0001");
+					
 					//---------------推-------------------
 					PushState.state(Useriphone, "callLog", 200);
 					System.out.println(json3.get("error").toString());
 					if (resultCode.equals("01")) {
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "验证码已过期，请从新获取新的验证码");
+						PushSocket.pushnew(map, UUID, "3000","验证码已过期，请从新获取新的验证码");
 					} else if (resultCode.equals("02")) {//验证码错误
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败");
+						PushSocket.pushnew(map, UUID, "3000","校验失败");
 					} else if (resultCode.equals("03")) {//sessionFail//session失效
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "校验失败,请稍后再试！");
-
+						PushSocket.pushnew(map, UUID, "3000","校验失败,请稍后再试！");
 					} else if (resultCode.equals("04")) {
 						map.put("errorCode", "0001");
 						map.put("errorInfo", "验证码不能为空");
+						PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
 					} else {
 						map.put("errorCode", "0001");
 						map.put("errorInfo", json3.get("error").toString());
+						PushSocket.pushnew(map, UUID, "3000","json3.get(\"error\").toString()");
 					}
 				}
 			} catch (ClassCastException e) {
@@ -1011,6 +1028,7 @@ public class MobileService {
 				//---------------------数据中心推送状态---------------------
 				map.put("errorInfo", "验证失败,稍后再试");//???????
 				map.put("errorCode", "0001");
+				PushSocket.pushnew(map, UUID, "3000","验证失败,稍后再试");
 				return map;
 			}
 
@@ -1018,6 +1036,7 @@ public class MobileService {
 			PushState.state(Useriphone, "callLog", 200);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常");
+			PushSocket.pushnew(map, UUID, "3000","网络异常");
 			e.printStackTrace();
 		}
 		return map;

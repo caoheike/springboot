@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8081
 
 manInfo:
-    ip: 117.34.70.214
+    ip: 192.168.3.11
     sendip: http://117.34.70.217:8080
-    port: 8080
+    port: 8081
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource

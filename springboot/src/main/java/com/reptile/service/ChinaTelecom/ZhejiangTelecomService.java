@@ -94,18 +94,26 @@ public class ZhejiangTelecomService {
  * @param code
  * @param request
  * @return
+ * @throws Exception 
  */
 	
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code,String longitude,String latitude,String UUID){
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,String phoneNumber,String servePwd,String name,String idCard,String code,String longitude,String latitude,String UUID) {
 		    Map<String, Object> map = new HashMap<String, Object>();
             //验证码	判断	=========================================  
 		    WebClient webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
-		    
+		    PushSocket.pushnew(map, UUID, "1000","登录中");
+		    try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		    if(webClient==null){
 		    	logger.warn("浙江电信，请先获取验证码");
 		    	PushSocket.push(map, UUID, "0001");
 		    	 map.put("errorCode", "0001");
-			     map.put("errorInfo", "请先获取验证码");	
+			     map.put("errorInfo", "请先获取验证码");
+			     PushSocket.pushnew(map, UUID, "3000","登录失败");
 				 return map;
 		    }
 		    try {  
@@ -135,7 +143,6 @@ public class ZhejiangTelecomService {
 			HtmlTextInput idcard = choosePage.getElementByName("idcard");
 			username.setValueAttribute(name);//1.
 			idcard.setValueAttribute(idCard);//2.
-		  
 			for(int i=0;i<6;i++){//六个月数据
 				selectMonth.setSelectedIndex(i);//选择对应月份
 				HtmlPage firstPage = (HtmlPage) choosePage.executeJavaScript(
@@ -143,15 +150,18 @@ public class ZhejiangTelecomService {
 				 //=============================浙江验证码校验===================================================	
 				 if(alertList.size()>0){
 					 logger.warn("浙江电信",alertList.get(0).toString());
-					 PushSocket.push(map, UUID, "0001");
+					 //PushSocket.push(map, UUID, "0001");
+					 PushSocket.pushnew(map, UUID, "3000","登录失败");
 		             map.put("errorCode", "0001");
 				     map.put("errorInfo", alertList.get(0).toString());	
 					 return map;
 				 }else if(i==0){
-					 PushSocket.push(map, UUID, "0000");
+					 //PushSocket.push(map, UUID, "0000");
+					 PushSocket.pushnew(map, UUID, "2000","登录成功");
 				 }
 				if (firstPage.asText().contains("我的清单详情")) {
-					
+					Thread.sleep(2000);
+					PushSocket.pushnew(map, UUID, "5000","数据获取中");
 				    HtmlSpan span=	(HtmlSpan) firstPage.getElementById("id1");
 				    
 				   /* if(span==null){
@@ -184,7 +194,11 @@ public class ZhejiangTelecomService {
 					return map;
 				}
 		}
-			
+			if(dlist.size()>0) {
+            	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+            }else {
+            	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+            }
 		    map.put("data", dlist);
             map.put("UserPassword",servePwd);
             map.put("UserIphone", phoneNumber);
@@ -197,7 +211,12 @@ public class ZhejiangTelecomService {
 			webClient.close();
 			Resttemplate resttemplate = new Resttemplate();
 	        map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 	
-		} catch (InterruptedException e) {
+	        if(map.get("errorCode").equals("0000")) {
+				PushSocket.pushnew(map, UUID, "8000","认证成功");
+			}else {
+				PushSocket.pushnew(map, UUID, "9000","认证失败");
+			}
+		    } catch (InterruptedException e) {
 			logger.warn("浙江电信",e);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常！");

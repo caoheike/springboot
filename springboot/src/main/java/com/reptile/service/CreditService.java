@@ -525,7 +525,9 @@ public class CreditService {
     public Map<String, Object> queryCredit(HttpServletRequest request, String userId, String verifyCode, String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
         try {
+        	Thread.sleep(2000);
             Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
             if (sessionWebClient != null) {
                 final WebClient webClient = (WebClient) sessionWebClient;
@@ -553,9 +555,13 @@ public class CreditService {
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("errorCode", "0001");
+                    PushSocket.pushnew(map, UUID, "3000","登录失败");
                 } else {
                     //推送长连接状态
-                    PushSocket.push(map, UUID, "0000");
+                    //PushSocket.push(map, UUID, "0000");
+                	 PushSocket.pushnew(map, UUID, "2000","登录成功");
+                	 Thread.sleep(2000);
+                	 PushSocket.pushnew(map, UUID, "5000","获取数据中");
                     HtmlTable table = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(1);
                     HtmlTable tableTime = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(0);
                     String realName = table.getCellAt(0, 0).asText();
@@ -576,6 +582,7 @@ public class CreditService {
                     data.put("reportHtml", resultPage.asXml());
                     try {
                         map.put("data", data);
+                        PushSocket.pushnew(map, UUID, "6000","获取数据成功");
                         //ludangwei 2017-08-03
                         // HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigation", JSONObject.fromObject(map).toString());
                         Resttemplate temp = new Resttemplate();
@@ -584,10 +591,12 @@ public class CreditService {
                         if (map != null && "0000".equals(map.get("ResultCode").toString())) {
                             map.put("errorInfo", "查询成功");
                             map.put("errorCode", "0000");
+                            PushSocket.pushnew(map, UUID, "8000","认证成功");
 
                         } else {
                             map.put("errorInfo", map.get("ResultInfo"));
                             map.put("errorCode", "0001");
+                            PushSocket.pushnew(map, UUID, "9000","认证失败");
                         }
                         webClient.close();
                     } catch (Exception e) {
@@ -604,6 +613,7 @@ public class CreditService {
                 map.put("ResultCode", "0002");
                 map.put("errorInfo", "您已超时,请重新登录查询!");
                 map.put("errorCode", "0002");
+                PushSocket.pushnew(map, UUID, "3000","您已超时,请重新登录查询!");
             }
         } catch (Exception e) {
             logger.warn(e.getMessage() + " 查询征信报告    mrlu", e);
