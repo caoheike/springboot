@@ -52,11 +52,11 @@
             <!--</exclusions>-->
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -292,6 +292,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <!--百度云识别图片 -->
+        <dependency>
+        <groupId>com.baidu.aip</groupId>
+        <artifactId>java-sdk</artifactId>
+        <version>3.4.1</version>
+    </dependency>
     </dependencies>
 
     <build>
