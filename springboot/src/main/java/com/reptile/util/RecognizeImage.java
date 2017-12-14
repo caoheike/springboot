@@ -23,13 +23,12 @@ public class RecognizeImage {
 
     /**
      * 二值化图片 方便图片更容易辨认
-     * @param filePath
+     * @param read
      * @return 二值化后图片的路径
      * @throws IOException
      */
-    public static String binaryImage(HttpServletRequest request, String filePath) throws IOException {
-        BufferedInputStream inputStream=new BufferedInputStream(new FileInputStream(new File(filePath)));
-        BufferedImage read = ImageIO.read(inputStream);
+    public static String binaryImage(HttpServletRequest request, BufferedImage read) throws IOException {
+
         int height = read.getHeight();
         int width = read.getWidth();
         BufferedImage image=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
@@ -80,8 +79,8 @@ public class RecognizeImage {
     }
 
     public static void main(String[] args) throws IOException {
-        String s = RecognizeImage.binaryImage(null,"f://hx.png");
-        JSONObject jsonObject = RecognizeImage.recognizeImage(s);
-        System.out.println(jsonObject.toString(2));
+//        String s = RecognizeImage.binaryImage(null,"f://hx.png");
+//        JSONObject jsonObject = RecognizeImage.recognizeImage(s);
+//        System.out.println(jsonObject.toString(2));
     }
 }

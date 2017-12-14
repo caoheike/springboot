@@ -642,7 +642,7 @@ public class MobileService {
 
 	/**
 	 * 联通登陆
-	 * @param uUID 
+	 * @param
 	 */
 
 	public Map<String, Object> UnicomLogin(HttpServletRequest request, String Useriphone, String password,
@@ -1426,6 +1426,31 @@ public class MobileService {
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)
+				DomNodeList<DomElement> img = pagess.getElementsByTagName("img");
+				for (DomElement dom:img){
+					String aClass = dom.getAttribute("class");
+					if(aClass.equals("xjxx-img")){
+						String src = dom.getAttribute("src");
+						UnexpectedPage page = webClient.getPage(src);
+						InputStream contentAsStream = page.getWebResponse().getContentAsStream();
+						BufferedImage read = ImageIO.read(contentAsStream);
+						String path = RecognizeImage.binaryImage(request, read);
+						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(path);
+						String result = jsonObject.get("words_result").toString();
+						JSONArray jsonArray = JSONArray.fromObject(result);
+						for (int i=0;i<jsonArray.size();i++){
+							String words = jsonArray.getJSONObject(i).get("words").toString();
+							if(words.contains("名:")){
+
+							}else if(words.contains("别:")){
+
+							}else if(words.contains("生日期:")){
+
+							}
+
+						}
+					}
+				}
 				List infos = pagess.querySelectorAll(".mb-table");
 
 				for (int i = 0; i < infos.size(); i++) {
@@ -1463,7 +1488,7 @@ public class MobileService {
 				//---------------------数据中心推送状态----------------------
 			}
 		} catch (Exception e) {
-			System.out.print(e);
+			e.printStackTrace();
 			if (e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")) {
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
