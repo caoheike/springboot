@@ -34,6 +34,8 @@ public class ShanXiTelecomService {
     public Map<String, Object>  TelecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String UUID) throws IOException, InterruptedException {
 
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+        Thread.sleep(2000);
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
 
@@ -42,9 +44,13 @@ public class ShanXiTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushSocket.pushnew(map, UUID, "3000","登录中，操作异常");
         } else {
+        	PushSocket.pushnew(map, UUID, "2000","登录成功");
             WebClient webClient = (WebClient) attribute;
             try {
+            	Thread.sleep(2000);
+            	PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
                 WebRequest webRequest = new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
 
@@ -98,8 +104,9 @@ public class ShanXiTelecomService {
                 }
                 if(dataList.size()!=0){
                 	//---------------推-------------------
-                	 PushSocket.push(map, UUID, "0000");
+                	 //PushSocket.push(map, UUID, "0000");
     					//---------------推-------------------
+                	PushSocket.pushnew(map, UUID, "6000","获取数据成功");
                     map.put("UserIphone",phoneNumber);
                     map.put("UserPassword",serverPwd);
                     map.put("longitude", longitude);//经度
@@ -108,9 +115,15 @@ public class ShanXiTelecomService {
                     map.put("flag","0");
                     Resttemplate resttemplate=new Resttemplate();
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                    if(map.get("errorCode").equals("0000")) {
+    					PushSocket.pushnew(map, UUID, "8000","认证成功");
+    				}else {
+    					PushSocket.pushnew(map, UUID, "9000","认证失败");
+    				}
                 }else{
                     map.put("errorCode", "0005");
                     map.put("errorInfo", "业务办理失败！");
+                    PushSocket.pushnew(map, UUID, "7000","获取数据失败");
                 }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);

@@ -62,8 +62,10 @@ public class GlobalUnicomController {
     @ApiOperation(value = "0.2登陆",notes = "参数：手机号，服务密码，验证码")
     @ResponseBody
     @RequestMapping(value = "UnicomLogin",method = RequestMethod.POST)
-    public Map<String, Object> UnicomLogin(HttpServletRequest request,@RequestParam("Useriphone") String Useriphone,
-                                           @RequestParam("password") String password,@RequestParam("UserCode") String UserCode){
+    public Map<String, Object> UnicomLogin(HttpServletRequest request,
+    		@RequestParam("Useriphone") String Useriphone,
+    		@RequestParam("password") String password,
+    		@RequestParam("UserCode") String UserCode){
         System.out.println("已经被访问了");
         
         return mobileService.UnicomLogin(request,Useriphone, password,UserCode);
@@ -98,7 +100,10 @@ public class GlobalUnicomController {
     @RequestMapping(value = "getDetials",method = RequestMethod.POST)
     public Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("Useriphone")String Useriphone,
     		@RequestParam("UserPassword")String UserPassword,
-    		@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID) {
+    		@RequestParam("code")String code,
+    		@RequestParam("longitude")String longitude,
+    		@RequestParam("latitude")String latitude,
+    		@RequestParam("UUID")String UUID) {
 				
     	return mobileService.getDetial(request, Useriphone, UserPassword,code,longitude,latitude,UUID);
     } 

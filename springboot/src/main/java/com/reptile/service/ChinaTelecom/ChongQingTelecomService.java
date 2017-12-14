@@ -102,7 +102,7 @@ public class ChongQingTelecomService {
 	 
 	 public Map<String, Object> getDetail(HttpServletRequest request, String phoneNumber,String passWord,String code,String longitude,String latitude,String UUID){
 		 Map<String, Object> map = new HashMap<String, Object>();
-		  
+		 PushSocket.pushnew(map, UUID, "1000","登录中");  
 	        List<Map<String, Object>> arrayList=new ArrayList<Map<String,Object>>();
 	        HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("driverGT");
@@ -111,6 +111,7 @@ public class ChongQingTelecomService {
 	        	PushSocket.push(map, UUID, "0001");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信验证码!");
+	            PushSocket.pushnew(map, UUID, "3000","请先获取短信验证码!");  
 	            return map;
 		        } else {
 		        	WebDriver driver =  (WebDriver)attribute;
@@ -141,19 +142,19 @@ public class ChongQingTelecomService {
 							 check.click();
 							 Thread.sleep(1000);
 						}catch (Exception e){
-							PushSocket.push(map, UUID, "0001");
+							//PushSocket.push(map, UUID, "0001");
 								 map.put("errorCode", "0001");
 	    				         map.put("errorInfo", "验证码错误");	
+	    				         PushSocket.pushnew(map, UUID, "3000","验证码错误");  
 	    				         return map;
-							
 						}
-					   
 					    
-					    
-					if(driver.getPageSource().contains("使用地点")){	
-						PushSocket.push(map, UUID, "0000");
-	        				System.out.println("查询成功");
-	        				 HttpClient httpClient = new HttpClient(); 
+					if(driver.getPageSource().contains("使用地点")){
+						PushSocket.pushnew(map, UUID, "2000","登录成功");
+						//PushSocket.push(map, UUID, "0000");
+						Thread.sleep(2000);
+						PushSocket.pushnew(map, UUID, "5000","数据获取中");
+						HttpClient httpClient = new HttpClient(); 
 	        				//==================获取cookie==========================================  
 	        				 Set<Cookie> cookie=driver.manage().getCookies();
 	        				 StringBuffer cookies=new StringBuffer();
@@ -176,13 +177,12 @@ public class ChongQingTelecomService {
 	        				 System.out.println(html);
 	        				 dataMap.put("item", html);
 	 				      	 arrayList.add(dataMap);		 
-	        			
+	 				      	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
 	        			}else{
 	        				 map.put("errorCode", "0001");
 					         map.put("errorInfo", "系统繁忙!");
-					         
+					         PushSocket.pushnew(map, UUID, "3000","登录失败");
 	        			}
-	        			
 					}
 				//------------推数据------------------------
 					map.put("errorCode", "0000");
@@ -195,7 +195,12 @@ public class ChongQingTelecomService {
 			        map.put("flag","15");
 	                Resttemplate resttemplate=new Resttemplate();
 	                map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
-				 //------------推数据------------------------
+				 if(map.get("errorCode").equals("0000")) {
+					 PushSocket.pushnew(map, UUID, "8000","认证成功");
+				 }else {
+					 PushSocket.pushnew(map, UUID, "9000","认证失败");
+				 }
+	                //------------推数据------------------------
 	                //driver.close();
 					
 					} catch (Exception e) {

@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.portlet.ModelAndView;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -703,6 +701,7 @@ public class InterfaceController {
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
 	    PushSocket.pushnew(map, UUID, "1000","登录中");
+	    Thread.sleep(2000);
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
@@ -714,7 +713,6 @@ public class InterfaceController {
 		    System.out.println(pageinfo.asXml());
 		    PushSocket.pushnew(map, UUID, "2000","登录成功");
 		    PushState.state(idCard, "TaoBao",100);
-		    Thread.sleep(2000);
 		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
 		    map.put("errorCode", "0000");
 		    map.put("errorInfo", "成功");

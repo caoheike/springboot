@@ -170,8 +170,15 @@ public class ShanDongTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userIphone, String imageCode, String userName,
-                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude,String UUID) {
+                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude,String UUID){
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         List<String> listData = new ArrayList<String>();
         HttpSession session = request.getSession();
 
@@ -179,9 +186,10 @@ public class ShanDongTelecomService {
         Object htmlpage = session.getAttribute("SDDXsendMesPage");
 
         if (attribute == null || htmlpage == null) {
-        	PushSocket.push(map, UUID, "0001");
+        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常!");
         } else {
             try {
                 WebClient webClient = (WebClient) attribute;
@@ -197,15 +205,19 @@ public class ShanDongTelecomService {
 //                System.out.println(aa.asXml());
 
                 if (!aa.asText().contains("您的客户信息校验成功，您可继续办理相关业务")) {
-                	PushSocket.push(map, UUID, "0001");
+                	//PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您的用户信息校验未通过，请确认后重新输入");
+                    PushSocket.pushnew(map, UUID, "3000","您的用户信息校验未通过，请确认后重新输入");
                     return map;
                 }
-                PushSocket.push(map, UUID, "0000");
+                //PushSocket.push(map, UUID, "0000");
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                
                 HtmlPage resultPage = aa.getElementById("easyDialogYesBtn").click();
 //                System.out.println(resultPage.asXml());
-
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 List<String> list = new ArrayList<String>();
                 CollectingAlertHandler alert = new CollectingAlertHandler(list);
                 webClient.setAlertHandler(alert);
@@ -244,6 +256,11 @@ public class ShanDongTelecomService {
                 for (int i = 0; i < list.size(); i++) {
                     listData.add(list.get(i));
                 }
+                if(listData.size()>0) {
+                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+                }else {
+                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+                }
                 map.put("UserPassword", "'"+userPassword+"'");
                 map.put("UserIphone", userIphone);
                 map.put("longitude", longitude);//经度
@@ -255,6 +272,11 @@ public class ShanDongTelecomService {
                 webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
+                if(map.get("errorCode").equals("0000")) {
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
+				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
                 map.put("errorCode", "0001");

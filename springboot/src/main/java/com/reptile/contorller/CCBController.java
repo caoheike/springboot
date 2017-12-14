@@ -31,4 +31,10 @@ public class CCBController {
 		return ccb.ccbInformation(request, IDNumber, cardNumber, cardPass,UUID);
 				
 	}
+	@RequestMapping(value="ttt",method=RequestMethod.GET)
+	public Map<String,Object> ttt(HttpServletRequest request) throws Exception{
+		System.out.println("asd");
+		return null;
+				
+	}
 }

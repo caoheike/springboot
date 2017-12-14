@@ -114,6 +114,7 @@ public class ChengduTelecomService {
                                             String servePwd, String longitude, String latitude, String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> dataMap = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
@@ -121,6 +122,7 @@ public class ChengduTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
+            PushSocket.pushnew(map, UUID, "3000","登录失败");
             return map;
         } else {
             WebClient webClient = (WebClient) attribute;
@@ -133,7 +135,9 @@ public class ChengduTelecomService {
                 HtmlPage page = webClient.getPage(getMes);
                 String result = page.asText();
                 JSONObject jsonObject = JSONObject.fromObject(result);
-
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 String record = null;
                 if (jsonObject.get("retCode") == null || !"0".equals(jsonObject.get("retCode").toString())) {
                     if (!result.contains("没有查询到相应记录")) {
@@ -142,7 +146,7 @@ public class ChengduTelecomService {
                         return map;
                     }
                 } else {
-                    PushSocket.push(map, UUID, "0000");
+                    //PushSocket.push(map, UUID, "0000");
                     record = jsonObject.get("json").toString();
                     list.add(record);
                 }
@@ -173,6 +177,11 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
+                if(list.size()>0) {
+                	PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+                }else {
+                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+                }
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
                 dataMap.put("longitude", longitude);//经度
@@ -182,6 +191,11 @@ public class ChengduTelecomService {
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
+               if(map.get("errorCode").equals("0000")) {
+            	   PushSocket.pushnew(map, UUID, "8000","认证成功");   
+               }else{
+            	   PushSocket.pushnew(map, UUID, "9000","认证失败");  
+               }
             } catch (Exception e) {
                 logger.warn("成都获取详情mrlu", e);
                 map.put("errorCode", "0002");

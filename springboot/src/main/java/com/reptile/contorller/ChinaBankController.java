@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +30,11 @@ public class ChinaBankController {
     @ResponseBody
     @CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("userCard") String userCard,
-                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID) {
+                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws ParseException {
 
         Map<String,Object> map=new HashMap<String,Object>();
         synchronized (this){
-            map= service.getDetailMes(request, userCard, cardNumber, userPwd,UUID);
+            map= service.getDetailMes(request, userCard, cardNumber, userPwd,UUID,timeCnt);
         }
         return map;
     }

@@ -27,6 +27,7 @@ public class GuangXiTelecomService {
 
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
+        
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("GBmobile-webclient");
         if (attribute == null) {
@@ -69,6 +70,7 @@ public class GuangXiTelecomService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode, String userName,
                                             String userCard,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
         List<String> dataList=new ArrayList<String>();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("GXDXwebClient");
@@ -77,6 +79,7 @@ public class GuangXiTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
+            PushSocket.pushnew(map, UUID, "3000","操作异常");
             return map;
         } else {
             WebClient webClient = (WebClient) attribute;
@@ -94,18 +97,22 @@ public class GuangXiTelecomService {
 
                     HtmlAnchor popup1 = (HtmlAnchor) xmlPage.getElementById("popup").getFirstChild().getChildNodes().get(2).getChildNodes().get(0);
                     HtmlPage click1 = popup1.click();
-                    PushSocket.push(map, UUID, "0001");
+                    //PushSocket.push(map, UUID, "0001");
+                    PushSocket.pushnew(map, UUID, "3000","登录失败");
+                    
                     Thread.sleep(1000);
                     map.put("errorCode", "0003");
                     map.put("errorInfo", popup);
                     return map;
                 }
-                PushSocket.push(map, UUID, "0000");
+                //PushSocket.push(map, UUID, "0000");
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar=Calendar.getInstance();
                 String lastTime = sim.format(calendar.getTime());
                 String startTime=lastTime;
-
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 for (int i = 0; i < 6; i++) {
                     WebRequest request1 = new WebRequest(new URL("http://gx.189.cn/chaxun/iframe/inxxall_new.jsp"));
                     request1.setHttpMethod(HttpMethod.POST);
@@ -130,6 +137,11 @@ public class GuangXiTelecomService {
 //                    System.out.println(page1.asXml());
                     dataList.add(page1.asXml());
                 }
+                if(dataList.size()>0) {
+                	 PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+                }else {
+                	 PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+                }
                 map.put("data",dataList);
                 map.put("flag","7");
                 map.put("UserPassword",serverPwd);
@@ -139,6 +151,11 @@ public class GuangXiTelecomService {
                 webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                if(map.get("errorCode").equals("0000")) {
+                	PushSocket.pushnew(map, UUID, "8000","认证成功");
+                }else {
+                	PushSocket.pushnew(map, UUID, "9000","认证失败");
+                }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+" 广西获取详单信息   mrlu",e);
                 map.put("errorCode", "0005");

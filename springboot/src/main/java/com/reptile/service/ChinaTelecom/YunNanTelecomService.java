@@ -90,6 +90,13 @@ public class YunNanTelecomService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,
                                             String userName, String userCard,String longitude,String latitude,String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         Object yunNanWebClient = session.getAttribute("yunNanWebClient");
@@ -98,10 +105,14 @@ public class YunNanTelecomService {
         	PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
+            PushSocket.pushnew(map, UUID, "3000","登录失败");
         } else {
+        	PushSocket.pushnew(map, UUID, "2000","登录成功");
             WebClient webClient = (WebClient) yunNanWebClient;
             HtmlPage htmlPage = (HtmlPage) yunNanHtmlPage;
             try {
+            	Thread.sleep(2000);
+            	PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 htmlPage.getElementById("NAME").setAttribute("value", userName);
                 htmlPage.getElementById("CUSTCARDNO").setAttribute("value", userCard);
                 htmlPage.getElementById("PROD_PASS").setAttribute("value", serverPwd);
@@ -162,6 +173,11 @@ public class YunNanTelecomService {
                     }
                     calendar.add(Calendar.MONTH, -1);
                 }
+                if(dataList.size()>0) {
+                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+                }else {
+                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+                }
                 map.put("data", dataList);
                 map.put("flag", "8");
                 map.put("UserPassword", serverPwd);
@@ -171,6 +187,11 @@ public class YunNanTelecomService {
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                if(map.get("errorCode").equals("0000")) {
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
+				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 map.put("errorCode", "0002");

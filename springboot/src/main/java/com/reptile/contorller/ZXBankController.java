@@ -36,7 +36,7 @@ public class ZXBankController {
     @ApiOperation(value = "2.登录中信", notes = "参数：手机号，登录密码，图片验证码")
     @ResponseBody
     @RequestMapping(value = "loadZX", method = RequestMethod.POST)
-    public Map<String, String> loadZX(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("passWord") String passWord, @RequestParam("imageCode") String imageCode) throws Exception{
+    public Map<String, Object> loadZX(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("passWord") String passWord, @RequestParam("imageCode") String imageCode) throws Exception{
 
         return service.loadZX(request,userNumber.trim(),passWord.trim(),imageCode.trim());
     }
@@ -52,8 +52,8 @@ public class ZXBankController {
     @ApiOperation(value = "4.获取账单信息", notes = "参数：手机验证码")
     @ResponseBody
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
-    public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userCard") String userCard, @RequestParam("phoneCode") String phoneCode,@RequestParam("UUID")String UUID) throws  Exception {
-        return service.getDetailMes(request,userCard.trim(),phoneCode.trim(),UUID.trim());
+    public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userCard") String userCard, @RequestParam("phoneCode") String phoneCode,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws  Exception {
+        return service.getDetailMes(request,userCard.trim(),phoneCode.trim(),UUID.trim(),timeCnt.trim());
     }
 
 }

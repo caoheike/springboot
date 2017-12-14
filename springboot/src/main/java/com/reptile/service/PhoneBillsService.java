@@ -149,7 +149,7 @@ public class PhoneBillsService {
                         return map;
                     }
                 }
-
+                	
                 //跳转到个人中心页面
                 String assertAcceptURL = jsonObject.get("assertAcceptURL").toString();
                 String artifact = jsonObject.get("artifact").toString();
@@ -277,8 +277,16 @@ public class PhoneBillsService {
 
     public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
                                                 String fuwuSec, String imageCode, String longitude, String latitude, String UUID) {
-
+    	System.out.println("---移动---"+userNumber);
         Map<String, Object> map = new HashMap<String, Object>();
+		System.out.println("---移动---"+userNumber);
+        PushSocket.pushnew(map, UUID, "1000","登录中");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
         Map<String, Object> dataMap = new HashMap<String, Object>();
         List dataList = new ArrayList();
@@ -289,10 +297,12 @@ public class PhoneBillsService {
             PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
+            PushSocket.pushnew(map, UUID, "3000","登录失败");
             return map;
         } else {
+        	try {
             WebClient webClient = (WebClient) client;
-            try {
+           	
                 HtmlPage page3 = webClient.getPage(path);
                 //对服务密码和手机验证码进行加密
                 List<String> alert = new ArrayList<String>();
@@ -308,7 +318,7 @@ public class PhoneBillsService {
                     pwdTempSerCode = alert.get(0);
                     pwdTempRandCode = alert.get(1);
                 }
-
+                
                 //身份进行二次验证
                 URL url2 = new URL("https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/" + userNumber +
                         "?callback=jQuery183045411546722870333_" + timeStamp + "&pwdTempSerCode=" + pwdTempSerCode +
@@ -331,9 +341,9 @@ public class PhoneBillsService {
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                     return map;
                 }
-
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
                 //---------------推-------------------
-                PushSocket.push(map, UUID, "0000");
+                //PushSocket.push(map, UUID, "0000");
                 Date date = new Date();
                 SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyyMM");
                 String str = SimpleDateFormat.format(date);
@@ -341,6 +351,7 @@ public class PhoneBillsService {
                 for (int i = 1; i < 7; i++) {
                     UnexpectedPage page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
+                    PushSocket.pushnew(map, UUID, "5000","数据获取中");	
                     String results = page9.getWebResponse().getContentAsString();
                     if (!results.contains("retCode\":\"000000")) {
                         map.put("errorCode", "0003");
@@ -357,6 +368,7 @@ public class PhoneBillsService {
                     Thread.sleep(500);
                 }
                 if (dataList.size() != 0) {
+                	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
                     dataMap.put("data", dataList);//通话详单数据
                     dataMap.put("userPhone", userNumber);//手机
                     dataMap.put("serverCard", fuwuSec);//服务密码
@@ -367,9 +379,16 @@ public class PhoneBillsService {
                     map.put("data", dataList.toString());
                     Resttemplate resttemplate = new Resttemplate();
                     map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/mobileCallRecord");
+                    //推送结果  未写
+                    if(map.get("errorCode").equals("0000")) {
+                    	PushSocket.pushnew(map, UUID, "8000","认证成功");
+                    }else {
+                    	PushSocket.pushnew(map, UUID, "9000","认证失败");
+                    }
                 } else {
                     map.put("errorCode", "0005");
                     map.put("errorInfo", "业务办理失败！");
+                    PushSocket.pushnew(map, UUID, "7000","数据获取失败");
                 }
                 webClient.close();
             } catch (Exception e) {

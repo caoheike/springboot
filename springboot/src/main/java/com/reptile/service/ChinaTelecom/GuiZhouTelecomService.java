@@ -84,12 +84,20 @@ public class GuiZhouTelecomService {
 	
 	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String UUID) {
 		    Map<String, Object> map = new HashMap<String, Object>();
-	        WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
+		    PushSocket.pushnew(map, UUID, "1000","登录中");
+		    try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		    WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
 	        if(webClient==null){
 	        	PushSocket.push(map, UUID, "0001");
 	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
+			     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 				 return map;
 		    }
 		      
@@ -108,7 +116,8 @@ public class GuiZhouTelecomService {
 				 Thread.sleep(1000);
 			//======================验证码正确性验证===============================	
 				 if(code==null||code.equals("")){
-					 PushSocket.push(map, UUID, "0001");
+					 //PushSocket.push(map, UUID, "0001");
+					 PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
 					 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码不能为空");
             		 return map; 
@@ -118,13 +127,15 @@ public class GuiZhouTelecomService {
 					 PushSocket.push(map, UUID, "0001");
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
+ 					PushSocket.pushnew(map, UUID, "3000","验证码错误");
             		 return map; 
             	 }else{		 
 				 //System.out.println(detial.getWebResponse().getContentAsString());
-					
+            		 PushSocket.pushnew(map, UUID, "5000","获取数据中");
 		        	dmap.put("item", detial.asXml());
 		         // System.out.println(detial.asXml());
 		      	    dataList.add(dmap);
+		      	    
             	 }
 			} catch (Exception e) {
 				logger.warn("贵州电信",e);
@@ -141,7 +152,13 @@ public class GuiZhouTelecomService {
 						//e.printStackTrace();
 					}
        }    
-             PushSocket.push(map, UUID, "0000");
+            // PushSocket.push(map, UUID, "0000");
+             if(dataList.size()>0) {
+            	 PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+             }else {
+            	 PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+             }
+             
            map.put("data", dataList);
            map.put("UserPassword",servePwd );
            map.put("UserIphone", phoneNumber);
@@ -155,12 +172,17 @@ public class GuiZhouTelecomService {
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
            System.out.println(map);
+           if(map.get("errorCode").equals("0000")) {
+        	   PushSocket.pushnew(map, UUID, "8000","认证成功");
+           }else {
+        	   PushSocket.pushnew(map, UUID, "9000","认证失败");
+           }
            if(map.get("errorCode").equals("0003")){
         	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
+        	   PushSocket.pushnew(map, UUID, "9000","认证失败");
            }
-           
 		return map;
 	}
 }

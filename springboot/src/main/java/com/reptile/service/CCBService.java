@@ -54,9 +54,12 @@ public class CCBService {
 			driver.get(CEBlogin);
 			driver.navigate().refresh();
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待
+			PushSocket.pushnew(map, UUID, "1000","建设银行储蓄卡登录中");
 			driver.findElement(By.id("USERID")).sendKeys(cardNumber);
+			
 			Actions action = new Actions(driver);
 	        action.sendKeys(Keys.TAB).build().perform();
+	        
 	        driver.findElement(By.id("LOGPASS")).sendKeys(cardPass);
 	        driver.findElement(By.id("loginButton")).click();
 	        String dpage1=driver.getPageSource();
@@ -64,22 +67,20 @@ public class CCBService {
 	        System.out.println(dpage1.indexOf("您输入的登录密码"));
 	        System.out.println(dpage1.indexOf("您输入的登录密码")==1);
 	        if(dpage1.indexOf("您输入的登录密码")!=-1){
-//	        	logger.warn("登录密码错误"+IDNumber+driver.getPageSource());
+	        	logger.warn("登录密码错误"+IDNumber+driver.getPageSource());
 	        	map.put("errorInfo","您输入的登录密码错误");
 	            map.put("errorCode","0003");
-//	            PushSocket.push(map, UUID, "0001");
-//	            driver.quit();
 	            driver.close();
+	        	PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的登录密码错误");
 	            return map;  
 	        }
 	        System.out.println(dpage1.indexOf("您输入的信息有误")!=-1);
 	        if(dpage1.indexOf("您输入的信息有误")!=-1){
-//	        	logger.warn("登录信息填写有误"+IDNumber+driver.getPageSource());
-//	        	driver.quit();
+	        	logger.warn("登录信息填写有误"+IDNumber+driver.getPageSource());
 	        	  driver.close();
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
-//	            PushSocket.push(map, UUID, "0001");
+	            PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的信息有误");
 	        	return map;  
 	        }
 	        PushState.state(IDNumber, "savings",100);
@@ -97,6 +98,7 @@ public class CCBService {
 		  String accountType = null;//开户状态
 		  String openBranch = null;//开户网点
 		  String openTime = null;//开户时间
+		  PushSocket.pushnew(map, UUID, "2000","建设银行储蓄卡登录成功");
 		  try {
 			  PushSocket.push(map, UUID, "0000");
 			  driver.switchTo().frame("txmainfrm");//第一级的frame
@@ -104,6 +106,7 @@ public class CCBService {
 				 driver.switchTo().frame("result");//第3级的frame,可点击页面元素
 				 Document page= Jsoup.parse(driver.getPageSource());
 				 accountType	=page.getElementsByClass("mt_10").text();//开户状态
+				 PushSocket.pushnew(map, UUID, "5000","建设银行储蓄卡获取中");
 				 System.out.println(accountType);
 				 page.getElementsByClass("pl_10 pt_10").text();
 				 String open= page.getElementsByClass("mb_20").text();
@@ -115,11 +118,10 @@ public class CCBService {
 				} catch (Exception e) {
 					PushState.state(IDNumber, "savings",200);
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+IDNumber);
+	            	 PushSocket.pushnew(map, UUID, "7000","建设银行储蓄卡获取失败");
 	            	  driver.close();
-//					driver.quit();
 		        	map.put("errorInfo","网络异常！数据加载过慢");
 		            map.put("errorCode","0004");
-//		            PushSocket.push(map, UUID, "0001");
 		        	return map;  
 					
 				}
@@ -238,6 +240,7 @@ public class CCBService {
 				                    
 									driver.switchTo().parentFrame();
 								}
+		                    PushSocket.pushnew(map, UUID, "6000","建设银行储蓄卡获取成功");
 		                    Collections.reverse(trs);
 		                    Map<String,Object> baseMes=new HashMap<String, Object>();
 		                    Map<String,Object> ccb=new HashMap<String, Object>();
@@ -253,6 +256,7 @@ public class CCBService {
 		                    map=resttemplate.SendMessage(ccb,ConstantInterface.port+"/HSDC/savings/authentication");
 		                    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 						    	PushState.state(IDNumber, "savings",300);
+						    	PushSocket.pushnew(map, UUID, "8000","建设银行储蓄卡认证成功");
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
 				                PushSocket.push(map, UUID, "0000");
@@ -261,6 +265,7 @@ public class CCBService {
 				                
 				            }else{
 				            	PushState.state(IDNumber, "savings",200);
+				            	PushSocket.pushnew(map, UUID, "9000","建设银行储蓄卡认证失败");
 				            	logger.warn("建设银行数据推送失败"+IDNumber);
 				                PushSocket.push(map, UUID, "0001");
 				                driver.close();
@@ -278,6 +283,7 @@ public class CCBService {
 			    	 PushState.state(IDNumber, "savings",200);
 			    	 map.clear();
 					 logger.warn("建设银行详单获取失败"+IDNumber);
+					 PushSocket.pushnew(map, UUID, "7000","建设银行储蓄卡获取失败");
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
 //					 driver.quit();

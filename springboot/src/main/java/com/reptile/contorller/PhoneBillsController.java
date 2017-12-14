@@ -62,6 +62,7 @@ public class PhoneBillsController {
     public Map<String,Object> getDetailAccount(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("phoneCode")String phoneCode,
                                                @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ,
                                                @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID ) throws Exception {
-        return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim(),UUID.trim());
+    	System.out.println("---移动---"+userNumber);
+    	return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim(),UUID.trim());
     }
 }
