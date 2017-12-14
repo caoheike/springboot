@@ -4,9 +4,13 @@ import com.baidu.aip.ocr.AipOcr;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -23,7 +27,7 @@ public class RecognizeImage {
      * @return 二值化后图片的路径
      * @throws IOException
      */
-    public static String binaryImage(String filePath) throws IOException {
+    public static String binaryImage(HttpServletRequest request, String filePath) throws IOException {
         BufferedInputStream inputStream=new BufferedInputStream(new FileInputStream(new File(filePath)));
         BufferedImage read = ImageIO.read(inputStream);
         int height = read.getHeight();
@@ -45,10 +49,15 @@ public class RecognizeImage {
                 }
             }
         }
-        String path="f://";
+        String realPath = request.getSession().getServletContext().getRealPath("/xzimage");
+        File file=new File(realPath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+
         String fileName="xz"+System.currentTimeMillis()+".jpg";
-        ImageIO.write(image,"jpg",new File(path+fileName));
-        return path+fileName;
+        ImageIO.write(image,"jpg",new File(file,fileName));
+        return realPath+"/"+fileName;
     }
 
     /**
@@ -71,7 +80,7 @@ public class RecognizeImage {
     }
 
     public static void main(String[] args) throws IOException {
-        String s = RecognizeImage.binaryImage("f://hx.png");
+        String s = RecognizeImage.binaryImage(null,"f://hx.png");
         JSONObject jsonObject = RecognizeImage.recognizeImage(s);
         System.out.println(jsonObject.toString(2));
     }
