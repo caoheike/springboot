@@ -79,9 +79,4 @@ public class RecognizeImage {
         return res;
     }
 
-    public static void main(String[] args) throws IOException {
-        String s = RecognizeImage.binaryImage(null,"f://hx.png");
-        JSONObject jsonObject = RecognizeImage.recognizeImage(s);
-        System.out.println(jsonObject.toString(2));
-    }
 }

@@ -44,7 +44,7 @@ public class ConstructionService {
 				driver.findElement(By.className("btn_blue")).click();//点击登录按钮
 				String detailedpage1= driver.getPageSource();
 				if(detailedpage1.contains("账号或卡号与账户类型不匹配")){
-					PushSocket.push(map, UUID, "0001");
+					//PushSocket.push(map, UUID, "0001");
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}
@@ -57,7 +57,7 @@ public class ConstructionService {
 					return map;
 				}
 				if(detailedpage1.contains("您输入的密码不正确")){
-					PushSocket.push(map, UUID, "0001");
+					//PushSocket.push(map, UUID, "0001");
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}
@@ -81,7 +81,7 @@ public class ConstructionService {
 				
 				PushSocket.pushnew(map, UUID, "2000","建设银行信用卡登陆中");
 				List<String> html =new ArrayList<String>();
-				PushSocket.push(map, UUID, "0000");
+				//PushSocket.push(map, UUID, "0000");
 				for (int i = 1; i < 7; i++) {
 					Map<String,Object>map1=new HashMap<String,Object>();
 					driver.findElement(By.className("select_value")).click();

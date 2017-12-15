@@ -117,7 +117,7 @@ public class JiangSuTelecomService {
 					PushSocket.pushnew(map, UUID, "9000","认证失败");
 				}
             } catch (Exception e) {
-            	PushSocket.push(map, UUID, "0001");
+            	//PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");

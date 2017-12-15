@@ -110,7 +110,7 @@ public class NanNingSocialSecurityService {
                     return map;
             	}
             }
-            PushSocket.push(dataMap, UUID, "0000");
+            //PushSocket.push(dataMap, UUID, "0000");
         	PushState.state(idCardNum, "socialSecurity", 100);
             /*
         	 *获取医辽余额页面                               

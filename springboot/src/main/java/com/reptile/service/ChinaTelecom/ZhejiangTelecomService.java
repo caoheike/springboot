@@ -110,7 +110,7 @@ public class ZhejiangTelecomService {
 			}
 		    if(webClient==null){
 		    	logger.warn("浙江电信，请先获取验证码");
-		    	PushSocket.push(map, UUID, "0001");
+		    	//PushSocket.push(map, UUID, "0001");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");
 			     PushSocket.pushnew(map, UUID, "3000","登录失败");
@@ -188,9 +188,10 @@ public class ZhejiangTelecomService {
 				    //}
 				} else { 
 					logger.warn("浙江电信","暂无数据");
-					PushSocket.push(map, UUID, "0001");
+					//PushSocket.push(map, UUID, "0001");
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
+					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
 					return map;
 				}
 		}

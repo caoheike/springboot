@@ -108,7 +108,7 @@ public class ChongQingTelecomService {
 	        Object attribute = session.getAttribute("driverGT");
 
 	        if (attribute == null) {
-	        	PushSocket.push(map, UUID, "0001");
+	        	//PushSocket.push(map, UUID, "0001");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信验证码!");
 	            PushSocket.pushnew(map, UUID, "3000","请先获取短信验证码!");  

@@ -47,9 +47,10 @@ public class talkFrame {
     }
     @OnMessage
     public void onsend(Session session,String msg){
+    	System.out.println("msg===="+msg);
     	if(msg!=null&&!msg.equals("")){
     		try {
-    			
+    			System.out.println("msg===="+msg);
 //    			JSONObject json1=JSONObject.fromObject(msg);
 //    			json1.accumulate("resultCode", "0000");
     			//session.getBasicRemote().sendObject(json1);

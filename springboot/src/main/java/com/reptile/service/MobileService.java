@@ -886,9 +886,10 @@ public class MobileService {
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("webClientTwo");
 		if (webClient == null) {
-			 PushSocket.push(map, UUID, "0001");
+			// PushSocket.push(map, UUID, "0001");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码！");
+			PushSocket.pushnew(map, UUID, "3000","请先获取验证码！");
 			return map;
 		}
 		//System.out.println("验证码发送成功");
@@ -1422,7 +1423,7 @@ public class MobileService {
 
 			//  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
 			if (!pages.asText().contains("您输入的用户名或密码有误") && !pages.asText().contains("图片验证码输入有误")) {
-				PushSocket.push(map, UUID, "0000");
+				//PushSocket.push(map, UUID, "0000");
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)
