@@ -1435,8 +1435,16 @@ public class MobileService {
 						UnexpectedPage page = webClient.getPage(src);
 						InputStream contentAsStream = page.getWebResponse().getContentAsStream();
 						BufferedImage read = ImageIO.read(contentAsStream);
-						String path = RecognizeImage.binaryImage(request, read);
-						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(path);
+
+						String realPath = request.getSession().getServletContext().getRealPath("/xzimage");
+						File file=new File(realPath);
+						if(!file.exists()){
+							file.mkdirs();
+						}
+						String fileName="xz"+System.currentTimeMillis()+".jpg";
+						ImageIO.write(read,"jpg",new File(file,fileName));
+//						String path = RecognizeImage.binaryImage(request, read);
+						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(realPath+"/"+fileName);
 						System.out.println(jsonObject.toString(2));
 						String result = jsonObject.get("words_result").toString();
 
@@ -1502,10 +1510,7 @@ public class MobileService {
 				map.put("CHSIAcount", username);
 				map.put("CHSIPassword", userpwd);
 				map.put("Usercard", userCard);
-
-
-//				map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/authcode/hireright");
-				map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/hireright");
+				map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
 				//--------------------数据中心推送状态----------------------
 				if(map.get("errorCode").equals("0000")){
 					PushState.state(userCard, "CHSI", 300);
