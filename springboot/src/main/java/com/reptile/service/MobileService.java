@@ -1427,6 +1427,7 @@ public class MobileService {
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)
 				DomNodeList<DomElement> img = pagess.getElementsByTagName("img");
+				List listData=new ArrayList();
 				for (DomElement dom:img){
 					String aClass = dom.getAttribute("class");
 					if(aClass.equals("xjxx-img")){
@@ -1436,35 +1437,75 @@ public class MobileService {
 						BufferedImage read = ImageIO.read(contentAsStream);
 						String path = RecognizeImage.binaryImage(request, read);
 						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(path);
+						System.out.println(jsonObject.toString(2));
 						String result = jsonObject.get("words_result").toString();
+
 						JSONArray jsonArray = JSONArray.fromObject(result);
+						Map<String,String> dataMap=new HashMap<>();
+						dataMap.put("schoolLength","");
+						dataMap.put("schoolName","");
+						dataMap.put("studentNumber","");
+						dataMap.put("classGrade","");
+						dataMap.put("QualificationsType","");
+						dataMap.put("graduateTime","");
+						dataMap.put("learningType","");
+						dataMap.put("nationality","");
+						dataMap.put("level","");
+						dataMap.put("joinTime","");
+						dataMap.put("birthdayTime","");
+						dataMap.put("domain","");
+						dataMap.put("branchCourts","");
+						dataMap.put("schoolStatus","");
+						dataMap.put("cardNumber","");
 						for (int i=0;i<jsonArray.size();i++){
 							String words = jsonArray.getJSONObject(i).get("words").toString();
 							if(words.contains("名:")){
-
-							}else if(words.contains("别:")){
-
+//								dataMap.put("",(words.split("名:"))[1]);
+							}else if(words.contains("性别:")){
+//								dataMap.put("",(words.split("性别:"))[1]);
 							}else if(words.contains("生日期:")){
-
+								dataMap.put("birthdayTime",(words.split("生日期:"))[1]);
+							}else if(words.contains("民族:")){
+								dataMap.put("nationality",(words.split("民族:"))[1]);
+							} else if(words.contains("码:")){
+								dataMap.put("cardNumber",(words.split("码:"))[1]);
+							}else if(words.contains("称:")){
+								dataMap.put("schoolName",(words.split("称:"))[1]);
+							}else if(words.contains("次:")){
+								dataMap.put("level",(words.split("次:"))[1]);
+							}else if(words.contains("业:")){
+								dataMap.put("domain",(words.split("业:"))[1]);
+							}else if(words.contains("制:")){
+								dataMap.put("schoolLength",(words.split("制:"))[1]);
+							}else if(words.contains("类别:")){
+								dataMap.put("QualificationsType",(words.split("类别:"))[1]);
+							}else if(words.contains("式:")){
+								dataMap.put("learningType",(words.split("式:"))[1]);
+							}else if(words.contains("院:")){
+								dataMap.put("branchCourts",(words.split("院:"))[1]);
+							}else if(words.contains("级:")){
+								dataMap.put("classGrade",(words.split("级:"))[1]);
+							}else if(words.contains("号:")){
+								dataMap.put("studentNumber",(words.split("号:"))[1]);
+							}else if(words.contains("学日期:")){
+								dataMap.put("joinTime",(words.split("学日期:"))[1]);
+							}else if(words.contains("校日期:")){
+								dataMap.put("graduateTime",(words.split("校日期:"))[1]);
+							}else if(words.contains("态:")){
+								dataMap.put("schoolStatus",(words.split("态:"))[1]);
 							}
-
 						}
+						listData.add(dataMap);
 					}
 				}
-				List infos = pagess.querySelectorAll(".mb-table");
-
-				for (int i = 0; i < infos.size(); i++) {
-					HtmlTable table = (HtmlTable) infos.get(i);
-					listinfo.add(table.asXml());
-				}
-				data.put("info", listinfo);
-				map.put("data", data);
-				map.put("Usernumber", username);
-				map.put("UserPwd", userpwd);
+				map.put("data", listData);
+				map.put("CHSIAcount", username);
+				map.put("CHSIPassword", userpwd);
 				map.put("Usercard", userCard);
 
 
-				map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/authcode/hireright");
+//				map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/authcode/hireright");
+				map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/authcode/hireright");
 				//--------------------数据中心推送状态----------------------
 				if(map.get("errorCode").equals("0000")){
 					PushState.state(userCard, "CHSI", 300);
