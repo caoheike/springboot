@@ -642,7 +642,7 @@ public class MobileService {
 
 	/**
 	 * 联通登陆
-	 * @param uUID 
+	 * @param
 	 */
 
 	public Map<String, Object> UnicomLogin(HttpServletRequest request, String Useriphone, String password,
@@ -1397,11 +1397,11 @@ public class MobileService {
 
 	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard,String UUID) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		List listinfo = new ArrayList();
-
 		//--------------------数据中心推送状态----------------------
 		PushState.state(userCard, "CHSI", 100);
 		//---------------------数据中心推送状态----------------------
 		Map<String, Object> map = new HashMap<String, Object>();
+		PushSocket.pushnew(map, UUID, "1000","登录中");
 		Map<String, Object> data = new HashMap<String, Object>();
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("xuexinWebClient");
@@ -1424,28 +1424,110 @@ public class MobileService {
 			//  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
 			if (!pages.asText().contains("您输入的用户名或密码有误") && !pages.asText().contains("图片验证码输入有误")) {
 				//PushSocket.push(map, UUID, "0000");
+				PushSocket.pushnew(map, UUID, "2000","登录成功");
+				
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)
-				List infos = pagess.querySelectorAll(".mb-table");
+				DomNodeList<DomElement> img = pagess.getElementsByTagName("img");
+				List listData=new ArrayList();
+				PushSocket.pushnew(map, UUID, "5000","获取数据中");
+				for (DomElement dom:img){
+					String aClass = dom.getAttribute("class");
+					if(aClass.equals("xjxx-img")){
+						String src = dom.getAttribute("src");
+						UnexpectedPage page = webClient.getPage(src);
+						InputStream contentAsStream = page.getWebResponse().getContentAsStream();
+						BufferedImage read = ImageIO.read(contentAsStream);
 
-				for (int i = 0; i < infos.size(); i++) {
-					HtmlTable table = (HtmlTable) infos.get(i);
-					listinfo.add(table.asXml());
+						String realPath = request.getSession().getServletContext().getRealPath("/xzimage");
+						File file=new File(realPath);
+						if(!file.exists()){
+							file.mkdirs();
+						}
+						String fileName="xz"+System.currentTimeMillis()+".jpg";
+						ImageIO.write(read,"jpg",new File(file,fileName));
+//						String path = RecognizeImage.binaryImage(request, read);
+						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(realPath+"/"+fileName);
+						System.out.println(jsonObject.toString(2));
+						String result = jsonObject.get("words_result").toString();
+
+						JSONArray jsonArray = JSONArray.fromObject(result);
+						Map<String,String> dataMap=new HashMap<>();
+						dataMap.put("schoolLength","");
+						dataMap.put("schoolName","");
+						dataMap.put("studentNumber","");
+						dataMap.put("classGrade","");
+						dataMap.put("QualificationsType","");
+						dataMap.put("graduateTime","");
+						dataMap.put("learningType","");
+						dataMap.put("nationality","");
+						dataMap.put("level","");
+						dataMap.put("joinTime","");
+						dataMap.put("birthdayTime","");
+						dataMap.put("domain","");
+						dataMap.put("branchCourts","");
+						dataMap.put("schoolStatus","");
+						dataMap.put("cardNumber","");
+						for (int i=0;i<jsonArray.size();i++){
+							String words = jsonArray.getJSONObject(i).get("words").toString();
+							if(words.contains("名:")){
+//								dataMap.put("",(words.split("名:"))[1]);
+							}else if(words.contains("性别:")){
+//								dataMap.put("",(words.split("性别:"))[1]);
+							}else if(words.contains("生日期:")){
+								dataMap.put("birthdayTime",(words.split("生日期:"))[1]);
+							}else if(words.contains("民族:")){
+								dataMap.put("nationality",(words.split("民族:"))[1]);
+							} else if(words.contains("码:")){
+								dataMap.put("cardNumber",(words.split("码:"))[1]);
+							}else if(words.contains("称:")){
+								dataMap.put("schoolName",(words.split("称:"))[1]);
+							}else if(words.contains("次:")){
+								dataMap.put("level",(words.split("次:"))[1]);
+							}else if(words.contains("业:")){
+								dataMap.put("domain",(words.split("业:"))[1]);
+							}else if(words.contains("制:")){
+								dataMap.put("schoolLength",(words.split("制:"))[1]);
+							}else if(words.contains("类别:")){
+								dataMap.put("QualificationsType",(words.split("类别:"))[1]);
+							}else if(words.contains("式:")){
+								dataMap.put("learningType",(words.split("式:"))[1]);
+							}else if(words.contains("院:")){
+								dataMap.put("branchCourts",(words.split("院:"))[1]);
+							}else if(words.contains("级:")){
+								dataMap.put("classGrade",(words.split("级:"))[1]);
+							}else if(words.contains("号:")){
+								dataMap.put("studentNumber",(words.split("号:"))[1]);
+							}else if(words.contains("学日期:")){
+								dataMap.put("joinTime",(words.split("学日期:"))[1]);
+							}else if(words.contains("校日期:")){
+								dataMap.put("graduateTime",(words.split("校日期:"))[1]);
+							}else if(words.contains("态:")){
+								dataMap.put("schoolStatus",(words.split("态:"))[1]);
+							}
+						}
+						listData.add(dataMap);
+					}
 				}
-				data.put("info", listinfo);
-				map.put("data", data);
-				map.put("Usernumber", username);
-				map.put("UserPwd", userpwd);
+				if(listData.size()>0) {
+					PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+				}
+				map.put("data", listData);
+				map.put("CHSIAcount", username);
+				map.put("CHSIPassword", userpwd);
 				map.put("Usercard", userCard);
-
-
-				map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/authcode/hireright");
+				map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
+				System.out.println("学信网数据中心返回结果----"+map);
 				//--------------------数据中心推送状态----------------------
 				if(map.get("errorCode").equals("0000")){
 					PushState.state(userCard, "CHSI", 300);
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
 				}else{
 					PushState.state(userCard, "CHSI", 200);
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
 				}
 
 				//---------------------数据中心推送状态----------------------
@@ -1454,6 +1536,7 @@ public class MobileService {
 				map.put("errorInfo", "您输入的用户名或密码有误");
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
+				PushSocket.pushnew(map, UUID, "3000","登录失败");
 				//---------------------数据中心推送状态----------------------
 
 			} else if (pages.asText().contains("图片验证码输入有误")) {
@@ -1461,24 +1544,26 @@ public class MobileService {
 				map.put("errorInfo", "图片验证码输入有误");
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
+				PushSocket.pushnew(map, UUID, "3000","图片验证码输入有误");
 				//---------------------数据中心推送状态----------------------
 			}
 		} catch (Exception e) {
-			System.out.print(e);
+			e.printStackTrace();
 			if (e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")) {
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "密码错误");
+				PushSocket.pushnew(map, UUID, "3000","密码错误");
 			} else {
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "网络错误");
+				PushSocket.pushnew(map, UUID, "3000","网络错误");
 			}
-
 		}
 		return map;
 	}

@@ -7,9 +7,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -23,13 +21,12 @@ public class RecognizeImage {
 
     /**
      * 二值化图片 方便图片更容易辨认
-     * @param filePath
+     * @param read
      * @return 二值化后图片的路径
      * @throws IOException
      */
-    public static String binaryImage(HttpServletRequest request, String filePath) throws IOException {
-        BufferedInputStream inputStream=new BufferedInputStream(new FileInputStream(new File(filePath)));
-        BufferedImage read = ImageIO.read(inputStream);
+    public static String binaryImage(HttpServletRequest request, BufferedImage read) throws IOException {
+
         int height = read.getHeight();
         int width = read.getWidth();
         BufferedImage image=new BufferedImage(width,height,BufferedImage.TYPE_BYTE_BINARY);
@@ -61,7 +58,7 @@ public class RecognizeImage {
     }
 
     /**
-     * 对二值化后的图片进行识别  返回json数据
+     * 对图片进行识别  返回json数据
      * @param filePath
      * @return
      */
