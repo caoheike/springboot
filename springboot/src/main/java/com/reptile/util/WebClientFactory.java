@@ -26,4 +26,21 @@ public class WebClientFactory {
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         return webClient;
     }
+    /**
+     * 获取webClient，不加载js
+     * @return
+     */
+    public WebClient getWebClientJs() {
+    	webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+    	webClient.getOptions().setCssEnabled(false);
+    	webClient.getOptions().setTimeout(30000);
+    	webClient.getOptions().setJavaScriptEnabled(true);
+    	webClient.setJavaScriptTimeout(30000);
+    	webClient.getOptions().setRedirectEnabled(true);
+    	webClient.getOptions().setThrowExceptionOnScriptError(false);
+    	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    	webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+    	webClient.getOptions().setJavaScriptEnabled(false);  
+    	return webClient;
+    }
 }
