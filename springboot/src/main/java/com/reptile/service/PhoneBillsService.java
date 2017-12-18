@@ -294,7 +294,7 @@ public class PhoneBillsService {
 
         Object client = session.getAttribute("YD-webClient");
         if (client == null) {
-            PushSocket.push(map, UUID, "0001");
+            //PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             PushSocket.pushnew(map, UUID, "3000","登录失败");
@@ -393,7 +393,7 @@ public class PhoneBillsService {
                 webClient.close();
             } catch (Exception e) {
                 logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
-                PushSocket.push(map, UUID, "0001");
+                //PushSocket.push(map, UUID, "0001");
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
             }

@@ -886,9 +886,10 @@ public class MobileService {
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("webClientTwo");
 		if (webClient == null) {
-			 PushSocket.push(map, UUID, "0001");
+			// PushSocket.push(map, UUID, "0001");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码！");
+			PushSocket.pushnew(map, UUID, "3000","请先获取验证码！");
 			return map;
 		}
 		//System.out.println("验证码发送成功");
@@ -1396,11 +1397,11 @@ public class MobileService {
 
 	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard,String UUID) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		List listinfo = new ArrayList();
-
 		//--------------------数据中心推送状态----------------------
 		PushState.state(userCard, "CHSI", 100);
 		//---------------------数据中心推送状态----------------------
 		Map<String, Object> map = new HashMap<String, Object>();
+		PushSocket.pushnew(map, UUID, "1000","登录中");
 		Map<String, Object> data = new HashMap<String, Object>();
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("xuexinWebClient");
@@ -1422,12 +1423,15 @@ public class MobileService {
 
 			//  HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
 			if (!pages.asText().contains("您输入的用户名或密码有误") && !pages.asText().contains("图片验证码输入有误")) {
-				PushSocket.push(map, UUID, "0000");
+				//PushSocket.push(map, UUID, "0000");
+				PushSocket.pushnew(map, UUID, "2000","登录成功");
+				
 				logger.info("学信网登录成功，准备获取数据");
 				HtmlPage pagess = webClient.getPage(crawlerUtil.Xuexininfo);
 //             HtmlTable table=(HtmlTable)
 				DomNodeList<DomElement> img = pagess.getElementsByTagName("img");
 				List listData=new ArrayList();
+				PushSocket.pushnew(map, UUID, "5000","获取数据中");
 				for (DomElement dom:img){
 					String aClass = dom.getAttribute("class");
 					if(aClass.equals("xjxx-img")){
@@ -1506,16 +1510,24 @@ public class MobileService {
 						listData.add(dataMap);
 					}
 				}
+				if(listData.size()>0) {
+					PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+				}else {
+					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+				}
 				map.put("data", listData);
 				map.put("CHSIAcount", username);
 				map.put("CHSIPassword", userpwd);
 				map.put("Usercard", userCard);
 				map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
+				System.out.println("学信网数据中心返回结果----"+map);
 				//--------------------数据中心推送状态----------------------
 				if(map.get("errorCode").equals("0000")){
 					PushState.state(userCard, "CHSI", 300);
+					PushSocket.pushnew(map, UUID, "8000","认证成功");
 				}else{
 					PushState.state(userCard, "CHSI", 200);
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
 				}
 
 				//---------------------数据中心推送状态----------------------
@@ -1524,6 +1536,7 @@ public class MobileService {
 				map.put("errorInfo", "您输入的用户名或密码有误");
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
+				PushSocket.pushnew(map, UUID, "3000","登录失败");
 				//---------------------数据中心推送状态----------------------
 
 			} else if (pages.asText().contains("图片验证码输入有误")) {
@@ -1531,6 +1544,7 @@ public class MobileService {
 				map.put("errorInfo", "图片验证码输入有误");
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
+				PushSocket.pushnew(map, UUID, "3000","图片验证码输入有误");
 				//---------------------数据中心推送状态----------------------
 			}
 		} catch (Exception e) {
@@ -1541,14 +1555,15 @@ public class MobileService {
 				//---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "密码错误");
+				PushSocket.pushnew(map, UUID, "3000","密码错误");
 			} else {
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "网络错误");
+				PushSocket.pushnew(map, UUID, "3000","网络错误");
 			}
-
 		}
 		return map;
 	}

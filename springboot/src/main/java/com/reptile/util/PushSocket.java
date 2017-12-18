@@ -11,7 +11,7 @@ public class PushSocket {
 	 * @param UUID
 	 * @param errorInfo
 	 */
-	public static Map<String, Object> push(Map<String, Object> map,String UUID,String errorInfo){
+	public static Map<String, Object> push1(Map<String, Object> map,String UUID,String errorInfo){
 		Map<String, Object> mapData=new HashMap<String, Object>();
 		Session se=	talkFrame.getWsUserMap().get(UUID);
 		String seq_id=talkFrame.getWsInfoMap().get(UUID);

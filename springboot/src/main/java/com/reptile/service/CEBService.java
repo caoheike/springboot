@@ -111,7 +111,7 @@ public class CEBService {
 				Object sessiondriver = session.getAttribute("sessionDriver-Ceb"+UserCard);//存在session 中的浏览器
 				final WebDriver driver = (WebDriver) sessiondriver;
 				if(sessiondriver==null){					
-					PushSocket.push(map, UUID, "0001");
+					//PushSocket.push(map, UUID, "0001");
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}
@@ -135,7 +135,7 @@ public class CEBService {
 				try {
 					driver.findElement(ByClassName.className("popup-dialog-message"));
 					Thread.sleep(2000);
-					PushSocket.push(map, UUID, "0001");
+					//PushSocket.push(map, UUID, "0001");
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
@@ -155,7 +155,7 @@ public class CEBService {
 					System.out.println("开始进入个人中心");
 					PushSocket.pushnew(map, UUID, "2000","光大银行信用卡登录成功");
 					WebElement table=  driver.findElement(ByClassName.className("tab_one"));
-					PushSocket.push(map, UUID, "0000");
+					//PushSocket.push(map, UUID, "0000");
 					List<WebElement> tr	=table.findElements(By.tagName("tr"));
 					List<String> html =new ArrayList<String>();
 					List<String> times=new ArrayList<String>();

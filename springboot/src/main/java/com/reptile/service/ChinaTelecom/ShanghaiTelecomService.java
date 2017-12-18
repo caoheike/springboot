@@ -86,7 +86,7 @@ public class ShanghaiTelecomService {
 		 List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
 		 WebClient  webClient = (WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient
 		 if(webClient==null){
-			 PushSocket.push(map, UUID, "0001");
+			 //PushSocket.push(map, UUID, "0001");
 			 logger.warn("上海电信未获取验证码");
 	    	 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
@@ -101,7 +101,7 @@ public class ShanghaiTelecomService {
 			HtmlPage detailPage=webClient.getPage("http://service.sh.189.cn/service/service/authority/query/billdetail/validate.do?input_code="+code+"&selDevid="+phoneNumber+"&flag=nocw&checkCode=验证码");
 			String a=detailPage.getWebResponse().getContentAsString();
 			if(a.contains("ME10001")){
-				PushSocket.push(map, UUID, "0001");
+				//PushSocket.push(map, UUID, "0001");
 				logger.warn("上海电信","输入的验证码错误！");
 				map.put("errorCode", "0001");
 		        map.put("errorInfo", "输入的验证码错误！");

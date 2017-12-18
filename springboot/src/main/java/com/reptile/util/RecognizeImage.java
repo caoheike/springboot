@@ -75,4 +75,5 @@ public class RecognizeImage {
         JSONObject res = aipOcr.basicGeneral(path, new HashMap<String, String>());
         return res;
     }
+
 }

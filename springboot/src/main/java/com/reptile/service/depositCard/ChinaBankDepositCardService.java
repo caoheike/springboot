@@ -40,6 +40,7 @@ public class ChinaBankDepositCardService {
      */
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName,String UUID) {
         Map<String, Object> map = new HashMap<>();
+        PushSocket.pushnew(map, UUID, "1000","登录中");
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
         File file = new File(path);
@@ -67,6 +68,7 @@ public class ChinaBankDepositCardService {
             if (msgContent.length() != 0) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
+                PushSocket.pushnew(map, UUID, "3000",msgContent);
                 driver.quit();
                 return map;
             }
@@ -76,6 +78,7 @@ public class ChinaBankDepositCardService {
             } catch (Exception e) {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "请输入正确的储蓄卡号");
+                PushSocket.pushnew(map, UUID, "3000","请输入正确的储蓄卡号");
                 driver.quit();
                 return map;
             }
@@ -103,16 +106,22 @@ public class ChinaBankDepositCardService {
                 if (msgContent.contains("验证码输入错误")) {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
+                    PushSocket.pushnew(map, UUID, "3000","验证码输入错误");
                 } else {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", msgContent);
+                    PushSocket.pushnew(map, UUID, "3000",msgContent);
                 }
                 driver.quit();
                 return map;
             }
+            
+            PushSocket.pushnew(map, UUID, "2000","登录成功");
+            Thread.sleep(2000);
+            PushSocket.pushnew(map, UUID, "5000","数据获取中");
             logger.warn("中国银行储蓄卡登录成功");
             //--------------这里加推送状态
-            PushSocket.push(map, UUID, "0000");
+            //PushSocket.push(map, UUID, "0000");
             //获取储蓄卡基本信息
             WebElement cardMain = driver.findElementById("cardMain");
             map.put("baseMes", cardMain.getAttribute("innerHTML"));
@@ -129,7 +138,14 @@ public class ChinaBankDepositCardService {
             map.put("userName", userName);
             map.put("bankName", "中国银行");
             //推送数据
+            PushSocket.pushnew(map, UUID, "6000","数据获取成功");
             map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");
+            if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+            	PushSocket.pushnew(map, UUID, "8000","认证成功");
+            }else {
+            	PushSocket.pushnew(map, UUID, "9000","认证失败");
+            }
+            
             logger.warn("中国银行储蓄卡账单信息推送完成");
             driver.quit();
         } catch (Exception e) {

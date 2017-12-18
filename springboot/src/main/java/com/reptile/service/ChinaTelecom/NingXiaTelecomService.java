@@ -223,7 +223,7 @@ public class NingXiaTelecomService {
 		  if(tipInfo.contains("验证失败")){
 			  logger.warn("宁夏电信验证码错误");
 			//---------------推-------------------
-			  PushSocket.push(map, UUID, "0001");
+			 // PushSocket.push(map, UUID, "0001");
 					//---------------推-------------------
 			  map.put("errorCode", "0001");
 			  map.put("errorInfo", "验证码错误");

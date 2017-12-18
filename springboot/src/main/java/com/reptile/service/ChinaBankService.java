@@ -53,9 +53,8 @@ public class ChinaBankService {
                     input.get(i).sendKeys(cardNumber);
                 }
             }
-            Thread.sleep(1000);
             PushSocket.pushnew(map, UUID, "1000","中国银行登录中");
-
+            Thread.sleep(3000);
             Actions action = new Actions(driver);
             
             action.sendKeys(Keys.TAB).build().perform();
@@ -126,7 +125,7 @@ public class ChinaBankService {
                 return map;
             }
             //--------------推-----------------
-            PushSocket.push(map, UUID, "0000");
+            //PushSocket.push(map, UUID, "0000");
             //--------------推-----------------
             
             

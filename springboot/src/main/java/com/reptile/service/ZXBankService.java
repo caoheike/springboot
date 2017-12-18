@@ -208,7 +208,7 @@ public class ZXBankService {
         Object zxImageCodeCook = session.getAttribute("zxCookies2");
         PushSocket.pushnew(map, UUID, "1000","中信银行登录中");
         if (zxhttpClient == null || zxImageCodeCook == null) {
-        	PushSocket.push(map, UUID, "0001");
+        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             PushSocket.pushnew(map, UUID, "3000","中信银行登录失败");
@@ -228,7 +228,7 @@ public class ZXBankService {
                 postM.getParams().setContentCharset("utf-8");
                 PushSocket.pushnew(map, UUID, "5000","中信银行获取中");
                 if (!postM.getResponseBodyAsString().contains("校验成功")) {
-                	PushSocket.push(map, UUID, "0001");
+                	//PushSocket.push(map, UUID, "0001");
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(postM.getResponseBodyAsString());
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("rtnMsg").toString());
@@ -237,7 +237,7 @@ public class ZXBankService {
                 if(isok==true) {
     				PushState.state(userCard, "bankBillFlow",100);
     			}
-                PushSocket.push(map, UUID, "0000");
+                //PushSocket.push(map, UUID, "0000");
                 //成功进入信用卡信息页面
                 GetMethod getMethod = new GetMethod("https://creditcard.ecitic.com/citiccard/newonline/myaccount.do?func=mainpage");
                 getMethod.setRequestHeader("Cookie", coks);
@@ -245,7 +245,7 @@ public class ZXBankService {
                 getMethod.getParams().setContentCharset("utf-8");
                 
                 if (getMethod.getResponseBodyAsString().contains("您还未绑卡，暂不支持业务办理")) {
-                	PushSocket.push(map, UUID, "0001");
+                	//PushSocket.push(map, UUID, "0001");
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "您还未绑卡，暂不支持业务办理");
                     return map;

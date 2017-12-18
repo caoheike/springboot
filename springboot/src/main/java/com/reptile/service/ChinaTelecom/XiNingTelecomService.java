@@ -40,7 +40,7 @@ public class XiNingTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
-        	PushSocket.push(map, UUID, "0001");
+        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushSocket.pushnew(map, UUID, "3000","登录失败");

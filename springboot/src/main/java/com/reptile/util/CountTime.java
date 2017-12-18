@@ -1,3 +1,4 @@
+
 package com.reptile.util;
 
 import java.text.ParseException;
@@ -19,3 +20,4 @@ public class CountTime {
 		}		
 	}
 }
+

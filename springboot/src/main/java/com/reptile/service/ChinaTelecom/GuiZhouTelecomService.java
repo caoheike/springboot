@@ -93,7 +93,7 @@ public class GuiZhouTelecomService {
 			}
 		    WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
 	        if(webClient==null){
-	        	PushSocket.push(map, UUID, "0001");
+	        	//PushSocket.push(map, UUID, "0001");
 	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
@@ -124,7 +124,7 @@ public class GuiZhouTelecomService {
 				 }
 				 
 				 if( detial.getElementById("tilte").asXml().contains("验证码错误")){
-					 PushSocket.push(map, UUID, "0001");
+					 //PushSocket.push(map, UUID, "0001");
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
  					PushSocket.pushnew(map, UUID, "3000","验证码错误");
@@ -139,9 +139,10 @@ public class GuiZhouTelecomService {
             	 }
 			} catch (Exception e) {
 				logger.warn("贵州电信",e);
-				PushSocket.push(map, UUID, "0001");
+				//PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
+	            PushSocket.pushnew(map, UUID, "3000","网络连接异常");
 				//e.printStackTrace();
 				return map;
 			}

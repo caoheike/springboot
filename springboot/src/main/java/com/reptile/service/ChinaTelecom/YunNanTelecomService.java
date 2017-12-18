@@ -102,7 +102,7 @@ public class YunNanTelecomService {
         Object yunNanWebClient = session.getAttribute("yunNanWebClient");
         Object yunNanHtmlPage = session.getAttribute("yunNanHtmlPage");
         if (yunNanWebClient == null) {
-        	PushSocket.push(map, UUID, "0001");
+        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
             PushSocket.pushnew(map, UUID, "3000","登录失败");
@@ -131,13 +131,13 @@ public class YunNanTelecomService {
                         popup = resultPage.getElementById("popup").getFirstChild().getChildNodes().get(1).getTextContent();
                     }
                     if (!popup.contains("验证成功")) {
-                    	  PushSocket.push(map, UUID, "0001");
+                    	//PushSocket.push(map, UUID, "0001");
                         map.put("errorCode", "0003");
                         map.put("errorInfo", popup);
                         return map;
                     }
                 }
-                PushSocket.push(map, UUID, "0000");
+                //PushSocket.push(map, UUID, "0000");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 for (int i = 0; i < 3; i++) {

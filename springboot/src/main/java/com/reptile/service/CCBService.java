@@ -55,6 +55,12 @@ public class CCBService {
 			driver.navigate().refresh();
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待
 			PushSocket.pushnew(map, UUID, "1000","建设银行储蓄卡登录中");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
 			driver.findElement(By.id("USERID")).sendKeys(cardNumber);
 			
 			Actions action = new Actions(driver);
@@ -100,7 +106,7 @@ public class CCBService {
 		  String openTime = null;//开户时间
 		  PushSocket.pushnew(map, UUID, "2000","建设银行储蓄卡登录成功");
 		  try {
-			  PushSocket.push(map, UUID, "0000");
+			  //PushSocket.push(map, UUID, "0000");
 			  driver.switchTo().frame("txmainfrm");//第一级的frame
 				 driver.switchTo().frame("result");//第2级的frame
 				 driver.switchTo().frame("result");//第3级的frame,可点击页面元素
@@ -259,7 +265,7 @@ public class CCBService {
 						    	PushSocket.pushnew(map, UUID, "8000","建设银行储蓄卡认证成功");
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
-				                PushSocket.push(map, UUID, "0000");
+				                //PushSocket.push(map, UUID, "0000");
 				                driver.close();
 				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				                
@@ -267,7 +273,7 @@ public class CCBService {
 				            	PushState.state(IDNumber, "savings",200);
 				            	PushSocket.pushnew(map, UUID, "9000","建设银行储蓄卡认证失败");
 				            	logger.warn("建设银行数据推送失败"+IDNumber);
-				                PushSocket.push(map, UUID, "0001");
+				                //PushSocket.push(map, UUID, "0001");
 				                driver.close();
 				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 				            	return map;

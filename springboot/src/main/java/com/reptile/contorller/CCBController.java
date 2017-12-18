@@ -28,6 +28,7 @@ public class CCBController {
 	@ResponseBody
 	@RequestMapping(value="CCBBank",method=RequestMethod.POST)
 	public Map<String,Object> CCBBank(HttpServletRequest request,@RequestParam("IDNumber") String IDNumber,@RequestParam("cardNumber") String cardNumber,@RequestParam("cardPass") String cardPass,@RequestParam("UUID")String UUID) throws Exception{
+		System.out.println("建设银行储蓄卡");
 		return ccb.ccbInformation(request, IDNumber, cardNumber, cardPass,UUID);
 				
 	}

@@ -26,6 +26,7 @@ public class ShanXiTelecomController {
     public Map<String, Object> TelecomLogin(HttpServletRequest req, @RequestParam("userPhone") String userPhone,
                                             @RequestParam("userPassword") String userPassword,@RequestParam("longitude") String longitude,
                                             @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID) throws Exception {
-        return service.TelecomLogin(req, userPhone,userPassword,longitude,latitude,UUID);
+       System.out.println("--------");
+    	return service.TelecomLogin(req, userPhone,userPassword,longitude,latitude,UUID);
     }
 }
