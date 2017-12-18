@@ -298,8 +298,14 @@
             <artifactId>java-sdk</artifactId>
             <version>3.4.1</version>
         </dependency>
+        <!-- 热启动 -->
+        <dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-devtools</artifactId>  
+            <optional>true</optional>  
+  </dependency>  
     </dependencies>
-
+		
 
     <build>
         <plugins>
