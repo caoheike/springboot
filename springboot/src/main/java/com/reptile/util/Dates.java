@@ -46,4 +46,27 @@ public class Dates {
 		return year;
 	}
 	
+	/**
+	 * 获取当前时间，单位秒
+	 * @return
+	 */
+	public static long getCurrentTime(){
+		return new Date().getTime();
+	}
+	
+	/**
+	 * 获取三个月之前的时间，单位秒
+	 * @return
+	 */
+	public static long getBeforeTime(){
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.MONTH, -3);
+		return c.getTime().getTime();
+	}
+	
+	
+	public static void main(String[] args) {
+		System.out.println(getBeforeTime());
+	}
 }
