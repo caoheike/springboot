@@ -344,6 +344,7 @@ public class PhoneBillsService {
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
+                    PushSocket.pushnew(map, UUID, "3000","登录失败");
                     return map;
                 }
                 PushSocket.pushnew(map, UUID, "2000","登录成功");
@@ -370,7 +371,7 @@ public class PhoneBillsService {
                     }
 
                     sDate--;
-                    Thread.sleep(500);
+                    Thread.sleep(2000);
                 }
                 if (dataList.size() != 0) {
                 	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
