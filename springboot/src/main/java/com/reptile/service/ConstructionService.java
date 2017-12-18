@@ -29,6 +29,9 @@ public class ConstructionService {
 		  boolean isok = CountTime.getCountTime(timeCnt);
 		  Map<String,Object>map=new HashMap<String,Object>();
 		  PushSocket.pushnew(map, UUID, "1000","建设银行信用卡登陆中");
+		  if(isok==true) {
+				PushState.state(UserCard, "bankBillFlow",100);
+		  }
 		  System.out.println(Thread.currentThread().getName());  
 			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
 			WebDriver driver = new ChromeDriver();
@@ -75,11 +78,9 @@ public class ConstructionService {
 				driver.switchTo().frame("result1");
 				WebElement table= driver.findElement(By.className("pbd_table_form"));//获取table ,再获取其中a标签
 				WebElement a= table.findElement(By.tagName("a"));
-				if(isok==true) {
-					PushState.state(UserCard, "bankBillFlow",100);
-				}
 				
-				PushSocket.pushnew(map, UUID, "2000","建设银行信用卡登陆中");
+				
+				PushSocket.pushnew(map, UUID, "2000","建设银行信用卡登陆成功");
 				List<String> html =new ArrayList<String>();
 				//PushSocket.push(map, UUID, "0000");
 				for (int i = 1; i < 7; i++) {
