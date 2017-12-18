@@ -106,6 +106,9 @@ public class CEBService {
 			
 			 Map<String, Object> map=new HashMap<String, Object>();
 			 PushSocket.pushnew(map, UUID, "1000","光大银行登录中");
+			 if(isok==true) {
+					PushState.state(UserCard, "bankBillFlow",100);
+				}
 			 Map<String,Object> data=new HashMap<String,Object>();
 				HttpSession session=request.getSession();//获得session
 				Object sessiondriver = session.getAttribute("sessionDriver-Ceb"+UserCard);//存在session 中的浏览器
@@ -145,9 +148,7 @@ public class CEBService {
 					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 					 PushSocket.pushnew(map, UUID, "3000","短信验证码输入有误");
 				} catch (Exception e) {
-					if(isok==true) {
-						PushState.state(UserCard, "bankBillFlow",100);
-					}
+					
 					
 					// TODO: handle exception
 					System.out.println("点击成功");

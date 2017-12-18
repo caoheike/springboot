@@ -207,6 +207,9 @@ public class ZXBankService {
 
         Object zxImageCodeCook = session.getAttribute("zxCookies2");
         PushSocket.pushnew(map, UUID, "1000","中信银行登录中");
+        if(isok==true) {
+			PushState.state(userCard, "bankBillFlow",100);
+		}
         if (zxhttpClient == null || zxImageCodeCook == null) {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
@@ -234,9 +237,7 @@ public class ZXBankService {
                     map.put("errorInfo", jsonObject.get("rtnMsg").toString());
                     return map;
                 }
-                if(isok==true) {
-    				PushState.state(userCard, "bankBillFlow",100);
-    			}
+               
                 //PushSocket.push(map, UUID, "0000");
                 //成功进入信用卡信息页面
                 GetMethod getMethod = new GetMethod("https://creditcard.ecitic.com/citiccard/newonline/myaccount.do?func=mainpage");

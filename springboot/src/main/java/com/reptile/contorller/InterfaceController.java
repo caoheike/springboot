@@ -643,7 +643,7 @@ public class InterfaceController {
 	@RequestMapping(value = "tab.html", method = RequestMethod.POST)
 	public Map<String,Object> test(HttpServletRequest request, HttpServletResponse response)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 		String sessid=new CrawlerUtil().getUUID(); //生成UUid 用于区分浏览器
-		WebClient webClient = new WebClientFactory().getWebClient();
+		WebClient webClient = new WebClientFactory().getWebClientJs();
 			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); // 此目录保存缩小后的关键图
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
 		  JSONObject jsonObject=JSONObject.fromObject(page.getContent());
