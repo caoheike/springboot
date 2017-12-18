@@ -708,9 +708,6 @@ public class InterfaceController {
 	    System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
-	    PushState.state(idCard, "TaoBao",100);
-	    PushSocket.pushnew(map, UUID, "1000","登录中");
-	    Thread.sleep(2000);
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
@@ -720,6 +717,7 @@ public class InterfaceController {
 	    	HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 		    System.out.println(pageinfo.asXml());
 		    PushSocket.pushnew(map, UUID, "2000","登录成功");
+		    PushState.state(idCard, "TaoBao",100);
 		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
 		    map.put("errorCode", "0000");
 		    map.put("errorInfo", "成功");
@@ -867,7 +865,14 @@ public class InterfaceController {
 		 	 return addresses;
 		}
 		
-		
+		/**
+		 * 分页，循环获取每一页的订单信息
+		 * @param count
+		 * @param webClient
+		 * @return
+		 * @throws FailingHttpStatusCodeException
+		 * @throws IOException
+		 */
 		public List<String>  getDetail(int count , WebClient webClient) throws FailingHttpStatusCodeException, IOException{
 			 WebRequest requests=new WebRequest(new URL("https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charse"));
 		       List<NameValuePair> lists=new ArrayList<NameValuePair>();
@@ -919,16 +924,15 @@ public class InterfaceController {
 				for (int i = 0; i < list.size(); i++) {
 					String s = ((HtmlScript)list.get(i)).asXml();
 					if(s.contains("detailData")){
-						s = s.trim();
 						detailData = s.substring(s.indexOf("var detailData = ")+"var detailData = ".length(),s.indexOf("//]]>"));
-						System.out.println(((HtmlScript)list.get(i)).asText());
+						logger.warn(((HtmlScript)list.get(i)).asXml());
 					}
 				}
 				JSONArray array = JSONObject.fromObject(detailData).getJSONObject("basic").getJSONArray("lists");
 				for (int i = 0; i < array.size(); i++) {
-					JSONObject json = array.getJSONObject(0);
+					JSONObject json = array.getJSONObject(i);
 					if("收货地址".equals(json.getString("key"))){
-						text = json.getJSONArray("content").getJSONObject(i).getString("text");
+						text = json.getJSONArray("content").getJSONObject(0).getString("text");
 						return text;
 					};
 				}

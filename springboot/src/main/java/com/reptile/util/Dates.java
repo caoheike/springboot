@@ -61,7 +61,7 @@ public class Dates {
 	public static long getBeforeTime(){
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
-		c.add(Calendar.MONTH, -3);
+		c.add(Calendar.MONTH, -6);
 		return c.getTime().getTime();
 	}
 	

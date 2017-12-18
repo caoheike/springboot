@@ -2,8 +2,8 @@ server:
   port: 8080
 
 manInfo:
-    ip: 117.34.70.214
-    sendip: http://117.34.70.217:8080
+    ip: 192.168.3.40
+    sendip: http://192.168.3.4:8081
     port: 8080
 spring:
   datasource:
@@ -17,6 +17,12 @@ spring:
     url: jdbc:mysql://192.168.2.151:3306/
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+email:
+  mailSmtpHost: smtp.163.com
+  mailSmtpPort: 25
+  fromUserName: m17301071346@163.com
+  fromUserPassword: xsc1007
+  toEmail: songcui.xue@hoomsun.com
 
     
   
