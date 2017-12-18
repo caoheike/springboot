@@ -18,8 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +32,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.portlet.ModelAndView;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.EncodeHintType;
@@ -49,6 +61,7 @@ import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.service.MobileService;
 import com.reptile.util.CrawlerUtil;
+import com.reptile.util.Dates;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -60,7 +73,7 @@ import com.sun.jna.Native;
 @Controller
 @RequestMapping("interface")
 public class InterfaceController {
-
+	private Logger logger = Logger.getLogger(InterfaceController.class);
 	@Autowired
 	private application application;
 	@Resource
@@ -580,8 +593,7 @@ public class InterfaceController {
 			@RequestParam("userName") String userName,
 			@RequestParam("userPassword") String userPassword,
 			@RequestParam("userCard") String userCard)
-			throws FailingHttpStatusCodeException, MalformedURLException,
-			IOException, InterruptedException {
+			throws Exception {
 
 		return mobileService.Taobao(request, userName, userPassword, userCard);
 
@@ -631,7 +643,7 @@ public class InterfaceController {
 	@RequestMapping(value = "tab.html", method = RequestMethod.POST)
 	public Map<String,Object> test(HttpServletRequest request, HttpServletResponse response)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
 		String sessid=new CrawlerUtil().getUUID(); //生成UUid 用于区分浏览器
-		WebClient webClient = new WebClientFactory().getWebClient();
+		WebClient webClient = new WebClientFactory().getWebClientJs();
 			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); // 此目录保存缩小后的关键图
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
 		  JSONObject jsonObject=JSONObject.fromObject(page.getContent());
@@ -688,16 +700,12 @@ public class InterfaceController {
 	 * @param idCard
 	 * @param UUID
 	 * @return
-	 * @throws FailingHttpStatusCodeException
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws NotFoundException
+	 * @throws Exception 
 	 */
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
-	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-			System.out.println("---------------"+"");
+	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws Exception {
+	    System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
 	    PushState.state(idCard, "TaoBao",100);
@@ -708,9 +716,8 @@ public class InterfaceController {
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 	    System.out.println(pages.getContent());
 	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
-	    
 	    if(jsonObject2.get("code").equals("10006")){
-		    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
+	    	HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 		    System.out.println(pageinfo.asXml());
 		    PushSocket.pushnew(map, UUID, "2000","登录成功");
 		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
@@ -719,7 +726,7 @@ public class InterfaceController {
 		    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
 		    HtmlTable  table= pagev.querySelector(".tbl-main");
 		    System.out.println(table.asXml()+"收货地址");
-		    
+	    
 	    //现在开始爬取 支付宝信息
 	      WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
 	       List<NameValuePair> lists=new ArrayList<NameValuePair>();
@@ -735,6 +742,8 @@ public class InterfaceController {
 	       HtmlPage pageinfos= webClient.getPage(requests);
 	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
 	       PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+	       //获取收货地址
+	       data.put("addresses",this.getAddress(webClient));
 	       data.put("info",table.asXml() );
 	       data.put("page",pageinfoss.asXml() );
 	       map.put("data", data);
@@ -747,14 +756,14 @@ public class InterfaceController {
 				PushState.state(idCard, "TaoBao", 300);
 				map.put("errorInfo", "查询成功");
 				map.put("errorCode", "0000");
-				 PushSocket.pushnew(map, UUID, "8000","淘宝查询成功");
+				PushSocket.pushnew(map, UUID, "8000","淘宝查询成功");
 			}else{
 				//--------------------数据中心推送状态----------------------
 				PushState.state(idCard, "TaoBao",200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorInfo","查询失败");
 				map.put("errorCode","0001");
-				 PushSocket.pushnew(map, UUID, "9000","淘宝查询失败");
+				PushSocket.pushnew(map, UUID, "9000","淘宝查询失败");
 			}
 	    }else if(jsonObject2.get("code").equals("10004")){
 	      PushState.state(idCard, "TaoBao",200);
@@ -791,6 +800,144 @@ public class InterfaceController {
 
 	    
 	  }
+		
+		/**
+		 * 获取收货地址
+		 * @param webClient
+		 * @return
+		 * @throws Exception
+		 */
+		public List<String> getAddress(WebClient webClient) throws Exception{
+			
+			  WebRequest requests=new WebRequest(new URL("https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charse"));
+		       List<NameValuePair> lists=new ArrayList<NameValuePair>();
+		       lists.add(new NameValuePair("pageNum","1"));
+		       lists.add(new NameValuePair("pageSize","15"));
+		       lists.add(new NameValuePair("dateBegin",Dates.getBeforeTime()+""));
+		       lists.add(new NameValuePair("dateEnd",Dates.getCurrentTime()+""));
+		       lists.add(new NameValuePair("auctionStatus","SUCCESS"));
+		       lists.add(new NameValuePair("prePageNo","1"));
+		       requests.setHttpMethod(HttpMethod.POST);
+		       requests.setRequestParameters(lists);
+		       Map<String,String> headers = new HashMap<String, String>();
+		       headers.put("origin", "https://buyertrade.taobao.com");
+		       headers.put("referer", "https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm?");
+		       requests.setAdditionalHeaders(headers);
+		       HtmlPage info= webClient.getPage(requests);
+		       String str = info.getWebResponse().getContentAsString();
+		       JSONArray array = JSONObject.fromObject(str).getJSONArray("mainOrders");
+		       List<String> urls = new ArrayList<String>();
+		       
+		       for (int i = 0; i < array.size(); i++) {
+					try {
+						JSONObject obj = array.getJSONObject(i);
+						JSONArray operations = obj.getJSONObject("statusInfo").getJSONArray("operations");
+						for (int j = 0; j < operations.size(); j++) {
+							JSONObject json = operations.getJSONObject(j);
+							if(json.getString("id").equals("viewDetail")){
+								urls.add(json.getString("url"));
+							}
+						}
+						
+					} catch (Exception e) {
+						continue;
+					}
+		       }
+		     //分页 
+		     String  totalPage = JSONObject.fromObject(str).getJSONObject("page").getString("totalPage");
+		     if(!totalPage.isEmpty()){
+		    	 int total = new Integer(totalPage);
+		    	 for (int i = 2; i <= total; i++) {
+					List<String> list = this.getDetail(i, webClient);
+					for (String item:list) {
+						urls.add(item);
+					}
+				}
+		     }
+		 	 List<String> addresses  = new ArrayList<String>();
+		 	 for (String url : urls) {
+		 		HtmlPage html = webClient.getPage("http:"+url);
+		 		logger.warn("----------------url---------"+html.asXml());
+		 		String address = this.getAddress(html);
+		 		if(!address.isEmpty()){
+		 			addresses.add(address);
+		 		}
+			}
+		 	logger.warn("----------------addresses---------"+JSONArray.fromObject(addresses));
+		 	 return addresses;
+		}
+		
+		
+		public List<String>  getDetail(int count , WebClient webClient) throws FailingHttpStatusCodeException, IOException{
+			 WebRequest requests=new WebRequest(new URL("https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charse"));
+		       List<NameValuePair> lists=new ArrayList<NameValuePair>();
+		       lists.add(new NameValuePair("pageNum",count+""));
+		       lists.add(new NameValuePair("pageSize","15"));
+		       lists.add(new NameValuePair("dateBegin",Dates.getBeforeTime()+""));
+		       lists.add(new NameValuePair("dateEnd",Dates.getCurrentTime()+""));
+		       lists.add(new NameValuePair("auctionStatus","SUCCESS"));
+		       lists.add(new NameValuePair("prePageNo",(count-1)+""));
+		       requests.setHttpMethod(HttpMethod.POST);
+		       requests.setRequestParameters(lists);
+		       Map<String,String> headers = new HashMap<String, String>();
+		       headers.put("origin", "https://buyertrade.taobao.com");
+		       headers.put("referer", "https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm?");
+		       requests.setAdditionalHeaders(headers);
+		       HtmlPage info= webClient.getPage(requests);
+		       String str = info.getWebResponse().getContentAsString();
+		       JSONArray array = JSONObject.fromObject(str).getJSONArray("mainOrders");
+		       List<String> urls = new ArrayList<String>();
+		       for (int i = 0; i < array.size(); i++) {
+					try {
+						JSONObject obj = array.getJSONObject(i);
+						JSONArray operations = obj.getJSONObject("statusInfo").getJSONArray("operations");
+						for (int j = 0; j < operations.size(); j++) {
+							JSONObject json = operations.getJSONObject(j);
+							if(json.getString("id").equals("viewDetail")){
+								urls.add(json.getString("url"));
+							}
+						}
+						
+					} catch (Exception e) {
+						continue;
+					}
+		       }
+		       
+		       return urls;
+		}
+		
+		/**
+		 * 从每个购买记录详情中获取收货地址
+		 * @param html
+		 * @return
+		 */
+		public String getAddress(HtmlPage html){
+			String text = "";
+			try {
+				List<DomElement> list = html.getElementsByTagName("script");
+				String detailData = "";
+				for (int i = 0; i < list.size(); i++) {
+					String s = ((HtmlScript)list.get(i)).asXml();
+					if(s.contains("detailData")){
+						s = s.trim();
+						detailData = s.substring(s.indexOf("var detailData = ")+"var detailData = ".length(),s.indexOf("//]]>"));
+						System.out.println(((HtmlScript)list.get(i)).asText());
+					}
+				}
+				JSONArray array = JSONObject.fromObject(detailData).getJSONObject("basic").getJSONArray("lists");
+				for (int i = 0; i < array.size(); i++) {
+					JSONObject json = array.getJSONObject(0);
+					if("收货地址".equals(json.getString("key"))){
+						text = json.getJSONArray("content").getJSONObject(i).getString("text");
+						return text;
+					};
+				}
+			} catch (Exception e) {
+				return text;
+			}
+			return text;
+			
+		}
 	
 	/**
 	 * OA学信网

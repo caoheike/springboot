@@ -32,6 +32,7 @@ public class ChinaBankService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String cardNumber, String userPwd, String UUID,String timeCnt
     ) throws ParseException {
     	boolean isok = CountTime.getCountTime(timeCnt);
+    	System.out.println("isok===="+isok);
         String path = request.getServletContext().getRealPath("/vecImageCode");
         System.setProperty("java.awt.headless", "true");
         File file = new File(path);
@@ -53,6 +54,9 @@ public class ChinaBankService {
                     input.get(i).sendKeys(cardNumber);
                 }
             }
+            if(isok==true) {
+				PushState.state(userCard, "bankBillFlow",100);				 
+			}
             PushSocket.pushnew(map, UUID, "1000","中国银行登录中");
             Thread.sleep(3000);
             Actions action = new Actions(driver);
@@ -129,11 +133,7 @@ public class ChinaBankService {
             //--------------推-----------------
             
             
-            if(isok==true) {
-            	System.out.println("月份太大啦");
-				PushState.state(userCard, "bankBillFlow",100);
-				 
-			}
+            
             PushSocket.pushnew(map, UUID, "2000","中国银行信用卡登录成功");
             Thread.sleep(5000);
             List<WebElement> element = driver.findElements(By.className("tabs"));

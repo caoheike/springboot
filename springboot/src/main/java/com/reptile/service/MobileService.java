@@ -499,19 +499,32 @@ public class MobileService {
 	 * @return
 	 * @throws IOException
 	 */
+	//阿里云手机归属查询 https://market.aliyun.com/products/57126001/cmapi014304.html?spm=5176.730005.0.0.auGdBd#sku=yuncode830400000
+	private static String appCode="410870f466d04b24a0427a076d370278";
 	public Map<String, Object> MobileBelong(HttpServletRequest request, HttpServletResponse response, String phone) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> data = new HashMap<String, Object>();
 		try {
 			CrawlerUtil craw = new CrawlerUtil();
 			WebClient webClient = craw.setWebClient();
-			HtmlPage page = webClient.getPage("http://www.ip138.com:8080/search.asp?mobile=" + phone + "&action=mobile");
-			System.out.println(page.querySelectorAll(".tdc2").get(2).asText());
-			data.put("MobileBelong", page.querySelectorAll(".tdc2").get(2).asText());
+			WebRequest webRequest=new WebRequest(new URL("http://jshmgsdmfb.market.alicloudapi.com/shouji/query"));
+			webRequest.setHttpMethod(HttpMethod.GET);
+			webRequest.setAdditionalHeader("Authorization","APPCODE "+appCode);
+			List<NameValuePair> list=new ArrayList<>();
+			list.add(new NameValuePair("shouji",phone));
+			webRequest.setRequestParameters(list);
+			UnexpectedPage page1 = webClient.getPage(webRequest);
+			String jsonData= page1.getWebResponse().getContentAsString();
+			String company = JSONObject.fromObject(jsonData).getJSONObject("result").get("company").toString();
+			data.put("MobileBelong",company);
+//			HtmlPage page = webClient.getPage("http://jshmgsdmfb.market.alicloudapi.com/shouji/query?shouji=" + phone );
+//			System.out.println(page.querySelectorAll(".tdc2").get(2).asText());
+//			data.put("MobileBelong", page.querySelectorAll(".tdc2").get(2).asText());
 			map.put("data", data);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 		} catch (Exception e) {
+			e.printStackTrace();
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络错误"); 
 		}
