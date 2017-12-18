@@ -1,6 +1,7 @@
 package com.reptile.service.ChinaTelecom;
 
 import com.reptile.util.*;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -203,6 +205,7 @@ public class NingXiaTelecomService {
 		 WebDriver driver =  (WebDriver) request.getSession().getAttribute("driver1");//从session中获得driver
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 PushSocket.pushnew(map, UUID, "1000","登录中");
+		 PushState.state(phoneNumber, "callLog",200);
 		 if(driver==null){
 			 logger.warn("宁夏电信请先获取验证码");
 			 map.put("errorCode", "0001");
@@ -347,8 +350,10 @@ public class NingXiaTelecomService {
 		           map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 
 		           if(map.get("errorCode").equals("0000")) {
 						PushSocket.pushnew(map, UUID, "8000","认证成功");
+						 PushState.state(phoneNumber, "callLog",300);
 					}else {
 						PushSocket.pushnew(map, UUID, "9000","认证失败");
+						 PushState.state(phoneNumber, "callLog",200);
 					}
 		           try {
 					Thread.sleep(2000);

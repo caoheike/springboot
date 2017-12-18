@@ -7,12 +7,14 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,6 +72,7 @@ public class GansuProvinceService {
 	 }
 	 public static Map<String,Object> GansuPhone1(HttpServletRequest request,String Usercard,String UserNum,String UserPass,String catpy,String longitude,String latitude,String UUID){
 		   Map<String,Object> map = new HashMap<String,Object>();
+		   PushState.state(UserNum, "callLog",100);
 		   PushSocket.pushnew(map, UUID, "1000","登录中");
 		   HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");

@@ -513,7 +513,7 @@ public class MobileService {
 			map.put("errorInfo", "查询成功");
 		} catch (Exception e) {
 			map.put("errorCode", "0001");
-			map.put("errorInfo", "网络错误");
+			map.put("errorInfo", "网络错误"); 
 		}
 		return map;
 
@@ -878,6 +878,7 @@ public class MobileService {
 			String UserPassword, String code, String longitude, String latitude,String UUID) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
+			PushState.state(Useriphone, "callLog", 100);
 			PushSocket.pushnew(map, UUID, "1000","登录中");
 			Thread.sleep(2000);
 		
@@ -919,7 +920,6 @@ public class MobileService {
 					PushSocket.pushnew(map, UUID, "2000","登录成功");
 					//---------------推-------------------
 				    System.out.println("验证码成功，可查询");
-					PushState.state(Useriphone, "callLog", 100);
 //=======================获取详单================================================ 
 					PushSocket.pushnew(map, UUID, "5000","获取数据中");
 					webClient.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
@@ -1397,11 +1397,11 @@ public class MobileService {
 
 	public Map<String, Object> AcademicLogin(HttpServletRequest request, String username, String userpwd, String code, String lt, String userCard,String UUID) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 		List listinfo = new ArrayList();
-		//--------------------数据中心推送状态----------------------
-		PushState.state(userCard, "CHSI", 100);
-		//---------------------数据中心推送状态----------------------
 		Map<String, Object> map = new HashMap<String, Object>();
+		//---------------------数据中心推送状态----------------------
+		PushState.state(userCard, "CHSI", 100);
 		PushSocket.pushnew(map, UUID, "1000","登录中");
+		//--------------------数据中心推送状态----------------------
 		Map<String, Object> data = new HashMap<String, Object>();
 		HttpSession session = request.getSession();
 		WebClient webClient = (WebClient) session.getAttribute("xuexinWebClient");

@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.*;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +118,7 @@ public class HebeiProvinceService {
 	public Map<String, Object> HebeiUsercard2(HttpServletRequest request, String Usernum, String UserPass, String capth,String longitude,String latitude) {
 		 Map<String,Object> map = new HashMap<String,Object>();
 		// TODO Auto-generated method stub
-		 
+		 PushState.state(Usernum, "callLog",100);
 		System.out.println("进入短信提交页面");
 		HttpSession session=request.getSession();//获得session
 		Object sessiondriver = session.getAttribute("sessionDriver-Hebei"+Usernum);

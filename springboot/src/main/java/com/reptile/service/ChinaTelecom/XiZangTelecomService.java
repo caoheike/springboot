@@ -4,9 +4,12 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.GetMonth;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
 import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -159,6 +163,7 @@ public class XiZangTelecomService {
 	  public Map<String, Object> getDetail(HttpServletRequest request,String phoneNumber, String serverPwd,String code,String longitude,String latitude){
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  Map<String, Object> mapDate = new HashMap<String, Object>();
+		  PushState.state(phoneNumber, "callLog",100);
 		  List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 	        HttpSession session = request.getSession();
 

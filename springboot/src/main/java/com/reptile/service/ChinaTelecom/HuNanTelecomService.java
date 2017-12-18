@@ -8,8 +8,11 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.model.NewTelecomBean;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+
 import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -154,6 +158,7 @@ public class HuNanTelecomService {
 		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String PassCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd){
 			Map<String,Object> map = new HashMap<String,Object>();
 	        Map<String,Object> data=new HashMap<String,Object>();
+	        PushState.state(phoneNumber, "callLog",100);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
 	        Object htmlpage = request.getSession().getAttribute("HNsendMesPage");
 	        if (attribute == null || htmlpage == null) {

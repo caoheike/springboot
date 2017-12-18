@@ -8,14 +8,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,6 +80,7 @@ public class ShanghaiTelecomService {
 		//定单详情查取方式1.选择月份 2.自定义时间
 		 Map<String, Object> map = new HashMap<String, Object>();
 		 PushSocket.pushnew(map, UUID, "1000","登录中");
+		 PushState.state(phoneNumber, "callLog",100);
 		 try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -248,8 +252,10 @@ public class ShanghaiTelecomService {
                map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 		 
                if(map.get("errorCode").equals("0000")) {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
+					PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushState.state(phoneNumber, "callLog",200);
 				}
 			}
 		  } catch (Exception e) {

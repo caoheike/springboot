@@ -12,9 +12,12 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.HttpUtils;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,7 @@ import org.w3c.dom.Node;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -526,6 +530,7 @@ public class CreditService {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushState.state(userId, "callLog",100);
         try {
         	Thread.sleep(2000);
             Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
@@ -592,11 +597,13 @@ public class CreditService {
                             map.put("errorInfo", "查询成功");
                             map.put("errorCode", "0000");
                             PushSocket.pushnew(map, UUID, "8000","认证成功");
+                            PushState.state(userId, "callLog",300);
 
                         } else {
                             map.put("errorInfo", map.get("ResultInfo"));
                             map.put("errorCode", "0001");
                             PushSocket.pushnew(map, UUID, "9000","认证失败");
+                            PushState.state(userId, "callLog",200);
                         }
                         webClient.close();
                     } catch (Exception e) {

@@ -8,7 +8,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -173,6 +176,7 @@ public class ShanDongTelecomService {
                                             String userCard, String phoneCode, String userPassword,String longitude,String latitude,String UUID){
         Map<String, Object> map = new HashMap<String, Object>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushState.state(userIphone, "callLog",100);
         try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -274,8 +278,10 @@ public class ShanDongTelecomService {
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
                 if(map.get("errorCode").equals("0000")) {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
+					 PushState.state(userIphone, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					 PushState.state(userIphone, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);

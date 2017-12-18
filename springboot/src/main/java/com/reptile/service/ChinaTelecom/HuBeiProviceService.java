@@ -88,6 +88,7 @@ public class HuBeiProviceService {
 	}
 	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass,String longitude,String latitude, String UUID){
 		 Map<String,Object> map = new HashMap<String,Object>();
+		 PushState.state(PhoneCode, "callLog",100);
 		 PushSocket.pushnew(map, UUID, "1000","登录中");
 		 try {
 			Thread.sleep(2000);

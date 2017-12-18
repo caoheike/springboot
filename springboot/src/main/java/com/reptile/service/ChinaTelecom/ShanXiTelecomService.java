@@ -7,13 +7,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -35,6 +38,7 @@ public class ShanXiTelecomService {
 
         Map<String, Object> map = new HashMap<String, Object>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushState.state(phoneNumber, "callLog",100);
         Thread.sleep(2000);
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -117,8 +121,10 @@ public class ShanXiTelecomService {
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                     if(map.get("errorCode").equals("0000")) {
     					PushSocket.pushnew(map, UUID, "8000","认证成功");
+    					PushState.state(phoneNumber, "callLog",300);
     				}else {
     					PushSocket.pushnew(map, UUID, "9000","认证失败");
+    					PushState.state(phoneNumber, "callLog",200);
     				}
                 }else{
                     map.put("errorCode", "0005");

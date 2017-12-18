@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 
 import net.sf.json.JSONObject;
@@ -114,6 +115,7 @@ public class ChengduTelecomService {
                                             String servePwd, String longitude, String latitude, String UUID) {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> dataMap = new HashMap<String, Object>();
+        PushState.state(phoneNumber, "callLog",100);
         PushSocket.pushnew(map, UUID, "1000","登录中");
         List list = new ArrayList();
         HttpSession session = request.getSession();
@@ -192,9 +194,11 @@ public class ChengduTelecomService {
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
                if(map.get("errorCode").equals("0000")) {
-            	   PushSocket.pushnew(map, UUID, "8000","认证成功");   
+            	   PushSocket.pushnew(map, UUID, "8000","认证成功"); 
+            	   PushState.state(phoneNumber, "callLog",300);
                }else{
-            	   PushSocket.pushnew(map, UUID, "9000","认证失败");  
+            	   PushSocket.pushnew(map, UUID, "9000","认证失败"); 
+            	   PushState.state(phoneNumber, "callLog",200);
                }
             } catch (Exception e) {
                 logger.warn("成都获取详情mrlu", e);

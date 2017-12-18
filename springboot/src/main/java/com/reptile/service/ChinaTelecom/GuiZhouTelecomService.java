@@ -5,14 +5,17 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +87,7 @@ public class GuiZhouTelecomService {
 	
 	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String UUID) {
 		    Map<String, Object> map = new HashMap<String, Object>();
+		    PushState.state(phoneNumber, "callLog",100);
 		    PushSocket.pushnew(map, UUID, "1000","登录中");
 		    try {
 				Thread.sleep(2000);
@@ -175,7 +179,9 @@ public class GuiZhouTelecomService {
            System.out.println(map);
            if(map.get("errorCode").equals("0000")) {
         	   PushSocket.pushnew(map, UUID, "8000","认证成功");
+        	   PushState.state(phoneNumber, "callLog",300);
            }else {
+        	   PushState.state(phoneNumber, "callLog",200);
         	   PushSocket.pushnew(map, UUID, "9000","认证失败");
            }
            if(map.get("errorCode").equals("0003")){

@@ -700,6 +700,7 @@ public class InterfaceController {
 			System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
+	    PushState.state(idCard, "TaoBao",100);
 	    PushSocket.pushnew(map, UUID, "1000","登录中");
 	    Thread.sleep(2000);
 	    HttpSession session=request.getSession();
@@ -712,7 +713,6 @@ public class InterfaceController {
 		    HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 		    System.out.println(pageinfo.asXml());
 		    PushSocket.pushnew(map, UUID, "2000","登录成功");
-		    PushState.state(idCard, "TaoBao",100);
 		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
 		    map.put("errorCode", "0000");
 		    map.put("errorInfo", "成功");
