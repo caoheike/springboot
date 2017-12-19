@@ -254,7 +254,7 @@ public class ShanghaiTelecomService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200);
 				}
 			}
@@ -262,6 +262,7 @@ public class ShanghaiTelecomService {
 			  logger.warn("上海电信",e);
 			  map.put("errorCode", "0001");
 	          map.put("errorInfo", "网络连接异常!");
+	          PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
 			//e.printStackTrace();
 		}    
 		return map;

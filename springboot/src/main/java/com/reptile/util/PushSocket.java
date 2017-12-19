@@ -49,6 +49,7 @@ public class PushSocket {
 		String seq_id=talkFrame.getWsInfoMap().get(UUID);
 		System.out.println("se==="+se);
 		System.out.println("seq==="+seq_id);
+		System.out.println(errorInfor);
 		String date=Dates.currentTime();
 		try {
 			if(se!=null&&seq_id!=null){

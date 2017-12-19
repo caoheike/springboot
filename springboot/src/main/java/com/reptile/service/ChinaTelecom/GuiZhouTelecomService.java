@@ -182,13 +182,13 @@ public class GuiZhouTelecomService {
         	   PushState.state(phoneNumber, "callLog",300);
            }else {
         	   PushState.state(phoneNumber, "callLog",200);
-        	   PushSocket.pushnew(map, UUID, "9000","认证失败");
+        	   PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
            }
            if(map.get("errorCode").equals("0003")){
         	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
-        	   PushSocket.pushnew(map, UUID, "9000","认证失败");
+        	   PushSocket.pushnew(map, UUID, "9000","查询失败，稍后再试！！");
            }
 		return map;
 	}

@@ -102,7 +102,7 @@ public class HuBeiProviceService {
 	        	
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
-	            PushSocket.pushnew(map, UUID, "3000","登录失败");
+	            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
 	            return map;
 	        } else {
 	        try {
@@ -204,7 +204,7 @@ public class HuBeiProviceService {
 	         }else{
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(PhoneNume, "callLog",200);
-	            	PushSocket.pushnew(map, UUID, "9000","认证失败");
+	            	PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 	            	//---------------------数据中心推送状态----------------------
 	          }
 				webClient.close();
@@ -217,6 +217,7 @@ public class HuBeiProviceService {
 				 map.clear();
 				 map.put("errorInfo","服务繁忙，请稍后再试");
 				 map.put("errorCode","0002");
+				 PushSocket.pushnew(map, UUID, "9000","服务繁忙，请稍后再试");
 			}
 	        }
 	        

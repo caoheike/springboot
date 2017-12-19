@@ -352,7 +352,7 @@ public class NingXiaTelecomService {
 						PushSocket.pushnew(map, UUID, "8000","认证成功");
 						 PushState.state(phoneNumber, "callLog",300);
 					}else {
-						PushSocket.pushnew(map, UUID, "9000","认证失败");
+						PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 						 PushState.state(phoneNumber, "callLog",200);
 					}
 		           try {
@@ -371,8 +371,6 @@ public class NingXiaTelecomService {
 						//e.printStackTrace();
 					}
 				}
-		           
 		return map;
 	 }
-
 }

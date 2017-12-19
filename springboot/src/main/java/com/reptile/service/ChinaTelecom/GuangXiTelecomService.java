@@ -81,7 +81,7 @@ public class GuangXiTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
-            PushSocket.pushnew(map, UUID, "3000","操作异常");
+            PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常");
             return map;
         } else {
             WebClient webClient = (WebClient) attribute;
@@ -100,7 +100,7 @@ public class GuangXiTelecomService {
                     HtmlAnchor popup1 = (HtmlAnchor) xmlPage.getElementById("popup").getFirstChild().getChildNodes().get(2).getChildNodes().get(0);
                     HtmlPage click1 = popup1.click();
                     //PushSocket.push(map, UUID, "0001");
-                    PushSocket.pushnew(map, UUID, "3000","登录失败");
+                    PushSocket.pushnew(map, UUID, "3000","popup");
                     
                     Thread.sleep(1000);
                     map.put("errorCode", "0003");
@@ -157,13 +157,14 @@ public class GuangXiTelecomService {
                 	PushSocket.pushnew(map, UUID, "8000","认证成功");
                 	PushState.state(phoneNumber, "callLog",300);
                 }else {
-                	PushSocket.pushnew(map, UUID, "9000","认证失败");
+                	PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
                 	PushState.state(phoneNumber, "callLog",200);
                 }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+" 广西获取详单信息   mrlu",e);
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
+                PushSocket.pushnew(map, UUID, "9000","网络异常");
             }
         }
         return map;
