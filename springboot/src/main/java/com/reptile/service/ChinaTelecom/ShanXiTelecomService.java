@@ -45,14 +45,14 @@ public class ShanXiTelecomService {
         Thread.sleep(2000);
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushSocket.pushnew(map, uuid, "1000","登录中");
 
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常");
+            PushSocket.pushnew(map, uuid, "3000","登录失败，操作异常");
         } else {
         	PushSocket.pushnew(map, uuid, "2000","登录成功");
             WebClient webClient = (WebClient) attribute;
@@ -130,7 +130,7 @@ public class ShanXiTelecomService {
     					PushSocket.pushnew(map, uuid, "8000","认证成功");
     					PushState.state(phoneNumber, "callLog",300);
     				}else {
-    					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+    					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
     					PushState.state(phoneNumber, "callLog",200);
     				}
                 }else{
@@ -142,7 +142,7 @@ public class ShanXiTelecomService {
                 logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){
                     webClient.close();
