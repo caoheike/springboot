@@ -21,10 +21,10 @@ import java.util.Map;
 @Component
 @Aspect
 public class AopClass {
-    private Logger logger = LoggerFactory.getLogger(AopClass.class);
+    /*private Logger logger = LoggerFactory.getLogger(AopClass.class);
     @Pointcut("@annotation(com.reptile.util.CustomAnnotation)")
     public void pointCut() {
-    }
+    }*/
 
 //    @Before("pointCut()")
 //    public void aopMethod(JoinPoint joinPoint) {
@@ -38,7 +38,7 @@ public class AopClass {
 //        }
 //    }
 
-    @Around("pointCut()")
+/*    @Around("pointCut()")
     public  Map<String,Object> around(ProceedingJoinPoint joinPoint) throws Throwable {
         Map<String,Object> map=new HashMap<String,Object>();
         try {
@@ -71,7 +71,7 @@ public class AopClass {
             map.put("errorInfo","推送状态失败");
         }
         return map;
-    }
+    }*/
 
 //    @AfterReturning(returning = "rvt", pointcut = "@annotation(com.reptile.util.CustomAnnotation)")
 //    public Object AfterExec(JoinPoint joinPoint, Object rvt) {
@@ -91,7 +91,7 @@ public class AopClass {
 //        return rvt;
 //    }
 
-
+/*
     //认证前推送状态
     public Map<String, Object> beforeTuiSong(String className, String argsName) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -143,6 +143,6 @@ public class AopClass {
         Resttemplate resttemplate = new Resttemplate();
         Map<String, Object> mapResult= resttemplate.SendMessage(map,ConstantInterface.port + "/HSDC/authcode/Autherized");
         return mapResult;
-    }
+    }*/
 
 }
