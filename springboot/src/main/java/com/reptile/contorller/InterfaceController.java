@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -25,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +50,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
+import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.EncodeHintType;
@@ -724,30 +727,64 @@ public class InterfaceController {
 		    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
 		    HtmlTable  table= pagev.querySelector(".tbl-main");
 		    System.out.println(table.asXml()+"收货地址");
+		    
+		    HtmlPage html = webClient.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
+		    String href = ((HtmlAnchor)html.getByXPath("//*[@id='main-content']/div/div[2]/div/div[2]/p/a[1]").get(0)).getAttribute("href");
+		    String sign_account_no = this.getSignNo(href);
+		    webClient.getPage("https://login.taobao.com/member/login.jhtml?tpl_redirect_url=https%3A%2F%2Fauthgtj.alipay.com%3A443%2Flogin%2FtrustLoginResultDispatch.htm%3FredirectType%3D%26sign_from%3D3000%26goto%3Dhttps%253A%252F%252Fmy.alipay.com%252Fportal%252Fi.htm%253Fsrc%253Dyy_taobao_gl_01%2526sign_from%253D3000%2526sign_account_no%253D"+sign_account_no+"%2526guide_q_control%253Dtop%2526guide_q_control%253Dtop%2526src%253Dyy_taobao_gl_01&from_alipay=1");
+		    webClient.getPage("https://authgtj.alipay.com/login/trustLoginResultDispatch.htm?redirectType=&sign_from=3000&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsrc%3Dyy_taobao_gl_01%26sign_from%3D3000%26sign_account_no%3D"+sign_account_no+"%26guide_q_control%3Dtop%26guide_q_control%3Dtop%26src%3Dyy_taobao_gl_01&sign_from=3000&sign_account_no="+sign_account_no+"&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
 	    
-	    //现在开始爬取 支付宝信息
-	      WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
+		    //现在开始爬取 支付宝信息
+	       WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
 	       List<NameValuePair> lists=new ArrayList<NameValuePair>();
-	       lists.add(new NameValuePair("goto","https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
-	       lists.add(new NameValuePair("tti","2119"));
+	       
+	       lists.add(new NameValuePair("goto","https://my.alipay.com/portal/i.htm?src=yy_taobao_gl_01&sign_from=3000&sign_account_no=20888028082824820156&guide_q_control=top&guide_q_control=top&src=yy_taobao_gl_01"));
+	       lists.add(new NameValuePair("redirectType",""));
+	       lists.add(new NameValuePair("loginScene",""));
+	       lists.add(new NameValuePair("tti","1302"));
 	       lists.add(new NameValuePair("isIframe","false"));
-	       lists.add(new NameValuePair("REMOTE_PCID_NAME","_seaside_gogo_pcid"));
+	       lists.add(new NameValuePair("_seaside_gogo_",""));
+	       lists.add(new NameValuePair("_seaside_gogo_p","false"));
+	       lists.add(new NameValuePair("_seaside_gogo_pcid",""));
 	       lists.add(new NameValuePair("is_sign","Y"));
+	       lists.add(new NameValuePair("real_sn",""));
+	       lists.add(new NameValuePair("signedData",""));
+	       lists.add(new NameValuePair("certCmdOutput",""));
+	       lists.add(new NameValuePair("certCmdInput",""));
+	       lists.add(new NameValuePair("certfg",""));
+	       lists.add(new NameValuePair("goto",""));
+	       lists.add(new NameValuePair("security_chrome_extension_aliedit_installed",""));
+	       lists.add(new NameValuePair("security_chrome_extension_alicert_installed",""));
+	       lists.add(new NameValuePair("security_activeX_enabled","false"));
+	       lists.add(new NameValuePair("REMOTE_PCID_NAME","_seaside_gogo_pcid"));
 	       lists.add(new NameValuePair("security_activeX_enabled","false"));
 	       lists.add(new NameValuePair("securityId","web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
 	       requests.setHttpMethod(HttpMethod.POST);
 	       requests.setRequestParameters(lists);
 	       HtmlPage pageinfos= webClient.getPage(requests);
-	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl");
+	       
+	       WebRequest detailInfo = new WebRequest(new URL("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
+	       Map<String,String> headers = new HashMap<String, String>();
+	       headers.put("cookie", this.getCookie(webClient));
+	 
+	       detailInfo.setHttpMethod(HttpMethod.GET);
+	       detailInfo.setAdditionalHeaders(headers);
+	       HtmlPage pageinfosss= webClient.getPage(detailInfo);
+	       Thread.sleep(2000);
+	       
+	       
+	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
 	       PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+	       
 	       //获取收货地址
 	       data.put("addresses",this.getAddress(webClient));
 	       data.put("info",table.asXml() );
-	       data.put("page",pageinfoss.asXml() );
+	       data.put("page",pageinfosss.asXml()+pageinfoss.asXml() );
 	       map.put("data", data);
 	       map.put("userName", "123");
 	       map.put("userPwd", "123");
 	       map.put("userCard", idCard);
+	       
 	       map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
 
 			if(map!=null&&"0000".equals(map.get("errorCode").toString())) {
@@ -779,6 +816,10 @@ public class InterfaceController {
 	        map.put("errorCode", "0000");
 	        map.put("errorInfo", "成功");
 	      }
+	      
+	    
+	      
+	      
 	    }else if(jsonObject2.get("code").equals("10000")){
 	    	
 	      System.out.println("等待授权");
@@ -794,7 +835,49 @@ public class InterfaceController {
 	      PushSocket.pushnew(map, UUID, "3000","非法操作！请重试");
 	    }
 	    return map;
+
+	    
 	  }
+		
+		/**
+		 * 获取sign_account_no
+		 * @param str
+		 * @return
+		 */
+		public String getSignNo(String str){
+			String text = "";
+			str = str.substring(str.indexOf("?")+1);
+			String [] array = str.split("&");
+			for (String item : array) {
+				if(item.contains("sign_account_no")){
+					text = item.split("=")[1];
+				}
+			}
+			return text;
+		}
+		
+		/**
+		 * 获取cookie
+		 * @param driver
+		 * @return
+		 */
+		public  String getCookie(WebClient webClient)		{
+			  //获得cookie用于发包
+			Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+		    StringBuffer tmpcookies = new StringBuffer();
+
+		   	for (Cookie cookie : cookies) {
+		   		String name = cookie.getName();
+		   		String value = cookie.getValue();
+	   			tmpcookies.append(name + "="+ value + ";");
+			}
+		   	String str = tmpcookies.toString();
+		   	if(!str.isEmpty()){
+		   		str = str.substring(0,str.lastIndexOf(";"));
+		   	}
+			return str; 	
+		}
+		
 		
 		/**
 		 * 获取收货地址
