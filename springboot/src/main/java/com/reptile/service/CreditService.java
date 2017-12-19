@@ -560,7 +560,7 @@ public class CreditService {
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("errorCode", "0001");
-                    PushSocket.pushnew(map, UUID, "3000","登录失败");
+                    PushSocket.pushnew(map, UUID, "3000",resultPage.getElementById("codeinfo").asText());
                 } else {
                     //推送长连接状态
                     //PushSocket.push(map, UUID, "0000");
@@ -602,7 +602,7 @@ public class CreditService {
                         } else {
                             map.put("errorInfo", map.get("ResultInfo"));
                             map.put("errorCode", "0001");
-                            PushSocket.pushnew(map, UUID, "9000","认证失败");
+                            PushSocket.pushnew(map, UUID, "9000",map.get("ResultInfo").toString());
                             PushState.state(userId, "callLog",200);
                         }
                         webClient.close();
@@ -612,6 +612,7 @@ public class CreditService {
                         map.put("ResultCode", "0002");
                         map.put("errorInfo", "系统繁忙，请稍后再试！");
                         map.put("errorCode", "0002");
+                        PushSocket.pushnew(map, UUID, "9000","系统繁忙，请稍后再试！");
                         webClient.close();
                     }
                 }
@@ -628,11 +629,10 @@ public class CreditService {
             map.put("ResultCode", "0002");
             map.put("errorInfo", "系统繁忙，请稍后再试！");
             map.put("errorCode", "0002");
+            PushSocket.pushnew(map, UUID, "3000","系统繁忙，请稍后再试！");
         }
         data.put("reportHtml", "");
         map.put("data", data);
         return map;
     }
-
-
 }

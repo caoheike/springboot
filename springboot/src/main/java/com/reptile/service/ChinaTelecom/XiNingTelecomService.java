@@ -45,7 +45,7 @@ public class XiNingTelecomService {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushSocket.pushnew(map, UUID, "3000","登录失败");
+            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
             return map;
         } else {
         	PushSocket.pushnew(map, UUID, "2000","登录成功");
@@ -141,13 +141,14 @@ public class XiNingTelecomService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorinfo").toString());
 					 PushState.state(phoneNumber, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  青海获取详单  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){
                     webClient.close();

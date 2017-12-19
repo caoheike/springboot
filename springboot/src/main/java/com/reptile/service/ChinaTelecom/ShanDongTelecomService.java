@@ -280,18 +280,16 @@ public class ShanDongTelecomService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 					 PushState.state(userIphone, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					 PushState.state(userIphone, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }
         }
-
         return map;
     }
-
-
 }

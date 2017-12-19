@@ -124,7 +124,7 @@ public class ChengduTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
-            PushSocket.pushnew(map, UUID, "3000","登录失败");
+            PushSocket.pushnew(map, UUID, "3000","手机验证码错误,请重新获取!");
             return map;
         } else {
             WebClient webClient = (WebClient) attribute;
@@ -197,13 +197,14 @@ public class ChengduTelecomService {
             	   PushSocket.pushnew(map, UUID, "8000","认证成功"); 
             	   PushState.state(phoneNumber, "callLog",300);
                }else{
-            	   PushSocket.pushnew(map, UUID, "9000","认证失败"); 
+            	   PushSocket.pushnew(map, UUID, "9000",map.get("errorCode").toString()); 
             	   PushState.state(phoneNumber, "callLog",200);
                }
             } catch (Exception e) {
                 logger.warn("成都获取详情mrlu", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
+                PushSocket.pushnew(map, UUID, "9000","网络连接异常!"); 
             }
         }
         return map;

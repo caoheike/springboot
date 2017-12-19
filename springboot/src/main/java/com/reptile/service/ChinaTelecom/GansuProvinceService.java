@@ -77,7 +77,7 @@ public class GansuProvinceService {
 		   HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
-	        	PushSocket.pushnew(map, UUID, "3000","登录失败");
+	        	PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
@@ -93,7 +93,6 @@ public class GansuProvinceService {
 	        	Map<String,Object>Gansu=new HashMap<String,Object>();
 	        	List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 					
-					PushState.state(UserNum, "callLog",100);
 					String num="4:"+UserNum;
 					Date date=new Date();
 				    String year= new SimpleDateFormat("yyyyMM").format(date);
@@ -136,15 +135,16 @@ public class GansuProvinceService {
 			                PushSocket.pushnew(map, UUID, "8000","认证成功");
 			         }else{
 			        	 //PushSocket.push(map, UUID, "0001");
-			        	 PushSocket.pushnew(map, UUID, "9000","认证失败");
+			        	 PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 			            	//--------------------数据中心推送状态----------------------
-			            	PushState.state(UserNum, "callLog",200);
+			             PushState.state(UserNum, "callLog",200);
 			            	//---------------------数据中心推送状态----------------------
 			          }
 					webClient.close();
 					} catch (Exception e) {
 						e.printStackTrace();
 						PushState.state(UserNum, "callLog",200);
+						PushSocket.pushnew(map, UUID, "9000","服务繁忙，请稍后再试");
 						//---------------------------数据中心推送状态----------------------------------
 						 map.clear();
 						 map.put("errorInfo","服务繁忙，请稍后再试");
