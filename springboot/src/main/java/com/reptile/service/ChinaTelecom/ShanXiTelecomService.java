@@ -1,8 +1,6 @@
 package com.reptile.service.ChinaTelecom;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
@@ -56,10 +54,22 @@ public class ShanXiTelecomService {
             	Thread.sleep(2000);
             	PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
+                Thread.sleep(3000);
+
+                //发送手机短信验证码
+//                WebRequest post=new WebRequest(new URL("http://sn.189.cn/service/bill/sendValidReq.action"));
+//                post.setHttpMethod(HttpMethod.POST);
+//                List<NameValuePair> list=new ArrayList<>();
+//                list.add(new NameValuePair("mobileNum",phoneNumber));
+//                list.add(new NameValuePair("listType","1"));
+//                post.setRequestParameters(list);
+//                post.setAdditionalHeader("Referer","http://sn.189.cn/service/bill/fee.action?type=ticket&fastcode=10000202&cityCode=sn");
+//                TextPage page =webClient.getPage(post);
+//                System.out.println(page.getContent());
+
+
                 WebRequest webRequest = new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
-
                 SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-
                 Calendar cal = Calendar.getInstance();
                 String endTime = sim.format(cal.getTime());
                 cal.set(Calendar.DAY_OF_MONTH, 1);
