@@ -10,10 +10,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/static/js/shanxi.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaBankController.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaBankController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChengduTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChengduTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChongQingTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChongQingTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GansuProvinceService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GansuProvinceService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuangXiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuangXiTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuiZhouTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuiZhouTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HeNanTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HeNanTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HuBeiProviceService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HuBeiProviceService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/JiangSuTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/JiangSuTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/NingXiaTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/NingXiaTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanDongTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanDongTelecomService.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanghaiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanghaiTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/XiNingTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/XiNingTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/YunNanTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/YunNanTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ZhejiangTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ZhejiangTelecomService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/CreditService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/CreditService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/AopClass.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/AopClass.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -38,25 +58,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ShanXiTelecomService.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ShanXiTelecomService.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="372">
-              <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+            <state relative-caret-position="-151">
+              <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
               <folding>
                 <element signature="e#1215#1231#0" expanded="true" />
-                <element signature="e#1416#1424#0" expanded="true" />
-                <element signature="e#2622#2637#0" expanded="true" />
+                <element signature="e#1361#1369#0" expanded="true" />
+                <element signature="e#2621#2636#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ShanXiTelecomController.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ShanXiTelecomController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="375">
-              <caret line="26" column="41" lean-forward="true" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
+              <caret line="26" column="41" lean-forward="false" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -66,7 +86,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="275">
-              <caret line="18" column="27" lean-forward="true" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
+              <caret line="18" column="27" lean-forward="false" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -76,7 +96,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="375">
-              <caret line="21" column="46" lean-forward="true" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
+              <caret line="21" column="46" lean-forward="false" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -126,7 +146,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="300">
-              <caret line="136" column="75" lean-forward="true" selection-start-line="136" selection-start-column="27" selection-end-line="136" selection-end-column="75" />
+              <caret line="136" column="75" lean-forward="false" selection-start-line="136" selection-start-column="27" selection-end-line="136" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -256,8 +276,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/RecognizeImage.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
       </list>
     </option>
   </component>
@@ -1333,11 +1353,18 @@
       <option name="project" value="LOCAL" />
       <updated>1513667282049</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="格式规范化  mrlu 12 19">
+      <created>1513667950722</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1513667950722</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="416457000" />
+    <option name="totallyTimeSpent" value="416678000" />
   </component>
   <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
@@ -1525,7 +1552,8 @@
     <MESSAGE value="重新定义日志为按照时间大小生成 mrlu 12 5" />
     <MESSAGE value="mrlu 12 14" />
     <MESSAGE value="java执行js文件 mrlu12 19" />
-    <option name="LAST_COMMIT_MESSAGE" value="java执行js文件 mrlu12 19" />
+    <MESSAGE value="格式规范化  mrlu 12 19" />
+    <option name="LAST_COMMIT_MESSAGE" value="格式规范化  mrlu 12 19" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1565,7 +1593,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/MyCYDMDemo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
-          <caret line="136" column="75" lean-forward="true" selection-start-line="136" selection-start-column="27" selection-end-line="136" selection-end-column="75" />
+          <caret line="136" column="75" lean-forward="false" selection-start-line="136" selection-start-column="27" selection-end-line="136" selection-end-column="75" />
           <folding />
         </state>
       </provider>
@@ -1734,6 +1762,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-925">
           <caret line="28" column="13" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1823,7 +1852,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
-          <caret line="18" column="27" lean-forward="true" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
+          <caret line="18" column="27" lean-forward="false" selection-start-line="18" selection-start-column="27" selection-end-line="18" selection-end-column="27" />
           <folding />
         </state>
       </provider>
@@ -1887,7 +1916,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
-          <caret line="21" column="46" lean-forward="true" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
+          <caret line="21" column="46" lean-forward="false" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
           <folding />
         </state>
       </provider>
@@ -1932,23 +1961,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding>
-            <element signature="e#1215#1231#0" expanded="true" />
-            <element signature="e#1416#1424#0" expanded="true" />
-            <element signature="e#2622#2637#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
-          <caret line="26" column="41" lean-forward="true" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
+          <caret line="26" column="41" lean-forward="false" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-151">
+          <caret line="48" column="0" lean-forward="true" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding>
+            <element signature="e#1215#1231#0" expanded="true" />
+            <element signature="e#1361#1369#0" expanded="true" />
+            <element signature="e#2621#2636#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -180,6 +180,7 @@ public class ChinaBankService {
             sendMap.put("html", listData);
             map.put("data", sendMap);
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
+            System.out.println("tuisonghou----"+map);
             driver.quit();
             if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 		    	if(isok==true) {

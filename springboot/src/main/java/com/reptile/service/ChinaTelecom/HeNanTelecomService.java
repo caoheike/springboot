@@ -133,7 +133,7 @@ public class HeNanTelecomService {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushSocket.pushnew(map, UUID, "3000","登录失败");
+            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
             return map;
         } else {
             try {
@@ -173,7 +173,7 @@ public class HeNanTelecomService {
                 if (result.contains("您输入的查询验证码错误或过期")) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
-                    PushSocket.pushnew(map, UUID, "3000","登录失败");
+                    PushSocket.pushnew(map, UUID, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }
                 PushSocket.pushnew(map, UUID, "2000","登录成功");
@@ -223,7 +223,7 @@ public class HeNanTelecomService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200);
 				}
 				
@@ -232,6 +232,7 @@ public class HeNanTelecomService {
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }
         }
         return map;

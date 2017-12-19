@@ -1540,7 +1540,7 @@ public class MobileService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 				}else{
 					PushState.state(userCard, "CHSI", 200);
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 				}
 
 				//---------------------数据中心推送状态----------------------
@@ -1549,7 +1549,7 @@ public class MobileService {
 				map.put("errorInfo", "您输入的用户名或密码有误");
 				//--------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
-				PushSocket.pushnew(map, UUID, "3000","登录失败");
+				PushSocket.pushnew(map, UUID, "3000","您输入的用户名或密码有误");
 				//---------------------数据中心推送状态----------------------
 
 			} else if (pages.asText().contains("图片验证码输入有误")) {

@@ -28,7 +28,7 @@ public class ChinaBankController {
     @ApiOperation(value = "获取ZGYH信用卡信息",notes = "参数：身份证，信用卡号，查询密码")
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
-    @CustomAnnotation
+    //@CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("userCard") String userCard,
                                             @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws ParseException {
 

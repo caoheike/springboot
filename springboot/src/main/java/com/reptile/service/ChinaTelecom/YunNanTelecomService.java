@@ -109,14 +109,11 @@ public class YunNanTelecomService {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
-            PushSocket.pushnew(map, UUID, "3000","登录失败");
+            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常");
         } else {
-        	PushSocket.pushnew(map, UUID, "2000","登录成功");
             WebClient webClient = (WebClient) yunNanWebClient;
             HtmlPage htmlPage = (HtmlPage) yunNanHtmlPage;
             try {
-            	Thread.sleep(2000);
-            	PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 htmlPage.getElementById("NAME").setAttribute("value", userName);
                 htmlPage.getElementById("CUSTCARDNO").setAttribute("value", userCard);
                 htmlPage.getElementById("PROD_PASS").setAttribute("value", serverPwd);
@@ -138,9 +135,13 @@ public class YunNanTelecomService {
                     	//PushSocket.push(map, UUID, "0001");
                         map.put("errorCode", "0003");
                         map.put("errorInfo", popup);
+                        PushSocket.pushnew(map, UUID, "3000",popup);
                         return map;
                     }
                 }
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","获取数据中");
                 //PushSocket.push(map, UUID, "0000");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
@@ -195,13 +196,14 @@ public class YunNanTelecomService {
 					PushSocket.pushnew(map, UUID, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					 PushState.state(phoneNumber, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
+                PushSocket.pushnew(map, UUID, "9000","网络连接异常");
             }
         }
 

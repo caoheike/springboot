@@ -185,7 +185,7 @@ public class ChongQingTelecomService {
 	        			}else{
 	        				 map.put("errorCode", "0001");
 					         map.put("errorInfo", "系统繁忙!");
-					         PushSocket.pushnew(map, UUID, "3000","登录失败");
+					         PushSocket.pushnew(map, UUID, "3000","登录失败,系统繁忙!");
 	        			}
 					}
 				//------------推数据------------------------
@@ -203,7 +203,7 @@ public class ChongQingTelecomService {
 					 PushSocket.pushnew(map, UUID, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				 }else {
-					 PushSocket.pushnew(map, UUID, "9000","认证失败");
+					 PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					 PushState.state(phoneNumber, "callLog",200);
 				 }
 	                //------------推数据------------------------
@@ -212,7 +212,7 @@ public class ChongQingTelecomService {
 					} catch (Exception e) {
 						map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
-				       
+				         PushSocket.pushnew(map, UUID, "9000","网络异常!");
 						e.printStackTrace();
 					}finally{
 						 driver.close();
@@ -224,11 +224,9 @@ public class ChongQingTelecomService {
 								//e.printStackTrace();
 							}
 					}
-		        	
 		        }
 		 
 		 return map;
-		 
 	 }
 	
 	/**
