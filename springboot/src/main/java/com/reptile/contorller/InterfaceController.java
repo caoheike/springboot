@@ -708,12 +708,12 @@ public class InterfaceController {
 	    System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>();
 	    Map<String, Object> data = new HashMap<String, Object>();
-	    PushState.state(idCard, "TaoBao",100);
-	    PushSocket.pushnew(map, UUID, "1000","登录中");
-	    Thread.sleep(2000);
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
+	    PushState.state(idCard, "TaoBao",100);
+	    PushSocket.pushnew(map, UUID, "1000","登录中");
+	    Thread.sleep(2000);
 	    System.out.println(pages.getContent());
 	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
 	    if(jsonObject2.get("code").equals("10006")){

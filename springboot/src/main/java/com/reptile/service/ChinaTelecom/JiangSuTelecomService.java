@@ -100,11 +100,7 @@ public class JiangSuTelecomService {
                     dataList.add(page.getWebResponse().getContentAsString());
                     Thread.sleep(500);
                 }
-                if(dataList.size()>0) {
-                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-                }else {
-                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-                }
+                PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
                 map.put("data",dataList);
                 map.put("errorCode","0000");
                 map.put("errorInfo","成功");
@@ -127,6 +123,7 @@ public class JiangSuTelecomService {
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushState.state(phoneNumber, "callLog",200);
                 PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){

@@ -41,6 +41,7 @@ public class ChinaBankDepositCardService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName,String UUID) {
         Map<String, Object> map = new HashMap<>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
+        
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
         File file = new File(path);

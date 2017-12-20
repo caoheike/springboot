@@ -106,7 +106,6 @@ public class HuBeiProviceService {
 	            return map;
 	        } else {
 	        try {
-	        	PushState.state(PhoneNume, "callLog",100);
 	        	WebClient webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));
 				requests.setHttpMethod(HttpMethod.POST);//提交方式
@@ -182,11 +181,7 @@ public class HuBeiProviceService {
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
-					if(datalist.size()>0) {
-	                	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
-	                }else {
-	                	PushSocket.pushnew(map, UUID, "7000","数据获取失败");
-	                }
+					PushSocket.pushnew(map, UUID, "6000","数据获取成功");
 				HUBEI.put("data", datalist);
 				HUBEI.put("UserIphone", PhoneNume);
 				map.put("longitude", longitude);

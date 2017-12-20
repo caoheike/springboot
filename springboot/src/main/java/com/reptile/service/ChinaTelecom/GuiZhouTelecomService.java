@@ -158,11 +158,7 @@ public class GuiZhouTelecomService {
 					}
        }    
             // PushSocket.push(map, UUID, "0000");
-             if(dataList.size()>0) {
-            	 PushSocket.pushnew(map, UUID, "6000","获取数据成功");
-             }else {
-            	 PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-             }
+             PushSocket.pushnew(map, UUID, "6000","获取数据成功");
              
            map.put("data", dataList);
            map.put("UserPassword",servePwd );
@@ -188,6 +184,7 @@ public class GuiZhouTelecomService {
         	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
+        	   PushState.state(phoneNumber, "callLog",200);
         	   PushSocket.pushnew(map, UUID, "9000","查询失败，稍后再试！！");
            }
 		return map;

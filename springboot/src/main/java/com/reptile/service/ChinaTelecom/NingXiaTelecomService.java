@@ -332,11 +332,7 @@ public class NingXiaTelecomService {
 					map.put("errorInfo", "网络连接异常");
 				} 
 				}
-				 if(dataList.size()>0) {
-	                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-	                }else {
-	                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-	                }
+				 PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
 				   map.put("data", dataList);
 		           map.put("UserPassword",servePwd );
 		           map.put("UserIphone", phoneNumber);

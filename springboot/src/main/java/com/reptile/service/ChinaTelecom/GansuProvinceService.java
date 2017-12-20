@@ -112,11 +112,7 @@ public class GansuProvinceService {
 						datalist.add(data);
 						Thread.sleep(5000);
 					}
-					if(datalist.size()>0) {
-						PushSocket.pushnew(map, UUID, "6000","数据获取成功");
-					}else {
-						PushSocket.pushnew(map, UUID, "7000","数据获取失败");
-					}
+					PushSocket.pushnew(map, UUID, "6000","数据获取成功");
 					Gansu.put("data", datalist);
 					Gansu.put("UserIphone", UserNum);
 					map.put("longitude", longitude);
@@ -137,7 +133,6 @@ public class GansuProvinceService {
 			        	 //PushSocket.push(map, UUID, "0001");
 			        	 PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 			            	//--------------------数据中心推送状态----------------------
-			             PushState.state(UserNum, "callLog",200);
 			            	//---------------------数据中心推送状态----------------------
 			          }
 					webClient.close();

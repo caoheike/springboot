@@ -179,11 +179,7 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
-                if(list.size()>0) {
-                	PushSocket.pushnew(map, UUID, "6000","获取数据成功");
-                }else {
-                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-                }
+                PushSocket.pushnew(map, UUID, "6000","获取数据成功");
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
                 dataMap.put("longitude", longitude);//经度
@@ -204,6 +200,7 @@ public class ChengduTelecomService {
                 logger.warn("成都获取详情mrlu", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
+                PushState.state(phoneNumber, "callLog",200);
                 PushSocket.pushnew(map, UUID, "9000","网络连接异常!"); 
             }
         }
