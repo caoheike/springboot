@@ -178,11 +178,8 @@ public class YunNanTelecomService {
                     }
                     calendar.add(Calendar.MONTH, -1);
                 }
-                if(dataList.size()>0) {
-                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-                }else {
-                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-                }
+                
+               	PushSocket.pushnew(map, UUID, "6000","获取数据成功");
                 map.put("data", dataList);
                 map.put("flag", "8");
                 map.put("UserPassword", serverPwd);
@@ -197,13 +194,14 @@ public class YunNanTelecomService {
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
-					 PushState.state(phoneNumber, "callLog",200);
+					PushState.state(phoneNumber, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
                 PushSocket.pushnew(map, UUID, "9000","网络连接异常");
+                PushState.state(phoneNumber, "callLog",200);
             }
         }
 

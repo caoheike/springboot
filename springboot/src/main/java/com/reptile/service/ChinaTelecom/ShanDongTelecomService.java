@@ -260,11 +260,8 @@ public class ShanDongTelecomService {
                 for (int i = 0; i < list.size(); i++) {
                     listData.add(list.get(i));
                 }
-                if(listData.size()>0) {
-                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-                }else {
-                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-                }
+                
+                PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
                 map.put("UserPassword", "'"+userPassword+"'");
                 map.put("UserIphone", userIphone);
                 map.put("longitude", longitude);//经度
@@ -287,6 +284,7 @@ public class ShanDongTelecomService {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushState.state(userIphone, "callLog",200);
                 PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }
         }

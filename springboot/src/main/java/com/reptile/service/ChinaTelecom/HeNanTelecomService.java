@@ -205,11 +205,7 @@ public class HeNanTelecomService {
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
-                if(dataList.size()>0) {
-                	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
-                }else {
-                	PushSocket.pushnew(map, UUID, "7000","数据获取失败");
-                }
+                PushSocket.pushnew(map, UUID, "6000","数据获取成功");
                 map.put("UserIphone", phoneNumber);
                 map.put("UserPassword", serverPwd);
                 map.put("longitude", longitude);//经度
@@ -232,6 +228,7 @@ public class HeNanTelecomService {
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                PushState.state(phoneNumber, "callLog",200);
                 PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
             }
         }

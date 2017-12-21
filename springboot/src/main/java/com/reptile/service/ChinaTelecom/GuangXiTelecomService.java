@@ -139,11 +139,7 @@ public class GuangXiTelecomService {
 //                    System.out.println(page1.asXml());
                     dataList.add(page1.asXml());
                 }
-                if(dataList.size()>0) {
-                	 PushSocket.pushnew(map, UUID, "6000","获取数据成功");
-                }else {
-                	 PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-                }
+                PushSocket.pushnew(map, UUID, "6000","获取数据成功");
                 map.put("data",dataList);
                 map.put("flag","7");
                 map.put("UserPassword",serverPwd);
@@ -164,6 +160,7 @@ public class GuangXiTelecomService {
                 logger.warn(e.getMessage()+" 广西获取详单信息   mrlu",e);
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
+                PushState.state(phoneNumber, "callLog",200);
                 PushSocket.pushnew(map, UUID, "9000","网络异常");
             }
         }

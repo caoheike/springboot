@@ -67,34 +67,59 @@ public class CEBService {
 //					拿到打码平台返回的值
 //				String catph= dem.getcode(filename);
 				loginform.findElement(By.id("yzmcode")).sendKeys(strResult);
+				Thread.sleep(3000);
 					//这一步走完后，图片验证码也输入完毕了，开始点击发送验证码
-				List<WebElement> button =	loginform.findElements(By.tagName("button"));
-				button.get(0).click();
-				Thread.sleep(1000);
-				try{
-					driver.findElement(ByClassName.className("popup-dialog-message"));
-					System.out.println("报错！！！");
-					logger.info("光大银行登录时输入有误"+Usercard);
-					map.put("errorInfo","异常服务请重新尝试");
-					map.put("errorCode","0002");
-					System.out.println(map);
-					driver.close();
-					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
-				}catch(Exception e){
-					logger.warn("光大银行出错啦",e);
-					HttpSession session=request.getSession();//获得session
-					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
-					Map<String,Object> data=new HashMap<String,Object>();
-					data.put("driverName", "sessionDriver-Ceb"+Usercard);
-					map.put("errorInfo","动态密码发送成功");
-					map.put("errorCode","0000");
-					map.put("data",data);
-					System.out.println(map);
-				}
+//				List<WebElement> button =	loginform.findElements(By.tagName("button"));
+//				button.get(0).click();
+//				Thread.sleep(1000);
+//				try{
+//					driver.findElement(ByClassName.className("popup-dialog-message"));
+//					System.out.println("报错！！！");
+//					logger.info("光大银行登录时输入有误"+Usercard);
+//					map.put("errorInfo","异常服务请重新尝试");
+//					map.put("errorCode","0002");
+//					System.out.println(map);
+//					driver.close();
+//					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+//				}catch(Exception e){
+//					logger.warn("光大银行出错啦",e);
+//					HttpSession session=request.getSession();//获得session
+//					session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
+//					Map<String,Object> data=new HashMap<String,Object>();
+//					data.put("driverName", "sessionDriver-Ceb"+Usercard);
+//					map.put("errorInfo","动态密码发送成功");
+//					map.put("errorCode","0000");
+//					map.put("data",data);
+//					System.out.println(map);
+//				}
+				  List<WebElement> button =  loginform.findElements(By.tagName("button"));
+			        Thread.sleep(2000);
+			        button.get(0).click();
+			        Thread.sleep(1000);
+			        System.out.println(driver.getPageSource().contains("popup-dialog-message"));
+			        if(driver.getPageSource().contains("popup-dialog-message")){
+			          driver.findElement(ByClassName.className("popup-dialog-message"));
+			          System.out.println("报错！！！");
+			          logger.info("光大银行登录时输入有误"+Usercard);
+			          map.put("errorInfo","光大银行登录时输入有误");
+			          map.put("errorCode","0002");
+			          System.out.println(map);
+			          driver.close();
+			          Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+			        }else {
+			          HttpSession session=request.getSession();//获得session
+			          session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
+			          Map<String,Object> data=new HashMap<String,Object>();
+			          data.put("driverName", "sessionDriver-Ceb"+Usercard);
+			          map.put("errorInfo","动态密码发送成功");
+			          map.put("errorCode","0000");
+			          map.put("data",data);
+			          System.out.println(map);
+			        }
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.info("光大银行登录时发送验证码失败"+Usercard);
-				map.put("errorInfo","服务繁忙！请稍后再试");
+				map.put("errorInfo","服务繁忙！请稍后再试，验证码发送失败");
 				map.put("errorCode","0001");
 				driver.close();
 			}

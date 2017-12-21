@@ -196,14 +196,12 @@ public class ZhejiangTelecomService {
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
 					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+					
 					return map;
 				}
 		}
-			if(dlist.size()>0) {
-            	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-            }else {
-            	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-            }
+			 
+            PushSocket.pushnew(map, UUID, "6000","获取数据成功");
 		    map.put("data", dlist);
             map.put("UserPassword",servePwd);
             map.put("UserIphone", phoneNumber);
@@ -229,6 +227,7 @@ public class ZhejiangTelecomService {
 			map.put("errorInfo", "网络异常！");
 			//e.printStackTrace();
 			PushSocket.pushnew(map, UUID, "9000","网络异常！");
+			PushState.state(phoneNumber, "callLog",200);
 			}
 	        return map;
 	}

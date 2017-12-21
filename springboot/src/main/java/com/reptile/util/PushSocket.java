@@ -1,6 +1,9 @@
 package com.reptile.util;
 
 import javax.websocket.Session;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +52,8 @@ public class PushSocket {
 		String seq_id=talkFrame.getWsInfoMap().get(UUID);
 		System.out.println("se==="+se);
 		System.out.println("seq==="+seq_id);
-		System.out.println(errorInfor);
-		String date=Dates.currentTime();
+		System.out.println(errorInfor+resultCode);
+		String date=currentTime();
 		try {
 			if(se!=null&&seq_id!=null){
 				if(seq_id.equals("hello")){
@@ -66,5 +69,14 @@ public class PushSocket {
 			e.printStackTrace();
 		}
 		return map;
+	}
+	/**
+	 * 获取当前时间（年月日时分秒）
+	 * @return
+	 */
+	public static String currentTime(){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss");
+	    String mon = format.format(new Date());
+		return mon;
 	}
 }

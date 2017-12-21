@@ -302,7 +302,7 @@ public class PhoneBillsService {
             //PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
-            PushSocket.pushnew(map, UUID, "3000","登录失败");
+            PushSocket.pushnew(map, UUID, "3000","登录超时");
             return map;
         } else {
         	try {
@@ -354,10 +354,11 @@ public class PhoneBillsService {
                 SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyyMM");
                 String str = SimpleDateFormat.format(date);
                 int sDate = Integer.parseInt(str);
+                PushSocket.pushnew(map, UUID, "5000","数据获取中");	
                 for (int i = 1; i < 7; i++) {
                     UnexpectedPage page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
-                    PushSocket.pushnew(map, UUID, "5000","数据获取中");	
+                    
                     String results = page9.getWebResponse().getContentAsString();
                     if (!results.contains("retCode\":\"000000")) {
                         map.put("errorCode", "0003");
@@ -373,7 +374,6 @@ public class PhoneBillsService {
                     sDate--;
                     Thread.sleep(2000);
                 }
-                if (dataList.size() != 0) {
                 	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
                     dataMap.put("data", dataList);//通话详单数据
                     dataMap.put("userPhone", userNumber);//手机
@@ -390,20 +390,18 @@ public class PhoneBillsService {
                     	PushSocket.pushnew(map, UUID, "8000","认证成功");
                     	 PushState.state(userNumber, "callLog",300);
                     }else {
-                    	PushSocket.pushnew(map, UUID, "9000","认证失败");
+                    	PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
                     	 PushState.state(userNumber, "callLog",200);
                     }
-                } else {
-                    map.put("errorCode", "0005");
-                    map.put("errorInfo", "业务办理失败！");
-                    PushSocket.pushnew(map, UUID, "7000","数据获取失败");
-                }
+                
                 webClient.close();
             } catch (Exception e) {
                 logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
                 //PushSocket.push(map, UUID, "0001");
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
+                PushState.state(userNumber, "callLog",200);
+                PushSocket.pushnew(map, UUID, "9000","认证失败,系统繁忙");
             }
         }
         return map;

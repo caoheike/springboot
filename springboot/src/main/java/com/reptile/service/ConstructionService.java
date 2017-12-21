@@ -36,6 +36,7 @@ public class ConstructionService {
 			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
 			WebDriver driver = new ChromeDriver();
 			driver.get("http://creditcard.ccb.com/tran/WCCMainPlatV5?CCB_IBSVersion=V5&SERVLET_NAME=WCCMainPlatV5&TXCODE=NE3050");
+			String flag="";
 			try {
 				
 				driver.switchTo().frame("itemiframe");
@@ -81,6 +82,7 @@ public class ConstructionService {
 				
 				
 				PushSocket.pushnew(map, UUID, "2000","建设银行信用卡登陆成功");
+				flag="2000";
 				List<String> html =new ArrayList<String>();
 				//PushSocket.push(map, UUID, "0000");
 				for (int i = 1; i < 7; i++) {
@@ -97,6 +99,7 @@ public class ConstructionService {
 					System.out.println("-----------"+i+"--------------");
 				}
 				PushSocket.pushnew(map, UUID, "5000","建设银行账单获取中");
+				flag="5000";
 				Map<String,Object> con=new HashMap<String, Object>();
 				Map<String,Object> data=new HashMap<String,Object>();
 			  	System.out.println("页面已经放置到html中");
@@ -107,6 +110,7 @@ public class ConstructionService {
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(con,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
 				PushSocket.pushnew(map, UUID, "6000","建设银行账单获取成功");
+				flag="6000";
 				 if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 						if(isok==true) {
 					    	PushState.state(UserCard, "bankBillFlow",300);
@@ -133,7 +137,15 @@ public class ConstructionService {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}
 					logger.warn("建设银行账单获取失败"+UserCard);
-					PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+					if(flag.equals("2000")){
+						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+					}else if(flag.equals("5000")){
+						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+					}else if(flag.equals("6000")){
+						PushSocket.pushnew(map, UUID, "9000","认证失败");
+					}else{
+						PushSocket.pushnew(map, UUID, "3000","登录失败");
+					}
 					driver.close();
 					e.printStackTrace();
 					map.clear();

@@ -219,6 +219,7 @@ public class ZXBankService {
         } else {
             HttpClient httpClient = (HttpClient) zxhttpClient;
             String coks = zxImageCodeCook.toString();
+            String flag="";
             try {
                 //提交短信验证码
             	  PushSocket.pushnew(map, UUID, "2000","中信银行登录成功");
@@ -282,6 +283,9 @@ public class ZXBankService {
                     cardlist1.add(cardlist);
                     logger.warn("中信银行获取卡列表失败 mrldw",e);
                     PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
+                    if(isok==true) {
+    					PushState.state(userCard, "bankBillFlow",200);
+    				}
                 }
 
 
@@ -344,6 +348,7 @@ public class ZXBankService {
 
                 logger.warn(sendMap.toString()+"   mrlu");
                 PushSocket.pushnew(map, UUID, "6000","中信银行获取成功");
+                flag="6000";
                 //推送信息
                 Map<String, Object> mapTui = new HashMap<String, Object>();
                 mapTui.put("data", sendMap);
@@ -368,7 +373,16 @@ public class ZXBankService {
                 }
                 
             } catch (Exception e) {
-            	  PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
+            	if( flag.equals("2000")){
+            		PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
+            	}else if(flag.equals("5000")){
+            		PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
+            	}else if(flag.equals("6000")){
+            		PushSocket.pushnew(map, UUID, "9000","中信银行认证失败");
+            	}
+            	  if(isok==true) {
+  					PushState.state(userCard, "bankBillFlow",200);
+  				}
                 logger.warn(e.getMessage() + "  中信获取账单   mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "查询出错");

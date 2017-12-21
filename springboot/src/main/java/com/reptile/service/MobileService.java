@@ -922,6 +922,7 @@ public class MobileService {
 //	 if(webClient.getPage(webRequest2).isHtmlPage()){
 //		
 //	}
+			String flag="";
 			try {
 				TextPage newPage = webClient.getPage(webRequest2);
 				Thread.sleep(1000);
@@ -932,9 +933,9 @@ public class MobileService {
 					//---------------推-------------------
 					PushSocket.pushnew(map, UUID, "2000","登录成功");
 					//---------------推-------------------
-				    System.out.println("验证码成功，可查询");
 //=======================获取详单================================================ 
 					PushSocket.pushnew(map, UUID, "5000","获取数据中");
+					flag="5000";
 					webClient.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 					webClient.addRequestHeader("Accept-Encoding", "gzip, deflate");
 					webClient.addRequestHeader("Accept-Language", "zh-CN,zh;q=0.8");
@@ -950,8 +951,7 @@ public class MobileService {
 					String begin = GetMonth.nowMonth() + "01";//开始是时间
 					String end = GetMonth.today();//结束时间
 					int year = new Integer(begin.substring(0, 4));
-					int month = new Integer(begin.substring(4,
-							6));//获取月  作为获取每个月的最后一天的参数
+					int month = new Integer(begin.substring(4,6));//获取月  作为获取每个月的最后一天的参数
 					String beforMonth = "";//上月
 					for (int i = 1; i < 7; i++) {
 						Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -974,11 +974,9 @@ public class MobileService {
 						dataMap.put("item", chekpages.getContent());
 						listsy.add(dataMap);
 					}
-					if(listsy.size()==0) {
-						PushSocket.pushnew(map, UUID, "7000","数据获取失败");
-					}else {
-						PushSocket.pushnew(map, UUID, "6000","数据获取成功");
-					}
+					 
+					PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+					flag="6000";
 					
 					map.put("errorCode", "0000");
 					map.put("errorInfo", "查询成功");
@@ -1003,13 +1001,9 @@ public class MobileService {
 						//---------------------数据中心推送状态---------------------
 						map.put("errorInfo", "推送失败");
 						map.put("errorCode", "0001");
-						PushSocket.pushnew(map, UUID, "9000","认证失败");
-						
+						PushSocket.pushnew(map, UUID, "9000",("errorInfo").toString());
 					}
 				} else {
-					
-					//---------------推-------------------
-					
 					//---------------推-------------------
 					PushState.state(Useriphone, "callLog", 200);
 					System.out.println(json3.get("error").toString());
@@ -1042,7 +1036,12 @@ public class MobileService {
 				//---------------------数据中心推送状态---------------------
 				map.put("errorInfo", "验证失败,稍后再试");//???????
 				map.put("errorCode", "0001");
-				PushSocket.pushnew(map, UUID, "3000","验证失败,稍后再试");
+				if(flag.equals("5000")){
+					PushSocket.pushnew(map, UUID, "7000","数据获失败");
+				}else if(flag.equals("6000")){
+					PushSocket.pushnew(map, UUID, "9000","认证失败");
+				}
+				
 				return map;
 			}
 
@@ -1050,7 +1049,7 @@ public class MobileService {
 			PushState.state(Useriphone, "callLog", 200);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常");
-			PushSocket.pushnew(map, UUID, "3000","网络异常");
+			PushSocket.pushnew(map, UUID, "3000","登录失败，网络异常");
 			e.printStackTrace();
 		}
 		return map;
@@ -1526,25 +1525,39 @@ public class MobileService {
 						listData.add(dataMap);
 					}
 				}
+				//获取数据失败则不推长连接（认证状态）
 				if(listData.size()>0) {
 					PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+					map.put("data", listData);
+					map.put("CHSIAcount", username);
+					map.put("CHSIPassword", userpwd);
+					map.put("Usercard", userCard);
+					map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
+					System.out.println("学信网数据中心返回结果----"+map);
+					//--------------------数据中心推送状态----------------------
+					if(map.get("errorCode").equals("0000")){
+						PushState.state(userCard, "CHSI", 300);
+						PushSocket.pushnew(map, UUID, "8000","认证成功");
+					}else{
+						PushState.state(userCard, "CHSI", 200);
+						PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+					}
 				}else {
 					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
+					map.put("data", listData);
+					map.put("CHSIAcount", username);
+					map.put("CHSIPassword", userpwd);
+					map.put("Usercard", userCard);
+					map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
+					System.out.println("学信网数据中心返回结果----"+map);
+					//--------------------数据中心推送状态----------------------
+					if(map.get("errorCode").equals("0000")){
+						PushState.state(userCard, "CHSI", 300);
+					}else{
+						PushState.state(userCard, "CHSI", 200);
+					}
 				}
-				map.put("data", listData);
-				map.put("CHSIAcount", username);
-				map.put("CHSIPassword", userpwd);
-				map.put("Usercard", userCard);
-				map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
-				System.out.println("学信网数据中心返回结果----"+map);
-				//--------------------数据中心推送状态----------------------
-				if(map.get("errorCode").equals("0000")){
-					PushState.state(userCard, "CHSI", 300);
-					PushSocket.pushnew(map, UUID, "8000","认证成功");
-				}else{
-					PushState.state(userCard, "CHSI", 200);
-					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
-				}
+				
 
 				//---------------------数据中心推送状态----------------------
 			} else if (pages.asText().contains("您输入的用户名或密码有误")) {

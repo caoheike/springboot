@@ -233,11 +233,7 @@ public class ShanghaiTelecomService {
 						map.put("errorCode", "0001");
 				        map.put("errorInfo", "暂无数据");
 					}
-					if(dataList.size()>0) {
 	                	PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
-	                }else {
-	                	PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-	                }
 				logger.warn("上海电信数据获取成功");	
 			   map.put("data", dataList);
 			   map.put("UserPassword", servePwd);
@@ -262,6 +258,7 @@ public class ShanghaiTelecomService {
 			  logger.warn("上海电信",e);
 			  map.put("errorCode", "0001");
 	          map.put("errorInfo", "网络连接异常!");
+	          PushState.state(phoneNumber, "callLog",200);
 	          PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
 			//e.printStackTrace();
 		}    
