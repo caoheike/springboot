@@ -9,32 +9,11 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/CEBService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/CEBService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChengduTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChengduTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChongQingTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ChongQingTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GansuProvinceService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GansuProvinceService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuangXiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuangXiTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuiZhouTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/GuiZhouTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HeNanTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HeNanTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HuBeiProviceService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/HuBeiProviceService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/JiangSuTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/JiangSuTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/NingXiaTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/NingXiaTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanDongTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanDongTelecomService.java" />
+    <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="Merge branch 'master' of https://github.com/caoheike/springboot&#10;&#10;# Conflicts:&#10;#&#9;springboot/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanghaiTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanghaiTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/XiNingTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/XiNingTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/YunNanTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/YunNanTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ZhejiangTelecomService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ZhejiangTelecomService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ConstructionService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ConstructionService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/PhoneBillsService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/PhoneBillsService.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/ZXBankService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/ZXBankService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/depositCard/ChinaBankDepositCardService.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/depositCard/ChinaBankDepositCardService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/application-dev.yml" afterPath="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -59,11 +38,105 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="application-dev.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="125">
+              <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShanXiTelecomController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="625">
+              <caret line="36" column="31" lean-forward="true" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShanXiTelecomService.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="550">
+              <caret line="40" column="32" lean-forward="false" selection-start-line="40" selection-start-column="32" selection-end-line="40" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application-prod.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="675">
+              <caret line="60" column="20" lean-forward="true" selection-start-line="60" selection-start-column="20" selection-end-line="60" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="50">
+              <caret line="2" column="15" lean-forward="false" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConstantInterface.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="350">
+              <caret line="14" column="44" lean-forward="false" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="talkFrame.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+              <folding>
+                <marker date="1513589351586" expanded="true" signature="1862:1868" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WebSocketConfig.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="400">
+              <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#425#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="MobileService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1981">
-              <caret line="1409" column="31" lean-forward="false" selection-start-line="1409" selection-start-column="31" selection-end-line="1409" selection-end-column="31" />
+            <state relative-caret-position="-1125">
+              <caret line="1426" column="46" lean-forward="true" selection-start-line="1426" selection-start-column="46" selection-end-line="1426" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2311#2327#0" expanded="true" />
@@ -120,163 +193,6 @@
                 <marker date="1513819719430" expanded="false" signature="72903:72919" ph="&lt;~&gt;" />
                 <marker date="1513819719430" expanded="false" signature="72960:72976" ph="&lt;~&gt;" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShanXiTelecomService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3025">
-              <caret line="139" column="64" lean-forward="true" selection-start-line="139" selection-start-column="64" selection-end-line="139" selection-end-column="64" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShanXiTelecomController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="29" column="17" lean-forward="true" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="67" column="53" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="53" />
-              <folding>
-                <marker date="1513819634107" expanded="true" signature="2238:2410" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="2431:2576" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="2597:2760" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="2804:2921" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="2964:3130" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="3151:3319" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="3366:3520" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="3541:3704" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="3725:3872" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="3894:4052" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4073:4223" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4245:4396" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4417:4574" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4596:4736" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4758:4893" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="4914:5053" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5074:5220" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5242:5387" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5410:5542" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5563:5706" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5729:5896" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="5917:6069" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="6090:6246" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="6268:6487" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="6509:6657" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="6679:6835" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="6856:6999" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7021:7180" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7201:7362" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7383:7534" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7555:7715" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7737:7885" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="7907:8060" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="8082:8224" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="8453:8604" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="8625:8791" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="8839:8983" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="9004:9161" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="9208:9471" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="9493:9654" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="9676:9793" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="9838:9988" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10030:10206" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10244:10864" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10262:10851" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10283:10663" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10479:10641" ph="..." />
-                <marker date="1513819634107" expanded="true" signature="10684:10832" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PhoneBillsController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/PhoneBillsController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="31" column="38" lean-forward="false" selection-start-line="31" selection-start-column="38" selection-end-line="31" selection-end-column="38" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PhoneBillsService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/PhoneBillsService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="339" column="92" lean-forward="false" selection-start-line="339" selection-start-column="92" selection-end-line="339" selection-end-column="92" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="InterfaceController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="483" column="37" lean-forward="true" selection-start-line="483" selection-start-column="37" selection-end-line="483" selection-end-column="37" />
-              <folding>
-                <element signature="e#14186#14202#0" expanded="true" />
-                <element signature="e#24850#24866#0" expanded="true" />
-                <element signature="e#24911#24927#0" expanded="true" />
-                <element signature="e#25824#25840#0" expanded="true" />
-                <element signature="e#25887#25903#0" expanded="true" />
-                <element signature="e#28505#28520#0" expanded="true" />
-                <element signature="e#34448#34463#0" expanded="true" />
-                <element signature="e#35479#35487#0" expanded="true" />
-                <element signature="e#36392#36400#0" expanded="true" />
-                <element signature="e#37290#37305#0" expanded="true" />
-                <element signature="e#38335#38343#0" expanded="true" />
-                <marker date="1513819719477" expanded="false" signature="30441:30457" ph="&lt;~&gt;" />
-                <marker date="1513819719477" expanded="false" signature="34998:35014" ph="&lt;~&gt;" />
-                <marker date="1513819719477" expanded="false" signature="37854:37870" ph="&lt;~&gt;" />
-                <marker date="1513819719477" expanded="false" signature="40367:40383" ph="&lt;~&gt;" />
-                <marker date="1513819719477" expanded="false" signature="40423:40439" ph="&lt;~&gt;" />
-                <marker date="1513819719477" expanded="false" signature="42440:42455" ph="&lt;~&gt;" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PushSocket.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ZXBankService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ZXBankService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="183" column="37" lean-forward="false" selection-start-line="183" selection-start-column="37" selection-end-line="183" selection-end-column="37" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JSONObject.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.2.2/json-lib-2.2.2-jdk15.jar!/net/sf/json/JSONObject.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
-              <caret line="5" column="10" lean-forward="false" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -388,7 +304,6 @@
         <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/contorller/LingYingMessageController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/AliyunHtmlUnit.java" />
         <option value="$MAVEN_REPOSITORY$/com/baidu/aip/java-sdk/3.4.1/java-sdk-3.4.1.jar!/com/baidu/aip/ocr/AipOcr.class" />
@@ -397,7 +312,6 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/SendMail.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/RecognizeImage.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/GongShangInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/AopClass.java" />
@@ -407,6 +321,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ZXBankService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
       </list>
     </option>
   </component>
@@ -547,6 +463,15 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="reptile" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="springboot" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="reptile" type="462c0819:PsiDirectoryNode" />
               <item name="springboot" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -564,36 +489,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.skyscreamer:jsonassert:1.4.0" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.skyscreamer:jsonassert:1.4.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="jsonassert-1.4.0.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.skyscreamer:jsonassert:1.4.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="jsonassert-1.4.0.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.skyscreamer:jsonassert:1.4.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="jsonassert-1.4.0.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="json" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1499,11 +1394,18 @@
       <option name="project" value="LOCAL" />
       <updated>1513749737940</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Merge branch 'master' of https://github.com/caoheike/springboot&#10;&#10;# Conflicts:&#10;#&#9;springboot/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
+      <created>1513819993464</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1513819993464</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="430163000" />
+    <option name="totallyTimeSpent" value="430421000" />
   </component>
   <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
@@ -1668,7 +1570,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="新增代理ip功能，&#10;设置定时器&#10;新增webclient获取类" />
     <MESSAGE value="代理ip不可用，则生成新的代理ip" />
     <MESSAGE value="获取ip出错时，定时器不做事情" />
     <MESSAGE value="新增城市id" />
@@ -1693,7 +1594,8 @@
     <MESSAGE value="java执行js文件 mrlu12 19" />
     <MESSAGE value="格式规范化  mrlu 12 19" />
     <MESSAGE value="处理base64无法正常打包  mrlu 12 20" />
-    <option name="LAST_COMMIT_MESSAGE" value="处理base64无法正常打包  mrlu 12 20" />
+    <MESSAGE value="Merge branch 'master' of https://github.com/caoheike/springboot&#10;&#10;# Conflicts:&#10;#&#9;springboot/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'master' of https://github.com/caoheike/springboot&#10;&#10;# Conflicts:&#10;#&#9;springboot/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1722,20 +1624,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/SimpleHttpClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/CountTime.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-925">
@@ -1827,14 +1715,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="2" column="15" lean-forward="false" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/JavaExcuteJs.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
@@ -1895,13 +1775,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="29" column="19" lean-forward="false" selection-start-line="29" selection-start-column="19" selection-end-line="29" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="14" column="0" lean-forward="false" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1974,22 +1847,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="41" lean-forward="false" selection-start-line="16" selection-start-column="41" selection-end-line="16" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="14" column="44" lean-forward="false" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/springboot/SpringbootApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -2037,63 +1894,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="67" column="53" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="53" />
-          <folding>
-            <marker date="1513819634107" expanded="true" signature="2238:2410" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="2431:2576" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="2597:2760" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="2804:2921" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="2964:3130" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="3151:3319" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="3366:3520" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="3541:3704" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="3725:3872" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="3894:4052" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4073:4223" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4245:4396" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4417:4574" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4596:4736" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4758:4893" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="4914:5053" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5074:5220" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5242:5387" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5410:5542" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5563:5706" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5729:5896" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="5917:6069" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="6090:6246" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="6268:6487" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="6509:6657" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="6679:6835" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="6856:6999" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7021:7180" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7201:7362" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7383:7534" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7555:7715" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7737:7885" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="7907:8060" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="8082:8224" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="8453:8604" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="8625:8791" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="8839:8983" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="9004:9161" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="9208:9471" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="9493:9654" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="9676:9793" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="9838:9988" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10030:10206" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10244:10864" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10262:10851" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10283:10663" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10479:10641" ph="..." />
-            <marker date="1513819634107" expanded="true" signature="10684:10832" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/PhoneBillsController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="185">
@@ -2110,10 +1910,78 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="483" column="37" lean-forward="true" selection-start-line="483" selection-start-column="37" selection-end-line="483" selection-end-column="37" />
+          <folding>
+            <element signature="e#14186#14202#0" expanded="true" />
+            <element signature="e#24850#24866#0" expanded="true" />
+            <element signature="e#24911#24927#0" expanded="true" />
+            <element signature="e#25824#25840#0" expanded="true" />
+            <element signature="e#25887#25903#0" expanded="true" />
+            <element signature="e#28505#28520#0" expanded="true" />
+            <element signature="e#34448#34463#0" expanded="true" />
+            <element signature="e#35479#35487#0" expanded="true" />
+            <element signature="e#36392#36400#0" expanded="true" />
+            <element signature="e#37290#37305#0" expanded="true" />
+            <element signature="e#38335#38343#0" expanded="true" />
+            <marker date="1513819719477" expanded="false" signature="30441:30457" ph="&lt;~&gt;" />
+            <marker date="1513819719477" expanded="false" signature="34998:35014" ph="&lt;~&gt;" />
+            <marker date="1513819719477" expanded="false" signature="37854:37870" ph="&lt;~&gt;" />
+            <marker date="1513819719477" expanded="false" signature="40367:40383" ph="&lt;~&gt;" />
+            <marker date="1513819719477" expanded="false" signature="40423:40439" ph="&lt;~&gt;" />
+            <marker date="1513819719477" expanded="false" signature="42440:42455" ph="&lt;~&gt;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding>
+            <marker date="1513589351586" expanded="true" signature="1862:1868" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="14" column="44" lean-forward="false" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="60" column="20" lean-forward="true" selection-start-line="60" selection-start-column="20" selection-end-line="60" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/MobileService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1981">
-          <caret line="1409" column="31" lean-forward="false" selection-start-line="1409" selection-start-column="31" selection-end-line="1409" selection-end-column="31" />
+        <state relative-caret-position="-1125">
+          <caret line="1426" column="46" lean-forward="true" selection-start-line="1426" selection-start-column="46" selection-end-line="1426" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2311#2327#0" expanded="true" />
@@ -2173,52 +2041,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3025">
-          <caret line="139" column="64" lean-forward="true" selection-start-line="139" selection-start-column="64" selection-end-line="139" selection-end-column="64" />
+        <state relative-caret-position="400">
+          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#425#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="2" column="15" lean-forward="false" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/ChinaTelecom/ShanXiTelecomController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="29" column="17" lean-forward="true" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+        <state relative-caret-position="625">
+          <caret line="36" column="31" lean-forward="true" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/ShanXiTelecomService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="483" column="37" lean-forward="true" selection-start-line="483" selection-start-column="37" selection-end-line="483" selection-end-column="37" />
-          <folding>
-            <element signature="e#14186#14202#0" expanded="true" />
-            <element signature="e#24850#24866#0" expanded="true" />
-            <element signature="e#24911#24927#0" expanded="true" />
-            <element signature="e#25824#25840#0" expanded="true" />
-            <element signature="e#25887#25903#0" expanded="true" />
-            <element signature="e#28505#28520#0" expanded="true" />
-            <element signature="e#34448#34463#0" expanded="true" />
-            <element signature="e#35479#35487#0" expanded="true" />
-            <element signature="e#36392#36400#0" expanded="true" />
-            <element signature="e#37290#37305#0" expanded="true" />
-            <element signature="e#38335#38343#0" expanded="true" />
-            <marker date="1513819719477" expanded="false" signature="30441:30457" ph="&lt;~&gt;" />
-            <marker date="1513819719477" expanded="false" signature="34998:35014" ph="&lt;~&gt;" />
-            <marker date="1513819719477" expanded="false" signature="37854:37870" ph="&lt;~&gt;" />
-            <marker date="1513819719477" expanded="false" signature="40367:40383" ph="&lt;~&gt;" />
-            <marker date="1513819719477" expanded="false" signature="40423:40439" ph="&lt;~&gt;" />
-            <marker date="1513819719477" expanded="false" signature="42440:42455" ph="&lt;~&gt;" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        <state relative-caret-position="550">
+          <caret line="40" column="32" lean-forward="false" selection-start-line="40" selection-start-column="32" selection-end-line="40" selection-end-column="32" />
           <folding />
         </state>
       </provider>

@@ -45,7 +45,7 @@ public class ShanXiTelecomService {
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
         PushState.state(phoneNumber, "callLog",100);
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushSocket.pushnew(map, uuid, "1000","登录中");
 
         Object attribute = session.getAttribute("GBmobile-webclient");
 
@@ -137,7 +137,6 @@ public class ShanXiTelecomService {
                     map.put("errorCode", "0005");
                     map.put("errorInfo", "业务办理失败！");
                     PushSocket.pushnew(map, uuid, "7000","获取数据失败");
-                    PushSocket.pushnew(map, UUID, "7000","获取数据失败");
                     PushState.state(phoneNumber, "callLog",200);
                 }
             } catch (Exception e) {
@@ -145,7 +144,7 @@ public class ShanXiTelecomService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200);
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){
                     webClient.close();
