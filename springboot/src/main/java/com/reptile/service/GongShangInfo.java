@@ -17,6 +17,8 @@ public class GongShangInfo {
         HtmlPage page = webClient.getPage("http://sn.gsxt.gov.cn");
 
         TextPage page1 = webClient.getPage("http://sn.gsxt.gov.cn/StartCaptchaServlet?&time=" + System.currentTimeMillis());
+
+
         System.out.println(page1.getContent());
 
     }
