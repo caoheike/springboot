@@ -1452,6 +1452,9 @@ public class MobileService {
 						UnexpectedPage page = webClient.getPage(src);
 						InputStream contentAsStream = page.getWebResponse().getContentAsStream();
 						BufferedImage read = ImageIO.read(contentAsStream);
+						Map<String,String> dataMap=new HashMap<>();
+						//获取图片的二进制
+						String jpg = RecognizeImage.getImageBinary(read, "jpg");
 
 						String realPath = request.getSession().getServletContext().getRealPath("/xzimage");
 						File file=new File(realPath);
@@ -1460,13 +1463,12 @@ public class MobileService {
 						}
 						String fileName="xz"+System.currentTimeMillis()+".jpg";
 						ImageIO.write(read,"jpg",new File(file,fileName));
-//						String path = RecognizeImage.binaryImage(request, read);
 						org.json.JSONObject jsonObject = RecognizeImage.recognizeImage(realPath+"/"+fileName);
 						System.out.println(jsonObject.toString(2));
 						String result = jsonObject.get("words_result").toString();
 
 						JSONArray jsonArray = JSONArray.fromObject(result);
-						Map<String,String> dataMap=new HashMap<>();
+
 						dataMap.put("schoolLength","");
 						dataMap.put("schoolName","");
 						dataMap.put("studentNumber","");
@@ -1482,6 +1484,7 @@ public class MobileService {
 						dataMap.put("branchCourts","");
 						dataMap.put("schoolStatus","");
 						dataMap.put("cardNumber","");
+						dataMap.put("imageUrl",jpg);
 						for (int i=0;i<jsonArray.size();i++){
 							String words = jsonArray.getJSONObject(i).get("words").toString();
 							if(words.contains("名:")){

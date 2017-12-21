@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+
+/**
+ * 陕西电信controller
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("ShanXiTelecomController")
 public class ShanXiTelecomController {
@@ -23,10 +30,10 @@ public class ShanXiTelecomController {
     @ResponseBody
     @RequestMapping(value = "TelecomLogin", method = RequestMethod.POST)
     @ApiOperation(value = "陕西电信登录", notes = "电信登录")
-    public Map<String, Object> TelecomLogin(HttpServletRequest req, @RequestParam("userPhone") String userPhone,
+    public Map<String, Object> telecomLogin(HttpServletRequest req, @RequestParam("userPhone") String userPhone,
                                             @RequestParam("userPassword") String userPassword,@RequestParam("longitude") String longitude,
                                             @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID) throws Exception {
        System.out.println("--------");
-    	return service.TelecomLogin(req, userPhone,userPassword,longitude,latitude,UUID);
+    	return service.telecomLogin(req, userPhone,userPassword,longitude,latitude,UUID);
     }
 }
