@@ -18,7 +18,7 @@ public interface ConstantInterface {
 
     //正式环境
 //        String MyCYDMDemoDLLPATH = "C://yundamaAPI.dll";
-//    	String port="http://10.1.1.12:8080";
+//    	  String port="http://10.1.1.12:8080";
 //        String ieDriverValue = "D:\\ie\\IEDriverServer.exe";
 //        String chromeDriverValue = "D:\\ie\\chromedriver.exe";
 }
