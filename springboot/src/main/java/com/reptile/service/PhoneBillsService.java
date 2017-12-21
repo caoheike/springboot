@@ -344,7 +344,7 @@ public class PhoneBillsService {
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
-                    PushSocket.pushnew(map, UUID, "3000","登录失败");
+                    PushSocket.pushnew(map, UUID, "3000",jsonObject.get("retMsg").toString());
                     return map;
                 }
                 PushSocket.pushnew(map, UUID, "2000","登录成功");

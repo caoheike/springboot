@@ -988,7 +988,8 @@ public class MobileService {
 					//map=resttemplate.SendMessage(map, "http://192.168.3.35:8080/HSDC/message/linkCallRecord");//魏艳
 					//map=resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/linkCallRecord");//胡献根
 					map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/message/linkCallRecord");
-					if (map != null && "0000".equals(map.get("errorCode").toString())) {
+					System.out.println("推送后=="+map);
+					if ("0000".equals(map.get("errorCode").toString())) {
 						
 						PushState.state(Useriphone, "callLog", 300);
 						map.put("errorInfo", "推送成功");
@@ -999,9 +1000,9 @@ public class MobileService {
 						//--------------------数据中心推送状态----------------------
 						PushState.state(Useriphone, "callLog", 200);
 						//---------------------数据中心推送状态---------------------
-						map.put("errorInfo", "推送失败");
+						map.put("errorInfo", map.get("errorInfo").toString());
 						map.put("errorCode", "0001");
-						PushSocket.pushnew(map, UUID, "9000",("errorInfo").toString());
+						PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					}
 				} else {
 					//---------------推-------------------
