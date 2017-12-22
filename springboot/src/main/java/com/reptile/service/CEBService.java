@@ -29,8 +29,9 @@ public class CEBService {
 	  private Logger logger= LoggerFactory.getLogger(CEBService.class);
 	  private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
-		public Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
-			 Map<String, Object> map=new HashMap<String, Object>();
+		public synchronized Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
+			
+			Map<String, Object> map=new HashMap<String, Object>();
 			 System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 
 			 WebDriver driver = new InternetExplorerDriver();
@@ -59,12 +60,10 @@ public class CEBService {
 				String filename="CEB//"+System.currentTimeMillis()+".png";
 				File screenshotLocation = new File("C://"+filename);
 				FileUtils.copyFile(screenshot, screenshotLocation);
-				System.out.println(screenshotLocation);
 				MyCYDMDemo dem=new MyCYDMDemo();
 				Map<String,Object> map1=dem.Imagev("C://"+filename);//图片验证，打码平台
-				System.out.println(map1);
 				String strResult= (String) map1.get("strResult");
-//					拿到打码平台返回的值
+//				拿到打码平台返回的值
 //				String catph= dem.getcode(filename);
 				loginform.findElement(By.id("yzmcode")).sendKeys(strResult);
 				Thread.sleep(3000);
@@ -96,15 +95,16 @@ public class CEBService {
 			        Thread.sleep(2000);
 			        button.get(0).click();
 			        Thread.sleep(1000);
-			        System.out.println(driver.getPageSource().contains("popup-dialog-message"));
 			        if(driver.getPageSource().contains("popup-dialog-message")){
 			          driver.findElement(ByClassName.className("popup-dialog-message"));
-			          System.out.println("报错！！！");
 			          logger.info("光大银行登录时输入有误"+Usercard);
 			          map.put("errorInfo","光大银行登录时输入有误");
 			          map.put("errorCode","0002");
-			          System.out.println(map);
-			          driver.close();
+			      	try {
+						driver.quit();
+					} catch (Exception e3) {
+						// TODO: handle exception
+					}
 			          Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 			        }else {
 			          HttpSession session=request.getSession();//获得session
@@ -114,14 +114,17 @@ public class CEBService {
 			          map.put("errorInfo","动态密码发送成功");
 			          map.put("errorCode","0000");
 			          map.put("data",data);
-			          System.out.println(map);
 			        }
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.info("光大银行登录时发送验证码失败"+Usercard);
 				map.put("errorInfo","服务繁忙！请稍后再试，验证码发送失败");
 				map.put("errorCode","0001");
-				driver.close();
+				try {
+					driver.quit();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
 			}
 			return map;
 			
@@ -147,10 +150,9 @@ public class CEBService {
 					map.put("errorInfo","连接超时！请重新获取验证码");
 					map.put("errorCode","0002");
 					PushSocket.pushnew(map, UUID, "3000","连接超时！请重新获取验证码");
-					driver.close();
 					 try {
-						Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
-					} catch (IOException e) {
+						 driver.quit();
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -169,8 +171,12 @@ public class CEBService {
 					}					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","短信验证码输入有误");
 					map.put("errorCode","0002");
-					driver.close();
-					 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+					 try {
+						 driver.quit();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					 PushSocket.pushnew(map, UUID, "3000","短信验证码输入有误");
 				} catch (Exception e) {
 					
@@ -209,7 +215,12 @@ public class CEBService {
 				  	System.out.println(seo);
 				  	Resttemplate resttemplate = new Resttemplate();
 					map=resttemplate.SendMessage(seo,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
-					driver.close();
+					 try {
+						 driver.quit();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 				    	if(isok==true) {
 				    		PushState.state(UserCard, "bankBillFlow",300);
@@ -230,12 +241,11 @@ public class CEBService {
 				}
 				
 			} catch (Exception e) {
-				driver.close();
 				 try {
-					Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
-				} catch (IOException e1) {
+					 driver.quit();
+				} catch (Exception e3) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e3.printStackTrace();
 				}
 				//---------------------------数据中心推送状态----------------------------------
 				 if(isok==true) {

@@ -101,6 +101,9 @@ public class ChinaBankService {
                 return map;
             }
             String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
+            if(code.length()==0){
+            	code="5210";
+            }
 
             List<WebElement> input2 = driver.findElements(By.className("input"));
             for (int i = 0; i < input2.size(); i++) {
@@ -156,7 +159,7 @@ public class ChinaBankService {
                     id = listDom.get(i).getAttribute("id");
                 }
             }
-            System.out.println(id);
+            System.out.println("id===="+id);
             String count = String.valueOf(driver.executeScript("return $(\"#" + id + " ul li\").length;"));
             System.out.println("mrludw    " + count);
             List<String> listData = new ArrayList<String>();

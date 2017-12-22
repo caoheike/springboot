@@ -530,7 +530,7 @@ public class CreditService {
         Map<String, Object> map = new HashMap<String, Object>();
         Map<String, Object> data = new HashMap<String, Object>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
-        PushState.state(userId, "callLog",100);
+        PushState.state(userId, "creditInvestigation",100);
         try {
         	Thread.sleep(2000);
             Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
@@ -597,13 +597,13 @@ public class CreditService {
                             map.put("errorInfo", "查询成功");
                             map.put("errorCode", "0000");
                             PushSocket.pushnew(map, UUID, "8000","认证成功");
-                            PushState.state(userId, "callLog",300);
+                            PushState.state(userId, "creditInvestigation",300);
 
                         } else {
                             map.put("errorInfo", map.get("ResultInfo"));
                             map.put("errorCode", "0001");
                             PushSocket.pushnew(map, UUID, "9000",map.get("ResultInfo").toString());
-                            PushState.state(userId, "callLog",200);
+                            PushState.state(userId, "creditInvestigation",200);
                         }
                         webClient.close();
                     } catch (Exception e) {
@@ -612,6 +612,7 @@ public class CreditService {
                         map.put("ResultCode", "0002");
                         map.put("errorInfo", "系统繁忙，请稍后再试！");
                         map.put("errorCode", "0002");
+                        PushState.state(userId, "creditInvestigation",200);
                         PushSocket.pushnew(map, UUID, "9000","系统繁忙，请稍后再试！");
                         webClient.close();
                     }

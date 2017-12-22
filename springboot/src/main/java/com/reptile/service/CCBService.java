@@ -15,6 +15,13 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
 
+
+
+
+
+
+
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +30,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,9 +56,11 @@ public class CCBService {
 			Map<String, Object> map=new HashMap<String, Object>();
 			Map<String,Object> data=new HashMap<String,Object>();
 			
-			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
-			WebDriver driver = new ChromeDriver();
-
+			//System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
+			//WebDriver driver = new ChromeDriver();
+			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
+			WebDriver driver = new InternetExplorerDriver();
+			
 			driver.get(CEBlogin);
 			driver.navigate().refresh();
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待
@@ -69,21 +79,25 @@ public class CCBService {
 	        driver.findElement(By.id("LOGPASS")).sendKeys(cardPass);
 	        driver.findElement(By.id("loginButton")).click();
 	        String dpage1=driver.getPageSource();
-	        System.out.println("aaa----------"+dpage1+"aaaa-----------");
-	        System.out.println(dpage1.indexOf("您输入的登录密码"));
-	        System.out.println(dpage1.indexOf("您输入的登录密码")==1);
 	        if(dpage1.indexOf("您输入的登录密码")!=-1){
 	        	logger.warn("登录密码错误"+IDNumber+driver.getPageSource());
 	        	map.put("errorInfo","您输入的登录密码错误");
 	            map.put("errorCode","0003");
-	            driver.close();
+	        	try {
+					driver.quit();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
 	        	PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的登录密码错误");
 	            return map;  
 	        }
-	        System.out.println(dpage1.indexOf("您输入的信息有误")!=-1);
 	        if(dpage1.indexOf("您输入的信息有误")!=-1){
 	        	logger.warn("登录信息填写有误"+IDNumber+driver.getPageSource());
-	        	  driver.close();
+	        	try {
+					driver.quit();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
 	            PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的信息有误");
@@ -113,19 +127,21 @@ public class CCBService {
 				 Document page= Jsoup.parse(driver.getPageSource());
 				 accountType	=page.getElementsByClass("mt_10").text();//开户状态
 				 PushSocket.pushnew(map, UUID, "5000","建设银行储蓄卡获取中");
-				 System.out.println(accountType);
 				 page.getElementsByClass("pl_10 pt_10").text();
 				 String open= page.getElementsByClass("mb_20").text();
 				 openBranch=open.substring(open.indexOf("签约分行")+5, open.lastIndexOf("签约状态"));//开户网点
 				 openTime =open.substring(open.indexOf("可用余额 操作")+9, open.lastIndexOf("活期储蓄"));//开户时间
-				 System.out.println(open);
 				 driver.findElement(ByXPath.xpath("/html/body/div/div[2]/table/tbody/tr/td[6]/a")).click();//点击查看明细
 				 Thread.sleep(5000);
 				} catch (Exception e) {
 					PushState.state(IDNumber, "savings",200);
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+IDNumber);
 	            	 PushSocket.pushnew(map, UUID, "7000","建设银行储蓄卡获取失败");
-	            	  driver.close();
+	            		try {
+	    					driver.quit();
+	    				} catch (Exception e2) {
+	    					// TODO: handle exception
+	    				}
 		        	map.put("errorInfo","网络异常！数据加载过慢");
 		            map.put("errorCode","0004");
 		        	return map;  
@@ -135,7 +151,6 @@ public class CCBService {
 			    try {  
 			        String currentHandle = driver.getWindowHandle();  
 			        Set<String> handles = driver.getWindowHandles();  
-			        System.out.println("currentHandle:"+currentHandle+"handles:"+handles.toString()+"driver.getTitle():"+driver.getTitle());
 			        for (String s : handles) {  
 			            if (s.equals(currentHandle))  
 			                continue;  
@@ -151,7 +166,6 @@ public class CCBService {
 			     			    date = sdf.parse(time);//初始日期
 			     			    c.setTime(date);//设置日历时间
 			     			    c.add(Calendar.MONTH,-10);//在日历的月份上减少10个月
-			     			    System.out.println(sdf.format(c.getTime()));//得到6个月后的日期
 			     			    //-------------------------------------------------------------------
 			     			    JavascriptExecutor jss = (JavascriptExecutor) driver;
 			     			    String jsv =" $('#START_DATE').val('"+sdf.format(c.getTime())+"');";
@@ -266,16 +280,22 @@ public class CCBService {
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
 				                //PushSocket.push(map, UUID, "0000");
-				                driver.close();
-				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				            	try {
+									driver.quit();
+								} catch (Exception e2) {
+									// TODO: handle exception
+								}
 				                
 				            }else{
 				            	PushState.state(IDNumber, "savings",200);
 				            	PushSocket.pushnew(map, UUID, "9000","建设银行储蓄卡认证失败");
 				            	logger.warn("建设银行数据推送失败"+IDNumber);
 				                //PushSocket.push(map, UUID, "0001");
-				                driver.close();
-				                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+				            	try {
+									driver.quit();
+								} catch (Exception e2) {
+									// TODO: handle exception
+								}
 				            	return map;
 				            }
 			                 break;  
@@ -293,13 +313,11 @@ public class CCBService {
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
 //					 driver.quit();
-					  driver.close();
-					  try {
-						Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+						try {
+							driver.quit();
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
 					 return map;  
 			    }
 			    return map;  

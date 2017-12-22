@@ -90,6 +90,9 @@ public class ChinaBankDepositCardService {
 
             //识别验证码
             String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
+            if(code.length()==0){
+            	code="5210";
+            }
             //输入验证码
             input.get(5).sendKeys(code.toLowerCase());
             //提交信息登录
