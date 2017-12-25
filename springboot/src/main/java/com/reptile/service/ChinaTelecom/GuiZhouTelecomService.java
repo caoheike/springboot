@@ -101,6 +101,7 @@ public class GuiZhouTelecomService {
 	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
+			     PushState.state(phoneNumber, "callLog",200);
 			     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 				 return map;
 		    }
@@ -122,6 +123,7 @@ public class GuiZhouTelecomService {
 				 if(code==null||code.equals("")){
 					 //PushSocket.push(map, UUID, "0001");
 					 PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
+					 PushState.state(phoneNumber, "callLog",200);
 					 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码不能为空");
             		 return map; 
@@ -131,6 +133,7 @@ public class GuiZhouTelecomService {
 					 //PushSocket.push(map, UUID, "0001");
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
+ 					PushState.state(phoneNumber, "callLog",200);
  					PushSocket.pushnew(map, UUID, "3000","验证码错误");
             		 return map; 
             	 }else{		 
@@ -146,6 +149,7 @@ public class GuiZhouTelecomService {
 				//PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
+	            PushState.state(phoneNumber, "callLog",200);
 	            PushSocket.pushnew(map, UUID, "3000","网络连接异常");
 				//e.printStackTrace();
 				return map;

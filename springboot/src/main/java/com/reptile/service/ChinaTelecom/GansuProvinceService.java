@@ -78,6 +78,7 @@ public class GansuProvinceService {
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
 	        	PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
+	        	PushState.state(UserNum, "callLog",200);
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
@@ -131,6 +132,7 @@ public class GansuProvinceService {
 			                PushSocket.pushnew(map, UUID, "8000","认证成功");
 			         }else{
 			        	 //PushSocket.push(map, UUID, "0001");
+			        	 PushState.state(UserNum, "callLog",200);
 			        	 PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 			            	//--------------------数据中心推送状态----------------------
 			            	//---------------------数据中心推送状态----------------------
@@ -146,7 +148,6 @@ public class GansuProvinceService {
 						 map.put("errorCode","0002");
 				}
 	        }
-	      
 		 return map;
 	 }
 }

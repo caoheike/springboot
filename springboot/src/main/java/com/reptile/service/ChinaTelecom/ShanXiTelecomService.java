@@ -52,6 +52,7 @@ public class ShanXiTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushState.state(phoneNumber, "callLog",200);
             PushSocket.pushnew(map, uuid, "3000","登录失败，操作异常");
         } else {
         	PushSocket.pushnew(map, uuid, "2000","登录成功");
@@ -112,7 +113,6 @@ public class ShanXiTelecomService {
                     }
 
                 }
-                if(dataList.size()!=0){
                 	PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                     map.put("UserIphone",phoneNumber);
                     map.put("UserPassword",serverPwd);
@@ -133,12 +133,6 @@ public class ShanXiTelecomService {
     					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
     					PushState.state(phoneNumber, "callLog",200);
     				}
-                }else{
-                    map.put("errorCode", "0005");
-                    map.put("errorInfo", "业务办理失败！");
-                    PushSocket.pushnew(map, uuid, "7000","获取数据失败");
-                    PushState.state(phoneNumber, "callLog",200);
-                }
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
                 map.put("errorCode", "0001");

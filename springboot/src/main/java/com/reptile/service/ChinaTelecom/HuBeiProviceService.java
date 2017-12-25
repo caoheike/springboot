@@ -102,6 +102,7 @@ public class HuBeiProviceService {
 	        	
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
+	            PushState.state(PhoneNume, "callLog",200);
 	            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
 	            return map;
 	        } else {
@@ -151,6 +152,8 @@ public class HuBeiProviceService {
 					if(Phonedetailed.indexOf(PhoneCode)!=-1){
 		     			map.put("errorCode", "0002");
 		     			map.put("errorInfo", "获取数据为空!");
+		     			PushState.state(PhoneNume, "callLog",200);
+		            	PushSocket.pushnew(map, UUID, "7000","暂无数据");
 		     			return map;
 		     			
 		     		}

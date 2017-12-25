@@ -538,6 +538,7 @@ public class CreditService {
                 final WebClient webClient = (WebClient) sessionWebClient;
                 HtmlPage queryPage = webClient.getPage(queryUrl);
                 Thread.sleep(3000);
+                PushSocket.pushnew(map, UUID, "2000","登录成功");
                 //判断3个选项中个人信用报告是否可选
                 NamedNodeMap radiobutton1 = queryPage.getElementById("radiobutton1").getAttributes();
                 Node aClass = radiobutton1.getNamedItem("disabled");
@@ -546,6 +547,8 @@ public class CreditService {
                     map.put("ResultInfo", "信用报告未生成！");
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", "信用报告未生成！");
+                    PushState.state(userId, "creditInvestigation",200);
+                    PushSocket.pushnew(map, UUID, "3000","信用报告未生成！");
                     map.put("errorCode", "0001");
                     return map;
                 }
@@ -560,11 +563,11 @@ public class CreditService {
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("errorCode", "0001");
+                    PushState.state(userId, "creditInvestigation",200);
                     PushSocket.pushnew(map, UUID, "3000",resultPage.getElementById("codeinfo").asText());
                 } else {
                     //推送长连接状态
                     //PushSocket.push(map, UUID, "0000");
-                	 PushSocket.pushnew(map, UUID, "2000","登录成功");
                 	 Thread.sleep(2000);
                 	 PushSocket.pushnew(map, UUID, "5000","获取数据中");
                     HtmlTable table = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(1);
@@ -622,6 +625,7 @@ public class CreditService {
                 map.put("ResultCode", "0002");
                 map.put("errorInfo", "您已超时,请重新登录查询!");
                 map.put("errorCode", "0002");
+                PushState.state(userId, "creditInvestigation",200);
                 PushSocket.pushnew(map, UUID, "3000","您已超时,请重新登录查询!");
             }
         } catch (Exception e) {
@@ -630,6 +634,7 @@ public class CreditService {
             map.put("ResultCode", "0002");
             map.put("errorInfo", "系统繁忙，请稍后再试！");
             map.put("errorCode", "0002");
+            PushState.state(userId, "creditInvestigation",200);
             PushSocket.pushnew(map, UUID, "3000","系统繁忙，请稍后再试！");
         }
         data.put("reportHtml", "");

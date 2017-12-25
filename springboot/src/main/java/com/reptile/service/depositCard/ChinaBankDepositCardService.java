@@ -120,6 +120,15 @@ public class ChinaBankDepositCardService {
                 return map;
             }
             
+            boolean contains = driver.getPageSource().contains("用户名/银行卡号");
+            if(contains){
+            	map.put("errorCode", "0001");
+                map.put("errorInfo", "登录失败，系统繁忙");
+                PushSocket.pushnew(map, UUID, "3000","登录失败，系统繁忙");
+                driver.quit();
+                return map;
+            }
+            
             PushSocket.pushnew(map, UUID, "2000","登录成功");
             Thread.sleep(2000);
             PushSocket.pushnew(map, UUID, "5000","数据获取中");

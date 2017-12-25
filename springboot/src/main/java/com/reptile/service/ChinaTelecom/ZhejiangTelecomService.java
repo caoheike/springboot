@@ -117,6 +117,7 @@ public class ZhejiangTelecomService {
 		    	//PushSocket.push(map, UUID, "0001");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");
+			     PushState.state(phoneNumber, "callLog",200);
 			     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 				 return map;
 		    }
@@ -196,7 +197,7 @@ public class ZhejiangTelecomService {
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
 					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-					
+					PushState.state(phoneNumber, "callLog",200);
 					return map;
 				}
 		}

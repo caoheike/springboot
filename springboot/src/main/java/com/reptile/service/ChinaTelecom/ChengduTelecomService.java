@@ -124,6 +124,7 @@ public class ChengduTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
+            PushState.state(phoneNumber, "callLog",200);
             PushSocket.pushnew(map, UUID, "3000","手机验证码错误,请重新获取!");
             return map;
         } else {

@@ -193,6 +193,7 @@ public class ShanDongTelecomService {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushState.state(userIphone, "callLog",200);
             PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常!");
         } else {
             try {

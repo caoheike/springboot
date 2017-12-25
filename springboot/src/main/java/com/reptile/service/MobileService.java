@@ -9,8 +9,10 @@ import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
 import com.reptile.util.*;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import javax.imageio.ImageReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -904,6 +907,7 @@ public class MobileService {
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码！");
 			PushSocket.pushnew(map, UUID, "3000","请先获取验证码！");
+			PushState.state(Useriphone, "callLog", 200);
 			return map;
 		}
 		//System.out.println("验证码发送成功");
@@ -1041,8 +1045,8 @@ public class MobileService {
 					PushSocket.pushnew(map, UUID, "7000","数据获失败");
 				}else if(flag.equals("6000")){
 					PushSocket.pushnew(map, UUID, "9000","认证失败");
+					PushState.state(Useriphone, "callLog", 200);
 				}
-				
 				return map;
 			}
 
@@ -1051,6 +1055,7 @@ public class MobileService {
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常");
 			PushSocket.pushnew(map, UUID, "3000","登录失败，网络异常");
+			PushState.state(Useriphone, "callLog", 200);
 			e.printStackTrace();
 		}
 		return map;
@@ -1527,7 +1532,6 @@ public class MobileService {
 					}
 				}
 				//获取数据失败则不推长连接（认证状态）
-				if(listData.size()>0) {
 					PushSocket.pushnew(map, UUID, "6000","获取数据成功");
 					map.put("data", listData);
 					map.put("CHSIAcount", username);
@@ -1543,22 +1547,6 @@ public class MobileService {
 						PushState.state(userCard, "CHSI", 200);
 						PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
 					}
-				}else {
-					PushSocket.pushnew(map, UUID, "7000","获取数据失败");
-					map.put("data", listData);
-					map.put("CHSIAcount", username);
-					map.put("CHSIPassword", userpwd);
-					map.put("Usercard", userCard);
-					map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/authcode/hireright");
-					System.out.println("学信网数据中心返回结果----"+map);
-					//--------------------数据中心推送状态----------------------
-					if(map.get("errorCode").equals("0000")){
-						PushState.state(userCard, "CHSI", 300);
-					}else{
-						PushState.state(userCard, "CHSI", 200);
-					}
-				}
-				
 
 				//---------------------数据中心推送状态----------------------
 			} else if (pages.asText().contains("您输入的用户名或密码有误")) {

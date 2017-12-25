@@ -171,6 +171,7 @@ public class XiZangTelecomService {
 	        if (client == null) {
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信证码");
+	            PushState.state(phoneNumber, "callLog",200);
 	            return map;
 	        } else { 
 	        	WebClient webClient = (WebClient) client;

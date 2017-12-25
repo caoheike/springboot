@@ -104,7 +104,7 @@ public class ChinaBankService {
             if(code.length()==0){
             	code="5210";
             }
-
+            
             List<WebElement> input2 = driver.findElements(By.className("input"));
             for (int i = 0; i < input2.size(); i++) {
                 if (input2.get(i).getAttribute("v") != null && input2.get(i).getAttribute("v").contains("验证码") &&
@@ -121,7 +121,7 @@ public class ChinaBankService {
                     break;
                 }
             }
-            Thread.sleep(8000);
+            Thread.sleep(5000);
             msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
                 if (msgContent.contains("验证码输入错误")) {
@@ -139,6 +139,17 @@ public class ChinaBankService {
             //--------------推-----------------
             //PushSocket.push(map, UUID, "0000");
             //--------------推-----------------
+            boolean contains = driver.getPageSource().contains("用户名/银行卡号");
+            if(contains){
+            	map.put("errorCode", "0001");
+                map.put("errorInfo", "登录失败，系统繁忙");
+                PushSocket.pushnew(map, UUID, "3000","登录失败，系统繁忙");
+                if(isok==true) {
+    				PushState.state(userCard, "bankBillFlow",200);
+    			}
+                driver.quit();
+                return map;
+            }
             
             PushSocket.pushnew(map, UUID, "2000","中国银行信用卡登录成功");
             states="2";

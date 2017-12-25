@@ -42,6 +42,7 @@ public class JiangSuTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushState.state(phoneNumber, "callLog",200);
             PushSocket.pushnew(map, UUID, "3000","操作异常!");       
             } else {
         	//PushSocket.push(map, UUID, "0000");

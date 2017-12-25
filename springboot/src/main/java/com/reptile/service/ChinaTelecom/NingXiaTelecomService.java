@@ -210,6 +210,7 @@ public class NingXiaTelecomService {
 			 logger.warn("宁夏电信请先获取验证码");
 			 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
+		     PushState.state(phoneNumber, "callLog",200);
 		     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 			 return map; 
 		 }
@@ -218,6 +219,7 @@ public class NingXiaTelecomService {
         	   logger.warn("宁夏电信验证码不能为空");
         	   map.put("errorCode", "0001");
  			   map.put("errorInfo", "验证码不能为空");
+ 			  PushState.state(phoneNumber, "callLog",200);
  			  PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
  			  return map;
               }
@@ -230,6 +232,7 @@ public class NingXiaTelecomService {
 					//---------------推-------------------
 			  map.put("errorCode", "0001");
 			  map.put("errorInfo", "验证码错误");
+			  PushState.state(phoneNumber, "callLog",200);
 			  PushSocket.pushnew(map, UUID, "3000","验证码错误");
 			  return map;
 		  }
@@ -309,10 +312,14 @@ public class NingXiaTelecomService {
 						 if(html.contains("糟糕...出错了")){
 						 map.put("errorCode", "0001");
 						 map.put("errorInfo", "糟糕...出错了");
+						 PushState.state(phoneNumber, "callLog",200);
+						 
 						 return map;
 						 }else if(html.contains("二次短信验证失败")){
 					     map.put("errorCode", "0001");
 						 map.put("errorInfo", "验证码错误"); 
+						 PushState.state(phoneNumber, "callLog",200);
+						 
 						 return map;
 						 }else{
 						 nowYear=new Integer(GetMonth.beforMon(year,month,1).substring(0,
@@ -330,6 +337,9 @@ public class NingXiaTelecomService {
 					 logger.warn("宁夏电信",e);
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "网络连接异常");
+					PushState.state(phoneNumber, "callLog",200);
+					PushSocket.pushnew(map, UUID, "7000","获取数据失败，网络连接异常"); 
+					return map;
 				} 
 				}
 				 PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 

@@ -281,7 +281,6 @@ public class PhoneBillsService {
 
     public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
                                                 String fuwuSec, String imageCode, String longitude, String latitude, String UUID) {
-    	System.out.println("---移动---"+userNumber);
         Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("---移动---"+userNumber);
         PushSocket.pushnew(map, UUID, "1000","登录中");
@@ -303,6 +302,7 @@ public class PhoneBillsService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             PushSocket.pushnew(map, UUID, "3000","登录超时");
+            PushState.state(userNumber, "callLog",200);
             return map;
         } else {
         	try {
@@ -345,6 +345,7 @@ public class PhoneBillsService {
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                     PushSocket.pushnew(map, UUID, "3000",jsonObject.get("retMsg").toString());
+                    PushState.state(userNumber, "callLog",200);
                     return map;
                 }
                 PushSocket.pushnew(map, UUID, "2000","登录成功");
@@ -391,7 +392,7 @@ public class PhoneBillsService {
                     	 PushState.state(userNumber, "callLog",300);
                     }else {
                     	PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
-                    	 PushState.state(userNumber, "callLog",200);
+                    	PushState.state(userNumber, "callLog",200);
                     }
                 
                 webClient.close();

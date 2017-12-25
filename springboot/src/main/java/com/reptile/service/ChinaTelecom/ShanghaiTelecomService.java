@@ -94,6 +94,7 @@ public class ShanghaiTelecomService {
 			 logger.warn("上海电信未获取验证码");
 	    	 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
+		     PushState.state(phoneNumber, "callLog",200);
 		     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
 			 return map;
 	    }
@@ -109,6 +110,7 @@ public class ShanghaiTelecomService {
 				logger.warn("上海电信","输入的验证码错误！");
 				map.put("errorCode", "0001");
 		        map.put("errorInfo", "输入的验证码错误！");
+		        PushState.state(phoneNumber, "callLog",200);
 		        PushSocket.pushnew(map, UUID, "3000","输入的验证码错误！");
 		        return map;
 			}else{

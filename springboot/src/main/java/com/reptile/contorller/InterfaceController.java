@@ -819,10 +819,6 @@ public class InterfaceController {
 	        map.put("errorCode", "0000");
 	        map.put("errorInfo", "成功");
 	      }
-	      
-	    
-	      
-	      
 	    }else if(jsonObject2.get("code").equals("10000")){
 	    	
 	      System.out.println("等待授权");

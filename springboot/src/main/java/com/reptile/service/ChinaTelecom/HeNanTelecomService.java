@@ -133,6 +133,7 @@ public class HeNanTelecomService {
         	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            PushState.state(phoneNumber, "callLog",200);
             PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
             return map;
         } else {
@@ -173,6 +174,7 @@ public class HeNanTelecomService {
                 if (result.contains("您输入的查询验证码错误或过期")) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
+                    PushState.state(phoneNumber, "callLog",200);
                     PushSocket.pushnew(map, UUID, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }

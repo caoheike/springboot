@@ -175,6 +175,7 @@ public class ZXBankService {
         } else {
             HttpClient httpClient = (HttpClient) zxhttpClient;
             String coks = zxImageCodeCook.toString();
+            System.out.println("中心==="+System.currentTimeMillis());
             try {
                 PostMethod postPhone = new PostMethod("https://creditcard.ecitic.com/citiccard/ucweb/sendSms.do?date=" + System.currentTimeMillis());
                 postPhone.setRequestHeader("Cookie", coks);
@@ -222,7 +223,6 @@ public class ZXBankService {
             String flag="";
             try {
                 //提交短信验证码
-            	  PushSocket.pushnew(map, UUID, "2000","中信银行登录成功");
                 PostMethod postM = new PostMethod("https://creditcard.ecitic.com/citiccard/ucweb/checkSms.do?date=" + System.currentTimeMillis());
                 postM.setRequestHeader("Cookie", coks);
                 String str1 = "{smsCode:'" + phoneCode + "'}";
@@ -230,7 +230,6 @@ public class ZXBankService {
                 postM.setRequestEntity(entity1);
                 httpClient.executeMethod(postM);
                 postM.getParams().setContentCharset("utf-8");
-                PushSocket.pushnew(map, UUID, "5000","中信银行获取中");
                 if (!postM.getResponseBodyAsString().contains("校验成功")) {
                 	//PushSocket.push(map, UUID, "0001");
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(postM.getResponseBodyAsString());
@@ -239,8 +238,11 @@ public class ZXBankService {
                     return map;
                 }
                
+                PushSocket.pushnew(map, UUID, "2000","中信银行登录成功");
                 //PushSocket.push(map, UUID, "0000");
                 //成功进入信用卡信息页面
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, UUID, "5000","中信银行获取中");
                 GetMethod getMethod = new GetMethod("https://creditcard.ecitic.com/citiccard/newonline/myaccount.do?func=mainpage");
                 getMethod.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(getMethod);
