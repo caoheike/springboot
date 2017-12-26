@@ -109,6 +109,7 @@ public class ConstructionService {
 			  	con.put("data", data);
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(con,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
+				driver.close();
 				PushSocket.pushnew(map, UUID, "6000","建设银行账单获取成功");
 				flag="6000";
 				 if(map!=null&&"0000".equals(map.get("errorCode").toString())){
@@ -117,7 +118,6 @@ public class ConstructionService {
 						}
 		                map.put("errorInfo","推送成功");
 		                map.put("errorCode","0000");
-		                driver.close();
 		            	PushSocket.pushnew(map, UUID, "8000","建设银行账单认证成功");
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
@@ -126,17 +126,16 @@ public class ConstructionService {
 		            		PushState.state(UserCard, "bankBillFlow",200);
 		            	}
 		            	//---------------------数据中心推送状态----------------------
-		            	driver.close();
 		            	PushSocket.pushnew(map, UUID, "9000","建设银行账单认证失败");
 
-		            }
+		            } 
 			} catch (Exception e) { 
 				// TODO Auto-generated catch block
 					e.printStackTrace();
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 					}
-					logger.warn("建设银行账单获取失败"+UserCard);
+					logger.warn("建设银行账单获取失败"+UserCard+e);
 					if(flag.equals("2000")){
 						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
 					}else if(flag.equals("5000")){

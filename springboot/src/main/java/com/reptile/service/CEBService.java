@@ -29,7 +29,7 @@ public class CEBService {
 	  private Logger logger= LoggerFactory.getLogger(CEBService.class);
 	  private final static String CabCardIndexpage="https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm";//光大银行信用卡个人中心
 	  private final static String CabCardloginUrl="https://xyk.cebbank.com/mall/login";//光大银行信用卡登录页面地址
-		public synchronized Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
+		public  Map<String,Object> CEBlogin1(HttpServletRequest request,String Usercard,String UserName){
 			
 			Map<String, Object> map=new HashMap<String, Object>();
 			 System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
@@ -129,7 +129,7 @@ public class CEBService {
 			return map;
 			
 		}
-		public Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password,String UUID,String timeCnt) throws ParseException{
+		public synchronized Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password,String UUID,String timeCnt) throws ParseException{
 			boolean isok = CountTime.getCountTime(timeCnt);
 			
 			 Map<String, Object> map=new HashMap<String, Object>();
@@ -171,6 +171,7 @@ public class CEBService {
 					}					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","短信验证码输入有误");
 					map.put("errorCode","0002");
+					
 					 try {
 						 driver.quit();
 					} catch (Exception e) {
@@ -228,7 +229,6 @@ public class CEBService {
 		                map.put("errorInfo","查询成功");
 		                map.put("errorCode","0000");
 		                PushSocket.pushnew(map, UUID, "8000","光大银行信用卡认证成功");
-		                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }else{
 		            	//--------------------数据中心推送状态----------------------
 		            	if(isok==true) {
@@ -236,7 +236,6 @@ public class CEBService {
 						}		            	//---------------------数据中心推送状态----------------------
 		            	logger.warn("光大银行账单推送失败"+UserCard);
 		            	PushSocket.pushnew(map, UUID, "9000","光大银行信用卡认证失败");
-		            	 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 		            }
 				}
 				

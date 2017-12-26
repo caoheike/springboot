@@ -65,6 +65,7 @@ public class CCBService {
 			driver.navigate().refresh();
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待
 			PushSocket.pushnew(map, UUID, "1000","建设银行储蓄卡登录中");
+			PushState.state(IDNumber, "savings",100);
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e2) {
@@ -89,6 +90,7 @@ public class CCBService {
 					// TODO: handle exception
 				}
 	        	PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的登录密码错误");
+	        	PushState.state(IDNumber, "savings",200);
 	            return map;  
 	        }
 	        if(dpage1.indexOf("您输入的信息有误")!=-1){
@@ -101,9 +103,10 @@ public class CCBService {
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
 	            PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的信息有误");
+	            PushState.state(IDNumber, "savings",200);
 	        	return map;  
 	        }
-	        PushState.state(IDNumber, "savings",100);
+	        
 
 	        driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
 		  WebElement name= driver.findElement(ByClassName.className("msg_welcome"));//用户名

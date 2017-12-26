@@ -181,6 +181,7 @@ public class ZXBankService {
                 postPhone.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(postPhone);
                 String result = postPhone.getResponseBodyAsString();
+                System.out.println("result==="+result);
                 if (!result.contains("发送成功")) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
                     map.put("errorCode", "0002");

@@ -146,6 +146,8 @@ public class ChengduTelecomService {
                     if (!result.contains("没有查询到相应记录")) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
+                        PushState.state(phoneNumber, "callLog",200);  
+                        PushSocket.pushnew(map, UUID, "3000",jsonObject.get("retMsg").toString());
                         return map;
                     }
                 } else {
