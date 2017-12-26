@@ -139,7 +139,7 @@ public class TelecomLoadVerificationService {
                     map.put("errorInfo", "服务器繁忙，请刷新后重试");
                 } else {
                     map.put("errorCode", "0007");
-                    map.put("errorInfo", "请前往官网修改初始密码！");
+                    map.put("errorInfo", divErr);
                 }
                 webClient.close();
             } else {
