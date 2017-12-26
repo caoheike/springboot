@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * 工商信息获取模板
+ *
+ * @author mrlu
+ * @date 2017/12/25
+ */
 @Controller
 @RequestMapping("BusinessInfoController")
 public class BusinessInfoController {
