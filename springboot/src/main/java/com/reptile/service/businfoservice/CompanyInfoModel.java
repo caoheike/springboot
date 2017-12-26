@@ -1,15 +1,13 @@
 package com.reptile.service.businfoservice;
 
 import com.gargoylesoftware.htmlunit.*;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.CustomException;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.util.PropertyExpander;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,7 +24,7 @@ import java.util.*;
  */
 public class CompanyInfoModel {
     private static Logger logger = LoggerFactory.getLogger(CompanyInfoModel.class);
-    public static  String gtDaMaUrl = "http://jiyanapi.c2567.com/shibie";
+    public static String gtDaMaUrl = "http://jiyanapi.c2567.com/shibie";
 
     /**
      * 本方法进行webclient的常用设置
@@ -51,16 +49,20 @@ public class CompanyInfoModel {
      * 获取工商网信息
      *
      * @param webClient
-     * @param goalUrl     目标地区工商网地址
-     * @param formDataMap 如果提交信息时需要页面的某些数据{"form":"0"（页面第1个表单）,"idname":"0"(页面第1个input),"name":"1"}
-     * @param getGtUrl    获取目标网址gt信息
-     * @param validateUrl 验证打码极验后返回的数据地址
-     * @param subInfoUrl  提交信息
-     * @param paramMap    需要查询的数据{"key":"needToSelect"}
+     * @param goalUrl            目标地区工商网地址
+     * @param formDataMap        如果提交信息时需要页面的某些数据{"form":"0"（页面第1个表单）,"idname":"0"(第一个表单中的第1个input),"name":"1"}
+     *                           ||{"noForm":"0"（没有表单）,"idname":"0"(页面第1个input),"name":"1"}
+     *                           不需要则提交空集合或者null
+     * @param getGtUrl           获取目标网址gt信息
+     * @param validateUrl        验证打码极验后返回的数据地址
+     * @param subInfoUrl         提交信息
+     * @param paramMap           需要查询的数据{"key":"needToSelect"}
+     *                            最后一步需要提交的参数
+     * @param needValidateResult 第5步是否需要第三步的验证结果，需要的话list中放入key值，不需要传空集合或者null {验证结果中返回的key:最后一步需要提交数据的key}
      * @throws IOException
      * @throws InterruptedException
      */
-    public static Map<String, Object> getCompanyInfo(WebClient webClient, String goalUrl, Map<String, String> formDataMap, String getGtUrl, String validateUrl, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws Exception {
+    public static Map<String, Object> getCompanyInfo(WebClient webClient, String goalUrl, Map<String, String> formDataMap, Map<String, String> needValidateResult, String getGtUrl, String validateUrl, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
 
         //获取gt参数
@@ -68,13 +70,30 @@ public class CompanyInfoModel {
         try {
             for (int count = 0; count < 3; count++) {
                 logger.warn("gt信息获取中...");
-                gtJson = getCodePram(webClient, goalUrl, formDataMap,getGtUrl,paramMap);
+                gtJson = getCodePram(webClient, goalUrl, formDataMap, getGtUrl, paramMap);
                 logger.warn("gt极验打码中...");
                 gtJson = daMaGT(webClient, gtJson);
                 if (gtJson.getString("status").equals("ok")) {
                     logger.warn("gt验证打码结果中...");
-                    boolean flag = validateGT(webClient, gtJson, validateUrl);
-                    if(flag){
+                    String validateResult = validateGT(webClient, gtJson, validateUrl);
+
+                    if (validateResult.contains("true") || validateResult.contains("ok")||validateResult.contains("success")) {
+                        if (needValidateResult!=null&&needValidateResult.size() > 0) {
+                            JSONObject jsonObject = JSONObject.fromObject(validateResult);
+                            Set<String> keySet = needValidateResult.keySet();
+                            Iterator<String> iterator = keySet.iterator();
+                            while (iterator.hasNext()) {
+                                String titile=iterator.next().toString();
+                                String key = needValidateResult.get(titile).toString();
+                                String value = jsonObject.getString(titile);
+                                //处理特殊情况，返回值里面含有请求连接 eg:山西  验证结果含有第五步需要的连接地址
+                                //{"success":true,"msg":"操作成功","obj":"searchList.jspx?top=top&checkNo=8295c961a88171fbeb7fa690a4ec8acd","attributes":null}
+                                if(value.contains(gtJson.getString("validate"))){
+                                    value=gtJson.getString("validate");
+                                }
+                                paramMap.put(key, value);
+                            }
+                        }
                         break;
                     }
                 }
@@ -83,12 +102,12 @@ public class CompanyInfoModel {
             resultMap = getAllCompany(webClient, gtJson, subInfoUrl, paramMap, encodeType);
             return resultMap;
         } catch (CustomException e) {
-            logger.warn(e.getExceptionInfo(),e);
+            logger.warn(e.getExceptionInfo(), e);
             resultMap.put("errorCode", "0001");
             resultMap.put("errorInfo", "网络异常");
             return resultMap;
-        }catch (Exception e){
-            logger.warn("循环打码出错",e);
+        } catch (Exception e) {
+            logger.warn("循环打码出错", e);
             resultMap.put("errorCode", "0002");
             resultMap.put("errorInfo", "网络异常");
             return resultMap;
@@ -103,35 +122,51 @@ public class CompanyInfoModel {
      * @return
      * @throws IOException
      */
-    public static JSONObject getCodePram(WebClient webClient, String goalUrl, Map<String, String> formDataMap, String getGtUrl,Map<String, String> paramMap){
+    public static JSONObject getCodePram(WebClient webClient, String goalUrl, Map<String, String> formDataMap, String getGtUrl, Map<String, String> paramMap) {
 
         Map<String, String> map = new HashMap<>();
-        JSONObject jsonObject=new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         //如果最终需要提交表单中的某些数据 循环迭代formDataMap从页面拿去数据，以key value的形式放入paramMap中，最终拼接在请求地址中
         try {
             HtmlPage page = webClient.getPage(new URL(goalUrl));
             if (formDataMap != null && formDataMap.size() > 1) {
-                int formIndex = Integer.parseInt(formDataMap.get("form").toString());
-                HtmlForm htmlForm = page.getForms().get(formIndex);
-                formDataMap.remove("form");
-                DomNodeList<HtmlElement> inputList = htmlForm.getElementsByTagName("input");
+                DomNodeList inputList = null;
+                if (formDataMap.get("form") != null) {
+                    int formIndex = Integer.parseInt(formDataMap.get("form").toString());
+                    HtmlForm htmlForm = page.getForms().get(formIndex);
+                    formDataMap.remove("form");
+                    inputList = htmlForm.getElementsByTagName("input");
+                } else if (formDataMap.get("noForm") != null) {
+                    int noForm = Integer.parseInt(formDataMap.get("noForm").toString());
+                    formDataMap.remove("noForm");
+                    inputList = page.getElementsByTagName("input");
+                } else {
+                    throw new CustomException("参数格式错误", new Exception());
+                }
                 Set<Map.Entry<String, String>> entries = formDataMap.entrySet();
                 for (Map.Entry<String, String> input : entries) {
                     int index = Integer.parseInt(input.getValue());
-                    String value = inputList.get(index).getAttribute("value");
+                    String value = ((HtmlElement) (inputList.get(index))).getAttribute("value");
                     String key = input.getKey();
                     map.put(key, value);
                 }
             }
             paramMap.putAll(map);
 
-            TextPage gtPage = webClient.getPage(getGtUrl);
-            jsonObject = JSONObject.fromObject(gtPage.getContent());
-            System.out.println("获取到gt信息："+jsonObject.toString());
+            Object gtPage = webClient.getPage(getGtUrl);
+            if(gtPage instanceof  TextPage){
+                TextPage tpage= (TextPage) gtPage;
+                jsonObject = JSONObject.fromObject(tpage.getContent());
+            }else{
+                UnexpectedPage unPage= (UnexpectedPage) gtPage;
+                jsonObject = JSONObject.fromObject(unPage.getWebResponse().getContentAsString());
+            }
+
+            System.out.println("获取到gt信息：" + jsonObject.toString());
             return jsonObject;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw  new CustomException("获取gt信息出错",e);
+            throw new CustomException("获取gt信息出错", e);
         }
     }
 
@@ -163,19 +198,20 @@ public class CompanyInfoModel {
             gtJson = JSONObject.fromObject(page2.getContent());
             System.out.println("极验打码结果:" + gtJson.toString());
             return gtJson;
-        }catch (Exception e){
-            throw new CustomException("极验打码失败",e);
+        } catch (Exception e) {
+            throw new CustomException("极验打码失败", e);
         }
     }
 
     /**
      * 校验打码是否可以通过目标网址验证
+     *
      * @param webClient
      * @param gtJson      打码平台返回的数据
      * @param validateUrl 目标网址极验结构提交地址
      * @return
      */
-    public static boolean validateGT(WebClient webClient, JSONObject gtJson, String validateUrl) {
+    public static String validateGT(WebClient webClient, JSONObject gtJson, String validateUrl) {
 
         try {
             WebRequest request = new WebRequest(new URL(validateUrl));
@@ -188,9 +224,9 @@ public class CompanyInfoModel {
             TextPage page4 = webClient.getPage(request);
             String result = page4.getContent();
             System.out.println("极验校准结果:" + result);
-            return result.contains("success") ? true : false;
-        }catch (Exception e){
-            throw new CustomException("校验打码结果失败",e);
+            return result;
+        } catch (Exception e) {
+            throw new CustomException("校验打码结果失败", e);
         }
     }
 
@@ -205,8 +241,8 @@ public class CompanyInfoModel {
      * @throws IOException
      * @throws InterruptedException
      */
-    public static Map<String,Object> getAllCompany(WebClient webClient, JSONObject gtJson, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws IOException, InterruptedException {
-        Map<String,Object> map=new HashMap<>();
+    public static Map<String, Object> getAllCompany(WebClient webClient, JSONObject gtJson, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws IOException, InterruptedException {
+        Map<String, Object> map = new HashMap<>();
         StringBuffer param = new StringBuffer();
         try {
             Iterator<String> iterator = paramMap.keySet().iterator();
@@ -218,19 +254,64 @@ public class CompanyInfoModel {
             String paramStr = param.toString();
 
             String str = subInfoUrl + "geetest_challenge=" + gtJson.getString("challenge") +
-                    "&geetest_validate=" + gtJson.getString("validate") + "&geetest_seccode=" + gtJson.getString("validate") + "|jordan" + paramStr;
+                        "&geetest_validate=" + gtJson.getString("validate") +
+                        "&geetest_seccode=" + gtJson.getString("validate") + "|jordan" + paramStr;
             System.out.println(str);
             WebRequest post = new WebRequest(new URL(str));
             post.setHttpMethod(HttpMethod.POST);
             HtmlPage page3 = webClient.getPage(post);
             Thread.sleep(3000);
             System.out.println(page3.asText());
-            map.put("errorCode","1000");
-            map.put("errorInfo","成功获取匹配的所有企业");
-            map.put("GSHtmlPage",page3);
+            map.put("errorCode", "1000");
+            map.put("errorInfo", "成功获取匹配的所有企业");
+            map.put("GSHtmlPage", page3);
+            map.put("GSWebClient", webClient);
             return map;
-        }catch (Exception e){
-            throw new CustomException("获取匹配信息失败",e);
+        } catch (Exception e) {
+            throw new CustomException("获取匹配信息失败", e);
+        }
+    }
+
+    /**
+     * 以吉林为例
+     * 最终提交方式为get 提交验证参数的key和其他不一样（challenge!=geetest_challenge），url不需要urlencode
+     * @param webClient
+     * @param gtJson
+     * @param subInfoUrl
+     * @param paramMap
+     * @param encodeType
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static Map<String, Object> getAllCompanyJL(WebClient webClient, JSONObject gtJson, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws IOException, InterruptedException {
+        Map<String, Object> map = new HashMap<>();
+        StringBuffer param = new StringBuffer();
+        try {
+            Iterator<String> iterator = paramMap.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                String value = paramMap.get(key);
+                param.append("&" + key + "=" + value);
+            }
+            String paramStr = param.toString();
+
+            String str = subInfoUrl + "challenge=" + gtJson.getString("challenge") +
+                    "&validate=" + gtJson.getString("validate") +
+                    "&seccode=" + gtJson.getString("validate") + "|jordan" + paramStr;
+            System.out.println(str);
+            WebRequest post = new WebRequest(new URL(str));
+            post.setHttpMethod(HttpMethod.GET);
+            HtmlPage page3 = webClient.getPage(post);
+            Thread.sleep(3000);
+            System.out.println(page3.asText());
+            map.put("errorCode", "1000");
+            map.put("errorInfo", "成功获取匹配的所有企业");
+            map.put("GSHtmlPage", page3);
+            map.put("GSWebClient", webClient);
+            return map;
+        } catch (Exception e) {
+            throw new CustomException("获取匹配信息失败", e);
         }
     }
 
@@ -250,6 +331,7 @@ public class CompanyInfoModel {
 //        Map<String, String> dataMap = new HashMap<>();//表单中存在数据 页面第一个表单 第一个input
 //        dataMap.put("form", "0");
 //        dataMap.put("type", "0");
+//        Map<String, String> needValidateResult = new HashMap<>();
 //        String encodeType = "gb2312";
 
         /**
@@ -262,13 +344,14 @@ public class CompanyInfoModel {
 //        String subInfoUrl="http://bj.gsxt.gov.cn/es/esAction!entlist.dhtml?urlflag=0&";
 //        Map<String,String> paramMap=new HashMap<>();
 //        paramMap.put("keyword","百度");
-//        String encodeType="utf-8";
-//
 //        Map<String,String> dataMap=new HashMap<>();
 //        dataMap.put("form","0");
 //        dataMap.put("urlflag","2");
 //        dataMap.put("nowNum","0");
 //        dataMap.put("clear","3");
+//        Map<String, String> needValidateResult = new HashMap<>();
+//
+//        String encodeType="utf-8";
 
         /**
          * 四川工商信息
@@ -285,6 +368,7 @@ public class CompanyInfoModel {
 //        dataMap.put("form","0");
 //        dataMap.put("captcha","1");
 //        dataMap.put("session.token","5");
+//        Map<String, String> needValidateResult = new HashMap<>();
 
         /**
          * 福建工商信息
@@ -302,18 +386,160 @@ public class CompanyInfoModel {
 //        Map<String, String> dataMap = new HashMap<>();
 //        dataMap.put("form", "0");
 //        dataMap.put("session.token", "5");
+//        Map<String, String> needValidateResult = new HashMap<>();
 //        String encodeType = "utf-8";
 
-        /**
-         * 山东
-         */
-        String goalUrl = "http://sd.gsxt.gov.cn";
-        String getGtUrl = "http://sd.gsxt.gov.cn/pub/geetest/register/" + System.currentTimeMillis()+"?_="+System.currentTimeMillis();
-        Map<String, String> dataMap = new HashMap<>();
-        Map<String, String> paramMap = new HashMap<>();
-        JSONObject codePram = getCodePram(webClient, goalUrl, dataMap, getGtUrl, paramMap);
-        System.out.println(codePram);
 
-//        getCompanyInfo(webClient, goalUrl, dataMap, getGtUrl, validateUrl, subInfoUrl, paramMap, encodeType);
+        /**
+         *
+         *河北工商信息
+         */
+//        String goalUrl = "http://he.gsxt.gov.cn";
+//        String getGtUrl = "http://he.gsxt.gov.cn/notice/pc-geetest/register?t=" + System.currentTimeMillis();
+//        String validateUrl = "http://he.gsxt.gov.cn/notice/pc-geetest/validate";
+//        String subInfoUrl = "http://he.gsxt.gov.cn/notice/search/ent_info_list?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("condition.keyword", "百度");
+//        paramMap.put("condition.searchType", "1");
+//        paramMap.put("captcha", "");
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        dataMap.put("form", "0");
+//        dataMap.put("session.token", "5");
+//        String encodeType = "utf-8";
+//        Map<String, String> needValidateResult = new HashMap<>();
+
+        /**
+         * 山西
+         */
+//        String goalUrl = "http://sx.gsxt.gov.cn";
+//        String getGtUrl = "http://sx.gsxt.gov.cn/registerValidate.jspx?t=" + System.currentTimeMillis();
+//        String validateUrl = "http://sx.gsxt.gov.cn/validateSecond.jspx";
+//        String subInfoUrl = "http://sx.gsxt.gov.cn/searchList.jspx?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("searchType", "1");
+//        paramMap.put("entName", "百度");
+//        paramMap.put("top", "top");
+//
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        String encodeType = "utf-8";
+//        //验证结果中含有最后一步需要提交的数据 没有则提交null;
+//        Map<String, String> needValidateResult = new HashMap<>();
+//        //{验证结果中返回的key:最后一步需要提交数据的key}
+//        needValidateResult.put("obj", "checkNo");
+
+
+        /**
+         * 辽宁
+         */
+//        String goalUrl = "http://ln.gsxt.gov.cn";
+//        String getGtUrl = "http://ln.gsxt.gov.cn/saicpub/pc-geetest/register?t=" + System.currentTimeMillis();
+//        String validateUrl = "http://ln.gsxt.gov.cn/saicpub/pc-geetest/validate";
+//        String subInfoUrl = "http://ln.gsxt.gov.cn/saicpub/entPublicitySC/entPublicityDC/lngsSearchFpc.action?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("authCode", "finish");
+//        paramMap.put("method", "searchValidate");
+//        paramMap.put("searchType", "qyxyxx");
+//        paramMap.put("solrCondition", "中国出口商品基地建设辽宁公司");
+//
+//
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        String encodeType = "utf-8";
+//        //验证结果中含有最后一步需要提交的数据 没有则提交null;
+//        Map<String, String> needValidateResult = new HashMap<>();
+//
+//        Map<String, Object> companyInfo = getCompanyInfo(webClient, goalUrl, dataMap, needValidateResult, getGtUrl, validateUrl, subInfoUrl, paramMap, encodeType);
+//        WebClient webClient1 = (WebClient) companyInfo.get("GSWebClient");
+//        WebRequest post=new WebRequest(new URL("http://ln.gsxt.gov.cn/saicpub/entPublicitySC/entPublicityDC/lngsSearchFpc!searchSolr.action?solrCondition="+URLEncoder.encode("中国出口商品基地建设辽宁公司","utf-8")));
+//        post.setHttpMethod(HttpMethod.POST);
+//        List<NameValuePair> list = new ArrayList<>();
+//        list.add(new NameValuePair("authCode", "finish"));
+//        list.add(new NameValuePair("currentPage", "1"));
+//        list.add(new NameValuePair("pageSize", "10"));
+//        post.setRequestParameters(list);
+//        UnexpectedPage page = webClient1.getPage(post);
+//        System.out.println(page.getWebResponse().getContentAsString("utf-8"));
+
+        /**
+         *吉林
+         */
+//        String goalUrl = "http://jl.gsxt.gov.cn";
+//        String getGtUrl = "http://jl.gsxt.gov.cn/api/Common/GetCaptcha?t=" + System.currentTimeMillis();
+//        String subInfoUrl = "http://jl.gsxt.gov.cn/SearchResult.html?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("keyword",new String(Base64.getEncoder().encode("110".getBytes())));
+//        paramMap.put("searchType", "searchNormal");
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        String encodeType = "utf-8";
+//
+//        JSONObject codePram = getCodePram(webClient, goalUrl, dataMap, getGtUrl, paramMap);
+//        JSONObject jsonObject = daMaGT(webClient, codePram);
+//        getAllCompanyJL(webClient, jsonObject, subInfoUrl, paramMap, encodeType);
+
+        /**
+         * 黑龙江
+         */
+//        String goalUrl = "http://hl.gsxt.gov.cn";
+//        String getGtUrl = "http://hl.gsxt.gov.cn/registerValidate.jspx?t=" + System.currentTimeMillis();
+//        String validateUrl = "http://hl.gsxt.gov.cn/validateSecond.jspx";
+//        String subInfoUrl = "http://hl.gsxt.gov.cn/searchList.jspx?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("top", "top");
+//        paramMap.put("entName", "百度");
+//        paramMap.put("searchType", "1");
+//
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        String encodeType = "utf-8";
+//        //验证结果中含有最后一步需要提交的数据 没有则提交null;
+//        Map<String, String> needValidateResult = new HashMap<>();
+//        //{验证结果中返回的key:最后一步需要提交数据的key}
+//        needValidateResult.put("obj", "checkNo");
+
+        /**
+         * 上海
+         */
+//        String goalUrl = "http://sh.gsxt.gov.cn";
+//        String getGtUrl = "http://sh.gsxt.gov.cn/notice/pc-geetest/register?t=" + System.currentTimeMillis();
+//        String validateUrl = "http://sh.gsxt.gov.cn/notice/pc-geetest/validate";
+//        String subInfoUrl = "http://sh.gsxt.gov.cn/notice/search/ent_info_list?";
+//        Map<String, String> paramMap = new HashMap<>();
+//        paramMap.put("condition.searchType","1");
+//        paramMap.put("captcha","");
+//        paramMap.put("condition.keyword","百度");
+//        //表单中存在数据 页面第一个表单 第一个input
+//        Map<String, String> dataMap = new HashMap<>();
+//        dataMap.put("form","0");
+//        dataMap.put("session.token","5");
+//
+//        String encodeType = "utf-8";
+//        //验证结果中含有最后一步需要提交的数据 没有则提交null;
+//        Map<String, String> needValidateResult = new HashMap<>();
+
+
+        /**
+         * 江苏
+         */
+        String goalUrl = "http://sh.gsxt.gov.cn";
+        String getGtUrl = "http://sh.gsxt.gov.cn/notice/pc-geetest/register?t=" + System.currentTimeMillis();
+        String validateUrl = "http://sh.gsxt.gov.cn/notice/pc-geetest/validate";
+        String subInfoUrl = "http://sh.gsxt.gov.cn/notice/search/ent_info_list?";
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("condition.searchType","1");
+        paramMap.put("captcha","");
+        paramMap.put("condition.keyword","百度");
+        //表单中存在数据 页面第一个表单 第一个input
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("form","0");
+        dataMap.put("session.token","5");
+
+        String encodeType = "utf-8";
+        //验证结果中含有最后一步需要提交的数据 没有则提交null;
+        Map<String, String> needValidateResult = new HashMap<>();
+
+        Map<String, Object> companyInfo = getCompanyInfo(webClient, goalUrl, dataMap, needValidateResult, getGtUrl, validateUrl, subInfoUrl, paramMap, encodeType);
     }
 }
