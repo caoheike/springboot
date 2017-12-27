@@ -358,10 +358,16 @@ public class PhoneBillsService {
                 int sDate = Integer.parseInt(str);
                 PushSocket.pushnew(map, UUID, "5000","数据获取中");	
                 for (int i = 1; i < 7; i++) {
-                    UnexpectedPage page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
+                    String results="";
+                    Object page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
-                    
-                    String results = page9.getWebResponse().getContentAsString();
+                    if(page9 instanceof HtmlPage ){
+                        break;
+                    }else{
+                        UnexpectedPage pages= (UnexpectedPage) page9;
+                        results = pages.getWebResponse().getContentAsString();
+                    }
+
                     if (!results.contains("retCode\":\"000000")) {
                         map.put("errorCode", "0003");
                         map.put("errorInfo", "哪里好像出错了");
@@ -372,9 +378,15 @@ public class PhoneBillsService {
                     if (results.contains("startTime") && results.contains("commPlac")) {
                         dataList.add(results);
                     }
-
                     sDate--;
                     Thread.sleep(2000);
+                }
+                if(dataList.size()<3){
+                    PushSocket.pushnew(map, UUID, "9000","数据获取不完全，请重新再次认证！");
+                    PushState.state(userNumber, "callLog",200);
+                    map.put("errorCode", "0009");
+                    map.put("errorInfo", "数据获取不完全，请重新再次认证！");
+                    return map;
                 }
                 	PushSocket.pushnew(map, UUID, "6000","数据获取成功");
                     dataMap.put("data", dataList);//通话详单数据

@@ -13,6 +13,7 @@ import com.reptile.springboot.Scheduler;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.WebClientFactory;
 import net.sf.json.JSONObject;
+import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,12 @@ public class TelecomLoadVerificationService {
             map.put("errorCode", "0000");
             map.put("errorInfo", "操作成功");
             map.put("data", mapdata);
-        } catch (Exception e) {
+        }catch (HttpHostConnectException e){
+            logger.warn(e.getMessage() + "mrlu 网络连接异常",e);
+            Scheduler.sendGet(Scheduler.getIp);
+            map.put("errorCode", "0001");
+            map.put("errorInfo", "网络错误，请重试！");
+        }catch (Exception e) {
             logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作失败");
@@ -93,6 +99,11 @@ public class TelecomLoadVerificationService {
             map.put("errorCode", "0000");
             map.put("errorInfo", "操作成功");
             map.put("data", jsonObject);
+        }catch (HttpHostConnectException e){
+            logger.warn(e.getMessage() + "mrlu 网络连接异常",e);
+            Scheduler.sendGet(Scheduler.getIp);
+            map.put("errorCode", "0001");
+            map.put("errorInfo", "网络错误，请重试！");
         } catch (Exception e) {
             logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
@@ -147,12 +158,19 @@ public class TelecomLoadVerificationService {
                 map.put("errorInfo", "登陆成功");
                 session.setAttribute("GBmobile-webclient", webClient);
             }
-        } catch (Exception e) {
-            webClient.close();
+        }catch (HttpHostConnectException e){
+            logger.warn(e.getMessage() + "mrlu 网络连接异常",e);
             Scheduler.sendGet(Scheduler.getIp);
-            logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0001");
-            map.put("errorInfo", "网络连接异常!");
+            map.put("errorInfo", "网络错误，请重试！");
+        } catch (Exception e) {
+            logger.warn(e.getMessage() + "mrlu",e);
+            map.put("errorCode", "0002");
+            map.put("errorInfo", "系统繁忙!");
+        }finally {
+            if(webClient!=null){
+                webClient.close();
+            }
         }
         return map;
     }

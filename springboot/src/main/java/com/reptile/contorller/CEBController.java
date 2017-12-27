@@ -28,10 +28,10 @@ public class CEBController {
 		public Map<String,Object> CEBPass(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserName") String UserName) throws Exception{
 			return ceb.CEBlogin1(request,UserCard,UserName);
 		}
-		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：用户账号(身份证),短信验证码")
+		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：用户账号(身份证),短信验证码,银行卡号")
 		@ResponseBody
 		@RequestMapping(value="CEBlogin",method=RequestMethod.POST)
-		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
-			return ceb.CEBlogin2(request,UserCard,Password,UUID,timeCnt);
+		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password,@RequestParam("userAccount")String userAccount,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
+			return ceb.CEBlogin2(request,UserCard,Password,userAccount,UUID,timeCnt);
 		}
 }

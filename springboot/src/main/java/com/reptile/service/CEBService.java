@@ -129,11 +129,11 @@ public class CEBService {
 			return map;
 			
 		}
-		public synchronized Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password,String UUID,String timeCnt) throws ParseException{
+		public  Map<String,Object> CEBlogin2(HttpServletRequest request,String UserCard,String Password,String userAccount,String UUID,String timeCnt) throws ParseException{
 			boolean isok = CountTime.getCountTime(timeCnt);
-			
 			 Map<String, Object> map=new HashMap<String, Object>();
 			 PushSocket.pushnew(map, UUID, "1000","光大银行登录中");
+			 String flag="";
 			 if(isok==true) {
 					PushState.state(UserCard, "bankBillFlow",100);
 				}
@@ -168,7 +168,8 @@ public class CEBService {
 					//PushSocket.push(map, UUID, "0001");
 					if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
-					}					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
+					}					
+					logger.warn("光大银行登录时发送验证码输入有误"+UserCard);
 					map.put("errorInfo","短信验证码输入有误");
 					map.put("errorCode","0002");
 					
@@ -180,18 +181,17 @@ public class CEBService {
 					}
 					 PushSocket.pushnew(map, UUID, "3000","短信验证码输入有误");
 				} catch (Exception e) {
-					
-					// TODO: handle exception
 					System.out.println("点击成功");
 					driver.get(CabCardIndexpage);
 					System.out.println("开始进入个人中心");
 					PushSocket.pushnew(map, UUID, "2000","光大银行信用卡登录成功");
+					flag="2000";
 					WebElement table=  driver.findElement(ByClassName.className("tab_one"));
-					//PushSocket.push(map, UUID, "0000");
 					List<WebElement> tr	=table.findElements(By.tagName("tr"));
 					List<String> html =new ArrayList<String>();
 					List<String> times=new ArrayList<String>();
 					PushSocket.pushnew(map, UUID, "5000","光大银行信用卡信息获取中");
+					flag="5000";
 					for (int i = 1; i < tr.size(); i++) {
 						WebElement tds=	 tr.get(i);
 						List<WebElement> td=tds.findElements(By.tagName("td"));
@@ -206,11 +206,13 @@ public class CEBService {
 						html.add(detailedpage);
 					}
 					PushSocket.pushnew(map, UUID, "6000","光大银行信用卡信息获取成功");
+					flag="6000";
 					Map<String,Object> seo=new HashMap<String, Object>();
 				  	System.out.println("页面已经放置到html中");
 				  	data.put("html", html);
 				  	data.put("backtype","CEB");
 				  	data.put("idcard",UserCard);
+				  	data.put("userAccount", userAccount);
 				  	seo.put("data", data);
 				  	System.out.println(seo);
 				  	Resttemplate resttemplate = new Resttemplate();
@@ -249,13 +251,21 @@ public class CEBService {
 				 if(isok==true) {
 						PushState.state(UserCard, "bankBillFlow",200);
 				 }
+				 if(flag.equals("2000")){
+						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+					}else if(flag.equals("5000")){
+						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+					}else if(flag.equals("6000")){
+						PushSocket.pushnew(map, UUID, "9000","认证失败");
+					}else{
+						PushSocket.pushnew(map, UUID, "3000","登录失败");
+					}
 				//---------------------------数据中心推送状态----------------------------------
 				 e.printStackTrace();
 				 map.clear();
 				 logger.warn("光大银行账单推送失败"+UserCard);
 				 map.put("errorInfo","获取账单失败");
 				 map.put("errorCode","0002");
-				 PushSocket.pushnew(map, UUID, "7000","光大银行信用卡信息获取失败");
 			}
 			
 			return map;
