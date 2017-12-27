@@ -69,6 +69,9 @@ public class ChinaBankService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
                 PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败");
+                if(isok==true) {
+                    PushState.state(userCard, "bankBillFlow",200);
+                }
                 states="3";
                 driver.quit();              
                 return map;
@@ -82,6 +85,9 @@ public class ChinaBankService {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "请使用信用卡号登录");
                         PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败请使用信用卡号登录");
+                        if(isok==true) {
+                            PushState.state(userCard, "bankBillFlow",200);
+                        }
                         states="3";
                         driver.quit();                       
                         return map;
@@ -96,6 +102,9 @@ public class ChinaBankService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "请输入正确的信用卡号");
                 PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败请输入正确的信用卡号");
+                if(isok==true) {
+                    PushState.state(userCard, "bankBillFlow",200);
+                }
                 states="3";
                 driver.quit();              
                 return map;
@@ -127,11 +136,14 @@ public class ChinaBankService {
                 if (msgContent.contains("验证码输入错误")) {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
-                    PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
-                    states="3";
                 } else {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", msgContent);
+                }
+                states="3";
+                PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                if(isok==true) {
+                    PushState.state(userCard, "bankBillFlow",200);
                 }
                 driver.quit();
                 return map;
@@ -199,6 +211,7 @@ public class ChinaBankService {
             sendMap.put("backtype", "BOC");
             sendMap.put("html", listData);
             sendMap.put("userAccount",cardNumber);
+            
             map.put("data", sendMap);
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
             System.out.println("tuisonghou----"+map);
@@ -211,7 +224,7 @@ public class ChinaBankService {
                 map.put("errorCode","0000");
                 PushSocket.pushnew(map, UUID, "8000","中国银行信用卡认证成功");
                 states="8";
-                Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }else{
             	//--------------------数据中心推送状态----------------------
             	if(isok==true) {
@@ -220,7 +233,7 @@ public class ChinaBankService {
             	logger.warn("中国银行账单推送失败"+userCard);
             	 PushSocket.pushnew(map, UUID, "9000","中国银行信用卡认证失败");
             	 states="9";
-            	 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
+            	 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }
         } catch (Exception e) {
             logger.warn("中国银行信用卡认证失败",e);
