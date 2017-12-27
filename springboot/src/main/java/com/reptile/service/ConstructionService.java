@@ -56,7 +56,7 @@ public class ConstructionService {
 					map.clear();
 //					logger.warn("建设账号或卡号与账户类型不匹配"+UserCode);
 					map.put("errorInfo","账号或卡号与账户类型不匹配");
-					 PushSocket.pushnew(map, UUID, "3000","建设银行信用卡账号或卡号与账户类型不匹配");
+					PushSocket.pushnew(map, UUID, "3000","建设银行信用卡账号或卡号与账户类型不匹配");
 					map.put("errorCode","0002");
 					return map;
 				}
@@ -106,7 +106,9 @@ public class ConstructionService {
 			  	data.put("html", html);
 			  	data.put("backtype","CCNB");
 			  	data.put("idcard",UserCard);
+				data.put("userAccount",UserCode);
 			  	con.put("data", data);
+			  	
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(con,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
 				driver.close();

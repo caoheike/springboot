@@ -2,8 +2,10 @@ package com.reptile.service.depositCard;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.RobotUntil;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -41,7 +44,7 @@ public class ChinaBankDepositCardService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String IDNumber, String cardNumber, String passWord, String userName,String UUID) {
         Map<String, Object> map = new HashMap<>();
         PushSocket.pushnew(map, UUID, "1000","登录中");
-        
+        PushState.state(IDNumber, "savings",100);
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
         File file = new File(path);
@@ -55,6 +58,7 @@ public class ChinaBankDepositCardService {
         options.addArguments("start-maximized");
         ChromeDriver driver = new ChromeDriver(options);
         WebDriverWait wait = new WebDriverWait(driver, 10);
+        String flag="0000";
         try {
             driver.get("https://ebsnew.boc.cn/boc15/login.html");
             List<WebElement> input = driver.findElementsByTagName("input");
@@ -70,6 +74,7 @@ public class ChinaBankDepositCardService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
                 PushSocket.pushnew(map, UUID, "3000",msgContent);
+                PushState.state(IDNumber, "savings",200);
                 driver.quit();
                 return map;
             }
@@ -80,6 +85,7 @@ public class ChinaBankDepositCardService {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "请输入正确的储蓄卡号");
                 PushSocket.pushnew(map, UUID, "3000","请输入正确的储蓄卡号");
+                PushState.state(IDNumber, "savings",200);
                 driver.quit();
                 return map;
             }
@@ -111,10 +117,12 @@ public class ChinaBankDepositCardService {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
                     PushSocket.pushnew(map, UUID, "3000","验证码输入错误");
+                    PushState.state(IDNumber, "savings",200);
                 } else {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", msgContent);
                     PushSocket.pushnew(map, UUID, "3000",msgContent);
+                    PushState.state(IDNumber, "savings",200);
                 }
                 driver.quit();
                 return map;
@@ -125,14 +133,16 @@ public class ChinaBankDepositCardService {
             	map.put("errorCode", "0001");
                 map.put("errorInfo", "登录失败，系统繁忙");
                 PushSocket.pushnew(map, UUID, "3000","登录失败，系统繁忙");
+                PushState.state(IDNumber, "savings",200);
                 driver.quit();
                 return map;
             }
-            
+            flag="3000";
             PushSocket.pushnew(map, UUID, "2000","登录成功");
+            flag="2000";
+            logger.warn("中国银行储蓄卡登录成功");
             Thread.sleep(2000);
             PushSocket.pushnew(map, UUID, "5000","数据获取中");
-            logger.warn("中国银行储蓄卡登录成功");
             //--------------这里加推送状态
             //PushSocket.push(map, UUID, "0000");
             //获取储蓄卡基本信息
@@ -155,8 +165,10 @@ public class ChinaBankDepositCardService {
             map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");
             if(map!=null&&"0000".equals(map.get("errorCode").toString())){
             	PushSocket.pushnew(map, UUID, "8000","认证成功");
+            	 PushState.state(IDNumber, "savings",300);
             }else {
             	PushSocket.pushnew(map, UUID, "9000","认证失败");
+            	 PushState.state(IDNumber, "savings",200);
             }
             
             logger.warn("中国银行储蓄卡账单信息推送完成");
@@ -167,6 +179,14 @@ public class ChinaBankDepositCardService {
             driver.quit();
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
+            if(flag.equals("3000")){
+            	PushSocket.pushnew(map, UUID, "3000","登录失败，网络异常");
+            }else if(flag.equals("2000")){
+            	PushSocket.pushnew(map, UUID, "7000","数据获取失败，网络异常");
+            }else{
+            	PushSocket.pushnew(map, UUID, "9000","认证失败，网络异常");
+            }
+       	    PushState.state(IDNumber, "savings",200);
         }
         return map;
     }

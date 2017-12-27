@@ -333,6 +333,7 @@ public class PhoneBillsService {
                 webRequest2.setAdditionalHeader("Referer", "http://shop.10086.cn/i/?f=home&welcome=" + System.currentTimeMillis());
                 webRequest2.setHttpMethod(HttpMethod.GET);
                 UnexpectedPage page8 = webClient.getPage(webRequest2);
+                //HtmlPage page8 = webClient.getPage(webRequest2);
                 Thread.sleep(1000);
                 String result = page8.getWebResponse().getContentAsString();
                 if (!page8.getWebResponse().getContentAsString().contains("认证成功")) {

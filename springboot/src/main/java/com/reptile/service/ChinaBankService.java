@@ -198,6 +198,7 @@ public class ChinaBankService {
             sendMap.put("idcard", userCard);
             sendMap.put("backtype", "BOC");
             sendMap.put("html", listData);
+            sendMap.put("userAccount",cardNumber);
             map.put("data", sendMap);
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
             System.out.println("tuisonghou----"+map);
