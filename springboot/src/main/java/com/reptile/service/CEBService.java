@@ -102,10 +102,10 @@ public class CEBService {
 			          map.put("errorCode","0002");
 			      	try {
 						driver.quit();
+						InvokeBat4.runbat();
 					} catch (Exception e3) {
 						// TODO: handle exception
 					}
-			          Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
 			        }else {
 			          HttpSession session=request.getSession();//获得session
 			          session.setAttribute("sessionDriver-Ceb"+Usercard, driver);
@@ -122,9 +122,11 @@ public class CEBService {
 				map.put("errorCode","0001");
 				try {
 					driver.quit();
+					InvokeBat4.runbat();
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
+				
 			}
 			return map;
 			
@@ -152,6 +154,7 @@ public class CEBService {
 					PushSocket.pushnew(map, UUID, "3000","连接超时！请重新获取验证码");
 					 try {
 						 driver.quit();
+						 InvokeBat4.runbat();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -175,6 +178,7 @@ public class CEBService {
 					
 					 try {
 						 driver.quit();
+						 InvokeBat4.runbat();
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -219,6 +223,7 @@ public class CEBService {
 					map=resttemplate.SendMessage(seo,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
 					 try {
 						 driver.quit();
+						 InvokeBat4.runbat();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -243,6 +248,7 @@ public class CEBService {
 			} catch (Exception e) {
 				 try {
 					 driver.quit();
+					 InvokeBat4.runbat();
 				} catch (Exception e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
@@ -252,13 +258,13 @@ public class CEBService {
 						PushState.state(UserCard, "bankBillFlow",200);
 				 }
 				 if(flag.equals("2000")){
-						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+						PushSocket.pushnew(map, UUID, "7000","光大银行账单获取失败");
 					}else if(flag.equals("5000")){
-						PushSocket.pushnew(map, UUID, "7000","建设银行账单获取失败");
+						PushSocket.pushnew(map, UUID, "7000","光大银行账单获取失败");
 					}else if(flag.equals("6000")){
 						PushSocket.pushnew(map, UUID, "9000","认证失败");
 					}else{
-						PushSocket.pushnew(map, UUID, "3000","登录失败");
+						PushSocket.pushnew(map, UUID, "3000","登录失败，验证码错误");
 					}
 				//---------------------------数据中心推送状态----------------------------------
 				 e.printStackTrace();
