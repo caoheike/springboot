@@ -320,12 +320,24 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- 常用24个工具类 -->
 		<dependency>
-			<groupId>iText</groupId>
-			<artifactId>iText</artifactId>
-			<version>2.0.8</version>
+			<groupId>com.hoomsun.HoomsunUtil</groupId>
+			<artifactId>HoomsunUtil</artifactId>
+			<version>0.0.2</version>
 		</dependency>
-
+		<!-- 截图找图 -->
+		<dependency>
+			<groupId>com.hoomsun.Image</groupId>
+			<artifactId>Image</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<!-- 控件处理 -->
+		<dependency>
+			<groupId>com.hoomsun.keyBoard</groupId>
+			<artifactId>keyBoard</artifactId>
+			<version>0.0.2</version>
+		</dependency>
 	</dependencies>
 
 
