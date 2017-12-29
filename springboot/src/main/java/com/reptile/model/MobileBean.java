@@ -18,7 +18,7 @@ public String getCallCode() {
 public void setCallCode(String callCode) {
 	CallCode = callCode;
 }
-public static String GetCodeUrl="https://sn.ac.10086.cn/servlet/CreateImage?"+System.currentTimeMillis();
+private static String GetCodeUrl="https://sn.ac.10086.cn/servlet/CreateImage?"+System.currentTimeMillis();
 public static String loginurl="https://sn.ac.10086.cn/loginAction";
 public static String ifLoginUrl="http://service.sn.10086.cn/app?service=page/MyBillQuery&listener=initPage&type=1&random=0.6167800748196473";
 public static String  CodeUrl="https://sn.ac.10086.cn/login";
@@ -27,13 +27,13 @@ public static String  CallCodeUrl="http://service.sn.10086.cn/app?service=page/M
 private static String SenUrl;
 public static String iflg="http://service.sn.10086.cn/app?service=page/balanceQueryNew&listener=initPage&random=0.7018434080546756";
 //public static String pingzhengUrl="http://service.sn.10086.cn/app?service=ajaxDirect/1/DetailedQuery/DetailedQuery/javascript/refushBusiSearchResult&pagename=DetailedQuery&eventname=queryAll&&MONTH=201705&MONTH_DAY=&LAST_MONTH_DAY=2017-05-31&BILL_TYPE=207&SHOW_TYPE=0&partids=refushBusiSearchResult&ajaxSubmitType=get&ajax_randomcode=0.02440126490078076";
-public static String downloadUrl="http://service.sn.10086.cn/app?service=page/DetailedQuery&listener=billExport&BILL_TYPE=201&ShowMonth=X";
+private static String downloadUrl="http://service.sn.10086.cn/app?service=page/DetailedQuery&listener=billExport&BILL_TYPE=201&ShowMonth=X";
 //修改密码需要此次认证Url才能进行修改
 public static String UpdatePwdAttestationUrl="https://service.sn.10086.cn/app?service=page/personalinfo.ResetPwdOperation&listener=resetOperation";
 //认证通过！通过此次请求进行修改
 public static String UpdatePwd="https://service.sn.10086.cn/app?service=page/personalinfo.ResetPwdOperation&listener=changeOperation";
 //修改密码首页，通过此次请求获得验证码，（通过Url直接获取有验证，So 只能根据元素获取）
-public static String UpdatePwdImg="https://service.sn.10086.cn/app?service=page/personalinfo.ResetPwdOperation&listener=initPage&MENU_ID=&loginType=-1&isGroup=1";
+private static String UpdatePwdImg="https://service.sn.10086.cn/app?service=page/personalinfo.ResetPwdOperation&listener=initPage&MENU_ID=&loginType=-1&isGroup=1";
 
 public String getUserIphone() {
 	return UserIphone;
@@ -69,6 +69,24 @@ return url;
 public String uvc(String uvc){
 String uvcs="https://sn.ac.10086.cn/servlet/CheckCode?code="+uvc+"";
 return uvcs;
+}
+public static String getGetCodeUrl() {
+	return GetCodeUrl;
+}
+public static void setGetCodeUrl(String getCodeUrl) {
+	GetCodeUrl = getCodeUrl;
+}
+public static String getDownloadUrl() {
+	return downloadUrl;
+}
+public static void setDownloadUrl(String downloadUrl) {
+	MobileBean.downloadUrl = downloadUrl;
+}
+public static String getUpdatePwdImg() {
+	return UpdatePwdImg;
+}
+public static void setUpdatePwdImg(String updatePwdImg) {
+	UpdatePwdImg = updatePwdImg;
 }
 
 }
