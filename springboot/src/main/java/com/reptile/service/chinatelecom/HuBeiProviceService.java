@@ -22,13 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Service
 public class HuBeiProviceService {
 	 @Autowired
 	  private application applications;
-	public static Map<String,Object> hubeicode(HttpServletRequest request,String PhoneCode,String PassPhone){
-		System.out.println("湖北电信");
-		  Map<String,Object> map = new HashMap<String,Object>();
+	public  Map<String,Object> hubeicode(HttpServletRequest request,String phoneCode,String passPhone){
+		  Map<String,Object> map = new HashMap<String,Object>(200);
 	        HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("GBmobile-webclient");
 	        
@@ -47,8 +51,8 @@ public class HuBeiProviceService {
 		            request1.setHttpMethod(HttpMethod.GET);
 		            HtmlPage page1 = webClient.getPage(request1);
 		            Thread.sleep(4000);
-		            page1.getElementById("txtAccount").setAttribute("value", PhoneCode);
-		            page1.getElementById("txtPassword").setAttribute("value", PassPhone);
+		            page1.getElementById("txtAccount").setAttribute("value", phoneCode);
+		            page1.getElementById("txtPassword").setAttribute("value", passPhone);
 		            HtmlPage page2 = page1.getElementById("loginbtn").click();
 		            HtmlInput hiiden=  (HtmlInput) page2.getElementById("CITYCODE");
 		            String citycode= hiiden.getAttribute("value");
@@ -58,16 +62,17 @@ public class HuBeiProviceService {
 		         	HtmlPage note =webClient.getPage(requests2);
 		         	Thread.sleep(5000);
 		            WebRequest request2 =new WebRequest(new URL("http://hb.189.cn/feesquery_PhoneIsDX.action"));
-		     		request2.setHttpMethod(HttpMethod.POST);//提交方式
+		          //提交方式
+		     		request2.setHttpMethod(HttpMethod.POST);
 		     		List<NameValuePair> list = new ArrayList<NameValuePair>();
-		     		list.add(new NameValuePair("productNumber",PhoneCode));
+		     		list.add(new NameValuePair("productNumber",phoneCode));
 		     		list.add(new NameValuePair("cityCode",citycode));
 		     		list.add(new NameValuePair("sentType","C"));
 		     		list.add(new NameValuePair("ip","0"));
 		     		request2.setRequestParameters(list);
 		     		HtmlPage backtrack =webClient.getPage(request2);
 		     		Thread.sleep(4000);
-		     		if(backtrack.asText().indexOf(PhoneCode)!=-1){
+		     		if(backtrack.asText().indexOf(phoneCode)!=-1){
 		     			System.out.println(backtrack.asText()+"--成功--");
 		     			session.setAttribute("sessionWebClient-HUBEI", webClient);
 		     			map.put("errorCode", "0000");
@@ -86,10 +91,10 @@ public class HuBeiProviceService {
 	        }
 		return map;
 	}
-	public Map<String,Object> hubeiphone(HttpServletRequest request, String PhoneCode,String PhoneNume,String PhonePass,String longitude,String latitude, String UUID){
-		 Map<String,Object> map = new HashMap<String,Object>();
-		 PushState.state(PhoneCode, "callLog",100);
-		 PushSocket.pushnew(map, UUID, "1000","登录中");
+	public Map<String,Object> hubeiphone(HttpServletRequest request, String phoneCode,String phoneNume,String phonePass,String longitude,String latitude, String uuid){
+		 Map<String,Object> map = new HashMap<String,Object>(200);
+		 PushState.state(phoneCode, "callLog",100);
+		 PushSocket.pushnew(map, uuid, "1000","登录中");
 		 try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -102,107 +107,107 @@ public class HuBeiProviceService {
 	        	
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
-	            PushState.state(PhoneNume, "callLog",200);
-	            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
+	            PushState.state(phoneNume, "callLog",200);
+	            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
 	            return map;
 	        } else {
 	        try {
 	        	WebClient webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));
-				requests.setHttpMethod(HttpMethod.POST);//提交方式
+				//提交方式
+				requests.setHttpMethod(HttpMethod.POST);
 				List<NameValuePair> list = new ArrayList<NameValuePair>();
-				list.add(new NameValuePair("accnbr",PhoneNume));
+				list.add(new NameValuePair("accnbr",phoneNume));
 				requests.setRequestParameters(list);
 				HtmlPage back1=webClient.getPage(requests);
 				String stat=back1.asText();
 				System.out.println(stat);
 				Thread.sleep(3000);
 				WebRequest requests2=new WebRequest(new URL("http://hb.189.cn/feesquery_checkCDMAFindWeb.action"));
-				requests2.setHttpMethod(HttpMethod.POST);//提交方式
+				//提交方式
+				requests2.setHttpMethod(HttpMethod.POST);
 				List<NameValuePair> list2 = new ArrayList<NameValuePair>();
-				list2.add(new NameValuePair("random",PhoneCode));
+				list2.add(new NameValuePair("random",phoneCode));
 				list2.add(new NameValuePair("sentType","C"));
 				requests2.setRequestParameters(list2);
 				HtmlPage back2=webClient.getPage(requests2);
 				String stat2=back2.asText();
 				System.out.println(stat2);				
-				  Map<String,Object>HUBEI=new HashMap<String,Object>();
+				  Map<String,Object>hubei=new HashMap<String,Object>(200);
 				  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				  
-					PushSocket.pushnew(map, UUID, "2000","登录成功");
+					PushSocket.pushnew(map, uuid, "2000","登录成功");
 					Thread.sleep(2000);
-					PushSocket.pushnew(map, UUID, "5000","获取数据中");
-					for (int i = 0; i < 3; i++) {
-					
-					 
-					Map<String,Object> detailed=new HashMap<String,Object>();
+					PushSocket.pushnew(map, uuid, "5000","获取数据中");
+					int num=3;
+					for (int i = 0; i < num; i++) {
+					Map<String,Object> detailed=new HashMap<String,Object>(200);
 					List<Map<String ,Object>> eachMonthList =new ArrayList<Map<String ,Object>>();					
 					List<NameValuePair> list3 = new ArrayList<NameValuePair>();
 					WebRequest requests3=new WebRequest(new URL("http://hb.189.cn/feesquery_querylist.action"));
-					requests3.setHttpMethod(HttpMethod.POST);//提交方式
-					String Month=Dates.beforMonth(i)+"0000";
-					System.out.println(Month+"----------------------");
-					list3.add(new NameValuePair("startMonth",Month));
+					//提交方式
+					requests3.setHttpMethod(HttpMethod.POST);
+					String month=Dates.beforMonth(i)+"0000";
+					System.out.println(month+"----------------------");
+					list3.add(new NameValuePair("startMonth",month));
 					list3.add(new NameValuePair("type",stat2));
-					list3.add(new NameValuePair("random",PhoneCode));
+					list3.add(new NameValuePair("random",phoneCode));
 					requests3.setRequestParameters(list3);
 					HtmlPage back3=webClient.getPage(requests3);
-					String Phonedetailed=back3.asText();
+					String phonedetailed=back3.asText();
 					
-					if(Phonedetailed.indexOf(PhoneCode)!=-1){
+					if(phonedetailed.indexOf(phoneCode)!=-1){
 		     			map.put("errorCode", "0002");
 		     			map.put("errorInfo", "获取数据为空!");
-		     			PushState.state(PhoneNume, "callLog",200);
-		            	PushSocket.pushnew(map, UUID, "7000","暂无数据");
+		     			PushState.state(phoneNume, "callLog",200);
+		            	PushSocket.pushnew(map, uuid, "7000","暂无数据");
 		     			return map;
 		     			
 		     		}
-					System.out.println(Phonedetailed+"----------------------");
-					Map<String ,Object> pageMap=new HashMap();
-//					pageMap.put("pageData", Phonedetailed);
-//					eachMonthList.add(pageMap);
-					//detailed.put("item", Phonedetailed);
+					System.out.println(phonedetailed+"----------------------");
+					Map<String ,Object> pageMap=new HashMap(200);
 					Thread.sleep(3000);
 					System.out.println("-------------获取下一页的数值------------------");
-					for (int j = 1; j < 4; j++) {
-						Map<String ,Object> eachpageMap=new HashMap();
+					int num1=4;
+					for (int j = 1; j < num1; j++) {
+						Map<String ,Object> eachpageMap=new HashMap(200);
 						Thread.sleep(2000);
 						List<NameValuePair> list4 = new ArrayList<NameValuePair>();
 						WebRequest requests4=new WebRequest(new URL("http://hb.189.cn/feesquery_pageQuery.action"));
-						requests4.setHttpMethod(HttpMethod.POST);//提交方式
+						//提交方式
+						requests4.setHttpMethod(HttpMethod.POST);
 						list4.add(new NameValuePair("page",j+""));
 						list4.add(new NameValuePair("showCount","100"));
 						requests4.setRequestParameters(list4);
 						HtmlPage back4=webClient.getPage(requests4);
-						String Phonedetailed2=back4.asText();
-						eachpageMap.put("pageData", Phonedetailed2);
+						String phonedetailed2=back4.asText();
+						eachpageMap.put("pageData", phonedetailed2);
 						eachMonthList.add(eachpageMap);
-						System.out.println("--------第"+j+"页------------"+Phonedetailed2+"----------------------");
-//						detailed.put("Month"+"--"+j, Phonedetailed2);
+						System.out.println("--------第"+j+"页------------"+phonedetailed2+"----------------------");
 					}
-//					eachMonthList.add(detailed);					
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
-					PushSocket.pushnew(map, UUID, "6000","数据获取成功");
-				HUBEI.put("data", datalist);
-				HUBEI.put("UserIphone", PhoneNume);
+					PushSocket.pushnew(map, uuid, "6000","数据获取成功");
+					hubei.put("data", datalist);
+					hubei.put("UserIphone", phoneNume);
 				map.put("longitude", longitude);
 				map.put("latitude", latitude);
-				HUBEI.put("flag", 12);
-				HUBEI.put("UserPassword", PhonePass);
+				hubei.put("flag", 12);
+				hubei.put("UserPassword", phonePass);
 				Resttemplate resttemplate = new Resttemplate();
-				map=resttemplate.SendMessage(HUBEI, applications.getSendip()+"/HSDC/message/telecomCallRecord");
-				if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-					
-			    	PushState.state(PhoneNume, "callLog",300);
+				map=resttemplate.SendMessage(hubei, applications.getSendip()+"/HSDC/message/telecomCallRecord");
+				String errorCode = "errorCode";
+				String state0 = "0000";
+				if(map!=null&&state0.equals(map.get(errorCode).toString())){
+			    	PushState.state(phoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
-	                PushSocket.pushnew(map, UUID, "8000","认证成功");
+	                PushSocket.pushnew(map, uuid, "8000","认证成功");
 	         }else{
 	            	//--------------------数据中心推送状态----------------------
-	            	PushState.state(PhoneNume, "callLog",200);
-	            	PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+	            	PushState.state(phoneNume, "callLog",200);
+	            	PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 	            	//---------------------数据中心推送状态----------------------
 	          }
 				webClient.close();
@@ -210,12 +215,12 @@ public class HuBeiProviceService {
 				// TODO Auto-generated catch block
 				
 				e.printStackTrace();
-				PushState.state(PhoneNume, "callLog",200);
+				PushState.state(phoneNume, "callLog",200);
 				//---------------------------数据中心推送状态----------------------------------
 				 map.clear();
 				 map.put("errorInfo","服务繁忙，请稍后再试");
 				 map.put("errorCode","0002");
-				 PushSocket.pushnew(map, UUID, "9000","服务繁忙，请稍后再试");
+				 PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
 			}
 	        }
 	        

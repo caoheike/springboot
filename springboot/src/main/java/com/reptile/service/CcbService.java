@@ -29,7 +29,6 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
@@ -43,58 +42,71 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
 
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 
 @Service
-public class CCBService {
+public class CcbService {
 	@Autowired
 	  private application applications;
-	  private PushState PushState;
-	  private Logger logger= LoggerFactory.getLogger(CCBService.class);
-	  private final static String CEBlogin="https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1&CUSTYPE=0&TXCODE=CLOGIN&DESKTOP=0&EXIT_PAGE=login.jsp&WANGZHANGLOGIN=&FORMEPAY=2";//建设银行登录页面
-	  public Map<String,Object> ccbInformation(HttpServletRequest request,String IDNumber,String cardNumber,String cardPass,String UUID){
-			Map<String, Object> map=new HashMap<String, Object>();
-			Map<String,Object> data=new HashMap<String,Object>();
-			
-			//System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
-			//WebDriver driver = new ChromeDriver();
+	  private Logger logger= LoggerFactory.getLogger(CcbService.class);
+	  /**
+	   * 建设银行登录页面
+	   */
+	  private final static String CEB_LOGIN="https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1&CUSTYPE=0&TXCODE=CLOGIN&DESKTOP=0&EXIT_PAGE=login.jsp&WANGZHANGLOGIN=&FORMEPAY=2";
+	  public Map<String,Object> ccbInformation(HttpServletRequest request,String iDNumber,String cardNumber,String cardPass,String uuid){
+			//创建Map进行与app的数据传输
+		  	Map<String, Object> map=new HashMap<String, Object>(70);
+			//创建driver(IE)
 			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 			WebDriver driver = new InternetExplorerDriver();
-			
-			driver.get(CEBlogin);
+			//输入需要登录的地址
+			driver.get(CEB_LOGIN);
+			//设置浏览器属性,隐式等待
 			driver.navigate().refresh();
-			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//隐式等待
-			PushSocket.pushnew(map, UUID, "1000","建设银行储蓄卡登录中");
-			PushState.state(IDNumber, "savings",100);
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+			//向app推送登录状态
+			PushSocket.pushnew(map, uuid, "1000","建设银行储蓄卡登录中");
+			PushState.state(iDNumber, "savings",100);
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
+			//输入建设银行储蓄卡卡号
 			driver.findElement(By.id("USERID")).sendKeys(cardNumber);
-			
+			//按下tab
 			Actions action = new Actions(driver);
 	        action.sendKeys(Keys.TAB).build().perform();
-	        
+	        //输入建设银行储蓄卡网银查询密码
 	        driver.findElement(By.id("LOGPASS")).sendKeys(cardPass);
+	        //点击登录
 	        driver.findElement(By.id("loginButton")).click();
+	        //进行判断是否登录成功
 	        String dpage1=driver.getPageSource();
-	        if(dpage1.indexOf("您输入的登录密码")!=-1){
-	        	logger.warn("登录密码错误"+IDNumber+driver.getPageSource());
+	        String state="";
+	        state="您输入的登录密码";
+	        if(dpage1.indexOf(state)!=-1){
+	        	logger.warn("登录密码错误"+iDNumber+driver.getPageSource());
 	        	map.put("errorInfo","您输入的登录密码错误");
 	            map.put("errorCode","0003");
 	        	try {
+	        		//关闭浏览器
 					driver.quit();
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
-	        	PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的登录密码错误");
-	        	PushState.state(IDNumber, "savings",200);
+	        	PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的登录密码错误");
+	        	PushState.state(iDNumber, "savings",200);
 	            return map;  
 	        }
-	        if(dpage1.indexOf("您输入的信息有误")!=-1){
-	        	logger.warn("登录信息填写有误"+IDNumber+driver.getPageSource());
+	        state="您输入的信息有误";
+	        if(dpage1.indexOf(state)!=-1){
+	        	logger.warn("登录信息填写有误"+iDNumber+driver.getPageSource());
 	        	try {
 					driver.quit();
 				} catch (Exception e2) {
@@ -102,44 +114,56 @@ public class CCBService {
 				}
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
-	            PushSocket.pushnew(map, UUID, "3000","建设银行储蓄卡输入的信息有误");
-	            PushState.state(IDNumber, "savings",200);
+	            PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的信息有误");
+	            PushState.state(iDNumber, "savings",200);
 	        	return map;  
 	        }
 	        
-
-	        driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
-		  WebElement name= driver.findElement(ByClassName.className("msg_welcome"));//用户名
-		  String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));//户名
+	       //到详情页面获取数据
+	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
+	      //获取到户名
+	      WebElement name= driver.findElement(ByClassName.className("msg_welcome"));
+		  String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));
 		  System.out.println(userName);
-		  driver.findElement(By.id("per1")).click();//点击账户查询
+		  //点击账户查询
+		  driver.findElement(By.id("per1")).click();
 		  try {
 			  Thread.sleep(2000);
 		  } catch (InterruptedException e) {
 			  e.printStackTrace();
 		  }
-		  String accountType = null;//开户状态
-		  String openBranch = null;//开户网点
-		  String openTime = null;//开户时间
-		  PushSocket.pushnew(map, UUID, "2000","建设银行储蓄卡登录成功");
+		  //开户状态
+		  String accountType = null;
+		  //开户网点
+		  String openBranch = null;
+		  //开户时间
+		  String openTime = null;
+		  PushSocket.pushnew(map, uuid, "2000","建设银行储蓄卡登录成功");
 		  try {
-			  //PushSocket.push(map, UUID, "0000");
-			  driver.switchTo().frame("txmainfrm");//第一级的frame
-				 driver.switchTo().frame("result");//第2级的frame
-				 driver.switchTo().frame("result");//第3级的frame,可点击页面元素
+			  	//第一级的frame
+			  	 driver.switchTo().frame("txmainfrm");
+			  	//第2级的frame
+				 driver.switchTo().frame("result");
+				//第3级的frame,可点击页面元素
+				 driver.switchTo().frame("result");
+				//将页面进行jsoup转换
 				 Document page= Jsoup.parse(driver.getPageSource());
-				 accountType	=page.getElementsByClass("mt_10").text();//开户状态
-				 PushSocket.pushnew(map, UUID, "5000","建设银行储蓄卡获取中");
+				//开户状态
+				 accountType	=page.getElementsByClass("mt_10").text();
+				 PushSocket.pushnew(map, uuid, "5000","建设银行储蓄卡获取中");
 				 page.getElementsByClass("pl_10 pt_10").text();
 				 String open= page.getElementsByClass("mb_20").text();
-				 openBranch=open.substring(open.indexOf("签约分行")+5, open.lastIndexOf("签约状态"));//开户网点
-				 openTime =open.substring(open.indexOf("可用余额 操作")+9, open.lastIndexOf("活期储蓄"));//开户时间
-				 driver.findElement(ByXPath.xpath("/html/body/div/div[2]/table/tbody/tr/td[6]/a")).click();//点击查看明细
+				//开户网点
+				 openBranch=open.substring(open.indexOf("签约分行")+5, open.lastIndexOf("签约状态"));
+				//开户时间
+				 openTime =open.substring(open.indexOf("可用余额 操作")+9, open.lastIndexOf("活期储蓄"));
+				//点击查看明细
+				 driver.findElement(ByXPath.xpath("/html/body/div/div[2]/table/tbody/tr/td[6]/a")).click();
 				 Thread.sleep(5000);
 				} catch (Exception e) {
-					PushState.state(IDNumber, "savings",200);
-	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+IDNumber);
-	            	 PushSocket.pushnew(map, UUID, "7000","建设银行储蓄卡获取失败");
+					PushState.state(iDNumber, "savings",200);
+	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
+	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
 	    					driver.quit();
 	    				} catch (Exception e2) {
@@ -150,7 +174,7 @@ public class CCBService {
 		        	return map;  
 					
 				}
-				//---------------------------------------------------------------
+				//------------------------进行建设银行资金流水的循环查询，需要进行点击下一页，进行查询---------------------------------------
 			    try {  
 			        String currentHandle = driver.getWindowHandle();  
 			        Set<String> handles = driver.getWindowHandles();  
@@ -164,25 +188,30 @@ public class CCBService {
 			                	//------------------------------------------------------------------
 			                	Date date=new Date();
 			                	String time= new SimpleDateFormat("yyyyMMdd").format(date);
-			     			    Calendar c = Calendar.getInstance();//获得一个日历的实例
+			                	//获得一个日历的实例
+			     			    Calendar c = Calendar.getInstance();
 			     			    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-			     			    date = sdf.parse(time);//初始日期
-			     			    c.setTime(date);//设置日历时间
-			     			    c.add(Calendar.MONTH,-10);//在日历的月份上减少10个月
+			     			    //初始日期
+			     			    date = sdf.parse(time);
+			     			 //设置日历时间
+			     			    c.setTime(date);
+			     			 //在日历的月份上减少10个月
+			     			    c.add(Calendar.MONTH,-10);
 			     			    //-------------------------------------------------------------------
 			     			    JavascriptExecutor jss = (JavascriptExecutor) driver;
 			     			    String jsv =" $('#START_DATE').val('"+sdf.format(c.getTime())+"');";
 			     			    jss.executeScript(jsv, "");
 			     			    Thread.sleep(2000);
 			     			    driver.findElement(By.id("qd1")).click();
-			                    driver.switchTo().frame("result1");//第一页
+			     			 //第一页
+			                    driver.switchTo().frame("result1");
 			                    Document page1= Jsoup.parse(driver.getPageSource()); 
 			                    Element table = page1.getElementById("result");
 			                    Elements tr =table.getElementsByTag("tr");
 			                    List<Map<String,Object>> trs = new ArrayList<Map<String,Object>>();
 			                    for (int i = 1; i < tr.size(); i++) {
 			                	 	Elements td =  tr.get(i).select("td");
-									Map<String,Object> tds=new HashMap<String,Object>();
+									Map<String,Object> tds=new HashMap<String,Object>(70);
 								for (int n = 0; n< td.size(); n++) {
 									    if(n==1){
 										    tds.put("dealTime", td.get(n).text());
@@ -215,7 +244,9 @@ public class CCBService {
 									trs.add(tds);
 								}
 			                    driver.switchTo().parentFrame();
-		                    for (int j = 2; j < 9; j++) {
+			                    int a=2;
+			                    int b=9;
+		                    for (int j = a; j < b; j++) {
 			                    	JavascriptExecutor j1 = (JavascriptExecutor) driver;
 					     			String js1 ="TxtSubmit2("+j+")";
 					     			j1.executeScript(js1, "");
@@ -228,7 +259,7 @@ public class CCBService {
 				                    Elements trj =tablej.getElementsByTag("tr");
 				                    for ( int i=1; i<trj.size(); i++){  
 										Elements tdj =  trj.get(i).select("td");  
-										Map<String,Object> tdsj=new HashMap<String,Object>();
+										Map<String,Object> tdsj=new HashMap<String,Object>(200);
 										for (int n = 0; n< tdj.size(); n++) {
 											if(n==1){
 												tdsj.put("dealTime", tdj.get(n).text());
@@ -263,12 +294,13 @@ public class CCBService {
 				                    
 									driver.switchTo().parentFrame();
 								}
-		                    PushSocket.pushnew(map, UUID, "6000","建设银行储蓄卡获取成功");
+		                    //数据获取完成，进行推送
+		                    PushSocket.pushnew(map, uuid, "6000","建设银行储蓄卡获取成功");
 		                    Collections.reverse(trs);
-		                    Map<String,Object> baseMes=new HashMap<String, Object>();
-		                    Map<String,Object> ccb=new HashMap<String, Object>();
+		                    Map<String,Object> baseMes=new HashMap<String, Object>(200);
+		                    Map<String,Object> ccb=new HashMap<String, Object>(200);
 		                    ccb.put("dillMes", trs);
-		                    ccb.put("IDNumber", IDNumber);
+		                    ccb.put("IDNumber", iDNumber);
 		                    ccb.put("cardNumber", cardNumber);
 		                    ccb.put("userName", userName);
 		                    ccb.put("baseMes", baseMes);
@@ -277,22 +309,21 @@ public class CCBService {
 		                    baseMes.put("openTime", openTime);
 		                	Resttemplate resttemplate = new Resttemplate();
 		                    map=resttemplate.SendMessage(ccb,ConstantInterface.port+"/HSDC/savings/authentication");
+		                   //判断推送是否成功
 		                    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-						    	PushState.state(IDNumber, "savings",300);
-						    	PushSocket.pushnew(map, UUID, "8000","建设银行储蓄卡认证成功");
+						    	PushState.state(iDNumber, "savings",300);
+						    	PushSocket.pushnew(map, uuid, "8000","建设银行储蓄卡认证成功");
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
-				                //PushSocket.push(map, UUID, "0000");
 				            	try {
 									driver.quit();
 								} catch (Exception e2) {
-									// TODO: handle exception
 								}
 				                
 				            }else{
-				            	PushState.state(IDNumber, "savings",200);
-				            	PushSocket.pushnew(map, UUID, "9000","建设银行储蓄卡认证失败");
-				            	logger.warn("建设银行数据推送失败"+IDNumber);
+				            	PushState.state(iDNumber, "savings",200);
+				            	PushSocket.pushnew(map, uuid, "9000","建设银行储蓄卡认证失败");
+				            	logger.warn("建设银行数据推送失败"+iDNumber);
 				                //PushSocket.push(map, UUID, "0001");
 				            	try {
 									driver.quit();
@@ -302,24 +333,23 @@ public class CCBService {
 				            	return map;
 				            }
 			                 break;  
-			                } else  
-			                    continue;  
+			                } else {
+			                	continue;  
+			                }
 			            }  
 			        }  
 			    } catch (Exception e) { 
-//			    	 PushSocket.push(map, UUID, "0001");
 			    	 e.printStackTrace();
-			    	 PushState.state(IDNumber, "savings",200);
+			    	 PushState.state(iDNumber, "savings",200);
 			    	 map.clear();
-					 logger.warn("建设银行详单获取失败"+IDNumber);
-					 PushSocket.pushnew(map, UUID, "7000","建设银行储蓄卡获取失败");
+					 logger.warn("建设银行详单获取失败"+iDNumber);
+					 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
-//					 driver.quit();
 						try {
 							driver.quit();
 						} catch (Exception e2) {
-							// TODO: handle exception
+							
 						}
 					 return map;  
 			    }
