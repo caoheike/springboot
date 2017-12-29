@@ -26,6 +26,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+/**
+ * 
+ * @ClassName: NingBoAccumulationfundService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class NingBoAccumulationfundService {
 	@Autowired 
@@ -34,8 +42,8 @@ public class NingBoAccumulationfundService {
     
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取宁波公积金图片验证码");
-        Map<String, Object> map = new HashMap<>();
-        Map<String, String> datamap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, String> datamap = new HashMap<>(10);
         String path = request.getServletContext().getRealPath("ImageCode");
         HttpSession session = request.getSession();
 
@@ -68,11 +76,12 @@ public class NingBoAccumulationfundService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> loansdata = new HashMap<>();
+    @SuppressWarnings({ "unused", "rawtypes" })
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, Object> dataMap = new HashMap<>(10);
+        Map<String, Object> data = new HashMap<>(10);
+        Map<String, Object> loansdata = new HashMap<>(10);
         List<Object> beanList=new ArrayList<Object>();
         Date date=new Date();
         
@@ -84,7 +93,8 @@ public class NingBoAccumulationfundService {
             WebClient webClient = (WebClient) htmlWebClient;
             
             try {           	
-            	List<String> alert=new ArrayList<>();//alert监控
+            	//alert监控
+            	List<String> alert=new ArrayList<>();
                 CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
                 webClient.setAlertHandler(alertHandler);
                 page.getElementById("cardno").setAttribute("value",userCard);
@@ -92,15 +102,18 @@ public class NingBoAccumulationfundService {
                 page.getElementById("verify").setAttribute("value",imageCode);
                 HtmlPage loginHtml = page.getElementById("sub").click();
                 Thread.sleep(2000);
-                HtmlPage posthtml1 = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");//账户明细查询页
+                //账户明细查询页
+                HtmlPage posthtml1 = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");
                 Thread.sleep(3000);
                 System.out.println(alert.size());
                 logger.warn("登录宁波住房公积金:"+alert.size());
+                final String mimaheDui = "密码错误，请核对!";
+                final String yanzhengMa = "验证码不正确";
                 if(alert.size()>0){
-                	if(alert.get(0).equals("密码错误，请核对!")){
+                	if(alert.get(0).equals(mimaheDui)){
                 		map.put("errorCode", "0005");
                 		map.put("errorInfo", "密码输入错误！请重新输入");
-                	}else if(alert.get(0).equals("验证码不正确")){
+                	}else if(alert.get(0).equals(yanzhengMa)){
                 		map.put("errorCode", "0005");
                 		map.put("errorInfo", "验证码不正确！");
                 	}else{
@@ -111,9 +124,11 @@ public class NingBoAccumulationfundService {
                     return map;
                 }      
             	PushState.state(idCardNum, "accumulationFund",100);
-                HtmlPage posthtml = webClient.getPage("http://www.nbgjj.com/perdetail.jhtml");//账户明细查询页
+            	//账户明细查询页
+                HtmlPage posthtml = webClient.getPage("http://www.nbgjj.com/perdetail.jhtml");
                 Thread.sleep(3000);
-                if(posthtml.asText().indexOf("提供近三个自然年个人明细查询")!=-1){
+                final String chaxunmingXi = "提供近三个自然年个人明细查询";
+                if(posthtml.asText().indexOf(chaxunmingXi)!=-1){
                 	Calendar c = Calendar.getInstance();
                 	
             		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy-MM-dd" );
@@ -129,7 +144,8 @@ public class NingBoAccumulationfundService {
             		HtmlPage resultHtml = posthtml.getElementById("sub").click();
             		Thread.sleep(2000);
             		logger.warn("宁波住房公积金账户明细查询:"+alert.size());
-            		if(resultHtml.asText().indexOf("条记录")==-1){
+            		final String jiLu = "条记录";
+            		if(resultHtml.asText().indexOf(jiLu)==-1){
             			logger.warn("宁波住房公积金账户明细获取失败");
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "当前网络繁忙，请刷新后重试");                     
@@ -137,15 +153,16 @@ public class NingBoAccumulationfundService {
             			AccumulationFlows flows = new AccumulationFlows();
             			HtmlTable posttable = (HtmlTable) resultHtml.getElementById("queryTable");
             			String a = resultHtml.asText();
-            			int num1 = a.indexOf("共 ");//
+            			int num1 = a.indexOf("共 ");
             			int num2 = a.indexOf(" 条记录，共 ");
-            			String  phonenum = a.substring(num1+2, num2);//总记录数
+            			//总记录数
+            			String  phonenum = a.substring(num1+2, num2);
             			for(int i=Integer.valueOf(phonenum);i>=1;i--){             				
             				String type1 = posttable.getCellAt(i,2).asText();
             				if(type1.indexOf("汇缴")==-1&&type1.indexOf("补缴")==-1){
             					continue;
             				}
-            				if(type1.equals("少缴补缴")){
+            				if("少缴补缴".equals(type1)){
             					type1="补缴";
             				}
             				String time = posttable.getCellAt(i,1).asText().substring(0, 7).replace("-", "");
@@ -168,9 +185,11 @@ public class NingBoAccumulationfundService {
             		
             		
                 }
-                HtmlPage basicInfoshtml = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");//基本信息查询页
+                //基本信息查询页
+                HtmlPage basicInfoshtml = webClient.getPage("http://www.nbgjj.com/perquery.jhtml");
                 Thread.sleep(2000);
-                if(basicInfoshtml.asText().indexOf("账户机构")!=-1){
+                final String zhanghujiGou = "账户机构";
+                if(basicInfoshtml.asText().indexOf(zhanghujiGou)!=-1){
                 	HtmlTable table = (HtmlTable) basicInfoshtml.getElementById("queryTable");
                 	DomNodeList tdList = table.getElementsByTagName("td");
                 	String companyName = basicInfoshtml.getElementById("unitaccname").getTextContent().substring(5);
@@ -181,35 +200,47 @@ public class NingBoAccumulationfundService {
                 	data.put("userCard", userCard);
                 	/*BasicInfos.setName(name);
                 	BasicInfos.setIdCard(userCard);*/
+                	//个人缴费金额
                 	data.put("personDepositAmount", table.getElementsByTagName("td").get(17).getTextContent());
-                	//BasicInfos.setPersonDepositAmount(table.getElementsByTagName("td").get(17).getTextContent());//个人缴费金额
+                	//BasicInfos.setPersonDepositAmount(table.getElementsByTagName("td").get(17).getTextContent());
+                	//个人公积金账号
                 	data.put("personFundAccount", table.getElementsByTagName("td").get(5).getTextContent());
-                	//BasicInfos.setPersonFundAccount(table.getElementsByTagName("td").get(5).getTextContent());//个人公积金账号
+                	//BasicInfos.setPersonFundAccount(table.getElementsByTagName("td").get(5).getTextContent());
+                	//缴费基数
                 	data.put("baseDeposit", table.getElementsByTagName("td").get(9).getTextContent());
-                	///BasicInfos.setBaseDeposit(table.getElementsByTagName("td").get(9).getTextContent());//缴费基数
+                	///BasicInfos.setBaseDeposit(table.getElementsByTagName("td").get(9).getTextContent());
+                	//个人公积金卡号
                 	data.put("personFundCard", "");
-                	//BasicInfos.setPersonFundCard(table.getElementsByTagName("td").get(5).getTextContent());//个人公积金卡号
+                	//BasicInfos.setPersonFundCard(table.getElementsByTagName("td").get(5).getTextContent());
+                	//公司缴费比例
                 	data.put("companyRatio", "");
-                	//BasicInfos.setCompanyRatio(table.getElementsByTagName("td").get(17).getTextContent());//公司缴费比例/////
+                	//BasicInfos.setCompanyRatio(table.getElementsByTagName("td").get(17).getTextContent());/////
+                	//个人缴费比例
                 	data.put("personRatio", "");
-                	//BasicInfos.setPersonRatio(table.getElementsByTagName("td").get(17).getTextContent());//个人缴费比例/////
+                	//BasicInfos.setPersonRatio(table.getElementsByTagName("td").get(17).getTextContent());/////
+                	//公司公积金账号
                 	data.put("companyFundAccount", "");
-                	//BasicInfos.setCompanyFundAccount(companyFundAccount);//公司公积金账号
+                	//BasicInfos.setCompanyFundAccount(companyFundAccount);
+                	//公司缴费金额
                 	data.put("companyDepositAmount", "");
-                	//BasicInfos.setCompanyDepositAmount(table.getElementsByTagName("td").get(17).getTextContent());//公司缴费金额
+                	//BasicInfos.setCompanyDepositAmount(table.getElementsByTagName("td").get(17).getTextContent());
+                	//最后缴费日期
                 	data.put("lastDepositDate", table.getElementsByTagName("td").get(27).getTextContent());
-                	//BasicInfos.setLastDepositDate(table.getElementsByTagName("td").get(27).getTextContent());//最后缴费日期
+                	//BasicInfos.setLastDepositDate(table.getElementsByTagName("td").get(27).getTextContent());
+                	//余额
                 	data.put("balance", table.getElementsByTagName("td").get(11).getTextContent());
-                	//BasicInfos.setBalance(table.getElementsByTagName("td").get(11).getTextContent());//余额
+                	//BasicInfos.setBalance(table.getElementsByTagName("td").get(11).getTextContent());
+                	//状态   
                 	data.put("status", table.getElementsByTagName("td").get(13).getTextContent());
-                	//BasicInfos.setStatus(table.getElementsByTagName("td").get(13).getTextContent());//状态          
+                	//BasicInfos.setStatus(table.getElementsByTagName("td").get(13).getTextContent());       
                 	dataMap.put("basicInfos", data);
                 }
-                
-                HtmlPage loanhtml = webClient.getPage("http://www.nbgjj.com/loanbase.jhtml");//贷款查询页
+                //贷款查询页
+                HtmlPage loanhtml = webClient.getPage("http://www.nbgjj.com/loanbase.jhtml");
                 Thread.sleep(2000);
-                
-                if(alert.get(0).toString().contains("根据身份证号未找到对应的合同信息!")){//没有贷款信息时alertList.get(0).toString().contains("")               	
+                //没有贷款信息时alertList.get(0).toString().contains("") 
+                final String  noinFo = "根据身份证号未找到对应的合同信息!";
+                if(alert.get(0).toString().contains(noinFo)){              	
                 	loansdata.put("loanAccNo", "");
                 	loansdata.put("loanLimit", "");
                 	loansdata.put("openDate", "");
@@ -260,8 +291,9 @@ public class NingBoAccumulationfundService {
         
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
-        
-        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        final String o = "0000";
+        final String errorCode = "errorCode";
+        if(map!=null&&o.equals(map.get(errorCode).toString())){
 	    	PushState.state(idCardNum, "accumulationFund",300);
 	    	map.put("errorInfo","推送成功");
 	    	map.put("errorCode","0000");

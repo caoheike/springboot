@@ -25,7 +25,14 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+/**
+ * 
+ * @ClassName: NingboSocialSecurityService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class NingboSocialSecurityService {
 	@Autowired 
@@ -35,8 +42,8 @@ public class NingboSocialSecurityService {
 	DecimalFormat df= new DecimalFormat("#.00");
     public Map<String, Object> loadImageCode(HttpServletRequest request){
         logger.warn("获取宁波社保图片验证码");
-        Map<String, Object> map = new HashMap<>();
-        Map<String, String> datamap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, String> datamap = new HashMap<>(10);
         String path = request.getServletContext().getRealPath("ImageCode");
         HttpSession session = request.getSession();
         File file = new File(path);
@@ -69,11 +76,12 @@ public class NingboSocialSecurityService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
-        Map<String, Object> loansdata = new HashMap<>();
-    	Map<String,Object> baseInfo = new HashMap<String, Object>();
+    @SuppressWarnings("unused")
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, Object> dataMap = new HashMap<>(10);
+        Map<String, Object> loansdata = new HashMap<>(10);
+    	Map<String,Object> baseInfo = new HashMap<String, Object>(10);
     	List<Object> yanglaoList=new ArrayList<Object>();
     	List<Object> yiliaoList=new ArrayList<Object>();
     	List<Object> shiyeList=new ArrayList<Object>();
@@ -99,15 +107,20 @@ public class NingboSocialSecurityService {
                 Thread.sleep(2000);
                 String errorInfo = pageLogin.getElementById("errDiv").getTextContent();  
                 System.out.println(errorInfo);
-                if(!errorInfo.contains("请妥善保管好")){
+                final String a= "请妥善保管好";
+                final String b= "验证码输入错误";
+                final String c= "E1001";
+                final String d= "账号或者密码不正确";
+                
+                if(!errorInfo.contains(a)){
                 	logger.warn(errorInfo);
-                	if(errorInfo.contains("账号或者密码不正确")){
+                	if(errorInfo.contains(d)){
                 		 map.put("errorCode", "0005");
                 		 map.put("errorInfo", "账号或者密码不正确！");	
-                	}else if(errorInfo.contains("验证码输入错误")){
+                	}else if(errorInfo.contains(b)){
                 		 map.put("errorCode", "0005");
                 		 map.put("errorInfo", "验证码输入错误！");
-                	}else if(errorInfo.contains("E1001")){
+                	}else if(errorInfo.contains(c)){
                		 map.put("errorCode", "0005");
                		 map.put("errorInfo", "证件号错误！");
                 	}else{
@@ -121,7 +134,8 @@ public class NingboSocialSecurityService {
             	PushState.state(idCardNum, "socialSecurity", 100);
                 HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-grxx.jsp");
                 Thread.sleep(2000);
-                if(basicInfos.asText().indexOf("个人信息")==-1){
+                final String e= "个人信息";
+                if(basicInfos.asText().indexOf(e)==-1){
                 	logger.warn("宁波社保基本信息获取失败！");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "宁波社保基本信息获取失败！");
@@ -129,51 +143,54 @@ public class NingboSocialSecurityService {
                 }
                 String idcard = basicInfos.getElementById("sfz").getTextContent();
                 String birthday = idcard .substring(6,10)+"."+idcard .substring(10,12)+"."+idcard .substring(12,14);
-                baseInfo.put("name", basicInfos.getElementById("xm").getTextContent());//姓名
-        		baseInfo.put("identityCards", idcard);//公民身份号码
-        		baseInfo.put("sex", basicInfos.getElementById("xb").getTextContent());//性别
-        		baseInfo.put("birthDate", birthday);//出生日期
-        		baseInfo.put("nation", "");//民族
-        		baseInfo.put("country", basicInfos.getElementById("gj").getTextContent());//国家
-        		baseInfo.put("personalIdentity", "");//个人身份
-        		baseInfo.put("workDate", "");//参加工作时间
-        		baseInfo.put("residenceType", "");//户口性质
-        		baseInfo.put("residenceAddr", "");//户口所在地地址
-        		baseInfo.put("residencePostcodes","");//户口所在地邮政编码
-        		baseInfo.put("contactAddress", basicInfos.getElementById("czdz").getTextContent());//居住地(联系)地址
-        		baseInfo.put("contactPostcodes", basicInfos.getElementById("yzbm").getTextContent());//居住地（联系）邮政编码
-        		baseInfo.put("queryMethod", "");//获取对账单方式
-        		baseInfo.put("email", "");//电子邮件地址
-        		baseInfo.put("educationalBackground", "");//文化程度
-        		baseInfo.put("telephone","");//参保人电话
-        		baseInfo.put("phoneNo", "");//参保人手机
-        		baseInfo.put("income", "");//申报月均工资收入（元）
-        		baseInfo.put("documentType", "");//证件类型/////
-        		baseInfo.put("documentNumber", "");//证件号码////////
-        		baseInfo.put("bankName", "");//委托代发银行名称
-        		baseInfo.put("bankNumber", "");//委托代发银行账号
-        		baseInfo.put("paymentPersonnelCategory", "");//缴费人员类别
-        		baseInfo.put("insuredPersonCategory", "");//医疗参保人员类别
-        		baseInfo.put("retireType", "");//离退休类别
-        		baseInfo.put("retireDate", "");//离退休日期
-        		baseInfo.put("sentinelMedicalInstitutions1", "");//定点医疗机构 1
-        		baseInfo.put("sentinelMedicalInstitutions2", "");//定点医疗机构 2
-        		baseInfo.put("sentinelMedicalInstitutions3", "");//定点医疗机构 3
-        		baseInfo.put("sentinelMedicalInstitutions4", "");//定点医疗机构 4
-        		baseInfo.put("sentinelMedicalInstitutions5", "");//定点医疗机构 5
-        		baseInfo.put("specialDisease", "");//是否患有特殊病       		      
-        		yanglaoList = getYangLaoInfo(webClient);//获取养老List
+                baseInfo.put("name", basicInfos.getElementById("xm").getTextContent());
+        		baseInfo.put("identityCards", idcard);
+        		baseInfo.put("sex", basicInfos.getElementById("xb").getTextContent());
+        		baseInfo.put("birthDate", birthday);
+        		baseInfo.put("nation", "");
+        		baseInfo.put("country", basicInfos.getElementById("gj").getTextContent());
+        		baseInfo.put("personalIdentity", "");
+        		baseInfo.put("workDate", "");
+        		baseInfo.put("residenceType", "");
+        		baseInfo.put("residenceAddr", "");
+        		baseInfo.put("residencePostcodes","");
+        		baseInfo.put("contactAddress", basicInfos.getElementById("czdz").getTextContent());
+        		baseInfo.put("contactPostcodes", basicInfos.getElementById("yzbm").getTextContent());
+        		baseInfo.put("queryMethod", "");
+        		baseInfo.put("email", "");
+        		baseInfo.put("educationalBackground", "");
+        		baseInfo.put("telephone","");
+        		baseInfo.put("phoneNo", "");
+        		baseInfo.put("income", "");
+        		baseInfo.put("documentType", "");
+        		baseInfo.put("documentNumber", "");
+        		baseInfo.put("bankName", "");
+        		baseInfo.put("bankNumber", "");
+        		baseInfo.put("paymentPersonnelCategory", "");
+        		baseInfo.put("insuredPersonCategory", "");
+        		baseInfo.put("retireType", "");
+        		baseInfo.put("retireDate", "");
+        		baseInfo.put("sentinelMedicalInstitutions1", "");
+        		baseInfo.put("sentinelMedicalInstitutions2", "");
+        		baseInfo.put("sentinelMedicalInstitutions3", "");
+        		baseInfo.put("sentinelMedicalInstitutions4", "");
+        		baseInfo.put("sentinelMedicalInstitutions5", "");
+        		baseInfo.put("specialDisease", "");		      
+        		yanglaoList = getYangLaoInfo(webClient);
         		Double endowmentInsuranceAmount = (Double) yanglaoList.get(yanglaoList.size()-1);
         		baseInfo.put("endowmentInsuranceAmount",endowmentInsuranceAmount);
-        		yanglaoList.remove(yanglaoList.size()-1);//去掉list中养老余额
-        		yiliaoList = getYiLiaoList(webClient);//获取医疗List
+        		yanglaoList.remove(yanglaoList.size()-1);
+        		yiliaoList = getYiLiaoList(webClient);
         		Double medicalInsuranceAmount = (Double) yiliaoList.get(yiliaoList.size()-1);
         		baseInfo.put("medicalInsuranceAmount",medicalInsuranceAmount);
         		
-        		yiliaoList.remove(yiliaoList.size()-1);//去掉list中医疗余额
-        		baseInfo.put("unemploymentInsuranceAmount", "");//失业保险缴费余额
-        		baseInfo.put("maternityInsuranceAmount", "");//生育保险缴费余额
-        		baseInfo.put("accidentInsuranceAmount", "");//工伤保险缴费余额
+        		yiliaoList.remove(yiliaoList.size()-1);
+        		//失业保险缴费余额
+        		baseInfo.put("unemploymentInsuranceAmount", "");
+        		//生育保险缴费余额
+        		baseInfo.put("maternityInsuranceAmount", "");
+        		//工伤保险缴费余额
+        		baseInfo.put("accidentInsuranceAmount", "");
         		dataMap.put("personalInfo", baseInfo);
         		dataMap.put("endowmentInsurance", yanglaoList);
         		dataMap.put("medicalInsurance", yiliaoList);
@@ -206,7 +223,9 @@ public class NingboSocialSecurityService {
         map.put("createTime", today);
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/socialSecurity");
-        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        final String o = "0000";
+        final String errorCode = "errorCode";
+        if(map!=null&&o.equals(map.get(errorCode).toString())){
           	PushState.state(idCardNum, "socialSecurity", 300);
           	map.put("errorInfo","推送成功");
           	map.put("errorCode","0000");
@@ -219,60 +238,62 @@ public class NingboSocialSecurityService {
         
         return map;
     }
-    public List<Object> getYangLaoInfo(WebClient webClient) throws Exception{
+    @SuppressWarnings("unused")
+	public List<Object> getYangLaoInfo(WebClient webClient) throws Exception{
     	List<Object> yanglaoList=new ArrayList<Object>();
         HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-ylbx.jsp");
         Thread.sleep(2000);
         String company_name = basicInfos.getElementById("ylbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
         String type = basicInfos.getElementById("ylbx").getElementsByTagName("td").get(3).getTextContent().substring(5);
-        if("参保缴费".equals(type)){
+        final String f = "参保缴费";
+        if(f.equals(type)){
         	type="缴存";
         }
-        //String niandu = basicInfos.getElementById("ylbx3").getElementsByTagName("td").get(0).getTextContent().substring(3);//最近整年交社保年份
-        //String jiaofei = basicInfos.getElementById("ylbx3").getElementsByTagName("td").get(5).getTextContent().substring(12);//截止最近整年交社保的缴费
         int num1 = basicInfos.getElementById("sjzl").getTextContent().indexOf("共 ");
         int num2 = basicInfos.getElementById("sjzl").getTextContent().indexOf(" 条");
         String num = basicInfos.getElementById("sjzl").getTextContent().substring(num1+2, num2);
         HtmlTable mytable = (HtmlTable) basicInfos.getElementById("mytable");
-        SecurityBean YangLaoBean = null;
+        SecurityBean yanglaoBean = null;
         String year="";        
         int month=0;
-        double endowmentInsuranceAmount=0.00;//缴费余额
+        //缴费余额
+        double endowmentInsuranceAmount=0.00;
         for(int i=1;i<=(Integer.valueOf(num)-1);i++){       	
-        	String tableyear1 = mytable.getCellAt(i, 0).asText().substring(0, 4);//第i行年份
-        	String tableyear2 = mytable.getCellAt(i+1, 0).asText().substring(0, 4);//第i+1行年份
-        	String jine = mytable.getCellAt(i, 2).asText();//缴费金额
+        	//第i行年份
+        	String tableyear1 = mytable.getCellAt(i, 0).asText().substring(0, 4);
+        	//第i+1行年份
+        	String tableyear2 = mytable.getCellAt(i+1, 0).asText().substring(0, 4);
+        	//缴费金额
+        	String jine = mytable.getCellAt(i, 2).asText();
         	if(tableyear1.equals(tableyear2)){       		
         		month=month+1;
         		if(month==2){  
-        			YangLaoBean = new SecurityBean();
-        			YangLaoBean.setYear(tableyear1);
-        			YangLaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
-        			YangLaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
-        			YangLaoBean.setCompany_name(company_name);
-        			YangLaoBean.setType(type); 
-        			YangLaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
+        			yanglaoBean = new SecurityBean();
+        			yanglaoBean.setYear(tableyear1);
+        			yanglaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
+        			yanglaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
+        			yanglaoBean.setCompany_name(company_name);
+        			yanglaoBean.setType(type); 
+        			yanglaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
         		}       		
         	}else {      		
         		month=month+1;
-        		YangLaoBean.setMonth_count(String.valueOf(month));
-        		/*JSONObject jsonObject = JSONObject.fromObject(YangLaoBean);
-    			String jsonBean = jsonObject.toString();*/
-    			//System.out.println(jsonBean);
-        		yanglaoList.add(YangLaoBean);
-        		System.out.println(YangLaoBean);
-        		month=1;//年缴纳月份归0
+        		yanglaoBean.setMonth_count(String.valueOf(month));
+        		
+        		yanglaoList.add(yanglaoBean);
+        		System.out.println(yanglaoBean);
+        		//年缴纳月份归0
+        		month=1;
         	}
         	if(i==Integer.valueOf(num)-1){
         		month=month+1;
-        		YangLaoBean.setMonth_count(String.valueOf(month));
-        		/*JSONObject jsonObject = JSONObject.fromObject(YangLaoBean);
-    			String jsonBean = jsonObject.toString();*/
-    			//System.out.println(jsonBean);
-        		yanglaoList.add(YangLaoBean);
-        		System.out.println(YangLaoBean);
+        		yanglaoBean.setMonth_count(String.valueOf(month));
+        		
+        		yanglaoList.add(yanglaoBean);
+        		System.out.println(yanglaoBean);
         	}
-        	endowmentInsuranceAmount=endowmentInsuranceAmount+Double.valueOf(jine);//养老金余额
+        	//养老金余额
+        	endowmentInsuranceAmount=endowmentInsuranceAmount+Double.valueOf(jine);
         	
         }
         yanglaoList.add(df.format(endowmentInsuranceAmount));
@@ -282,63 +303,70 @@ public class NingboSocialSecurityService {
     	List<Object> yiliaoList=new ArrayList<Object>();
         HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-yilbx.jsp");		
         Thread.sleep(2000);
-        if(basicInfos.asText().indexOf("服务不可用，请稍候再试")!=-1){//判断用户属于医保城镇居民，还是市级城镇职工
+        //判断用户属于医保城镇居民，还是市级城镇职工
+        final String g = "服务不可用，请稍候再试";
+        if(basicInfos.asText().indexOf(g)!=-1){
         	basicInfos = basicInfos.getElementById("yilbxLi2").click();
         	Thread.sleep(1000);
         }
-        String company_name = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(2).getTextContent().substring(5);//yilbx
+        String company_name = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
         String type = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(4).getTextContent().substring(5);
-        if("参保缴费".equals(type)){
+        final String t = "参保缴费";
+        if(t.equals(type)){
         	type="缴存";
         }
-        //String niandu = basicInfos.getElementById("ylbx3").getElementsByTagName("td").get(0).getTextContent().substring(3);//最近整年交社保年份
-        //String jiaofei = basicInfos.getElementById("ylbx3").getElementsByTagName("td").get(5).getTextContent().substring(12);//截止最近整年交社保的缴费
-        int num1 = basicInfos.getElementById("sjzl").getTextContent().indexOf("共 ");//sjzl
+        int num1 = basicInfos.getElementById("sjzl").getTextContent().indexOf("共 ");
         int num2 = basicInfos.getElementById("sjzl").getTextContent().indexOf(" 条");
-        String num = basicInfos.getElementById("sjzl").getTextContent().substring(num1+2, num2);//记录条数
+        //记录条数
+        String num = basicInfos.getElementById("sjzl").getTextContent().substring(num1+2, num2);
         HtmlTable mytable = (HtmlTable) basicInfos.getElementById("mytable");
-        SecurityBean YiLiaoBean = null;
-        String year="";
+        SecurityBean yiliaoBean = null;
+        @SuppressWarnings("unused")
+		String year="";
         int month=0;
-        double medicalInsuranc=0.00;//缴费余额
+        //缴费余额
+        double medicalInsuranc=0.00;
         for(int i=1;i<=(Integer.valueOf(num)-1);i++){       	
-        	String tableyear1 = mytable.getCellAt(i, 0).asText().substring(0, 4);//第i行年份
-        	String tableyear2 = mytable.getCellAt(i+1, 0).asText().substring(0, 4);//第i+1行年份
-        	String jine = mytable.getCellAt(i, 2).asText();//缴费金额
+        	//第i行年份
+        	String tableyear1 = mytable.getCellAt(i, 0).asText().substring(0, 4);
+        	//第i+1行年份
+        	String tableyear2 = mytable.getCellAt(i+1, 0).asText().substring(0, 4);
+        	//缴费金额
+        	String jine = mytable.getCellAt(i, 2).asText();
         	if(tableyear1.equals(tableyear2)){    
         		month=month+1;
         		if(month==2){   
-        			YiLiaoBean = new SecurityBean();
-        			YiLiaoBean.setYear(tableyear1);
-        			YiLiaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
-        			YiLiaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
-        			YiLiaoBean.setCompany_name(company_name);
-        			YiLiaoBean.setType(type);
-        			YiLiaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
+        			yiliaoBean = new SecurityBean();
+        			yiliaoBean.setYear(tableyear1);
+        			yiliaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
+        			yiliaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
+        			yiliaoBean.setCompany_name(company_name);
+        			yiliaoBean.setType(type);
+        			yiliaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
         		}       		
         	}else {
         		month=month+1;
-        		YiLiaoBean.setMonth_count(String.valueOf(month));
-        		/*JSONObject jsonObject = JSONObject.fromObject(YiLiaoBean);
-    			String jsonBean = jsonObject.toString();*/  			
-    			yiliaoList.add(YiLiaoBean);
-    			System.out.println(YiLiaoBean);
-        		month=1;//年缴纳月份归0
+        		yiliaoBean.setMonth_count(String.valueOf(month));        			
+    			yiliaoList.add(yiliaoBean);
+    			System.out.println(yiliaoBean);
+    			//年缴纳月份归0
+        		month=1;
         	}
         	if(i==Integer.valueOf(num)-1){
         		month=month+1;
-        		YiLiaoBean.setMonth_count(String.valueOf(month));
-        		/*JSONObject jsonObject = JSONObject.fromObject(YiLiaoBean);
-    			String jsonBean = jsonObject.toString();*/
-    			//System.out.println(jsonBean);
-    			yiliaoList.add(YiLiaoBean);
-    			System.out.println(YiLiaoBean);
+        		yiliaoBean.setMonth_count(String.valueOf(month));
+        		
+    			yiliaoList.add(yiliaoBean);
+    			System.out.println(yiliaoBean);
         	}
-        	medicalInsuranc = medicalInsuranc+Double.valueOf(jine);//医疗余额
+        	//医疗余额
+        	medicalInsuranc = medicalInsuranc+Double.valueOf(jine);
         }
         HtmlTable table = (HtmlTable) basicInfos.getElementById("mytable2");
-        DomNodeList tr = table.getElementsByTagName("tr");
-        double n = 0.00;//医疗花去费用
+        @SuppressWarnings("rawtypes")
+		DomNodeList tr = table.getElementsByTagName("tr");
+        //医疗花去费用
+        double n = 0.00;
         for (int i=1;i<tr.size();i++){
         	n = n+Double.valueOf(table.getCellAt(i, 7).asText());
         }

@@ -26,15 +26,25 @@ import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+/**
+ * 
+ * @ClassName: HuNanTelecomService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class HuNanTelecomService {
     private Logger logger= LoggerFactory.getLogger(ShanDongTelecomService.class);
     NewTelecomBean monthNum = new NewTelecomBean();
     List<Object> finallyList = new ArrayList<Object>();
     List<Object> temp = new ArrayList<Object>();
-	public Map<String,Object> HuNanimgeCode(HttpServletRequest request,String idCard,String username){
-		Map<String,Object> map = new HashMap<String,Object>();
-        Map<String,Object> data=new HashMap<String,Object>();
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public Map<String,Object> hunanimgeCode(HttpServletRequest request,String idCard,String username){
+		Map<String,Object> map = new HashMap<String,Object>(10);
+        Map<String,Object> data=new HashMap<String,Object>(10);
         
         HttpSession session = request.getSession();
 		Object attribute =  session.getAttribute("GBmobile-webclient");
@@ -55,7 +65,8 @@ public class HuNanTelecomService {
 	    		 
 	    		 Thread.sleep(1000);
 	    		 String str = click1.asText();
-	    		 if(str.indexOf("请输入短信验证码")==-1){
+	    		 final String a = "请输入短信验证码";
+	    		 if(str.indexOf(a)==-1){
 	    			 map.put("ResultInfo","校验错误");
                      map.put("ResultCode","0001");
                      map.put("errorInfo","校验错误");
@@ -63,17 +74,22 @@ public class HuNanTelecomService {
                      map.put("data",data);
                      return map;
 	    		 }
-	    		 
-	    		 HtmlSelect selectType=(HtmlSelect) click1.getElementById("selectPatyType");//数据类型select
-	    		 selectType.setSelectedIndex(0);//选中移动语音
-	    		 HtmlSelect selectphone=(HtmlSelect) click1.getElementById("mynum");//号码select
-	    		 selectphone.setSelectedIndex(0);//选中该用户手机
-	    		 
-				HtmlSelect selectmonth=(HtmlSelect) click1.getElementById("blqYearMonth");//月份select
+	    		//数据类型select
+	    		HtmlSelect selectType=(HtmlSelect) click1.getElementById("selectPatyType");
+	    		//选中移动语音
+	    		selectType.setSelectedIndex(0);
+	    		//号码select
+	    		HtmlSelect selectphone=(HtmlSelect) click1.getElementById("mynum");
+	    		//选中该用户手机
+	    		selectphone.setSelectedIndex(0);
+	    		//月份select
+				HtmlSelect selectmonth=(HtmlSelect) click1.getElementById("blqYearMonth");
 				selectmonth.setSelectedIndex(0);
 				click1.getElementById("startDay").setAttribute("value", "1");
-				DomNodeList selectday=(DomNodeList) click1.getElementByName("endDay").getElementsByTagName("option");//endday下拉框
-				HtmlSelect selectlday=(HtmlSelect) click1.getElementById("endDay");//最后一天select
+				//endday下拉框
+				DomNodeList selectday=(DomNodeList) click1.getElementByName("endDay").getElementsByTagName("option");
+				//最后一天select
+				HtmlSelect selectlday=(HtmlSelect) click1.getElementById("endDay");
 				selectlday.setSelectedIndex(selectday.size()-1);
 				File file = new File(request.getServletContext().getRealPath("/HNimageCode"));
                 if (!file.exists()) {
@@ -102,12 +118,17 @@ public class HuNanTelecomService {
 	     }
 	    return map;
 	}
-	/*
+
+	/**
 	 * 图片验证码
+	 * @param request
+	 * @param imageCode
+	 * @return
 	 */
+		@SuppressWarnings("resource")
 		public Map<String,Object> huNanPhoneCode(HttpServletRequest request,String imageCode){
-			Map<String,Object> map = new HashMap<String,Object>();
-	        Map<String,Object> data=new HashMap<String,Object>();
+			Map<String,Object> map = new HashMap<String,Object>(10);
+	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
 	        Object htmlpage = request.getSession().getAttribute("HNhtmlPage");
 	        
@@ -131,7 +152,8 @@ public class HuNanTelecomService {
 	                 
 	                 Thread.sleep(500);
 	                 if(alertList.size()>0){
-	 					if(alertList.get(0).toString().contains("成功")){
+	                	 final String b = "成功";
+	 					if(alertList.get(0).toString().contains(b)){
 	 						 map.put("errorCode", "0000");
 	 				         map.put("errorInfo", "短信验证码发送成功!");
 	 					}else{
@@ -151,13 +173,22 @@ public class HuNanTelecomService {
 	        map.put("data", data);
 	        return map;   
 		}
-		/*
-		 * 短信验证码以及信息
-		 */
 		
-		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String PassCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd){
-			Map<String,Object> map = new HashMap<String,Object>();
-	        Map<String,Object> data=new HashMap<String,Object>();
+		/**
+		 * 短信验证码以及信息
+		 * @param request
+		 * @param PassCode
+		 * @param imageCode
+		 * @param longitude
+		 * @param latitude
+		 * @param phoneNumber
+		 * @param servicepwd
+		 * @return
+		 */
+		@SuppressWarnings({ "rawtypes", "resource", "unused", "unchecked" })
+		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String passCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd){
+			Map<String,Object> map = new HashMap<String,Object>(10);
+	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        PushState.state(phoneNumber, "callLog",100);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
 	        Object htmlpage = request.getSession().getAttribute("HNsendMesPage");
@@ -168,18 +199,20 @@ public class HuNanTelecomService {
 	            try {
 	            	 WebClient webClient = (WebClient) attribute;
 	                 HtmlPage page = (HtmlPage) htmlpage;
-	                 page.getElementById("blqvalicode").setAttribute("value", PassCode);
+	                 page.getElementById("blqvalicode").setAttribute("value", passCode);
 	                 HtmlPage nextpage = page.getElementById("blQueryBtn").click();
 	                 Thread.sleep(500);
-	                 if(page.asText().contains("验证码错误!")){
+	                 final String c = "验证码错误!";
+	                 if(page.asText().contains(c)){
 	                	 map.put("errorCode", "0001");
 	                     map.put("errorInfo", "验证码输入错误，重新输入");
 	                     return map;
 	                 }else{
-	                	 DomNodeList selectallmonth=(DomNodeList) page.getElementByName("queryMonth").getElementsByTagName("option");//月份下拉框
+	                	 //月份下拉框
+	                	 DomNodeList selectallmonth=(DomNodeList) page.getElementByName("queryMonth").getElementsByTagName("option");
 			    		 for(int i=0;i<selectallmonth.size();i++){
-			    			 
-			    			 HtmlSelect selectmonth=(HtmlSelect) page.getElementById("blqYearMonth");//月份select
+			    			 //月份select
+			    			 HtmlSelect selectmonth=(HtmlSelect) page.getElementById("blqYearMonth");
 				    		 selectmonth.setSelectedIndex(i);
 				    		 String month1 = selectmonth.getOption(i).getValueAttribute();
 				    		 String month = month1.substring(5);
@@ -196,8 +229,9 @@ public class HuNanTelecomService {
 			    			 SimpleDateFormat sdftoday =  new SimpleDateFormat( "hh:mm:ss" );
 			    			 String today = sdftoday.format(date);	
 			    			 HtmlPage infopage1; 
-			    			 if(i==0){//第一个月
-			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2035%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode="+PassCode+"&code="+PassCode+"&accNbr=";					    																									
+			    			 if(i==0){
+			    				 //第一个月
+			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2035%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode="+passCode+"&code="+passCode+"&accNbr=";					    																									
 					    		 URL url = new URL(loadPath);
 					    		 WebRequest webRequest = new WebRequest(url);
 					    		 webRequest.setHttpMethod(HttpMethod.GET);
@@ -209,14 +243,15 @@ public class HuNanTelecomService {
 				                 list.add(new NameValuePair("endDay", lday));
 				                 list.add(new NameValuePair("patitype", "2"));			                
 				                 list.add(new NameValuePair("tabIndex", "2"));
-				                 list.add(new NameValuePair("code", PassCode));
+				                 list.add(new NameValuePair("code", passCode));
 				                 list.add(new NameValuePair("tabIndex", ""));
 				                 list.add(new NameValuePair("accNbr", ""));
 				                 list.add(new NameValuePair("valicode", "PassCode"));
 			                     webRequest.setRequestParameters(list);
 				                 infopage1 = webClient.getPage(webRequest);
 				                 Thread.sleep(1000);
-			    			 }else{//后五个月
+			    			 }else{
+			    				 //后五个月
 			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2035%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode=&code=undefined&accNbr=";
 					    		 																					
 					    		 URL url = new URL(loadPath);
@@ -256,38 +291,45 @@ public class HuNanTelecomService {
 	        map.put("data",finallyList);
 	        map.put("pwd", servicepwd);
 	        map.put("phone", phoneNumber);
-	        map.put("longitude", longitude);//经度
-	        map.put("latitude", latitude);//纬度
+	        //经度
+	        map.put("longitude", longitude);
+	        //纬度
+	        map.put("latitude", latitude);
 	        
 	        Resttemplate resttemplate=new Resttemplate();
             map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/operator");
 	        return map;
 	        
 		}
+		@SuppressWarnings({ "unused", "resource", "rawtypes" })
 		public Map<String,Object> huNanPhoneinfo(HttpServletRequest request,String phoneNumber,String month1,String lday){
-			Map<String,Object> map = new HashMap<String,Object>();
-	        Map<String,Object> data=new HashMap<String,Object>();
+			Map<String,Object> map = new HashMap<String,Object>(10);
+	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        List<Object>  listData =new ArrayList<Object>();
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
 	        WebClient webClient = (WebClient) attribute;
 	        try{
 	        	HtmlPage infopage1 = (HtmlPage) request.getSession().getAttribute("infoPage1");
 	        	String info = infopage1.asText();
-		        if(infopage1.asText().indexOf("融合老用户超值大礼包>>速来领取>>")==-1){
+	        	final String d = "融合老用户超值大礼包>>速来领取>>";
+		        if(infopage1.asText().indexOf(d)==-1){
 	       		 	map.put("errorCode", "0001");
 	                map.put("errorInfo", "操作异常!");
 	                return map;
 		       	 }else{	   	       		
 		    		int num =  info.indexOf("总页数：");
-		    		int num1 =  info.indexOf(" 当前页：");	    		
-		    	    String  phonenum = info.substring(num+4, num1);//总页数
+		    		int num1 =  info.indexOf(" 当前页：");	    
+		    		//总页数
+		    	    String  phonenum = info.substring(num+4, num1);
 		    	    Date date=new Date();
 		    		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy" );
 		    		String year = sdf.format(date);
-		    	    for(int i=1;i<=Integer.valueOf(phonenum);i++){//一个月页数循环
+		    		//一个月页数循环
+		    	    for(int i=1;i<=Integer.valueOf(phonenum);i++){
 		    	    	HtmlTable table = (HtmlTable) infopage1.getElementById("tab_cont_box").getElementsByTagName("table").get(1);
 		    	    	DomNodeList trlist = table.getElementsByTagName("tr");
-		    	    	for(int tr=2;tr<trlist.size();tr++){//单页每行循环		    	    		
+		    	    	for(int tr=2;tr<trlist.size();tr++){
+		    	    		//单页每行循环	
 	    	    			if(table.getCellAt(tr,0).asText().indexOf(year)!=-1){
 	    	    				continue;
 	    	    			}	    	
@@ -300,7 +342,8 @@ public class HuNanTelecomService {
 	    	    			monthNum.setCallDuration(table.getCellAt(tr,4).asText());
 	    	    			JSONObject jsonObject = JSONObject.fromObject(monthNum);
 	    	    			String jsonhuNanBean = jsonObject.toString();
-	    	    			listData.add(jsonhuNanBean);//每一行   	    			
+	    	    			//每一行
+	    	    			listData.add(jsonhuNanBean);   	    			
 		    	    	}
 		    	    	
 		    	    	String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&pageNo="+(i+1)+"&valicode=undefined&accNbr=";		    	    	                     
@@ -324,8 +367,8 @@ public class HuNanTelecomService {
 		    	    
 		       	}
 		        
-		        
-		        map.put("list", listData);	//一个月        
+		        //一个月        
+		        map.put("list", listData);	
 	        } catch (Exception e) {
                 e.printStackTrace();
                 map.put("errorCode", "0001");

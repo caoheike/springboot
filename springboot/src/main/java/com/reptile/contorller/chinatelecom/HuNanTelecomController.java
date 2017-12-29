@@ -30,7 +30,7 @@ public class HuNanTelecomController {
     //湖南电信获取图片验证码
     public Map<String, Object> HuNanimgeCode(HttpServletRequest request,@RequestParam("idCard") String idCard,
     																	@RequestParam("name") String name) {
-        return hunan.HuNanimgeCode(request,idCard,name);
+        return hunan.hunanimgeCode(request,idCard,name);
     }
 	
 	 @ApiOperation(value = "2.发送短信验证码", notes = "参数：图片验证码")

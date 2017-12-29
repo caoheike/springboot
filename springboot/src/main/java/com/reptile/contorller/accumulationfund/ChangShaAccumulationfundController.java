@@ -14,7 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.ChangShaAccumulationfundService;
-
+/**
+ * 
+ * @ClassName: ChangShaAccumulationfundController  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("ChangShaAccumulationfundController")
 public class ChangShaAccumulationfundController {

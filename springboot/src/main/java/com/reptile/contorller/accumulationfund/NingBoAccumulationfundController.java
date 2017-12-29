@@ -2,6 +2,7 @@ package com.reptile.contorller.accumulationfund;
 
 import io.swagger.annotations.ApiOperation;
 
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
 import com.reptile.service.accumulationfund.NingBoAccumulationfundService;
+/**
+ * 
+ * @ClassName: NingBoAccumulationfundController  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("NingBoAccumulationfundController")
 public class NingBoAccumulationfundController {

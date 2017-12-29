@@ -36,7 +36,14 @@ import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
-
+/**
+ * 
+ * @ClassName: JiNanAccumulationfundService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class JiNanAccumulationfundService {
 	@Autowired 
@@ -46,11 +53,12 @@ public class JiNanAccumulationfundService {
 	List<String> alert=new ArrayList<>();
 	DecimalFormat df= new DecimalFormat("#.00");
     CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
+	@SuppressWarnings("unused")
 	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password,String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
-        Map<String, Object> loansdata = new HashMap<>();
-    	Map<String,Object> baseInfo = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, Object> dataMap = new HashMap<>(10);
+        Map<String, Object> loansdata = new HashMap<>(10);
+    	Map<String,Object> baseInfo = new HashMap<String, Object>(10);
     	List<Object> infoList=new ArrayList<Object>();
     	List<Object> loansList=new ArrayList<Object>();
         System.setProperty("webdriver.chrome.driver", "C:\\chromedriver.exe");
@@ -71,15 +79,18 @@ public class JiNanAccumulationfundService {
 			WebElement captchaImg  = driver.findElements(By.tagName("img")).get(0);
 			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			BufferedImage  fullImg = ImageIO.read(screenshot);
-			Point point = captchaImg.getLocation();//坐标
-			int eleWidth = captchaImg.getSize().getWidth();//宽
+			//坐标
+			Point point = captchaImg.getLocation();
+			//宽
+			int eleWidth = captchaImg.getSize().getWidth();
 			if(eleWidth==0){
 				logger.warn("网络繁忙，请刷新页面后重试！");
             	map.put("errorCode", "0001");
             	map.put("errorInfo", "网络繁忙，请刷新页面后重试！");
             	return map;
 			}
-			int eleHeight = captchaImg.getSize().getHeight();//高
+			//高
+			int eleHeight = captchaImg.getSize().getHeight();
 			BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),eleWidth, eleHeight);            
             ImageIO.write(eleScreenshot, "png", new File("C://aa.png"));
             Map<String, Object> codes = MyCYDMDemo.getCode("C://aa.png");
@@ -89,9 +100,11 @@ public class JiNanAccumulationfundService {
 			WebElement button = driver.findElements(By.tagName("button")).get(0);
 			button.click();
 			try{
-    			Alert alt = driver.switchTo().alert();//监控弹框
+				//监控弹框
+    			Alert alt = driver.switchTo().alert();
         		String errorInfo = alt.getText();
-        		if (errorInfo!=null&&errorInfo.contains("超时了")){
+        		final String chaoShi = "超时了";
+        		if (errorInfo!=null&&errorInfo.contains(chaoShi)){
                 	logger.warn("连接超时，请重新登陆！");
                 	map.put("errorCode", "0001");
                 	map.put("errorInfo", "连接超时，请重新登陆！");
@@ -116,12 +129,14 @@ public class JiNanAccumulationfundService {
             	String today = GetMonth.today1();
             	int year = Integer.valueOf(today.substring(0,4))-3;
             	String startDate = String.valueOf(year)+"-01-01";
-            	WebElement BegDate = driver.findElement(By.id("BegDate"));//起始时间
-            	BegDate.clear();
-            	BegDate.sendKeys(startDate);          	
-    			WebElement EndDate = driver.findElement(By.id("EndDate"));//终止时间
-    			EndDate.clear();
-    			EndDate.sendKeys(today);
+            	//起始时间
+            	WebElement begDate = driver.findElement(By.id("BegDate"));
+            	begDate.clear();
+            	begDate.sendKeys(startDate);          	
+            	//终止时间
+    			WebElement endDate = driver.findElement(By.id("EndDate"));
+    			endDate.clear();
+    			endDate.sendKeys(today);
     			WebElement queryButton = driver.findElement(By.id("b_query"));
     			queryButton.click();
     			Thread.sleep(2000);
@@ -136,7 +151,8 @@ public class JiNanAccumulationfundService {
                 	for(int j=1;j<=Integer.parseInt(yeshu);j++){
                 		WebElement infoTable = driver.findElement(By.id("datalist"));
                 		List<WebElement>  tdList = infoTable.findElements(By.tagName("td"));
-	                	for(int i=1;i<tdList.size();i=i+10){
+                		final int d = 10;
+	                	for(int i=1;i<tdList.size();i=i+d){
 	                		System.out.println();
 	                		String type1 = tdList.get(i+2).getText();
 	        				if(type1.indexOf("汇缴")==-1&&type1.indexOf("补缴")==-1){
@@ -149,13 +165,18 @@ public class JiNanAccumulationfundService {
 	        					type1="汇缴";
 	        				}
 	        				String time = tdList.get(i+1).getText().substring(0, 7).replace("-", "");
-	        				String bizDesc = type1+time+"公积金";//业务描述
-	        				flows.setAmount(tdList.get(i+4).getText().replace(",", ""));//操作金额
+	        				//业务描述
+	        				String bizDesc = type1+time+"公积金";
+	        				//操作金额
+	        				flows.setAmount(tdList.get(i+4).getText().replace(",", ""));
 	        				flows.setBizDesc(bizDesc);
-	        				flows.setOperatorDate(tdList.get(i+1).getText());//操作时间
-	        				flows.setPayMonth(time);//缴费月份
+	        				//操作时间
+	        				flows.setOperatorDate(tdList.get(i+1).getText());
+	        				//缴费月份
+	        				flows.setPayMonth(time);
 	        				flows.setType(type1);
-	        				flows.setCompanyName("");//公司名
+	        				//公司名
+	        				flows.setCompanyName("");
 	        				JSONObject jsonObject = JSONObject.fromObject(flows);
 	    	    			String jsonBean = jsonObject.toString();
 	    	    			System.out.println(jsonBean);
@@ -186,9 +207,11 @@ public class JiNanAccumulationfundService {
     		WebElement query = driver.findElement(By.id("b_query"));
     		query.click();
     		try{
-    			Alert alt = driver.switchTo().alert();//监控弹框
+    			//监控弹框
+    			Alert alt = driver.switchTo().alert();
         		String errorInfo1 = alt.getText();
-        		if (errorInfo1!=null&&errorInfo1.contains("贷款合同信息不存在")){
+        		final String heTong = "贷款合同信息不存在";
+        		if (errorInfo1!=null&&errorInfo1.contains(heTong)){
                 	dataMap.put("loans", loansList); 
                 }
         		alt.accept();
@@ -236,37 +259,54 @@ public class JiNanAccumulationfundService {
         return map;
 	}
 	public Map<String, Object> getBaseInfo(WebDriver driver) throws InterruptedException{
-		Map<String, Object> dataMap = new HashMap<>();
-		Map<String, Object> data = new HashMap<>();		
+		Map<String, Object> dataMap = new HashMap<>(10);
+		Map<String, Object> data = new HashMap<>(10);		
 		driver.get("http://123.233.117.50:801/jnwt/init.summer?_PROCID=60020009");	
 		Thread.sleep(2000);
-		boolean isFind = DriverUtil.waitById("ct_form",driver,5);//错误提示
+		//错误提示
+		boolean isFind = DriverUtil.waitById("ct_form",driver,5);
         if(isFind==true){
         	data.put("companyName", driver.findElement(By.id("UnitAccName")).getAttribute("value"));
-        	data.put("personDepositAmount", driver.findElement(By.id("MonPaySum")).getAttribute("value"));//个人缴费金额
-        	data.put("baseDeposit", driver.findElement(By.id("BaseNumber")).getAttribute("value"));//缴费基数
-        	data.put("personFundCard", driver.findElement(By.id("AccNum")).getAttribute("value"));//个人公积金卡号
-        	data.put("companyRatio", "");//公司缴费比例//////
-        	data.put("personRatio", "");//个人缴费比例/////////////
-        	data.put("companyFundAccount", driver.findElement(By.id("UnitAccNum")).getAttribute("value"));//公司公积金账号
-        	data.put("companyDepositAmount", "");//公司缴费金额
-        	data.put("lastDepositDate", driver.findElement(By.id("LastPayDate")).getAttribute("value"));//最后缴费日期
-        	data.put("balance", driver.findElement(By.id("Balance")).getAttribute("value"));//余额
-        	String State = driver.findElement(By.id("PerAccState")).getAttribute("value");
-        	if("1".equals(State)){
-        		State="正常";
-        	}else if("2".equals(State)){
-        		State="封存";
-        	}else if("3".equals(State)){
-        		State="托管";
-        	}else if("4".equals(State)){
-        		State="待查";
-        	}else if("8".equals(State)){
-        		State="转移锁定";
-        	}else if("9".equals(State)){
-        		State="销户";
+        	//个人缴费金额
+        	data.put("personDepositAmount", driver.findElement(By.id("MonPaySum")).getAttribute("value"));
+        	//缴费基数
+        	data.put("baseDeposit", driver.findElement(By.id("BaseNumber")).getAttribute("value"));
+        	//个人公积金卡号
+        	data.put("personFundCard", driver.findElement(By.id("AccNum")).getAttribute("value"));
+        	//公司缴费比例
+        	data.put("companyRatio", "");
+        	//个人缴费比例
+        	data.put("personRatio", "");
+        	//公司公积金账号
+        	data.put("companyFundAccount", driver.findElement(By.id("UnitAccNum")).getAttribute("value"));
+        	//公司缴费金额
+        	data.put("companyDepositAmount", "");
+        	//最后缴费日期
+        	data.put("lastDepositDate", driver.findElement(By.id("LastPayDate")).getAttribute("value"));
+        	//余额
+        	data.put("balance", driver.findElement(By.id("Balance")).getAttribute("value"));
+        	String state = driver.findElement(By.id("PerAccState")).getAttribute("value");
+        	final String a = "1";
+        	final String b = "2";
+        	final String c = "3";
+        	final String d = "4";
+        	final String e = "8";
+        	final String f = "9";
+        	if(a.equals(state)){
+        		state="正常";
+        	}else if(b.equals(state)){
+        		state="封存";
+        	}else if(c.equals(state)){
+        		state="托管";
+        	}else if(d.equals(state)){
+        		state="待查";
+        	}else if(e.equals(state)){
+        		state="转移锁定";
+        	}else if(f.equals(state)){
+        		state="销户";
         	}       	
-        	data.put("status", State);//状态        	
+        	//状态        
+        	data.put("status", state);	
         	data.put("userCard", driver.findElement(By.id("AccNum")).getAttribute("value"));
         	data.put("personFundAccount", "");
         	data.put("name", driver.findElement(By.id("AccName")).getAttribute("value"));
