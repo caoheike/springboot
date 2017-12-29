@@ -13,14 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.accumulationfund.BZHousingFundService;
+import com.reptile.service.accumulationfund.BinZhouHousingFundService;
 
-
+/**
+ * 滨州公积金
+ * @ClassName: BinZhouHousingFundController  
+ * @Description: TODO  
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("binZhouHouseFund")
-public class BZHousingFundController {
+public class BinZhouHousingFundController {
 	@Autowired
-	private BZHousingFundService bzHouseFundService;
+	private BinZhouHousingFundService binZhouHouseFundService;
 	
 
 	/**
@@ -36,6 +43,6 @@ public class BZHousingFundController {
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
-		return bzHouseFundService.doLogin(request, userName, passWord, idCard, cityCode,idCardNum);
+		return binZhouHouseFundService.doLogin(request, userName, passWord, idCard, cityCode,idCardNum);
 	}
 }
