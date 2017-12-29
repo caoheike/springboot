@@ -243,7 +243,7 @@ public class NingboSocialSecurityService {
     	List<Object> yanglaoList=new ArrayList<Object>();
         HtmlPage basicInfos = webClient.getPage("https://rzxt.nbhrss.gov.cn/nbsbk-rzxt/web/pages/query/query-ylbx.jsp");
         Thread.sleep(2000);
-        String company_name = basicInfos.getElementById("ylbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
+        String companyName = basicInfos.getElementById("ylbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
         String type = basicInfos.getElementById("ylbx").getElementsByTagName("td").get(3).getTextContent().substring(5);
         final String f = "参保缴费";
         if(f.equals(type)){
@@ -272,7 +272,7 @@ public class NingboSocialSecurityService {
         			yanglaoBean.setYear(tableyear1);
         			yanglaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
         			yanglaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
-        			yanglaoBean.setCompany_name(company_name);
+        			yanglaoBean.setCompany_name(companyName);
         			yanglaoBean.setType(type); 
         			yanglaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
         		}       		
@@ -309,7 +309,7 @@ public class NingboSocialSecurityService {
         	basicInfos = basicInfos.getElementById("yilbxLi2").click();
         	Thread.sleep(1000);
         }
-        String company_name = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
+        String companyName = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(2).getTextContent().substring(5);
         String type = basicInfos.getElementById("yilbx").getElementsByTagName("td").get(4).getTextContent().substring(5);
         final String t = "参保缴费";
         if(t.equals(type)){
@@ -340,7 +340,7 @@ public class NingboSocialSecurityService {
         			yiliaoBean.setYear(tableyear1);
         			yiliaoBean.setBase_number(mytable.getCellAt(i, 1).asText());
         			yiliaoBean.setLast_pay_date(mytable.getCellAt(i, 0).asText());
-        			yiliaoBean.setCompany_name(company_name);
+        			yiliaoBean.setCompany_name(companyName);
         			yiliaoBean.setType(type);
         			yiliaoBean.setMonthly_personal_income(mytable.getCellAt(i, 2).asText());
         		}       		

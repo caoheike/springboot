@@ -45,7 +45,7 @@ public class NanNingSocialSecurityService {
 	private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 	Date date=new Date();
 	DecimalFormat df= new DecimalFormat("#.00");
-	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String socialCard,String idCardNum,String UUID) {
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String socialCard,String idCardNum,String uuId) {
         Map<String, Object> map = new HashMap<>(10);
         Map<String, Object> dataMap = new HashMap<>(10);
     	Map<String,Object> baseInfo = new HashMap<String, Object>(10);
@@ -172,8 +172,8 @@ public class NanNingSocialSecurityService {
             			yanglao = new SecurityBean();
         				yanglao.setCompany_name(tdtable.findElements(By.tagName("td")).get(td-2).getText());
         				yanglao.setYear(year);
-        				String monthly_personal_income = tdtable.findElements(By.tagName("td")).get(td+2).getText();
-        				yanglao.setMonthly_personal_income(monthly_personal_income);
+//        				String monthly_personal_income = ;
+        				yanglao.setMonthly_personal_income(tdtable.findElements(By.tagName("td")).get(td+2).getText());
         				yanglao.setLast_pay_date(tdtable.findElements(By.tagName("td")).get(td-1).getText());
         				yanglaoList.add(yanglao);
         			}
@@ -181,8 +181,8 @@ public class NanNingSocialSecurityService {
             			yiliao = new SecurityBean();
             			yiliao.setCompany_name(tdtable.findElements(By.tagName("td")).get(td-2).getText());
             			yiliao.setYear(year);
-        				String monthly_personal_income = tdtable.findElements(By.tagName("td")).get(td+2).getText();
-        				yiliao.setMonthly_personal_income(monthly_personal_income);
+//        				String monthly_personal_income = ;
+        				yiliao.setMonthly_personal_income(tdtable.findElements(By.tagName("td")).get(td+2).getText());
         				yiliao.setLast_pay_date(tdtable.findElements(By.tagName("td")).get(td-1).getText());
         				yiliaoList.add(yiliao);
         			}
@@ -190,8 +190,8 @@ public class NanNingSocialSecurityService {
             			shiye = new SecurityBean();
             			shiye.setCompany_name(tdtable.findElements(By.tagName("td")).get(td-2).getText());
             			shiye.setYear(year);
-        				String monthly_personal_income = tdtable.findElements(By.tagName("td")).get(td+2).getText();
-        				shiye.setMonthly_personal_income(monthly_personal_income);
+//        				String monthly_personal_income = ;
+        				shiye.setMonthly_personal_income(tdtable.findElements(By.tagName("td")).get(td+2).getText());
         				shiye.setLast_pay_date(tdtable.findElements(By.tagName("td")).get(td-1).getText());
         				shiyeList.add(shiye);
         			}
@@ -199,8 +199,8 @@ public class NanNingSocialSecurityService {
             			gongshang = new SecurityBean();
             			gongshang.setCompany_name(tdtable.findElements(By.tagName("td")).get(td-2).getText());
             			gongshang.setYear(year);
-        				String monthly_personal_income = tdtable.findElements(By.tagName("td")).get(td+2).getText();
-        				gongshang.setMonthly_personal_income(monthly_personal_income);
+//        				String monthly_personal_income = ;
+        				gongshang.setMonthly_personal_income(tdtable.findElements(By.tagName("td")).get(td+2).getText());
         				gongshang.setLast_pay_date(tdtable.findElements(By.tagName("td")).get(td-1).getText());
         				gongshList.add(gongshang);
         			}
@@ -208,8 +208,8 @@ public class NanNingSocialSecurityService {
             			shengyu = new SecurityBean();
             			shengyu.setCompany_name(tdtable.findElements(By.tagName("td")).get(td-2).getText());
             			shengyu.setYear(year);
-        				String monthly_personal_income = tdtable.findElements(By.tagName("td")).get(td+2).getText();
-        				shengyu.setMonthly_personal_income(monthly_personal_income);
+//        				String monthly_personal_income = ;
+        				shengyu.setMonthly_personal_income(tdtable.findElements(By.tagName("td")).get(td+2).getText());
         				shengyu.setLast_pay_date(tdtable.findElements(By.tagName("td")).get(td-1).getText());
         				shengyuList.add(shengyu);
         			}
@@ -342,25 +342,25 @@ public class NanNingSocialSecurityService {
 				 if(i<list.size()){					 
 					 if(!list.get(i).getYear().equals(list.get(i-1).getYear())||i==list.size()-1){
 						 SecurityBean newSecurityBean = new SecurityBean();
-						 String personal_income1;
-						 String personal_income2;	
+						 String personalIncome1;
+						 String personalIncome2;	
 						 monthCount = (monthCount+1)/2;
 						 if(monthCount>12) {
 							 monthCount = 12;
 						 }
 						 if(i==list.size()-1){
-							 personal_income1 = list.get(i).getMonthly_personal_income();		 					 
-							 personal_income2 = list.get(i-1).getMonthly_personal_income();			
+							 personalIncome1 = list.get(i).getMonthly_personal_income();		 					 
+							 personalIncome2 = list.get(i-1).getMonthly_personal_income();			
 						 }else {
-							 personal_income1 = list.get(i-1).getMonthly_personal_income();						 					 
-							 personal_income2 = list.get(i-2).getMonthly_personal_income();	
+							 personalIncome1 = list.get(i-1).getMonthly_personal_income();						 					 
+							 personalIncome2 = list.get(i-2).getMonthly_personal_income();	
 						 }					 					 
-						 Double personal_income = Double.valueOf(personal_income1)+Double.valueOf(personal_income2);
-						 String base_number = df.format(personal_income/0.379);
+						 Double personalIncome = Double.valueOf(personalIncome1)+Double.valueOf(personalIncome2);
+						 String baseNumber = df.format(personalIncome/0.379);
 						 newSecurityBean.setYear(list.get(i-1).getYear());
 						 newSecurityBean.setMonth_count(String.valueOf(monthCount));
-						 newSecurityBean.setMonthly_personal_income(df.format(personal_income));
-						 newSecurityBean.setBase_number(base_number);
+						 newSecurityBean.setMonthly_personal_income(df.format(personalIncome));
+						 newSecurityBean.setBase_number(baseNumber);
 						 newSecurityBean.setType("缴存");
 						 newSecurityBean.setLast_pay_date(list.get(i-1).getLast_pay_date());	
 						 newSecurityBean.setCompany_name(list.get(i-1).getCompany_name());
@@ -379,13 +379,13 @@ public class NanNingSocialSecurityService {
 							 monthCount = 12;
 						 }
 						 SecurityBean newSecurityBean = new SecurityBean();
-						 String personal_income1 = list.get(i-1).getMonthly_personal_income();
-						 Double personal_income = Double.valueOf(personal_income1);
-						 String base_number = df.format(personal_income/0.379);
+						 String personalIncome1 = list.get(i-1).getMonthly_personal_income();
+						 Double personalIncome = Double.valueOf(personalIncome1);
+						 String baseNumber = df.format(personalIncome/0.379);
 						 newSecurityBean.setYear(list.get(i-1).getYear());
 						 newSecurityBean.setMonth_count(String.valueOf(monthCount));
-						 newSecurityBean.setMonthly_personal_income(df.format(personal_income));
-						 newSecurityBean.setBase_number(base_number);
+						 newSecurityBean.setMonthly_personal_income(df.format(personalIncome));
+						 newSecurityBean.setBase_number(baseNumber);
 						 newSecurityBean.setType("缴存");
 						 newSecurityBean.setLast_pay_date(list.get(i-1).getLast_pay_date());	
 						 newSecurityBean.setCompany_name(list.get(i-1).getCompany_name());
@@ -458,8 +458,8 @@ public class NanNingSocialSecurityService {
 	public Double getSum(List<SecurityBean> list){
 		Double sum = 0.00;
 		for(int i=0;i<list.size();i++){
-			String monthly_personal_income = list.get(i).getMonthly_personal_income();
-			sum = sum+Double.valueOf(monthly_personal_income);
+			String monthlypersonalIncome = list.get(i).getMonthly_personal_income();
+			sum = sum+Double.valueOf(monthlypersonalIncome);
 		}
 		return sum;
 	}
