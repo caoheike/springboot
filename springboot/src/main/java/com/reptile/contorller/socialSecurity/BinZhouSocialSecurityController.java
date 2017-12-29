@@ -13,21 +13,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.socialSecurity.BZSocialSecurityService;
+import com.reptile.service.socialSecurity.BinZhouSocialSecurityService;
 
-
+/**
+ * 
+ * @ClassName: BinZhouSocialSecurityController  
+ * @Description: TODO (滨州社保)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("binZhouSocialSecurity")
-public class BZSocialSecurityController {
+public class BinZhouSocialSecurityController {
 	@Autowired
-	private BZSocialSecurityService bzSocialSecurityService;
+	private BinZhouSocialSecurityService binZhouSocialSecurityService;
 	
 	
 	@ApiOperation(value = "滨州市社保：获取验证码",notes = "参数：无")
 	@ResponseBody
 	@RequestMapping(value = "doGetVerifyImg", method = RequestMethod.POST)
 	public  Map<String,Object> doGetVerifyImg(HttpServletRequest request){
-		return bzSocialSecurityService.doGetVerifyImg(request);
+		return binZhouSocialSecurityService.doGetVerifyImg(request);
 		
 	}
 	
@@ -45,6 +52,6 @@ public class BZSocialSecurityController {
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
-		return bzSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode,idCardNum);
+		return binZhouSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode,idCardNum);
 	}
 }

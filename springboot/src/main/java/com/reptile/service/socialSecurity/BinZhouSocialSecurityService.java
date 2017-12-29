@@ -1,45 +1,75 @@
 package com.reptile.service.socialSecurity;
 
-import com.gargoylesoftware.htmlunit.*;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ImgUtil;
+import com.reptile.util.PushState;
+import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
+import com.reptile.util.application;
+
+/**
+ * 
+ * @ClassName: BinZhouSocialSecurityService  
+ * @Description: TODO (滨州社保)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Service
-public class BZSocialSecurityService {
-	private Logger logger= LoggerFactory.getLogger(BZSocialSecurityService.class);
+public class BinZhouSocialSecurityService {
+	private Logger logger= LoggerFactory.getLogger(BinZhouSocialSecurityService.class);
 	
 	@Autowired
 	private application application;
 	
+	private static String  sessionUid = "__usersession_uuid";
+	private static String errorCode = "errorCode";
+	private static String success = "0000";
+	private static String select = "select";
+	private static int length = 4;
 	/**
 	 * 获取登录验证码图片
 	 * @param request
 	 * @return
 	 */
 	public Map<String, Object> doGetVerifyImg(HttpServletRequest request) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
 			HtmlPage loginPage=webClient.getPage("http://222.134.45.172:8002/hsp/logonDialog_withE.jsp");
 			Thread.sleep(1000);
 			//读取页面验证码图片到本地
-			HtmlImage authcode_numleft= (HtmlImage) loginPage.getElementById("authcode_numleft");
-			HtmlImage authcode_operator= (HtmlImage) loginPage.getElementById("authcode_operator");
-			HtmlImage authcode_numright= (HtmlImage) loginPage.getElementById("authcode_numright");
+			HtmlImage authcodeNumleft= (HtmlImage) loginPage.getElementById("authcode_numleft");
+			HtmlImage authcodeOperator= (HtmlImage) loginPage.getElementById("authcode_operator");
+			HtmlImage authcodeNumright= (HtmlImage) loginPage.getElementById("authcode_numright");
 			
-			data.put("leftImgPath", ImgUtil.saveImg(authcode_numleft, "left", "/verifyImages", "gif", request));
-			data.put("operatorImgPath", ImgUtil.saveImg(authcode_operator, "operator", "/verifyImages", "gif", request));
-			data.put("rightImgPath", ImgUtil.saveImg(authcode_numright, "right", "/verifyImages", "gif", request));
+			data.put("leftImgPath", ImgUtil.saveImg(authcodeNumleft, "left", "/verifyImages", "gif", request));
+			data.put("operatorImgPath", ImgUtil.saveImg(authcodeOperator, "operator", "/verifyImages", "gif", request));
+			data.put("rightImgPath", ImgUtil.saveImg(authcodeNumright, "right", "/verifyImages", "gif", request));
 			
 			request.getSession().setAttribute("binZhouWebClient",webClient); 
 			request.getSession().setAttribute("binZhouLoginPage",loginPage); 
@@ -65,10 +95,12 @@ public class BZSocialSecurityService {
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
 			String userCard, String passWord,String userCode,String cityCode,String idCardNum) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
 		try {
-			WebClient webClient = (WebClient)request.getSession().getAttribute("binZhouWebClient");//从session中获得webClient
-			HtmlPage loginPage = (HtmlPage)request.getSession().getAttribute("binZhouLoginPage");//从session中获得loginPage
+			//从session中获得webClient
+			WebClient webClient = (WebClient)request.getSession().getAttribute("binZhouWebClient");
+			//从session中获得loginPage
+			HtmlPage loginPage = (HtmlPage)request.getSession().getAttribute("binZhouLoginPage");
 			
 			if(webClient == null || loginPage == null){
 				data.put("errorInfo", "系统繁忙，请稍后再试！");
@@ -86,22 +118,24 @@ public class BZSocialSecurityService {
 			
 			String usermm,appversion = "";
 			if(alertList.size() > 0){
-				usermm = alertList.get(0);//加密后的密码
-				appversion = alertList.get(1);//加密后的appversion值
+				//加密后的密码
+				usermm = alertList.get(0);
+				//加密后的appversion值
+				appversion = alertList.get(1);
 			}else{
 				data.put("errorInfo", "系统繁忙，请稍后再试！");
 	            data.put("errorCode", "0002");
 	            return data;
 			}
 			//封装请求参数
-			List<NameValuePair> ValueList = new ArrayList<NameValuePair>();
-			ValueList.add(new NameValuePair("method", "doLogon"));
+			List<NameValuePair> valueList = new ArrayList<NameValuePair>();
+			valueList.add(new NameValuePair("method", "doLogon"));
 			//dlfs值为1时为本地登录，值为2时为e账户登录
-			ValueList.add(new NameValuePair("_xmlString","<?xml version='1.0' encoding='UTF-8'?><p><s userid='"+userCard+"'/><s usermm='"+usermm+"'/><s authcode='"+userCode+"'/><s yxzjlx='A'/><s dlfs='1'/><s appversion='"+appversion+"'/></p>"));
-			ValueList.add(new NameValuePair("_random", ""+Math.random()));
+			valueList.add(new NameValuePair("_xmlString","<?xml version='1.0' encoding='UTF-8'?><p><s userid='"+userCard+"'/><s usermm='"+usermm+"'/><s authcode='"+userCode+"'/><s yxzjlx='A'/><s dlfs='1'/><s appversion='"+appversion+"'/></p>"));
+			valueList.add(new NameValuePair("_random", ""+Math.random()));
 			
-			String response = webRequest("http://222.134.45.172:8002/hsp/logon.do", ValueList, HttpMethod.POST, webClient);
-			if(response.contains("__usersession_uuid")){
+			String response = webRequest("http://222.134.45.172:8002/hsp/logon.do", valueList, HttpMethod.POST, webClient);
+			if(response.contains(sessionUid)){
 				data = this.doGetDetail(request, userCard, cityCode,idCardNum ,webClient);
 			}else{
 				data.put("errorInfo", response);
@@ -125,8 +159,8 @@ public class BZSocialSecurityService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,String userCard,String cityCode,String idCardNum,WebClient webClient)  {
-		Map<String, Object> data = new HashMap<String, Object>();
-		Map<String, Object> infoAll = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
+		Map<String, Object> infoAll = new HashMap<String, Object>(16);
 		
 		try {
 			String userSessionUuid = (String)request.getSession().getAttribute("userSessionUuid");
@@ -156,7 +190,7 @@ public class BZSocialSecurityService {
             data.put("city", cityCode);
             data.put("userId", idCardNum);
             data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
-            if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+            if(data != null && success.equals(data.get(errorCode).toString())){
             	PushState.state(idCardNum, "socialSecurity", 300);
             	data.put("errorInfo","推送成功");
             	data.put("errorCode","0000");
@@ -202,12 +236,12 @@ public class BZSocialSecurityService {
 		if(isFlag){
 			responseInfo.add(response);
 		}else{
-			if(response.contains("select")){
+			if(response.contains(select)){
 				
 				String selectInfo = response.substring(response.indexOf("select")+6,response.lastIndexOf("select")+6);
 				//获取可查到的所有年限
 				Set<String> years = new HashSet<String>();
-				for (int i = 0; i < selectInfo.length()-4; i++) {
+				for (int i = 0; i < selectInfo.length()-length; i++) {
 					String str = selectInfo.substring(i, i+4);
 					if(str.matches("^2[0-9]{3}")){
 						years.add(str);
@@ -215,7 +249,7 @@ public class BZSocialSecurityService {
 				}
 				//获取每年的社保信息,养老保险年限用ny，其余保险年限为year
 				for (String item : years) {
-					if(method.equals("queryAgedPayHis")){
+					if("queryAgedPayHis".equals(method)){
 						if(list.size() == 4){
 							list.add(4,new NameValuePair("nd", item));
 						}else{
