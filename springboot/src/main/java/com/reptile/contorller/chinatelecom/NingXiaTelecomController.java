@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.chinatelecom.NingXiaTelecomService;
 import com.reptile.util.CustomAnnotation;
 
+/**
+ * 
+ * @ClassName: NingXiaTelecomController  
+ * @Description: TODO (宁夏的电信)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("ningXiaTelecom")
 public class NingXiaTelecomController {
@@ -40,8 +48,8 @@ public class NingXiaTelecomController {
 		@ResponseBody
 		@CustomAnnotation
 		@RequestMapping(value = "ningXiaDetil", method = RequestMethod.POST)
-		public Map<String,Object> ningXiaDetil(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
-			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code,longitude,latitude,UUID);	
+		public Map<String,Object> ningXiaDetil(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
+			return ningxiaTelecomService.ningXiaDetial(request, phoneNumber, servePwd, code,longitude,latitude,uuid);	
 
 		}
 }

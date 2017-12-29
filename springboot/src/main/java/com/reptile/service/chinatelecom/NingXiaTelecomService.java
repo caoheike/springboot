@@ -55,6 +55,12 @@ public class NingXiaTelecomService {
 			.getLogger(NingXiaTelecomService.class);
 	@Autowired
 	private application application;
+	
+	private static String detailStr = "详单查询";
+	private static String viFail = "验证失败";
+	private static String viCodeStr = "验证码";
+	private static String success = "0000";
+	private static String errorCode = "errorCode";
 
 	/**
 	 * 登陆
@@ -69,7 +75,7 @@ public class NingXiaTelecomService {
 	public  Map<String, Object> ningXiaLogin(HttpServletRequest request,
 			String phoneNumber, String servePwd) {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>(16);
 		System.setProperty("phantomjs.binary.path",
 				"C:/phantomjs-2.1.1-windows/bin/phantomjs.exe");
 		WebDriver driver = new PhantomJSDriver();
@@ -128,7 +134,7 @@ public class NingXiaTelecomService {
 			WebElement loginBtns = driver.findElement(By.id("loginbtn"));
 			loginBtns.click();
 			driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-			if (driver.getPageSource().contains("详单查询")) {
+			if (driver.getPageSource().contains(detailStr)) {
 				logger.warn("宁夏电信，登陆成功");
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功");
@@ -136,7 +142,7 @@ public class NingXiaTelecomService {
 				String divErr = driver.findElement(By.id("divErr")).getText();
 				logger.warn("宁夏电信", divErr);
 				map.put("errorCode", "0001");
-				if (divErr.contains("验证码")) {
+				if (divErr.contains(viCodeStr)) {
 					map.put("errorInfo", "网络繁忙，请稍后再试");
 				} else {
 					map.put("errorInfo", divErr);
@@ -169,7 +175,7 @@ public class NingXiaTelecomService {
 		WebDriver driver = (WebDriver) request.getSession().getAttribute(
 				"driver");
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>(16);
 		if (driver == null) {
 			logger.warn("宁夏电信未登录");
 			map.put("errorCode", "0001");
@@ -225,19 +231,19 @@ public class NingXiaTelecomService {
 
 	public Map<String, Object> ningXiaDetial(HttpServletRequest request,
 			String phoneNumber, String servePwd, String code, String longitude,
-			String latitude, String UUID) {
+			String latitude, String uuid) {
 		// 从session中获得driver
 		WebDriver driver = (WebDriver) request.getSession().getAttribute(
 				"driver1");
-		Map<String, Object> map = new HashMap<String, Object>();
-		PushSocket.pushnew(map, UUID, "1000", "登录中");
+		Map<String, Object> map = new HashMap<String, Object>(16);
+		PushSocket.pushnew(map, uuid, "1000", "登录中");
 		PushState.state(phoneNumber, "callLog", 200);
 		if (driver == null) {
 			logger.warn("宁夏电信请先获取验证码");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码");
 			PushState.state(phoneNumber, "callLog", 200);
-			PushSocket.pushnew(map, UUID, "3000", "请先获取验证码");
+			PushSocket.pushnew(map, uuid, "3000", "请先获取验证码");
 			return map;
 		}
 		List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
@@ -246,28 +252,28 @@ public class NingXiaTelecomService {
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "验证码不能为空");
 			PushState.state(phoneNumber, "callLog", 200);
-			PushSocket.pushnew(map, UUID, "3000", "验证码不能为空");
+			PushSocket.pushnew(map, uuid, "3000", "验证码不能为空");
 			return map;
 		}
 		driver.findElement(By.id("yzm")).sendKeys(code);
 		String tipInfo = driver.findElement(
 				By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
-		if (tipInfo.contains("验证失败")) {
+		if (tipInfo.contains(viFail)) {
 			logger.warn("宁夏电信验证码错误");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "验证码错误");
 			PushState.state(phoneNumber, "callLog", 200);
-			PushSocket.pushnew(map, UUID, "3000", "验证码错误");
+			PushSocket.pushnew(map, uuid, "3000", "验证码错误");
 			return map;
 		}
-		PushSocket.pushnew(map, UUID, "2000", "登录成功");
+		PushSocket.pushnew(map, uuid, "2000", "登录成功");
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		PushSocket.pushnew(map, UUID, "5000", "数据获取中");
+		PushSocket.pushnew(map, uuid, "5000", "数据获取中");
 
 		logger.warn("宁夏电信数据获取中...");
 		// ==================获取cookie==========================================
@@ -312,8 +318,9 @@ public class NingXiaTelecomService {
 		// post的参数
 		String str = "";
 		// ==============取数据=================// 六个月
-		for (int i = 0; i < 6; i++) {
-			Map<String, Object> dmap = new HashMap<String, Object>();
+		int count = 6;
+		for (int i = 0; i < count; i++) {
+			Map<String, Object> dmap = new HashMap<String, Object>(16);
 			if (i == 0) {
 				start = GetMonth.firstDate(year, month);
 				end = nowDate;
@@ -364,11 +371,11 @@ public class NingXiaTelecomService {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
 				PushState.state(phoneNumber, "callLog", 200);
-				PushSocket.pushnew(map, UUID, "7000", "获取数据失败，网络连接异常");
+				PushSocket.pushnew(map, uuid, "7000", "获取数据失败，网络连接异常");
 				return map;
 			}
 		}
-		PushSocket.pushnew(map, UUID, "6000", "获取数据成功");
+		PushSocket.pushnew(map, uuid, "6000", "获取数据成功");
 		map.put("data", dataList);
 		map.put("UserPassword", servePwd);
 		map.put("UserIphone", phoneNumber);
@@ -381,11 +388,11 @@ public class NingXiaTelecomService {
 		Resttemplate resttemplate = new Resttemplate();
 		map = resttemplate.SendMessage(map, application.getSendip()
 				+ "/HSDC/message/telecomCallRecord");
-		if (map.get("errorCode").equals("0000")) {
-			PushSocket.pushnew(map, UUID, "8000", "认证成功");
+		if (map.get(errorCode).equals(success)) {
+			PushSocket.pushnew(map, uuid, "8000", "认证成功");
 			PushState.state(phoneNumber, "callLog", 300);
 		} else {
-			PushSocket.pushnew(map, UUID, "9000", map.get("errorInfo")
+			PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo")
 					.toString());
 			PushState.state(phoneNumber, "callLog", 200);
 		}
