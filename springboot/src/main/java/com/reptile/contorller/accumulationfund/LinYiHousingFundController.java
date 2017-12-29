@@ -13,13 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.accumulationfund.LYHousingFundService;
+import com.reptile.service.accumulationfund.LinYiHousingFundService;
 
+/**
+ * 
+ * @ClassName: LinYiHousingFundController  
+ * @Description: TODO(临沂公积金) 
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("linYiHouseFund")
-public class LYHousingFundController {
+public class LinYiHousingFundController {
 	@Autowired
-	private LYHousingFundService lyHouseFundService;
+	private LinYiHousingFundService linYiHousingFundService;
 	
 	
 
@@ -36,6 +44,6 @@ public class LYHousingFundController {
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
-		return lyHouseFundService.doLogin(request, userName, passWord, idCard, cityCode,idCardNum);
+		return linYiHousingFundService.doLogin(request, userName, passWord, idCard, cityCode,idCardNum);
 	}
 }
