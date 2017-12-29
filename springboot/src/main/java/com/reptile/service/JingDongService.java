@@ -94,7 +94,7 @@ public class JingDongService {
 				//密码
 				driver.findElementById("nloginpwd").sendKeys(passWord);
 				//判断2秒内页面上是否有验证码
-				if(DriverUtil.VisibilityById(authcode, driver, two)){
+				if(DriverUtil.visibilityById(authcode, driver, two)){
 					WebElement verifyImg = driver.findElementById("JD_Verification1");
 					//验证码图片路径
 					String path = request.getServletContext().getRealPath("/vecImageCode");
@@ -104,7 +104,7 @@ public class JingDongService {
 				//登录
 				driver.findElementByLinkText("登    录").click();
 				//判断msg-error是否会出现
-				if(DriverUtil.VisibilityByClassName(msgError, driver, two)){
+				if(DriverUtil.visibilityByClassName(msgError, driver, two)){
 					
 					String text = driver.findElementByClassName("msg-error").getText().replace("\n", "。");
 					if(text.contains(viCodeStr)){
