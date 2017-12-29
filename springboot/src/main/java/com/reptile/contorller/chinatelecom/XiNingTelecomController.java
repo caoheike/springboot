@@ -1,6 +1,6 @@
 package com.reptile.contorller.chinatelecom;
 
-import com.reptile.service.ChinaTelecom.XiNingTelecomService;
+import com.reptile.service.chinatelecom.XiNingTelecomService;
 import com.reptile.util.CustomAnnotation;
 
 import io.swagger.annotations.ApiOperation;

@@ -72,17 +72,19 @@ public class CompanyInfoModel {
 	public static Map<String, Object> getCompanyInfo(WebClient webClient, String goalUrl,
 			Map<String, String> formDataMap, Map<String, String> needValidateResult, String getGtUrl,
 			String validateUrl, String subInfoUrl, Map<String, String> paramMap, String encodeType) throws Exception {
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>(16);
 
 		// 获取gt参数
 		JSONObject gtJson = new JSONObject();
+		int boundCount=3;
 		try {
-			for (int count = 0; count < 3; count++) {
+			for (int count = 0; count < boundCount; count++) {
 				logger.warn("gt信息获取中...");
 				gtJson = getCodePram(webClient, goalUrl, formDataMap, getGtUrl, paramMap);
 				logger.warn("gt极验打码中...");
 				gtJson = daMaGT(webClient, gtJson);
-				if (gtJson.getString("status").equals("ok")) {
+				String flagOk="ok";
+				if (gtJson.getString("status").equals(flagOk)) {
 					logger.warn("gt验证打码结果中...");
 					String validateResult = validateGT(webClient, gtJson, validateUrl);
 
@@ -136,19 +138,21 @@ public class CompanyInfoModel {
 	public static JSONObject getCodePram(WebClient webClient, String goalUrl, Map<String, String> formDataMap,
 			String getGtUrl, Map<String, String> paramMap) {
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<>(16);
 		JSONObject jsonObject = new JSONObject();
 		// 如果最终需要提交表单中的某些数据 循环迭代formDataMap从页面拿去数据，以key value的形式放入paramMap中，最终拼接在请求地址中
 		try {
 			HtmlPage page = webClient.getPage(new URL(goalUrl));
 			if (formDataMap != null && formDataMap.size() > 1) {
 				DomNodeList inputList = null;
-				if (formDataMap.get("form") != null) {
+				String formFlag="form";
+				String noFormFlag="noForm";
+				if (formDataMap.get(formFlag) != null) {
 					int formIndex = Integer.parseInt(formDataMap.get("form").toString());
 					HtmlForm htmlForm = page.getForms().get(formIndex);
 					formDataMap.remove("form");
 					inputList = htmlForm.getElementsByTagName("input");
-				} else if (formDataMap.get("noForm") != null) {
+				} else if (formDataMap.get(noFormFlag) != null) {
 					int noForm = Integer.parseInt(formDataMap.get("noForm").toString());
 					formDataMap.remove("noForm");
 					inputList = page.getElementsByTagName("input");
@@ -195,7 +199,8 @@ public class CompanyInfoModel {
 			WebRequest get = new WebRequest(new URL(gtDaMaUrl));
 			get.setHttpMethod(HttpMethod.GET);
 			// 判断极验为第几代
-			String model = gtJson.getString("success").equals("1") ? "0" : "1";
+			String flagInt="1";
+			String model = gtJson.getString("success").equals(flagInt) ? "0" : "1";
 			List<NameValuePair> list = new ArrayList<>();
 			list.add(new NameValuePair("user", "caoheike"));
 			list.add(new NameValuePair("pass", "598415805"));
@@ -261,7 +266,7 @@ public class CompanyInfoModel {
 	 */
 	public static Map<String, Object> getAllCompany(WebClient webClient, JSONObject gtJson, String subInfoUrl,
 			Map<String, String> paramMap, String encodeType) throws IOException, InterruptedException {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>(16);
 		StringBuffer param = new StringBuffer();
 		try {
 			Iterator<String> iterator = paramMap.keySet().iterator();
@@ -314,7 +319,7 @@ public class CompanyInfoModel {
 	 */
 	public static Map<String, Object> getAllCompanyJL(WebClient webClient, JSONObject gtJson, String subInfoUrl,
 			Map<String, String> paramMap, String encodeType) throws IOException, InterruptedException {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>(16);
 		StringBuffer param = new StringBuffer();
 		try {
 			Iterator<String> iterator = paramMap.keySet().iterator();
@@ -614,22 +619,22 @@ public class CompanyInfoModel {
 		
 		
 		/**
-		 * 安徽
+		 *
 		 */
 		 String goalUrl = "http://ah.gsxt.gov.cn";
 		 String getGtUrl = "http://ah.gsxt.gov.cn/registerValidate.jspx?t=" +System.currentTimeMillis();
 		 String validateUrl = "http://ah.gsxt.gov.cn/validateSecond.jspx";
 		 String subInfoUrl = "http://ah.gsxt.gov.cn/searchList.jspx?";
-		 Map<String, String> paramMap = new HashMap<>();
+		 Map<String, String> paramMap = new HashMap<>(16);
 		 paramMap.put("top","top");
 		 paramMap.put("searchType","1");
 		 paramMap.put("entName",URLEncoder.encode("百度","utf-8"));
 		 //表单中存在数据 页面第一个表单 第一个input
-		 Map<String, String> dataMap = new HashMap<>();
+		 Map<String, String> dataMap = new HashMap<>(16);
 		
 		 String encodeType = "utf-8";
 		 //验证结果中含有最后一步需要提交的数据 没有则提交null;
-		 Map<String, String> needValidateResult = new HashMap<>();
+		 Map<String, String> needValidateResult = new HashMap<>(16);
 		 needValidateResult.put("obj","checkNo");
 		
 		 Map<String, Object> companyInfo = getCompanyInfo(webClient, goalUrl, dataMap,needValidateResult, getGtUrl, validateUrl, subInfoUrl, paramMap, encodeType);

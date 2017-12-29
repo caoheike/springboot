@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;

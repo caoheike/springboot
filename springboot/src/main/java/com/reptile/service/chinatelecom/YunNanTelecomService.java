@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -21,11 +21,17 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 云南电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class YunNanTelecomService {
     private Logger logger= LoggerFactory.getLogger(YunNanTelecomService.class);
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         List<String> dataList = new ArrayList<String>();
 
         HttpSession session = request.getSession();
@@ -60,14 +66,16 @@ public class YunNanTelecomService {
                 }
 
                 String popup = "";
-                if (motoText.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().size() == 3) {
-                    popup = motoText.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().get(1).getTextContent();
+                String popupSignle="popup";
+                int validateInt=3;
+                if (motoText.getElementById(popupSignle).getFirstChild().getFirstChild().getChildNodes().size() == validateInt) {
+                    popup = motoText.getElementById(popupSignle).getFirstChild().getFirstChild().getChildNodes().get(1).getTextContent();
                 } else {
-                    popup = motoText.getElementById("popup").getFirstChild().getChildNodes().get(1).getTextContent();
+                    popup = motoText.getElementById(popupSignle).getFirstChild().getChildNodes().get(1).getTextContent();
                 }
 
-
-                if (!popup.contains("短信验证码发送成功")) {
+                String validateResult="短信验证码发送成功";
+                if (!popup.contains(validateResult)) {
                     map.put("errorCode", "0002");
                     map.put("errorInfo", popup);
                 } else {
@@ -91,9 +99,9 @@ public class YunNanTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,
-                                            String userName, String userCard,String longitude,String latitude,String UUID) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+                                            String userName, String userCard,String longitude,String latitude,String uuid) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
         try {
 			Thread.sleep(2000);
@@ -106,11 +114,10 @@ public class YunNanTelecomService {
         Object yunNanWebClient = session.getAttribute("yunNanWebClient");
         Object yunNanHtmlPage = session.getAttribute("yunNanHtmlPage");
         if (yunNanWebClient == null) {
-        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
             PushState.state(phoneNumber, "callLog",200);
-            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常");
+            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常");
         } else {
             WebClient webClient = (WebClient) yunNanWebClient;
             HtmlPage htmlPage = (HtmlPage) yunNanHtmlPage;
@@ -124,30 +131,31 @@ public class YunNanTelecomService {
                 Thread.sleep(4000);
 
                 String areaCode = resultPage.getElementByName("AREA_CODE").getAttribute("value");
-
-                if (resultPage.getElementById("popup") != null) {
+                String popupSignle="popup";
+                if (resultPage.getElementById(popupSignle) != null) {
                     String popup = "";
-                    if (resultPage.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().size() == 3) {
-                        popup = resultPage.getElementById("popup").getFirstChild().getFirstChild().getChildNodes().get(1).getTextContent();
+                    int count=3;
+                    if (resultPage.getElementById(popupSignle).getFirstChild().getFirstChild().getChildNodes().size() == count) {
+                        popup = resultPage.getElementById(popupSignle).getFirstChild().getFirstChild().getChildNodes().get(1).getTextContent();
                     } else {
-                        popup = resultPage.getElementById("popup").getFirstChild().getChildNodes().get(1).getTextContent();
+                        popup = resultPage.getElementById(popupSignle).getFirstChild().getChildNodes().get(1).getTextContent();
                     }
-                    if (!popup.contains("验证成功")) {
-                    	//PushSocket.push(map, UUID, "0001");
+                    String validateYan="验证成功";
+                    if (!popup.contains(validateYan)) {
                         map.put("errorCode", "0003");
                         map.put("errorInfo", popup);
                         PushState.state(phoneNumber, "callLog",200);
-                        PushSocket.pushnew(map, UUID, "3000",popup);
+                        PushSocket.pushnew(map, uuid, "3000",popup);
                         return map;
                     }
                 }
-                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, UUID, "5000","获取数据中");
-                //PushSocket.push(map, UUID, "0000");
+                PushSocket.pushnew(map, uuid, "5000","获取数据中");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
-                for (int i = 0; i < 3; i++) {
+                int boundCount=3;
+                for (int i = 0; i <boundCount; i++) {
                     String monthDate = sim.format(calendar.getTime());
                     WebRequest webRequest = new WebRequest(new URL("http://yn.189.cn/service/jt/bill/actionjt/ifr_bill_detailslist_em_new.jsp"));
                     webRequest.setHttpMethod(HttpMethod.POST);
@@ -172,7 +180,8 @@ public class YunNanTelecomService {
                         String[] split = pageContent.split("1/");
                         String[] split1 = split[1].split("\\(每页");
                         int pageCount = Integer.parseInt(split1[0]);
-                        for (int j = 2; j < pageCount + 1; j++) {
+                        int countSignle=2;
+                        for (int j = countSignle; j < pageCount + 1; j++) {
                             getDetailList(phoneNumber, monthDate, areaCode, webClient, j, dataList);
                         }
                     } catch (Exception e) {
@@ -181,28 +190,32 @@ public class YunNanTelecomService {
                     calendar.add(Calendar.MONTH, -1);
                 }
                 
-               	PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+               	PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 map.put("data", dataList);
                 map.put("flag", "8");
                 map.put("UserPassword", serverPwd);
                 map.put("UserIphone", phoneNumber);
-                map.put("longitude", longitude);//经度
-                map.put("latitude", latitude);//纬度
+                //经度
+                map.put("longitude", longitude);
+                //纬度
+                map.put("latitude", latitude);
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
-                if(map.get("errorCode").equals("0000")) {
-					PushSocket.pushnew(map, UUID, "8000","认证成功");
+                String errorCode="errorCode";
+                String numberResult="0000";
+                if(map.get(errorCode).equals(numberResult)) {
+					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200);
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常");
                 PushState.state(phoneNumber, "callLog",200);
             }
         }

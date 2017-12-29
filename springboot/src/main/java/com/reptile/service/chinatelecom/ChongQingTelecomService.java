@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.MyCYDMDemo;

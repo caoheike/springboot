@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * Created by HotWong on 2017/5/2 003.
+ * 成都电信
+ *
+ * @author HotWong
+ * @date 2016/10/31
  */
 @Controller
 @RequestMapping("accumulationFund")
@@ -26,7 +29,7 @@ public class AccumulationFundController {
 
     @ResponseBody
     @RequestMapping(value = "/Login.html",method = RequestMethod.POST)
-    public Map<String,Object> Login( HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
+    public Map<String,Object> login( HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("fundCard")String fundCard){
     	FormBean bean=new FormBean();
     	bean.setCityCode(cityCode);
     	bean.setUserId(idCard);

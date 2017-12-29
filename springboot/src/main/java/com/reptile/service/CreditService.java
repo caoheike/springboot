@@ -36,22 +36,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by HotWong on 2017/5/2 0002.
+ * 中国银行信用卡
+ *
+ * @author hotwang
+ * @date 2016/10/31
  */
 @Service("creditService")
 public class CreditService {
-    private final static String loginUrl = "https://ipcrs.pbccrc.org.cn/page/login/loginreg.jsp";
-    private final static String ApplyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
-    private final static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
+    private  static String loginUrl = "https://ipcrs.pbccrc.org.cn/page/login/loginreg.jsp";
+    private  static String applyUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=applicationReport";
+    private  static String queryUrl = "https://ipcrs.pbccrc.org.cn/reportAction.do?method=queryReport";
 
     private Logger logger = LoggerFactory.getLogger(CreditService.class);
 
     public Map<String, Object> getVerifyImage(String type, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         try {
-//            Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
-//            Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage-ZX");
             String verifyImages = request.getSession().getServletContext().getRealPath("/verifyImages");
             File file = new File(verifyImages + File.separator);
             if (!file.exists()) {
@@ -62,11 +63,15 @@ public class CreditService {
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
             webClient.setJavaScriptTimeout(20000);
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-            webClient.getOptions().setJavaScriptEnabled(true); // 启用JS解释器，默认为true
-            webClient.getOptions().setCssEnabled(false);// 禁用css支持
+            // 启用JS解释器，默认为true
+            webClient.getOptions().setJavaScriptEnabled(true);
+            // 禁用css支持
+            webClient.getOptions().setCssEnabled(false);
             webClient.getOptions().setUseInsecureSSL(true);
-            webClient.getOptions().setThrowExceptionOnScriptError(false);// js运行错误时，是否抛出异常
-            webClient.getOptions().setTimeout(10000); // 设置连接超时时间，这里是30S。如果为0，则无限期等待
+            // js运行错误时，是否抛出异常
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            // 设置连接超时时间，这里是30S。如果为0，则无限期等待
+            webClient.getOptions().setTimeout(10000);
             webClient.getCookieManager().setCookiesEnabled(true);
             webClient.addRequestHeader("Host", "ipcrs.pbccrc.org.cn");
             webClient.addRequestHeader("Referer", "https://ipcrs.pbccrc.org.cn/");
@@ -74,8 +79,8 @@ public class CreditService {
             HtmlPage loginPage = null;
 
             loginPage = webClient.getPage(loginUrl);
-
-            if (type != null && type.equals("reg")) {
+            String regs="reg";
+            if (type != null && regs.equals(type)) {
                 HtmlForm userForm = loginPage.getFormByName("userForm");
                 HtmlPage regPage = userForm.getInputByValue("新用户注册").click();
                 HtmlImage verifyCodeImagePage = (HtmlImage) regPage.getElementById("imgrc");
@@ -105,8 +110,8 @@ public class CreditService {
     }
 
     public Map<String, Object> sendSms(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionApplyPage = request.getSession().getAttribute("sessionApplyPage");
         try {
@@ -136,9 +141,9 @@ public class CreditService {
      * @return Map<String,Object>
      */
     public Map<String, Object> sendRegSms(String phone, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
-        if (phone == null || phone.equals("")) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
+        if (phone == null || "".equals(phone)) {
             data.put("ResultInfo", "手机号码错误！");
             data.put("ResultCode", "0001");
             map.put("data", data);
@@ -175,8 +180,8 @@ public class CreditService {
      * @return Map<String,Object>
      */
     public Map<String, Object> reg(FormBean bean, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionRegPage = request.getSession().getAttribute("sessionRegPage");
         try {
@@ -190,9 +195,12 @@ public class CreditService {
                 userForm.getInputByName("userInfoVO.mobileTel").setValueAttribute(bean.getPhone());
                 userForm.getInputByName("userInfoVO.verifyCode").setValueAttribute(bean.getVerifyCode());
                 HtmlPage resultPage = userForm.getInputByValue("提交").click();
-                if (resultPage.asText().indexOf("密码") != -1 && resultPage.asText().indexOf("手机号码") != -1) {
+                String miMa="密码";
+                String shouJi="手机号码";
+                if (resultPage.asText().indexOf(miMa) != -1 && resultPage.asText().indexOf(shouJi) != -1) {
                     StringBuilder sb = new StringBuilder();
-                    if (resultPage.getElementById("_error_field_") != null) {
+                    String errorField="_error_field_";
+                    if (resultPage.getElementById(errorField) != null) {
                         sb.append(resultPage.getElementById("_error_field_").asText());
                     }
                     sb.append(resultPage.getElementById("loginNameInfo").asText());
@@ -229,8 +237,8 @@ public class CreditService {
      * @return Map<String,Object>
      */
     public Map<String, Object> preReg(FormBean bean, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
         Object sessionRegPage = request.getSession().getAttribute("sessionRegPage");
         try {
@@ -245,7 +253,9 @@ public class CreditService {
                 servearticle.setAttribute("checked", "checked");
                 regPage = userForm.getInputByValue("下一步").click();
                 String result = regPage.asText();
-                if (result.indexOf("密码") != -1 && result.indexOf("手机号码") != -1) {
+                String miMa2="密码";
+                String owernPhone="手机号码";
+                if (result.indexOf(miMa2) != -1 && result.indexOf(owernPhone) != -1) {
                     data.put("ResultInfo", "预注册成功，下一步补充信息!");
                     data.put("ResultCode", "0000");
                     request.getSession().setAttribute("sessionRegPage", regPage);
@@ -266,9 +276,10 @@ public class CreditService {
     }
 
     public Map<String, Object> subSms(String sms, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
-        if (sms == null || sms.length() != 6) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
+        int length=6;
+        if (sms == null || sms.length() != length) {
             data.put("ResultInfo", "验证码错误!");
             data.put("ResultCode", "0001");
             map.put("data", data);
@@ -282,11 +293,13 @@ public class CreditService {
                 applyPage.getElementById("verifyCode").setAttribute("value", sms);
                 HtmlButtonInput nextstep = (HtmlButtonInput) applyPage.getElementById("nextstep");
                 applyPage = nextstep.click();
-                if (applyPage.asText().indexOf("获取动态码") != -1) {
+                String getDync="获取动态码";
+                if (applyPage.asText().indexOf(getDync) != -1) {
                     data.put("ResultInfo", applyPage.getElementById("messages").asText());
                     data.put("ResultCode", "0001");
                 } else {
-                    if (applyPage.asText().indexOf("已存在") != -1) {
+                    String hasExit="已存在";
+                    if (applyPage.asText().indexOf(hasExit) != -1) {
                         HtmlButtonInput jixu = applyPage.querySelector(".regist_btn");
                         applyPage = jixu.click();
                     }
@@ -313,8 +326,8 @@ public class CreditService {
     }
 
     public Map<String, Object> login(FormBean bean, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         try {
             if (!bean.verifyCredit(bean)) {
                 data.put("ResultInfo", "提交数据有误,请刷新页面后重新输入!");
@@ -345,7 +358,8 @@ public class CreditService {
                 HtmlSubmitInput submit = form.getInputByValue("登录");
                 HtmlPage login = submit.click();
                 String result = login.asText();
-                if (result.indexOf("用户登录") != -1) {
+                String userLoad="用户登录";
+                if (result.indexOf(userLoad) != -1) {
                     HtmlElement error = (HtmlElement) login.getByXPath("//div[@class='erro_div3']").get(0);
                     data.put("ResultInfo", error.asText().trim());
                     data.put("ResultCode", "0001");
@@ -354,18 +368,20 @@ public class CreditService {
                     return map;
                 }
 
-                HtmlPage applyPage = webClient.getPage(ApplyUrl);
+                HtmlPage applyPage = webClient.getPage(applyUrl);
                 String resultStr = applyPage.asText();
                 //ludangwei  2017-08-03
                 // if(resultStr.indexOf("已生成")！=-1){
-                if (resultStr.contains("加工成功")) {
+                String madeSuccess="加工成功";
+                if (resultStr.contains(madeSuccess)) {
                     request.getSession().setAttribute("user", bean);
                     data.put("ResultInfo", "信用已生成，请直接查询信用。");
                     data.put("ResultCode", "0003");
                     map.put("data", data);
                     return map;
                 }
-                if(resultStr.contains("处理中")){
+                String dealing="处理中";
+                if(resultStr.contains(dealing)){
                     HtmlPage page = webClient.getPage(queryUrl);
                     NamedNodeMap nextstep = page.getElementById("nextstep").getAttributes();
                     Node disabled = nextstep.getNamedItem("disabled");
@@ -383,8 +399,12 @@ public class CreditService {
                     list.get(i).setAttribute("checked", "checked");
                 }
                 HtmlButtonInput nextstep = (HtmlButtonInput) applyPage.getElementById("nextstep");
-                if (nextstep.getAttribute("disabled") != null && nextstep.getAttribute("disabled").equals("disabled")) {
-                    if (resultStr.indexOf("手机动态码") != -1 && resultStr.indexOf("处理中") != -1) {
+                String statusDis="disabled";
+                String phoneDync="手机动态码";
+                String dealing1="处理中";
+                if (nextstep.getAttribute(statusDis) != null && statusDis.equals(nextstep.getAttribute(statusDis))) {
+
+                    if (resultStr.indexOf(phoneDync) != -1 && resultStr.indexOf(dealing1) != -1) {
                         data.put("ResultInfo", "您的信用信息查询申请已提交，请在24小时后访问平台获取结果!");
                     } else {
                         data.put("ResultInfo", "您的信用信息查询申请已提交，正在处理中，验证结果会在24小时内发送到您手机！");
@@ -394,7 +414,7 @@ public class CreditService {
                     webClient.close();
                     return map;
                 }
-                if (resultStr.indexOf("手机动态码") != -1) {
+                if (resultStr.indexOf(phoneDync) != -1) {
                     request.getSession().setAttribute("sessionApplyPage", applyPage);
                     data.put("phone", applyPage.querySelector(".user_text").asText());
                     data.put("type", "phone");
@@ -409,7 +429,8 @@ public class CreditService {
                     }
                     applyPage.getElementById("radiobutton3").click();
                     applyPage = nextstep.click();
-                    if (applyPage.asText().indexOf("已存在") != -1) {
+                    String hasExit="已存在";
+                    if (applyPage.asText().indexOf(hasExit) != -1) {
                         HtmlButtonInput jixu = applyPage.querySelector(".regist_btn");
                         applyPage = jixu.click();
                     }
@@ -452,8 +473,8 @@ public class CreditService {
     }
 
     public Map<String, Object> question(String options, String userId, HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
         try {
             if (options == null) {
                 throw new Exception("参数为空!");
@@ -462,7 +483,7 @@ public class CreditService {
             Object sessionQuestionPage = request.getSession().getAttribute("sessionQuestionPage");
             if (sessionQuestionPage != null) {
                 HtmlPage questionPage = (HtmlPage) sessionQuestionPage;
-                HtmlPage applyPage = questionPage.getWebClient().getPage(ApplyUrl);
+                HtmlPage applyPage = questionPage.getWebClient().getPage(applyUrl);
                 List<HtmlCheckBoxInput> list = applyPage.getByXPath("//input[@type='checkbox']");
                 for (int i = 0; i < list.size(); i++) {
                     list.get(i).setChecked(true);
@@ -470,7 +491,8 @@ public class CreditService {
                 }
                 applyPage = applyPage.getElementById("radiobutton3").click();
                 HtmlButtonInput nextstep = (HtmlButtonInput) applyPage.getElementById("nextstep");
-                if (nextstep.getAttribute("disabled") != null && nextstep.getAttribute("disabled").equals("disabled")) {
+                String disabled="disabled";
+                if (nextstep.getAttribute(disabled) != null && disabled.equals(nextstep.getAttribute(disabled))) {
                     data.put("ResultInfo", "您已提交申请，验证结果会在24小时内发送到您手机！");
                     data.put("ResultCode", "0000");
                     map.put("data", data);
@@ -493,7 +515,8 @@ public class CreditService {
                 try {
                     Map<String, Object> resMap = new HashedMap();
                     Map<String, Object> resData = new HashedMap();
-                    if (request.getSession().getAttribute("questions") != null) {
+                    String questionss="questions";
+                    if (request.getSession().getAttribute(questionss) != null) {
                         List<Question> questions = (List<Question>) request.getSession().getAttribute("questions");
                         resData.put("questions", questions);
                         resData.put("options", options);
@@ -503,8 +526,6 @@ public class CreditService {
                         resMap.put("data", resData);
                         HttpUtils.sendPost(ConstantInterface.port + "/HSDC/person/creditInvestigationQuestion", JSONObject.fromObject(resMap).toString());
 
-                        //ludangwei 2017-08-11
-//                        map= resttemplate.SendMessageCredit(JSONObject.fromObject(resMap), "http://192.168.3.16:8089/HSDC/person/creditInvestigationQuestion");
                     }
                 } catch (Exception e) {
                     logger.warn(e.getMessage() + " 获取征信问题    mrlu", e);
@@ -525,11 +546,18 @@ public class CreditService {
         return map;
     }
 
-    //查询信用报告
-    public Map<String, Object> queryCredit(HttpServletRequest request, String userId, String verifyCode, String UUID) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> data = new HashMap<String, Object>();
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+    /**
+     * 查询信用报告
+     * @param request
+     * @param userId
+     * @param verifyCode
+     * @param uuid
+     * @return
+     */
+    public Map<String, Object> queryCredit(HttpServletRequest request, String userId, String verifyCode, String uuid) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> data = new HashMap<String, Object>(16);
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(userId, "creditInvestigation",100);
         try {
         	Thread.sleep(2000);
@@ -538,7 +566,7 @@ public class CreditService {
                 final WebClient webClient = (WebClient) sessionWebClient;
                 HtmlPage queryPage = webClient.getPage(queryUrl);
                 Thread.sleep(3000);
-                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
                 //判断3个选项中个人信用报告是否可选
                 NamedNodeMap radiobutton1 = queryPage.getElementById("radiobutton1").getAttributes();
                 Node aClass = radiobutton1.getNamedItem("disabled");
@@ -548,7 +576,7 @@ public class CreditService {
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", "信用报告未生成！");
                     PushState.state(userId, "creditInvestigation",200);
-                    PushSocket.pushnew(map, UUID, "3000","信用报告未生成！");
+                    PushSocket.pushnew(map, uuid, "3000","信用报告未生成！");
                     map.put("errorCode", "0001");
                     return map;
                 }
@@ -558,18 +586,18 @@ public class CreditService {
                 queryPage.getElementById("tradeCode").setAttribute("value", verifyCode);
                 queryPage.getElementById("radiobutton1").click();
                 HtmlPage resultPage = queryPage.getElementById("nextstep").click();
-                if (resultPage.asText().indexOf("身份验证码") != -1) {
+                String userValidate="身份验证码";
+                if (resultPage.asText().indexOf(userValidate) != -1) {
                     map.put("ResultInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("ResultCode", "0001");
                     map.put("errorInfo", resultPage.getElementById("codeinfo").asText());
                     map.put("errorCode", "0001");
                     PushState.state(userId, "creditInvestigation",200);
-                    PushSocket.pushnew(map, UUID, "3000",resultPage.getElementById("codeinfo").asText());
+                    PushSocket.pushnew(map, uuid, "3000",resultPage.getElementById("codeinfo").asText());
                 } else {
-                    //推送长连接状态
-                    //PushSocket.push(map, UUID, "0000");
+
                 	 Thread.sleep(2000);
-                	 PushSocket.pushnew(map, UUID, "5000","获取数据中");
+                	 PushSocket.pushnew(map, uuid, "5000","获取数据中");
                     HtmlTable table = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(1);
                     HtmlTable tableTime = (HtmlTable) resultPage.getElementsByTagName("table").get(0).getElementsByTagName("table").get(0);
                     String realName = table.getCellAt(0, 0).asText();
@@ -582,7 +610,8 @@ public class CreditService {
                     data.put("userIdA", userIdA.substring(userIdA.indexOf("：") + 1).trim());
                     data.put("realName", realName.substring(realName.indexOf("：") + 1).trim());
                     data.put("queryTime", queryTime.substring(queryTime.indexOf("：") + 1));
-                    if (request.getSession().getAttribute("user") != null) {
+                    String users="user";
+                    if (request.getSession().getAttribute(users) != null) {
                         FormBean user = (FormBean) request.getSession().getAttribute("user");
                         data.put("userName", user.getUserName());
                         data.put("userPass", user.getUserPass());
@@ -590,22 +619,21 @@ public class CreditService {
                     data.put("reportHtml", resultPage.asXml());
                     try {
                         map.put("data", data);
-                        PushSocket.pushnew(map, UUID, "6000","获取数据成功");
-                        //ludangwei 2017-08-03
-                        // HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/creditInvestigation", JSONObject.fromObject(map).toString());
+                        PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                         Resttemplate temp = new Resttemplate();
                         map = temp.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port + "/HSDC/person/creditInvestigation");
-
-                        if (map != null && "0000".equals(map.get("ResultCode").toString())) {
+                        String zeroing="0000";
+                        String validateResult="ResultCode";
+                        if (map != null && zeroing.equals(map.get(validateResult).toString())) {
                             map.put("errorInfo", "查询成功");
                             map.put("errorCode", "0000");
-                            PushSocket.pushnew(map, UUID, "8000","认证成功");
+                            PushSocket.pushnew(map, uuid, "8000","认证成功");
                             PushState.state(userId, "creditInvestigation",300);
 
                         } else {
                             map.put("errorInfo", map.get("ResultInfo"));
                             map.put("errorCode", "0001");
-                            PushSocket.pushnew(map, UUID, "9000",map.get("ResultInfo").toString());
+                            PushSocket.pushnew(map, uuid, "9000",map.get("ResultInfo").toString());
                             PushState.state(userId, "creditInvestigation",200);
                         }
                         webClient.close();
@@ -616,7 +644,7 @@ public class CreditService {
                         map.put("errorInfo", "系统繁忙，请稍后再试！");
                         map.put("errorCode", "0002");
                         PushState.state(userId, "creditInvestigation",200);
-                        PushSocket.pushnew(map, UUID, "9000","系统繁忙，请稍后再试！");
+                        PushSocket.pushnew(map, uuid, "9000","系统繁忙，请稍后再试！");
                         webClient.close();
                     }
                 }
@@ -626,7 +654,7 @@ public class CreditService {
                 map.put("errorInfo", "您已超时,请重新登录查询!");
                 map.put("errorCode", "0002");
                 PushState.state(userId, "creditInvestigation",200);
-                PushSocket.pushnew(map, UUID, "3000","您已超时,请重新登录查询!");
+                PushSocket.pushnew(map, uuid, "3000","您已超时,请重新登录查询!");
             }
         } catch (Exception e) {
             logger.warn(e.getMessage() + " 查询征信报告    mrlu", e);
@@ -635,7 +663,7 @@ public class CreditService {
             map.put("errorInfo", "系统繁忙，请稍后再试！");
             map.put("errorCode", "0002");
             PushState.state(userId, "creditInvestigation",200);
-            PushSocket.pushnew(map, UUID, "3000","系统繁忙，请稍后再试！");
+            PushSocket.pushnew(map, uuid, "3000","系统繁忙，请稍后再试！");
         }
         data.put("reportHtml", "");
         map.put("data", data);

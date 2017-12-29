@@ -1,6 +1,6 @@
 package com.reptile.contorller.depositcard;
 
-import com.reptile.service.depositCard.ZXBankDepositCardService;
+import com.reptile.service.depositcard.ZxBankDepositCardService;
 import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("ZXBankDepositCardController")
 public class ZxBankDepositCardController {
     @Autowired
-    private ZXBankDepositCardService service;
+    private ZxBankDepositCardService service;
 
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     @ResponseBody

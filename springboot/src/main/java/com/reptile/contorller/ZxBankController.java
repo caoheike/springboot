@@ -1,6 +1,6 @@
 package com.reptile.contorller;
 
-import com.reptile.service.ZXBankService;
+import com.reptile.service.ZxBankService;
 import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class ZxBankController {
 
     @Autowired
-    private ZXBankService service;
+    private ZxBankService service;
 
     @ApiOperation(value = "1.中信银行图片验证码", notes = "参数：无")
     @ResponseBody

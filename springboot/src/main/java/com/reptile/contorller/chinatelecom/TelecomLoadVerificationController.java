@@ -1,6 +1,6 @@
 package com.reptile.contorller.chinatelecom;
 
-import com.reptile.service.ChinaTelecom.TelecomLoadVerificationService;
+import com.reptile.service.chinatelecom.TelecomLoadVerificationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

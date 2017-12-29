@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -22,13 +22,19 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 河南电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class HeNanTelecomService {
     private Logger logger= LoggerFactory.getLogger(HeNanTelecomService.class);
 
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("GBmobile-webclient");
 
@@ -75,8 +81,8 @@ public class HeNanTelecomService {
                 req.setHttpMethod(HttpMethod.POST);
                 list = new ArrayList<NameValuePair>();
                 list.add(new NameValuePair("PRODTYPE", pagess.getElementById("PRODTYPE").getAttribute("value")));
-                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));//
-                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));//
+                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));
                 list.add(new NameValuePair("ACC_NBR",  phoneNumber));
                 list.add(new NameValuePair("PROD_TYPE",  pagess.getElementById("PROD_TYPE").getAttribute("value")));
                 list.add(new NameValuePair("PROD_PWD",  ""));
@@ -96,7 +102,8 @@ public class HeNanTelecomService {
                 XmlPage page = webClient.getPage(req);
                 Thread.sleep(1000);
                 String result = page.asText();
-                if (result.trim().contains("请等待30分钟后在发送")) {
+                String flagMes="请等待30分钟后在发送";
+                if (result.trim().contains(flagMes)) {
                     String[] arr = result.trim().split("送");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "请等待" + arr[1].trim() + "分钟后在发送!");
@@ -115,10 +122,10 @@ public class HeNanTelecomService {
         return map;
     }
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude,String UUID) {
-        Map<String, Object> map = new HashMap<String, Object>();
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd, String phoneCode,String longitude,String latitude,String uuid) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
         PushState.state(phoneNumber, "callLog",100);
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -130,11 +137,10 @@ public class HeNanTelecomService {
         Object attribute = session.getAttribute("HNwebClient");
         Object pag = session.getAttribute("HeNanHtmlPage");
         if (attribute == null) {
-        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200);
-            PushSocket.pushnew(map, UUID, "3000","登录失败,操作异常!");
+            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
             return map;
         } else {
             try {
@@ -150,8 +156,8 @@ public class HeNanTelecomService {
                 String beforeDate = sim.format(time);
 
                 list.add(new NameValuePair("PRODTYPE", pagess.getElementById("PRODTYPE").getAttribute("value")));
-                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));//
-                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));//
+                list.add(new NameValuePair("RAND_TYPE",  pagess.getElementById("RAND_TYPE").getAttribute("value")));
+                list.add(new NameValuePair("BureauCode",  pagess.getElementById("BureauCode").getAttribute("value")));
                 list.add(new NameValuePair("ACC_NBR",  phoneNumber));
                 list.add(new NameValuePair("PROD_TYPE",  pagess.getElementById("PROD_TYPE").getAttribute("value")));
                 list.add(new NameValuePair("PROD_PWD",  pagess.getElementById("PROD_PWD").getAttribute("value")));
@@ -170,19 +176,19 @@ public class HeNanTelecomService {
                 HtmlPage page2 = webClient.getPage(req);
                 Thread.sleep(1000);
                 String result = page2.asText();
-
-                if (result.contains("您输入的查询验证码错误或过期")) {
+                String flagStr="您输入的查询验证码错误或过期";
+                if (result.contains(flagStr)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     PushState.state(phoneNumber, "callLog",200);
-                    PushSocket.pushnew(map, UUID, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
+                    PushSocket.pushnew(map, uuid, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }
-                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, UUID, "5000","数据获取中");
-                //PushSocket.push(map, UUID, "0000");
-                for (int i = 0; i < 6; i++) {
+                PushSocket.pushnew(map, uuid, "5000","数据获取中");
+                int boundCount=6;
+                for (int i = 0; i < boundCount; i++) {
                     req = new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                     req.setHttpMethod(HttpMethod.POST);
                     list = new ArrayList<NameValuePair>();
@@ -207,21 +213,25 @@ public class HeNanTelecomService {
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
-                PushSocket.pushnew(map, UUID, "6000","数据获取成功");
+                PushSocket.pushnew(map, uuid, "6000","数据获取成功");
                 map.put("UserIphone", phoneNumber);
                 map.put("UserPassword", serverPwd);
-                map.put("longitude", longitude);//经度
-                map.put("latitude", latitude);//纬度
+                //经度
+                map.put("longitude", longitude);
+                //纬度
+                map.put("latitude", latitude);
                 map.put("flag", "5");
                 map.put("data", dataList);
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
-				if(map.get("errorCode").equals("0000")) {
-					PushSocket.pushnew(map, UUID, "8000","认证成功");
+                String errorCode="errorCode";
+                String resultCode="0000";
+				if(map.get(errorCode).equals(resultCode)) {
+					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200);
 				}
 				
@@ -231,7 +241,7 @@ public class HeNanTelecomService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200);
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }
         return map;

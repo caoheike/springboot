@@ -1,6 +1,6 @@
 package com.reptile.contorller.chinatelecom;
 
-import com.reptile.service.ChinaTelecom.GuangXiTelecomService;
+import com.reptile.service.chinatelecom.GuangXiTelecomService;
 import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

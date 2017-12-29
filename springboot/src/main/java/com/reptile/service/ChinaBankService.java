@@ -25,11 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 中国银行信用卡
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class ChinaBankService {
     private Logger logger= LoggerFactory.getLogger(ChinaBankService.class);
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String cardNumber, String userPwd, String UUID,String timeCnt
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String cardNumber, String userPwd, String uuid,String timeCnt
     ) throws ParseException {
     	boolean isok = CountTime.getCountTime(timeCnt);
     	System.out.println("isok===="+isok);
@@ -39,7 +45,7 @@ public class ChinaBankService {
         if (!file.exists()) {
             file.mkdirs();
         }
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
@@ -50,7 +56,7 @@ public class ChinaBankService {
         if(isok==true) {
         	PushState.state(userCard, "bankBillFlow",100);				 
         }
-        PushSocket.pushnew(map, UUID, "1000","中国银行登录中");
+        PushSocket.pushnew(map, uuid, "1000","中国银行登录中");
         String states="1";
         try {
         	Thread.sleep(3000);
@@ -68,7 +74,7 @@ public class ChinaBankService {
             if (msgContent.length() != 0) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
-                PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败");
+                PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败");
                 if(isok==true) {
                     PushState.state(userCard, "bankBillFlow",200);
                 }
@@ -84,7 +90,7 @@ public class ChinaBankService {
                     } else {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "请使用信用卡号登录");
-                        PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败请使用信用卡号登录");
+                        PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败请使用信用卡号登录");
                         if(isok==true) {
                             PushState.state(userCard, "bankBillFlow",200);
                         }
@@ -101,7 +107,7 @@ public class ChinaBankService {
                 logger.warn("中信银行信用卡卡号错误",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "请输入正确的信用卡号");
-                PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败请输入正确的信用卡号");
+                PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败请输入正确的信用卡号");
                 if(isok==true) {
                     PushState.state(userCard, "bankBillFlow",200);
                 }
@@ -109,7 +115,7 @@ public class ChinaBankService {
                 driver.quit();              
                 return map;
             }
-            String code = new RobotUntil().getImgFileByScreenshot(imageCode, driver, file);
+            String code =RobotUntil.getImgFileByScreenshot(imageCode, driver, file);
             if(code.length()==0){
             	code="5210";
             }
@@ -133,7 +139,8 @@ public class ChinaBankService {
             Thread.sleep(5000);
             msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
-                if (msgContent.contains("验证码输入错误")) {
+                String yanZhengMa="验证码输入错误";
+                if (msgContent.contains(yanZhengMa)) {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
                 } else {
@@ -141,21 +148,19 @@ public class ChinaBankService {
                     map.put("errorInfo", msgContent);
                 }
                 states="3";
-                PushSocket.pushnew(map, UUID, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
                 if(isok==true) {
                     PushState.state(userCard, "bankBillFlow",200);
                 }
                 driver.quit();
                 return map;
             }
-            //--------------推-----------------
-            //PushSocket.push(map, UUID, "0000");
-            //--------------推-----------------
+
             boolean contains = driver.getPageSource().contains("用户名/银行卡号");
             if(contains){
             	map.put("errorCode", "0001");
                 map.put("errorInfo", "登录失败，系统繁忙");
-                PushSocket.pushnew(map, UUID, "3000","登录失败，系统繁忙");
+                PushSocket.pushnew(map, uuid, "3000","登录失败，系统繁忙");
                 if(isok==true) {
     				PushState.state(userCard, "bankBillFlow",200);
     			}
@@ -163,7 +168,7 @@ public class ChinaBankService {
                 return map;
             }
             
-            PushSocket.pushnew(map, UUID, "2000","中国银行信用卡登录成功");
+            PushSocket.pushnew(map, uuid, "2000","中国银行信用卡登录成功");
             states="2";
             Thread.sleep(5000);
             List<WebElement> element = driver.findElements(By.className("tabs"));
@@ -173,12 +178,12 @@ public class ChinaBankService {
                 }
             }
             Thread.sleep(2000);
-            PushSocket.pushnew(map, UUID, "5000","中国银行信用卡获取中");
+            PushSocket.pushnew(map, uuid, "5000","中国银行信用卡获取中");
             states="5";
             List<WebElement> listDom = driver.findElements(By.className("sel"));
             String id = "";
             for (int i = 0; i < listDom.size(); i++) {
-                if (listDom.get(i).getAttribute("tips") != null && listDom.get(i).getAttribute("tips").equals("tipsrequired")) {
+                if (listDom.get(i).getAttribute("tips") != null && "tipsrequired".equals(listDom.get(i).getAttribute("tips"))) {
                     id = listDom.get(i).getAttribute("id");
                 }
             }
@@ -186,7 +191,7 @@ public class ChinaBankService {
             String count = String.valueOf(driver.executeScript("return $(\"#" + id + " ul li\").length;"));
             System.out.println("mrludw    " + count);
             List<String> listData = new ArrayList<String>();
-            for (int i = 1; i < Integer.valueOf(count) + 1; i++) {//   //*[@id="sel_outaccountmonth_740750"]/span
+            for (int i = 1; i < Integer.valueOf(count) + 1; i++) {
             	Thread.sleep(2000);
                 driver.findElement(By.xpath("//*[@id='" + id + "']/span")).click();
                 Thread.sleep(2000);
@@ -195,7 +200,7 @@ public class ChinaBankService {
 
                 List<WebElement> btn = driver.findElements(By.className("btn"));
                 for (int j = 0; j < btn.size(); j++) {
-                    if (btn.get(j).getText().equals("查询")) {
+                    if ("查询".equals(btn.get(j).getText())) {
                         btn.get(j).click();
                     }
                 }
@@ -204,9 +209,9 @@ public class ChinaBankService {
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
             }
-            PushSocket.pushnew(map, UUID, "6000","中国银行信用卡获取成功");
+            PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
             states="6";
-            Map<String, Object> sendMap = new HashMap<String, Object>();
+            Map<String, Object> sendMap = new HashMap<String, Object>(16);
             sendMap.put("idcard", userCard);
             sendMap.put("backtype", "BOC");
             sendMap.put("html", listData);
@@ -216,13 +221,15 @@ public class ChinaBankService {
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
             System.out.println("tuisonghou----"+map);
             driver.quit();
-            if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+            String ling="0000";
+            String codeResult="errorCode";
+            if(map!=null&&ling.equals(map.get(codeResult).toString())){
 		    	if(isok==true) {
 		    		PushState.state(userCard, "bankBillFlow",300);
 		    	}
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
-                PushSocket.pushnew(map, UUID, "8000","中国银行信用卡认证成功");
+                PushSocket.pushnew(map, uuid, "8000","中国银行信用卡认证成功");
                 states="8";
                 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }else{
@@ -231,20 +238,23 @@ public class ChinaBankService {
 					PushState.state(userCard, "bankBillFlow",200);
 				}		            	//---------------------数据中心推送状态----------------------
             	logger.warn("中国银行账单推送失败"+userCard);
-            	 PushSocket.pushnew(map, UUID, "9000","中国银行信用卡认证失败");
+            	 PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
             	 states="9";
             	 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }
         } catch (Exception e) {
             logger.warn("中国银行信用卡认证失败",e);
-            if(states=="3"){
-            	PushSocket.pushnew(map, UUID, "3000","登录失败,网络繁忙");
+            int signle1=3;
+            int signle2=7;
+            int signle3=9;
+            if(states.equals(signle1)){
+            	PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
             }
-            if(states=="9"){
-            	PushSocket.pushnew(map, UUID, "9000","中国银行信用卡认证失败");
+            if(states.equals(signle3)){
+            	PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
             }
-            if(states=="7"){
-            	PushSocket.pushnew(map, UUID, "7000","中国银行信用卡信息获取失败");
+            if(states.equals(signle2)){
+            	PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
             }
             if(isok==true) {
 				PushState.state(userCard, "bankBillFlow",200);

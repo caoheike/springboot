@@ -1,5 +1,5 @@
 
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -26,14 +26,25 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * 电信统一登录接口
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class TelecomLoadVerificationService {
     private Logger logger = LoggerFactory.getLogger(TelecomLoadVerificationService.class);
 
-    //查询号码信息 eg:{"phonesen":"1819455","provinceId":"29","provinceName":"青海","cityNo":"971","cityName":"西宁","areaCode":"971","netId":null,"cardType":null,"remark":null}
+    /**
+     * 查询号码信息 eg:{"phonesen":"1819455","provinceId":"29","provinceName":"青海","cityNo":"971","cityName":"西宁","areaCode":"971","netId":null,"cardType":null,"remark":null}
+     * @param phoneNumber
+     * @return
+     */
+
     public Map<String, Object> getProvince(String phoneNumber) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<Object, Object> mapdata = new HashMap<Object, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<Object, Object> mapdata = new HashMap<Object, Object>(16);
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
             WebRequest request1 = new WebRequest(new URL("http://login.189.cn/web/login/ajax"));
@@ -72,9 +83,14 @@ public class TelecomLoadVerificationService {
         return map;
     }
 
-    //判断是否需要验证码 eg {"rspType":"0","rspCode":"0000","desc":"图形验证码接口成功","captchaFlag":true}
+    /**
+     * 判断是否需要验证码 eg {"rspType":"0","rspCode":"0000","desc":"图形验证码接口成功","captchaFlag":true}
+     * @param account
+     * @param provinceID
+     * @return
+     */
     public Map<String, Object> judgeVecCode(String account, String provinceID) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
             WebRequest request1 = new WebRequest(new URL("http://login.189.cn/web/login/ajax"));
@@ -90,11 +106,6 @@ public class TelecomLoadVerificationService {
             UnexpectedPage page = webClient.getPage(request1);
             String result = page.getWebResponse().getContentAsString();
 
-//            if (result.contains("true")) {
-//                map.put("errorCode", "0001");
-//                map.put("errorInfo", "密码错误3次，请休息一会再来！");
-//                return map;
-//            }
             JSONObject jsonObject = JSONObject.fromObject(result);
             map.put("errorCode", "0000");
             map.put("errorInfo", "操作成功");
@@ -117,7 +128,7 @@ public class TelecomLoadVerificationService {
     }
 
     public Map<String, String> loadGlobalDX(HttpServletRequest request, String userName, String servePwd) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
@@ -143,9 +154,13 @@ public class TelecomLoadVerificationService {
             HtmlPage loginbtn = page.getElementById("loginbtn").click();
 
             Thread.sleep(2000);
-            if (!loginbtn.asText().contains("详细查询") && !loginbtn.asText().contains("详单查询") && !loginbtn.asText().contains("账单查询")) {
+            String signleStr1="详细查询";
+            String signleStr2="详单查询";
+            String signleStr3="账单查询";
+            if (!loginbtn.asText().contains(signleStr1) && !loginbtn.asText().contains(signleStr2) && !loginbtn.asText().contains(signleStr3)) {
                 String divErr = loginbtn.getElementById("divErr").getTextContent();
-                if (divErr.contains("验证码")) {
+                String  validateCode="验证码";
+                if (divErr.contains(validateCode)) {
                     map.put("errorCode", "0008");
                     map.put("errorInfo", "服务器繁忙，请刷新后重试");
                 } else {

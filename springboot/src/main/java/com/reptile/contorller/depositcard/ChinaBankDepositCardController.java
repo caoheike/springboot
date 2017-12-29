@@ -1,6 +1,6 @@
 package com.reptile.contorller.depositcard;
 
-import com.reptile.service.depositCard.ChinaBankDepositCardService;
+import com.reptile.service.depositcard.ChinaBankDepositCardService;
 import com.reptile.util.CustomAnnotation;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

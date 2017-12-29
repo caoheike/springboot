@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.ChinaTelecom.ZhejiangTelecomService;
+import com.reptile.service.chinatelecom.ZhejiangTelecomService;
 import com.reptile.util.CustomAnnotation;
 
 @Controller

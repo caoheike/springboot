@@ -32,21 +32,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 中信银行信用卡
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
-public class ZXBankService {
+public class ZxBankService {
 
 
-    private Logger logger = LoggerFactory.getLogger(ZXBankService.class);
+    private Logger logger = LoggerFactory.getLogger(ZxBankService.class);
 
 
     public Map<String, Object> getZXImageCode(HttpServletRequest request) {
         //获取验证码并保存在本地
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> mapInfo = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> mapInfo = new HashMap<String, Object>(16);
         HttpSession session = request.getSession();
 
         HttpClient httpClient = new HttpClient();
-//        httpClient.getHostConfiguration().setProxy(Scheduler.ip, Scheduler.port);
+
         GetMethod postVec = new GetMethod("https://creditcard.ecitic.com/citiccard/ucweb/newvalicode.do?time=" + System.currentTimeMillis());
 
         try {
@@ -64,8 +70,8 @@ public class ZXBankService {
                 file.mkdirs();
             }
             String fileName = "zx" + System.currentTimeMillis() + ".jpg";
-            BufferedImage BufferedImage = ImageIO.read(responseBodyAsStream);
-            ImageIO.write(BufferedImage, "JPG", new File(file, fileName));
+            BufferedImage bufferedImage = ImageIO.read(responseBodyAsStream);
+            ImageIO.write(bufferedImage, "JPG", new File(file, fileName));
 
             session.setAttribute("ZXhttpClient", httpClient);
             session.setAttribute("ZXImageCodeCook", cok);
@@ -86,7 +92,7 @@ public class ZXBankService {
 
     public Map<String, Object> loadZX(HttpServletRequest request, String userNumber, String passWord, String imageCode) {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         HttpSession session = request.getSession();
 
         Object zxhttpClient = session.getAttribute("ZXhttpClient");
@@ -126,7 +132,8 @@ public class ZXBankService {
                 post.setRequestEntity(entity);
                 httpClient.executeMethod(post);
                 String result = post.getResponseBodyAsString();
-                if (!result.contains("验证成功")) {
+                String validateSuc="验证成功";
+                if (!result.contains(validateSuc)) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
@@ -140,7 +147,8 @@ public class ZXBankService {
                 httpClient.executeMethod(post1);
                 post1.getParams().setContentCharset("utf-8");
                 result = post1.getResponseBodyAsString();
-                if (!result.contains("短信验证码")) {
+                String duanXin="短信验证码";
+                if (!result.contains(duanXin)) {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "操作失败");
                     return map;
@@ -162,7 +170,7 @@ public class ZXBankService {
     public Map<String, String> sendPhoneCode(HttpServletRequest request) {
 
         //发送手机验证码
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
 
         Object zxhttpClient = session.getAttribute("ZXhttpClient");
@@ -182,7 +190,8 @@ public class ZXBankService {
                 httpClient.executeMethod(postPhone);
                 String result = postPhone.getResponseBodyAsString();
                 System.out.println("result==="+result);
-                if (!result.contains("发送成功")) {
+                String sendSuccess="发送成功";
+                if (!result.contains(sendSuccess)) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("rtnMsg").toString());
@@ -201,22 +210,21 @@ public class ZXBankService {
     }
 
 
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode,String UUID,String timeCnt) throws ParseException {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String phoneCode,String uuid,String timeCnt) throws ParseException {
     	boolean isok = CountTime.getCountTime(timeCnt);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         HttpSession session = request.getSession();
         Object zxhttpClient = session.getAttribute("ZXhttpClient");
 
         Object zxImageCodeCook = session.getAttribute("zxCookies2");
-        PushSocket.pushnew(map, UUID, "1000","中信银行登录中");
+        PushSocket.pushnew(map, uuid, "1000","中信银行登录中");
         if(isok==true) {
 			PushState.state(userCard, "bankBillFlow",100);
 		}
         if (zxhttpClient == null || zxImageCodeCook == null) {
-        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
-            PushSocket.pushnew(map, UUID, "3000","中信银行登录失败");
+            PushSocket.pushnew(map, uuid, "3000","中信银行登录失败");
             return map;
         } else {
             HttpClient httpClient = (HttpClient) zxhttpClient;
@@ -231,26 +239,24 @@ public class ZXBankService {
                 postM.setRequestEntity(entity1);
                 httpClient.executeMethod(postM);
                 postM.getParams().setContentCharset("utf-8");
-                if (!postM.getResponseBodyAsString().contains("校验成功")) {
-                	//PushSocket.push(map, UUID, "0001");
+                String validateSuc="校验成功";
+                if (!postM.getResponseBodyAsString().contains(validateSuc)) {
                     net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(postM.getResponseBodyAsString());
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("rtnMsg").toString());
                     return map;
                 }
                
-                PushSocket.pushnew(map, UUID, "2000","中信银行登录成功");
-                //PushSocket.push(map, UUID, "0000");
+                PushSocket.pushnew(map, uuid, "2000","中信银行登录成功");
                 //成功进入信用卡信息页面
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, UUID, "5000","中信银行获取中");
+                PushSocket.pushnew(map, uuid, "5000","中信银行获取中");
                 GetMethod getMethod = new GetMethod("https://creditcard.ecitic.com/citiccard/newonline/myaccount.do?func=mainpage");
                 getMethod.setRequestHeader("Cookie", coks);
                 httpClient.executeMethod(getMethod);
                 getMethod.getParams().setContentCharset("utf-8");
-                
-                if (getMethod.getResponseBodyAsString().contains("您还未绑卡，暂不支持业务办理")) {
-                	//PushSocket.push(map, UUID, "0001");
+                String infoMes="您还未绑卡，暂不支持业务办理";
+                if (getMethod.getResponseBodyAsString().contains(infoMes)) {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "您还未绑卡，暂不支持业务办理");
                     return map;
@@ -285,7 +291,7 @@ public class ZXBankService {
                     Object cardlist = jsonObject1.get("cardlist");
                     cardlist1.add(cardlist);
                     logger.warn("中信银行获取卡列表失败 mrldw",e);
-                    PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
+                    PushSocket.pushnew(map, uuid, "7000","中信银行获取失败");
                     if(isok==true) {
     					PushState.state(userCard, "bankBillFlow",200);
     				}
@@ -295,14 +301,14 @@ public class ZXBankService {
                 List dataList = new ArrayList();
                 for (int i = 0; i < cardlist1.size(); i++) {
                     net.sf.json.JSONObject jsonObject2 = cardlist1.getJSONObject(i);
-                    String card_nbr = jsonObject2.get("card_nbr").toString();
-                    String card_des = jsonObject2.get("card_desc").toString();
-                    if (!card_des.contains("银联")) {
+                    String cardNbr = jsonObject2.get("card_nbr").toString();
+                    String cardDes = jsonObject2.get("card_desc").toString();
+                    if (!cardDes.contains("银联")) {
                         continue;
                     }
                     PostMethod postMethod1 = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/billQuery.do?func=queryBillInfo");
                     postMethod1.setRequestHeader("Cookie", coks);
-                    NameValuePair param1 = new NameValuePair("cardNo", card_nbr);
+                    NameValuePair param1 = new NameValuePair("cardNo", cardNbr);
                     NameValuePair param2 = new NameValuePair("stmt_date", "");
                     NameValuePair param3 = new NameValuePair("crytype", "156");
                     NameValuePair param4 = new NameValuePair("start_pos", "1");
@@ -329,7 +335,7 @@ public class ZXBankService {
                     for (int j = 0; j < size; j++) {
                         PostMethod postMeth = new PostMethod("https://creditcard.ecitic.com/citiccard/newonline/billQuery.do?func=queryBillInfo");
                         postMeth.setRequestHeader("Cookie", coks);
-                        NameValuePair param11 = new NameValuePair("cardNo", card_nbr);
+                        NameValuePair param11 = new NameValuePair("cardNo", cardNbr);
                         NameValuePair param21 = new NameValuePair("stmt_date", cardlist.getJSONObject(j).get("stmt_date").toString());
                         NameValuePair param31 = new NameValuePair("crytype", "156");
                         NameValuePair param41 = new NameValuePair("start_pos", "1");
@@ -343,27 +349,29 @@ public class ZXBankService {
                     }
                 }
 
-                Map<String, Object> sendMap = new HashMap<String, Object>();
+                Map<String, Object> sendMap = new HashMap<String, Object>(16);
                 sendMap.put("idcard", userCard);
                 sendMap.put("backtype", "CCB");
                 sendMap.put("html", dataList);
                 sendMap.put("fixedEd",fixedEd);
 
                 logger.warn(sendMap.toString()+"   mrlu");
-                PushSocket.pushnew(map, UUID, "6000","中信银行获取成功");
+                PushSocket.pushnew(map, uuid, "6000","中信银行获取成功");
                 flag="6000";
                 //推送信息
-                Map<String, Object> mapTui = new HashMap<String, Object>();
+                Map<String, Object> mapTui = new HashMap<String, Object>(16);
                 mapTui.put("data", sendMap);
                 Resttemplate rs = new Resttemplate();
                 map = rs.SendMessage(mapTui, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
-                if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+                String four0="0000";
+                String errorCode="errorCode";
+                if(map!=null&&four0.equals(map.get(errorCode).toString())){
     		    	if(isok==true) {
     		    		PushState.state(userCard, "bankBillFlow",300);
     		    	}
                     map.put("errorInfo","查询成功");
                     map.put("errorCode","0000");
-                    PushSocket.pushnew(map, UUID, "8000","中信银行认证成功");
+                    PushSocket.pushnew(map, uuid, "8000","中信银行认证成功");
                     Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
                 }else{
                 	//--------------------数据中心推送状态----------------------
@@ -371,17 +379,20 @@ public class ZXBankService {
     					PushState.state(userCard, "bankBillFlow",200);
     				}		            	//---------------------数据中心推送状态----------------------
                 	logger.warn("中信银行账单推送失败"+userCard);
-                	  PushSocket.pushnew(map, UUID, "9000","中信银行认证失败");
+                	  PushSocket.pushnew(map, uuid, "9000","中信银行认证失败");
                 	 Runtime.getRuntime().exec("taskkill /F /IM IEDriverServer.exe");
                 }
                 
             } catch (Exception e) {
-            	if( flag.equals("2000")){
-            		PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
-            	}else if(flag.equals("5000")){
-            		PushSocket.pushnew(map, UUID, "7000","中信银行获取失败");
-            	}else if(flag.equals("6000")){
-            		PushSocket.pushnew(map, UUID, "9000","中信银行认证失败");
+                String status2000="2000";
+                String status5000="5000";
+                String status6000="6000";
+            	if(status2000.equals(flag)){
+            		PushSocket.pushnew(map, uuid, "7000","中信银行获取失败");
+            	}else if(status5000.equals(flag)){
+            		PushSocket.pushnew(map, uuid, "7000","中信银行获取失败");
+            	}else if(status6000.equals(flag)){
+            		PushSocket.pushnew(map, uuid, "9000","中信银行认证失败");
             	}
             	  if(isok==true) {
   					PushState.state(userCard, "bankBillFlow",200);

@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -24,7 +24,12 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
+/**
+ * 成都电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class ChengduTelecomService {
     private Logger logger = LoggerFactory.getLogger(ChengduTelecomService.class);
@@ -64,7 +69,7 @@ public class ChengduTelecomService {
 
 
     public Map<String, String> sendPhoneCode(HttpServletRequest request) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
 
         Object attribute = session.getAttribute("GBmobile-webclient");
@@ -79,7 +84,8 @@ public class ChengduTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/v6/xdcx?fastcode=20000326&cityCode=sc"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-                if (!page1.asText().contains("手机验证码")) {
+                String flagPhone="手机验证码";
+                if (!page1.asText().contains(flagPhone)) {
                     map.put("errorCode", "0007");
                     map.put("errorInfo", "操作异常！");
                     return map;
@@ -89,7 +95,8 @@ public class ChengduTelecomService {
                 String sendPhone = "http://sc.189.cn/service/billDetail/sendSMSAjax.jsp?dateTime1=" + beginTime + "&dateTime2=" + endTime;
                 UnexpectedPage page = webClient.getPage(sendPhone);
                 String result = page.getWebResponse().getContentAsString();
-                if (!result.contains("成功")) {
+                String flagSuccess="成功";
+                if (!result.contains(flagSuccess)) {
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
@@ -112,11 +119,11 @@ public class ChengduTelecomService {
 
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String phoneCode,
-                                            String servePwd, String longitude, String latitude, String UUID) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> dataMap = new HashMap<String, Object>();
+                                            String servePwd, String longitude, String latitude, String uuid) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> dataMap = new HashMap<String, Object>(16);
         PushState.state(phoneNumber, "callLog",100);
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
@@ -125,7 +132,7 @@ public class ChengduTelecomService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
             PushState.state(phoneNumber, "callLog",200);
-            PushSocket.pushnew(map, UUID, "3000","手机验证码错误,请重新获取!");
+            PushSocket.pushnew(map, uuid, "3000","手机验证码错误,请重新获取!");
             return map;
         } else {
             WebClient webClient = (WebClient) attribute;
@@ -138,20 +145,22 @@ public class ChengduTelecomService {
                 HtmlPage page = webClient.getPage(getMes);
                 String result = page.asText();
                 JSONObject jsonObject = JSONObject.fromObject(result);
-                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, UUID, "5000","获取数据中");
+                PushSocket.pushnew(map, uuid, "5000","获取数据中");
                 String record = null;
-                if (jsonObject.get("retCode") == null || !"0".equals(jsonObject.get("retCode").toString())) {
-                    if (!result.contains("没有查询到相应记录")) {
+                String retCode="retCode";
+                String flag0="0";
+                if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
+                    String resultInfo="没有查询到相应记录";
+                    if (!result.contains(resultInfo)) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog",200);  
-                        PushSocket.pushnew(map, UUID, "3000",jsonObject.get("retMsg").toString());
+                        PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString());
                         return map;
                     }
                 } else {
-                    //PushSocket.push(map, UUID, "0000");
                     record = jsonObject.get("json").toString();
                     list.add(record);
                 }
@@ -159,8 +168,8 @@ public class ChengduTelecomService {
 
                 Calendar calendar = Calendar.getInstance();
                 Calendar calendar1 = Calendar.getInstance();
-
-                for (int i = 0; i < 5; i++) {
+                int boundCount=5;
+                for (int i = 0; i < boundCount; i++) {
                     //上月第一天
                     calendar.add(Calendar.MONTH, -1);
                     calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -182,21 +191,25 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
-                PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+                PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
-                dataMap.put("longitude", longitude);//经度
-                dataMap.put("latitude", latitude);//纬度
+                //经度
+                dataMap.put("longitude", longitude);
+                //纬度
+                dataMap.put("latitude", latitude);
                 dataMap.put("flag", "1");
                 dataMap.put("data", list);
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
-               if(map.get("errorCode").equals("0000")) {
-            	   PushSocket.pushnew(map, UUID, "8000","认证成功"); 
+                String flagResult="0000";
+                String errorCode="errorCode";
+               if(flagResult.equals(map.get(errorCode))) {
+            	   PushSocket.pushnew(map, uuid, "8000","认证成功");
             	   PushState.state(phoneNumber, "callLog",300);
                }else{
-            	   PushSocket.pushnew(map, UUID, "9000",map.get("errorCode").toString()); 
+            	   PushSocket.pushnew(map, uuid, "9000",map.get("errorCode").toString());
             	   PushState.state(phoneNumber, "callLog",200);
                }
             } catch (Exception e) {
@@ -204,7 +217,7 @@ public class ChengduTelecomService {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200);
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!"); 
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }
         return map;

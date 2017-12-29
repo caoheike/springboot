@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -25,6 +25,12 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 山东电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class ShanDongTelecomService {
     private Logger logger= LoggerFactory.getLogger(ShanDongTelecomService.class);
@@ -38,8 +44,8 @@ public class ShanDongTelecomService {
      * @return
      */
     public Map<String, Object> getImageCode(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, String> dataMap = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, String> dataMap = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
 
         Object attribute = session.getAttribute("GBmobile-webclient");
@@ -120,8 +126,8 @@ public class ShanDongTelecomService {
 //    }
 
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String imageCode) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, String> dataMap = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, String> dataMap = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
 
         Object attribute = session.getAttribute("SDDXwebclient");
@@ -137,14 +143,14 @@ public class ShanDongTelecomService {
                 page.getElementById("validatecode_2busi").setAttribute("value", imageCode);
                 HtmlPage sendMesPage = page.getElementById("getDynamicHref_rn").click();
                 Thread.sleep(500);
-//                System.out.println(sendMesPage.asXml());
-
-                if (sendMesPage.asText().contains("您输入的验证码错误！")) {
+                String validateError="您输入的验证码错误！";
+                if (sendMesPage.asText().contains(validateError)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的验证码错误!");
                     return map;
                 }
-                if (sendMesPage.asText().contains("验证码不能为空")) {
+                validateError="验证码不能为空";
+                if (sendMesPage.asText().contains(validateError)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "验证码不能为空!");
                     return map;
@@ -152,9 +158,8 @@ public class ShanDongTelecomService {
 
                 HtmlPage easyDialogYesBtn = sendMesPage.getElementById("easyDialogYesBtn").click();
                 Thread.sleep(500);
-//                System.out.println(easyDialogYesBtn.asXml());
-
-                if (sendMesPage.asText().contains("短信随机密码已发送到您的手机")) {
+                validateError="短信随机密码已发送到您的手机";
+                if (sendMesPage.asText().contains(validateError)) {
                     map.put("errorCode", "0000");
                     map.put("errorInfo", "短信发送成功");
 
@@ -173,9 +178,9 @@ public class ShanDongTelecomService {
     }
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userIphone, String imageCode, String userName,
-                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude,String UUID){
-        Map<String, Object> map = new HashMap<String, Object>();
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+                                            String userCard, String phoneCode, String userPassword,String longitude,String latitude,String uuid){
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(userIphone, "callLog",100);
         try {
 			Thread.sleep(2000);
@@ -190,11 +195,10 @@ public class ShanDongTelecomService {
         Object htmlpage = session.getAttribute("SDDXsendMesPage");
 
         if (attribute == null || htmlpage == null) {
-        	//PushSocket.push(map, UUID, "0001");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(userIphone, "callLog",200);
-            PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常!");
+            PushSocket.pushnew(map, uuid, "3000","登录失败，操作异常!");
         } else {
             try {
                 WebClient webClient = (WebClient) attribute;
@@ -207,22 +211,18 @@ public class ShanDongTelecomService {
 
                 HtmlPage aa = page.getElementById("submit_btn_rn").click();
                 Thread.sleep(1000);
-//                System.out.println(aa.asXml());
-
-                if (!aa.asText().contains("您的客户信息校验成功，您可继续办理相关业务")) {
-                	//PushSocket.push(map, UUID, "0001");
+                String   validateError="您的客户信息校验成功，您可继续办理相关业务";
+                if (!aa.asText().contains(validateError)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您的用户信息校验未通过，请确认后重新输入");
-                    PushSocket.pushnew(map, UUID, "3000","您的用户信息校验未通过，请确认后重新输入");
+                    PushSocket.pushnew(map, uuid, "3000","您的用户信息校验未通过，请确认后重新输入");
                     return map;
                 }
-                //PushSocket.push(map, UUID, "0000");
-                PushSocket.pushnew(map, UUID, "2000","登录成功");
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
                 
                 HtmlPage resultPage = aa.getElementById("easyDialogYesBtn").click();
-//                System.out.println(resultPage.asXml());
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, UUID, "5000","获取数据中");
+                PushSocket.pushnew(map, uuid, "5000","获取数据中");
                 List<String> list = new ArrayList<String>();
                 CollectingAlertHandler alert = new CollectingAlertHandler(list);
                 webClient.setAlertHandler(alert);
@@ -231,7 +231,8 @@ public class ShanDongTelecomService {
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 String format = sim.format(cal.getTime());
                 int date = Integer.parseInt(format);
-                for (int i = 0; i < 6; i++) {
+                int boundCount=6;
+                for (int i = 0; i < boundCount; i++) {
                     resultPage.executeJavaScript("\tvar params = {\n" +
                             "    \taccNbr: \""+userIphone+"\",//固定电话需带区号，移动电话不带区号\n" +
                             "\t    billingCycle:'" + date + "',//详单月份：格式yyyyMM\n" +
@@ -262,11 +263,13 @@ public class ShanDongTelecomService {
                     listData.add(list.get(i));
                 }
                 
-                PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+                PushSocket.pushnew(map, uuid, "6000","获取数据成功"); 
                 map.put("UserPassword", "'"+userPassword+"'");
                 map.put("UserIphone", userIphone);
-                map.put("longitude", longitude);//经度
-                map.put("latitude", latitude);//纬度
+                //经度
+                map.put("longitude", longitude);
+                //纬度
+                map.put("latitude", latitude);
                 map.put("flag", "3");
                 map.put("data", listData);
                 map.put("errorCode", "0000");
@@ -274,11 +277,13 @@ public class ShanDongTelecomService {
                 webClient.close();
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
-                if(map.get("errorCode").equals("0000")) {
-					PushSocket.pushnew(map, UUID, "8000","认证成功");
+                validateError="errorCode";
+                String resultCount="0000";
+                if(map.get(validateError).equals(resultCount)) {
+					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					 PushState.state(userIphone, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					 PushState.state(userIphone, "callLog",200);
 				}
             } catch (Exception e) {
@@ -286,7 +291,7 @@ public class ShanDongTelecomService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(userIphone, "callLog",200);
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }
         return map;

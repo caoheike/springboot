@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -40,7 +40,7 @@ public class ShanXiTelecomService {
      */
     public Map<String, Object>  telecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String uuid) throws IOException, InterruptedException {
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
         Thread.sleep(2000);
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();

@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-
+/**
+ * 工商网service
+ *
+ * @author mrlu
+ * @date 2017/12/29
+ */
 @Service
 public class BusinessInfoService {
 

@@ -35,14 +35,20 @@ import com.reptile.util.CrawlerUtil;
 import com.reptile.util.Resttemplate;
 
 
+/**
+ * 163邮箱
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class Email163Service {
 
 	public Map<String, Object> get163Mail(HttpServletRequest request,
 			HttpServletResponse response, @RequestParam String username,
 			@RequestParam String password) throws Exception {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		Map<String, Object> infoMap = new HashMap<String, Object>();
+		Map<String, Object> dataMap = new HashMap<String, Object>(16);
+		Map<String, Object> infoMap = new HashMap<String, Object>(16);
 		HttpSession session=request.getSession();
 
 		if (username == null || username.trim().length()==0) {
@@ -55,8 +61,8 @@ public class Email163Service {
 			dataMap.put("errorCode", "0001");
 			return dataMap;
 		}
-
-		if(!username.contains("@163.com")){
+		String address163="@163.com";
+		if(!username.contains(address163)){
 			dataMap.put("errorinfo", "163邮箱地址不正确!");
 			dataMap.put("errorCode", "0001");
 			return dataMap;
@@ -93,13 +99,14 @@ public class Email163Service {
 			}
 
 			Thread.sleep(1000);
-
-			if (click.asText().contains("帐号或密码错误")) {
+			String loadError="帐号或密码错误";
+			if (click.asText().contains(loadError)) {
 				dataMap.put("errorCode", "0001");
 				dataMap.put("errorInfo", "账号或者密码错误！");
 				return dataMap;
 			}
-			if (click.asText().contains("此帐号已被锁定")) {
+			String accountStatus="此帐号已被锁定";
+			if (click.asText().contains(accountStatus)) {
 				dataMap.put("errorCode", "0001");
 				dataMap.put("errorInfo", "此帐号已被锁定！");
 				return dataMap;
@@ -131,26 +138,26 @@ public class Email163Service {
 		// 解析页面并找到收件箱所有信息
 		String xmlPage = page1.asXml();
 		org.dom4j.Document document = DocumentHelper.parseText(xmlPage);
-
-		Element rootElement = document.getRootElement(); // result层
+		// result层
+		Element rootElement = document.getRootElement();
 		List elements = rootElement.elements();
 		for (int i = 0; i < elements.size(); i++) {
 			Element element = (Element) elements.get(i);
 			if (element.attribute("name") != null
-					&& "var".equals(element.attribute("name").getValue())) { // array层
+					&& "var".equals(element.attribute("name").getValue())) {
 				List elements1 = element.elements();
-
-				for (int j = 0; j < elements1.size(); j++) { // object层
+				// object层
+				for (int j = 0; j < elements1.size(); j++) {
 					Element element2 = (Element) elements1.get(j);
 					List elements2 = element2.elements();
-
-					for (int k = 0; k < elements2.size(); k++) { // 信息层
+					// 信息层
+					for (int k = 0; k < elements2.size(); k++) {
 						Element element3 = (Element) elements2.get(k);
 						if (element3.attribute("name") != null
 								&& "fid".equals(element3.attribute("name")
 										.getValue())
 								&& "1".equals(element3.getTextTrim())) {
-							Map<String, Object> data = new HashMap<String, Object>();
+							Map<String, Object> data = new HashMap<String, Object>(16);
 
 							for (int q = 0; q < elements2.size(); q++) {
 								Element elementGoal = (Element) elements2
@@ -171,12 +178,18 @@ public class Email163Service {
 
 		// 设置要爬取信件的发件人集合
 		List<String> sendMember = new ArrayList<String>();
-		sendMember.add("PCCC@bocomcc.com");	//交通
-		sendMember.add("ccsvc@message.cmbchina.com");  //招商
-		sendMember.add("creditcard@cgbchina.com.cn");	//广发
-		sendMember.add("cebbank@cardcenter.cebbank.com"); //广大
-		sendMember.add("creditcardcenter@cardmail.psbc.com");  //邮储
-		sendMember.add("349834823@qq.com");  //邮储
+		//交通
+		sendMember.add("PCCC@bocomcc.com");
+		//招商
+		sendMember.add("ccsvc@message.cmbchina.com");
+		//广发
+		sendMember.add("creditcard@cgbchina.com.cn");
+		//广大
+		sendMember.add("cebbank@cardcenter.cebbank.com");
+		//邮储
+		sendMember.add("creditcardcenter@cardmail.psbc.com");
+		//邮储
+		sendMember.add("349834823@qq.com");
 		// 将查询到的所有账单信息封装到list中
 		List<Object> list = new ArrayList<Object>();
 
@@ -227,12 +240,6 @@ public class Email163Service {
 				return dataMap;
 			}
 		}
-
-//		if (list.size() == 0) {
-//			dataMap.put("errorCode", "0000");
-//			dataMap.put("errorInfo", "暂无账单信息");
-//			return dataMap;
-//		}
 
 		// 将信息封装到infoMap中进行推送
 		infoMap.put("qqnumber", username+"@163.com" );

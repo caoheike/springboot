@@ -6,6 +6,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 数据库操作
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class JdbcTestService {
     @Autowired

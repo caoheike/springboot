@@ -1,4 +1,4 @@
-package com.reptile.service.ChinaTelecom;
+package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
@@ -22,12 +22,18 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 江苏电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Service
 public class JiangSuTelecomService {
     private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude,String UUID) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        PushSocket.pushnew(map, UUID, "1000","登录中");
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude,String uuid) {
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
         try {
 			Thread.sleep(2000);
@@ -43,18 +49,17 @@ public class JiangSuTelecomService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200);
-            PushSocket.pushnew(map, UUID, "3000","操作异常!");       
+            PushSocket.pushnew(map, uuid, "3000","操作异常!");       
             } else {
-        	//PushSocket.push(map, UUID, "0000");
-            	PushSocket.pushnew(map, UUID, "2000","登录成功");
+
+            	PushSocket.pushnew(map, uuid, "2000","登录成功");
             	WebClient webClient = (WebClient) attribute;
             try {
             	Thread.sleep(2000);
-            	PushSocket.pushnew(map, UUID, "5000","获取数据中"); 
+            	PushSocket.pushnew(map, uuid, "5000","获取数据中"); 
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-//                System.out.println(page1.asXml());
 
                 SimpleDateFormat sim=new SimpleDateFormat("yyyyMMdd");
 
@@ -78,7 +83,8 @@ public class JiangSuTelecomService {
                 UnexpectedPage page = webClient.getPage(request1);
                 dataList.add(page.getWebResponse().getContentAsString());
                 Thread.sleep(500);
-                for (int i=0;i<5;i++){
+                int boundCount=5;
+                for (int i=0;i<boundCount;i++){
 
                     cal.add(Calendar.DAY_OF_MONTH,-1);
                     endTime=sim.format(cal.getTime());
@@ -101,31 +107,34 @@ public class JiangSuTelecomService {
                     dataList.add(page.getWebResponse().getContentAsString());
                     Thread.sleep(500);
                 }
-                PushSocket.pushnew(map, UUID, "6000","获取数据成功"); 
+                PushSocket.pushnew(map, uuid, "6000","获取数据成功"); 
                 map.put("data",dataList);
                 map.put("errorCode","0000");
                 map.put("errorInfo","成功");
                 map.put("flag","4");
                 map.put("UserPassword",userPassword);
                 map.put("UserIphone",phoneNumber);
-                map.put("longitude", longitude);//经度
-                map.put("latitude", latitude);//纬度
+                //经度
+                map.put("longitude", longitude);
+                //纬度
+                map.put("latitude", latitude);
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
-            	if(map.get("errorCode").equals("0000")) {
-					PushSocket.pushnew(map, UUID, "8000","认证成功");
+                String errorCode="errorCode";
+                String resultValid="0000";
+            	if(map.get(errorCode).equals(resultValid)) {
+					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					 PushState.state(phoneNumber, "callLog",200);
 				}
             } catch (Exception e) {
-            	//PushSocket.push(map, UUID, "0001");
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200);
-                PushSocket.pushnew(map, UUID, "9000","网络连接异常!");
+                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){
                     webClient.close();
@@ -134,7 +143,10 @@ public class JiangSuTelecomService {
         }
         return map;
     }
-    //获取当前日期及前5个月的月初月末
+
+    /**
+     * 获取当前日期及前5个月的月初月末
+     */
     public static void main(String[] args) {
         SimpleDateFormat sim=new SimpleDateFormat("yyyyMMdd");
         Calendar cal=Calendar.getInstance();
@@ -144,7 +156,8 @@ public class JiangSuTelecomService {
         time=cal.getTime();
         String startTime=sim.format(time);
         System.out.println(startTime+"   "+endTime);
-        for(int i=0;i<5;i++){
+        int boundCount=5;
+        for(int i=0;i<boundCount;i++){
           cal.add(Calendar.DAY_OF_MONTH,-1);
           endTime=sim.format(cal.getTime());
           cal.set(Calendar.DAY_OF_MONTH,1);

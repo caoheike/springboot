@@ -22,19 +22,22 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by HotWong on 2017/5/2 0002.
+ * 陕西社保
+ *
+ * @author hotWang
+ * @date 2016/10/31
  */
 @Service("accumulationFundService")
 public class AccumulationFundService {
-    private final static String detailsUrl="http://query.xazfgjj.gov.cn/gjjcx_gjjmxcx.jsp?urltype=tree.TreeTempUrl&wbtreeid=1177";
-    private final static String infoUrl="http://query.xazfgjj.gov.cn/gjjcx_gjjxxcx.jsp?urltype=tree.TreeTempUrl&wbtreeid=1178";
-    private final static String loginUrl="http://query.xazfgjj.gov.cn/index.jsp?urltype=tree.TreeTempUrl&wbtreeid=1172";
-    private final static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
+    private  static String detailsUrl="http://query.xazfgjj.gov.cn/gjjcx_gjjmxcx.jsp?urltype=tree.TreeTempUrl&wbtreeid=1177";
+    private  static String infoUrl="http://query.xazfgjj.gov.cn/gjjcx_gjjxxcx.jsp?urltype=tree.TreeTempUrl&wbtreeid=1178";
+    private  static String loginUrl="http://query.xazfgjj.gov.cn/index.jsp?urltype=tree.TreeTempUrl&wbtreeid=1172";
+    private  static String verifyCodeImageUrl="http://query.xazfgjj.gov.cn/system/resource/creategjjcheckimg.jsp?randomid="+System.currentTimeMillis();
     private static CrawlerUtil crawlerutil=new CrawlerUtil();
     private Logger logger= LoggerFactory.getLogger(AccumulationFundService.class);
     public Map<String,Object> login(FormBean bean, HttpServletRequest request,String idCardNum){
-        Map<String,Object> map=new HashMap<String,Object>();
-        Map<String,Object> data=new HashMap<String,Object>();
+        Map<String,Object> map=new HashMap<String,Object>(16);
+        Map<String,Object> data=new HashMap<String,Object>(16);
         try {
             if(!bean.verifyParams(bean)){
                 map.put("ResultInfo","提交数据有误,请刷新页面后重新输入!");
@@ -68,14 +71,16 @@ public class AccumulationFundService {
                 Thread.sleep(1000);
                 String str=index.asText();
                 System.out.println(index.getTitleText());
-                if(str.indexOf("身份证号码：")!=-1&&collectedAlerts.size()!=0){
+                String cardNumber="身份证号码";
+                String updatePwd="修改密码";
+                if(str.indexOf(cardNumber)!=-1&&collectedAlerts.size()!=0){
                     map.put("ResultInfo",collectedAlerts.get(0));
                     map.put("ResultCode","0001");
                     map.put("errorInfo",collectedAlerts.get(0));
                     map.put("errorCode","0001");
                     map.put("data",data);
                     return map;
-                }else if(index.getTitleText()!=null&&index.getTitleText().contains("修改密码")){
+                }else if(index.getTitleText()!=null&&index.getTitleText().contains(updatePwd)){
                 	map.put("ResultInfo","请先登录官网修改密码");
                     map.put("ResultCode","0001");
                     map.put("errorInfo","请先登录官网修改密码");
@@ -106,14 +111,14 @@ public class AccumulationFundService {
                     for(int j=0;j<tdList.size();j++){
                         String key=detils.get(2).getElementsByTagName("td").get(j).asText();
                         String value=detils.get(i).getElementsByTagName("td").get(j).asText();
-                        value=value.equals("")?null:value;
-                        if(key.equals("收入")){
+                        value="".equals(value)?null:value;
+                        if("收入".equals(key)){
                             temp.setIncome(value);
-                        }else if(key.equals("摘要")){
+                        }else if("摘要".equals(key)){
                             temp.setDesc(value);
-                        }else if(key.equals("日期")){
+                        }else if("日期".equals(key)){
                             temp.setCreateTime(value);
-                        }else if(key.equals("支出")){
+                        }else if("支出".equals(key)){
                             temp.setExpenditure(value);
                         }
                     }
@@ -132,14 +137,12 @@ public class AccumulationFundService {
                 map.put("userName",bean.getUserName().toString());
                 map.put("userPass",bean.getUserPass().toString());
                 map.put("data",data);
-//                HttpUtils.sendPost("http://192.168.3.16:8089/HSDC/person/accumulationFund", JSONObject.fromObject(map).toString());
-                
-                //ludangwei 2017-08-11
+
                 Resttemplate resttemplate = new Resttemplate();
                 map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), ConstantInterface.port+"/HSDC/person/accumulationFund");
-               //map=resttemplate.SendMessageCredit(JSONObject.fromObject(map), "http://192.168.3.38:8089/HSDC/person/accumulationFund");
-
-                if(map!=null&&"0000".equals(map.get("ResultCode").toString())){
+                String flagCode="0000";
+                String flagInfo="ResultCode";
+                if(map!=null&&flagCode.equals(map.get(flagInfo).toString())){
                 	 PushState.state(idCardNum, "accumulationFund", 300);
                     map.put("errorInfo","推送成功");
                     map.put("errorCode","0000");
@@ -171,8 +174,8 @@ public class AccumulationFundService {
     }
 
     public Map<String,Object> getVerifyImage(HttpServletResponse response, HttpServletRequest request){
-        Map<String,Object> data=new HashMap<String,Object>();
-        Map<String,Object> map=new HashMap<String,Object>();
+        Map<String,Object> data=new HashMap<String,Object>(16);
+        Map<String,Object> map=new HashMap<String,Object>(16);
         try {
             HttpSession session = request.getSession();
             String verifyImages=request.getSession().getServletContext().getRealPath("/verifyImages");
@@ -204,8 +207,6 @@ public class AccumulationFundService {
         } catch (Exception e) {
             logger.warn(e.getMessage()+"     mrlu");
             e.printStackTrace();
-
-//            Scheduler.sendGet(Scheduler.getIp);
 
             System.out.println("更换ip+++++++++++++mrlu");
             data.put("ResultInfo","服务器繁忙，请稍后再试！");
