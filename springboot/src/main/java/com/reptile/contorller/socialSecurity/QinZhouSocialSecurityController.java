@@ -15,6 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.socialSecurity.QinZhouSocialSecurityService;
 
+/**
+ * 
+ * @ClassName: QinZhouSocialSecurityController  
+ * @Description: TODO (钦州社保)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("QinZhouSocialSecurity")
 public class QinZhouSocialSecurityController {
