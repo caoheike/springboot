@@ -14,6 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+
+/**
+ * 
+ * @ClassName: ImgUtil  
+ * @Description: TODO (图片工具类)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 public class ImgUtil {
 		
 	/**
@@ -84,7 +93,8 @@ public class ImgUtil {
 		ImageIO.write(bufferedImage, suffix, new File(file,fileName));
 		
 		Map<String, Object> imagev = MyCYDMDemo.Imagev(file + "/" +fileName);
-        String code = imagev.get("strResult").toString();//读取图片验证码
+		//读取图片验证码
+        String code = imagev.get("strResult").toString();
 		return code;
 	}
 		

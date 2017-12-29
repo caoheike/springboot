@@ -4,11 +4,34 @@ import java.io.IOException;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
+/**
+ * 
+ * @ClassName: DriverUtil  
+ * @Description: TODO (DriverUtil)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 public class  DriverUtil{
+	
+	private static String ieBrowser = "ie";
+	
+	public static WebDriver getDriverInstance(String type){
+		WebDriver driver = null;
+		if(ieBrowser.equals(type)){
+			System.setProperty("webdriver.ie.driver", "C:/ie/IEDriverServer.exe");
+			DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
+			ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,true);
+			ieCapabilities.setCapability(InternetExplorerDriver.BROWSER_ATTACH_TIMEOUT,15000);
+			driver = new InternetExplorerDriver(ieCapabilities);
+		}
+		return driver;
+	}
 	
 	/**
 	 * 显示等待，通过title来判断元素是否存在
@@ -84,7 +107,7 @@ public class  DriverUtil{
 	 * @param driver 
 	 * @param time 多长时间关闭 单位 秒
 	 */
-	public static boolean VisibilityById(String id,WebDriver driver,int time){
+	public static boolean visibilityById(String id,WebDriver driver,int time){
 		WebDriverWait wite = new WebDriverWait(driver,time);
 		try {
 			wite.until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
@@ -101,7 +124,7 @@ public class  DriverUtil{
 	 * @param driver 
 	 * @param time 多长时间关闭 单位 秒
 	 */
-	public static boolean VisibilityByClassName(String className,WebDriver driver,int time){
+	public static boolean visibilityByClassName(String className,WebDriver driver,int time){
 		WebDriverWait wite = new WebDriverWait(driver,time);
 		try {
 			wite.until(ExpectedConditions.visibilityOfElementLocated(By.className(className)));
