@@ -1,4 +1,4 @@
-package com.reptile.contorller.depositCard;
+package com.reptile.contorller.depositcard;
 
 import com.reptile.service.depositCard.ZXBankDepositCardService;
 import com.reptile.util.CustomAnnotation;
@@ -11,16 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 中国银行储蓄卡
+ * 中信储蓄卡（原始版）
+ *
+ * @author mrlu
+ * @date 2016/10/31
  */
 
 @Controller
 @RequestMapping("ZXBankDepositCardController")
-public class ZXBankDepositCardController {
+public class ZxBankDepositCardController {
     @Autowired
     private ZXBankDepositCardService service;
 
@@ -28,12 +30,12 @@ public class ZXBankDepositCardController {
     @ResponseBody
     @ApiOperation(value = "储蓄卡获取数据", notes = "参数：身份证，卡号，用户名，密码")
     @CustomAnnotation
-    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String IDNumber,
+    public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("IDNumber") String idNumber,
                                             @RequestParam("cardNumber") String cardNumber, @RequestParam("passWord") String passWord,
                                             @RequestParam("userName") String userName) {
         Map<String, Object> detailMes ;
         synchronized (this) {
-            detailMes = service.getDetailMes(request, IDNumber, cardNumber, userName, passWord);
+            detailMes = service.getDetailMes(request, idNumber, cardNumber, userName, passWord);
         }
         return detailMes;
     }

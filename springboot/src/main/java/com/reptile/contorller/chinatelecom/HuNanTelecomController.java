@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.ChinaTelecom.HeNanTelecomService;
 import com.reptile.service.ChinaTelecom.HuNanTelecomService;
 
 @Controller

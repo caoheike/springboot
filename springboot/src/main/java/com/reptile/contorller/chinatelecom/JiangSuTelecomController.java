@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import com.reptile.service.ChinaTelecom.JiangSuTelecomService;
 import com.reptile.util.CustomAnnotation;
@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+/**
+ * 江苏电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("JiangSuTelecomController")
 public class JiangSuTelecomController {
@@ -24,8 +30,8 @@ public class JiangSuTelecomController {
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public  Map<String,Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber,
-                                            @RequestParam("userPassword") String password,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID){
-        return service.getDetailMes(request,phoneNumber,password,longitude,latitude,UUID);
+                                            @RequestParam("userPassword") String password,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String uuid){
+        return service.getDetailMes(request,phoneNumber,password,longitude,latitude,uuid);
     }
 
 }

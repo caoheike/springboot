@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 
 import com.reptile.service.ChinaTelecom.ShanDongTelecomService;
@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
+/**
+ * 山东电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("ShanDongTelecomController")
 public class ShanDongTelecomController {
@@ -52,7 +58,7 @@ public class ShanDongTelecomController {
     public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userIphone")String userIphone, @RequestParam("imageCode") String imageCode,
                                             @RequestParam("userName")String userName, @RequestParam("userCard") String userCard,
                                             @RequestParam("phoneCode")String phoneCode,@RequestParam("userPassword")String userPassword,
-                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID){
-        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword,longitude,latitude,UUID);
+                                            @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String uuid){
+        return service.getDetailMes(request,userIphone,imageCode,userName,userCard,phoneCode,userPassword,longitude,latitude,uuid);
     }
 }

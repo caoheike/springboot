@@ -17,7 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * Created by HotWong on 2017/5/2 003.
+ * 征信
+ *
+ * @author HotWong
+ * @date 2016/10/31
  */
 @Controller
 @RequestMapping("credit")
@@ -46,7 +49,7 @@ public class CreditController {
 
     @ResponseBody
     @RequestMapping(value = "/Login.html",method = RequestMethod.POST)
-    public Map<String,Object> Login(FormBean bean,HttpServletRequest request){
+    public Map<String,Object> login(FormBean bean,HttpServletRequest request){
         return creditService.login(bean,request);
     }
 
@@ -87,8 +90,8 @@ public class CreditController {
     @ResponseBody
     @CustomAnnotation
     @RequestMapping(value = "/queryCredit.html",method = RequestMethod.POST)
-    public Map<String,Object> queryCredit(HttpServletRequest request,@RequestParam("userId")String userId,@RequestParam("verifyCode")String verifyCode,@RequestParam("UUID")String UUID){
-        return creditService.queryCredit(request,userId,verifyCode,UUID);
+    public Map<String,Object> queryCredit(HttpServletRequest request,@RequestParam("userId")String userId,@RequestParam("verifyCode")String verifyCode,@RequestParam("UUID")String uuid){
+        return creditService.queryCredit(request,userId,verifyCode,uuid);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import com.reptile.service.ChinaTelecom.XiNingTelecomService;
 import com.reptile.util.CustomAnnotation;
@@ -16,6 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
+/**
+ * 西宁电信
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("XiNingTelecomController")
 public class XiNingTelecomController {
@@ -28,8 +34,8 @@ public class XiNingTelecomController {
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("phoneNumber")String phoneNumber,
-                                            @RequestParam("serverPwd") String serverPwd,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID) {
-        return service.getDetailMes(request,phoneNumber,serverPwd,longitude,latitude,UUID);
+                                            @RequestParam("serverPwd") String serverPwd,@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String uuid) {
+        return service.getDetailMes(request,phoneNumber,serverPwd,longitude,latitude,uuid);
     }
 
 //    @ApiOperation(value = "3.获取详单信息", notes = "参数：手机验证码,手机号，服务密码")
