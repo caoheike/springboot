@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import com.reptile.service.ChinaTelecom.TelecomLoadVerificationService;
 import io.swagger.annotations.ApiOperation;
@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
+
 /**
  * 电信登录通用类
  *  主要进行登录前  手机号归属地，手机号是否可登录状态的查询
  *
+ * @author mrlu
+ * @date 2016/10/31
  */
 @Controller
 @RequestMapping("TelecomLoadVerification")

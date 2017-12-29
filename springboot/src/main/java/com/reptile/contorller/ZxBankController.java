@@ -14,13 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * 信用卡账户信息
- * <p>
- * Created by Administrator on 2017/8/26 0026.
+ * 中信信用卡
+ *
+ * @author HotWong
+ * @date 2016/10/31
  */
 @Controller
 @RequestMapping("bankController")
-public class ZXBankController {
+public class ZxBankController {
 
     @Autowired
     private ZXBankService service;
@@ -52,8 +53,8 @@ public class ZXBankController {
     @ApiOperation(value = "4.获取账单信息", notes = "参数：手机验证码")
     @ResponseBody
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
-    public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userCard") String userCard, @RequestParam("phoneCode") String phoneCode,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws  Exception {
-        return service.getDetailMes(request,userCard.trim(),phoneCode.trim(),UUID.trim(),timeCnt.trim());
+    public Map<String, Object> getDetailMes(HttpServletRequest request,@RequestParam("userCard") String userCard, @RequestParam("phoneCode") String phoneCode,@RequestParam("UUID")String uuid,@RequestParam("timeCnt")String timeCnt) throws  Exception {
+        return service.getDetailMes(request,userCard.trim(),phoneCode.trim(),uuid.trim(),timeCnt.trim());
     }
 
 }

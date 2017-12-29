@@ -19,6 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 中国银行信用卡
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Controller
 @RequestMapping("ChinaBankController")
 public class ChinaBankController {
@@ -28,13 +34,12 @@ public class ChinaBankController {
     @ApiOperation(value = "获取ZGYH信用卡信息",notes = "参数：身份证，信用卡号，查询密码")
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
-    //@CustomAnnotation
     public Map<String, Object> getDetailMes(HttpServletRequest request, @RequestParam("userCard") String userCard,
-                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws ParseException {
+                                            @RequestParam("cardNumber") String cardNumber,@RequestParam("userPwd") String userPwd,@RequestParam("UUID")String uuid,@RequestParam("timeCnt")String timeCnt) throws ParseException {
 
-        Map<String,Object> map=new HashMap<String,Object>();
+        Map<String,Object> map=new HashMap<String,Object>(16);
         synchronized (this){
-            map= service.getDetailMes(request, userCard, cardNumber, userPwd,UUID,timeCnt);
+            map= service.getDetailMes(request, userCard, cardNumber, userPwd,uuid,timeCnt);
         }
         return map;
     }

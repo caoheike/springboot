@@ -37,7 +37,8 @@ public class PhoneBillsService {
         Map<String, String> map = new HashMap<String, String>();
         HttpSession session = request.getSession();
 
-        WebClient webClient = new WebClientFactory().getWebClient();
+//        WebClient webClient = new WebClientFactory().getWebClient();
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
         webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setTimeout(90000);
@@ -362,7 +363,7 @@ public class PhoneBillsService {
                     Object page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
                     if(page9 instanceof HtmlPage ){
-                        break;
+                        continue;
                     }else{
                         UnexpectedPage pages= (UnexpectedPage) page9;
                         results = pages.getWebResponse().getContentAsString();

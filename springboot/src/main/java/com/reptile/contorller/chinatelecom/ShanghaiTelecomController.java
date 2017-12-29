@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import io.swagger.annotations.ApiOperation;
 

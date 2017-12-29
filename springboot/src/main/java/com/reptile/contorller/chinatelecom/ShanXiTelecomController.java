@@ -1,4 +1,4 @@
-package com.reptile.contorller.ChinaTelecom;
+package com.reptile.contorller.chinatelecom;
 
 import com.reptile.service.ChinaTelecom.ShanXiTelecomService;
 import com.reptile.util.CustomAnnotation;
@@ -32,8 +32,8 @@ public class ShanXiTelecomController {
     @ApiOperation(value = "陕西电信登录", notes = "电信登录")
     public Map<String, Object> telecomLogin(HttpServletRequest req, @RequestParam("userPhone") String userPhone,
                                             @RequestParam("userPassword") String userPassword,@RequestParam("longitude") String longitude,
-                                            @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID) throws Exception {
+                                            @RequestParam("latitude") String latitude,@RequestParam("UUID")String uuid) throws Exception {
        System.out.println("--------");
-    	return service.telecomLogin(req, userPhone,userPassword,longitude,latitude,UUID);
+    	return service.telecomLogin(req, userPhone,userPassword,longitude,latitude,uuid);
     }
 }

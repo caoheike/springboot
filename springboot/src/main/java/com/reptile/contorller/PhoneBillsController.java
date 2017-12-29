@@ -17,7 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * 手机通话详情
+ * 移动运营商
+ *
+ * @author HotWong
+ * @date 2016/10/31
  */
 @Controller
 @RequestMapping("chinaMobile")
@@ -61,8 +64,8 @@ public class PhoneBillsController {
     @RequestMapping(value = "getDetailAccount",method = RequestMethod.POST)
     public Map<String,Object> getDetailAccount(HttpServletRequest request, @RequestParam("userNumber")String userNumber, @RequestParam("phoneCode")String phoneCode,
                                                @RequestParam("fuwuSec")String fuwuSec, @RequestParam("imageCode")String imageCode ,
-                                               @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String UUID ) throws Exception {
+                                               @RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude,@RequestParam("UUID")String uuid ) throws Exception {
     	System.out.println("---移动---"+userNumber);
-    	return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim(),UUID.trim());
+    	return phoneService.getDetailAccount(request,userNumber.trim(),phoneCode.trim(),fuwuSec.trim(),imageCode.trim(),longitude.trim(),latitude.trim(),uuid.trim());
     }
 }
