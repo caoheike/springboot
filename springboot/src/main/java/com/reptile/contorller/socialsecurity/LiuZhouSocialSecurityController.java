@@ -14,16 +14,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.socialsecurity.LiuZhouSocialSecurityService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Controller
 @RequestMapping("LiuZhouSocialSecurityController")
 public class LiuZhouSocialSecurityController {
 	 	
 		@Autowired
 	    private LiuZhouSocialSecurityService service;
-	 
-		
-	  	//柳州社保图片验证码
 	    @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
 	    @ResponseBody
 	    @ApiOperation(value = "加载图片验证码",notes = "参数：无")

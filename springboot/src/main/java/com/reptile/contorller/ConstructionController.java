@@ -2,6 +2,7 @@ package com.reptile.contorller;
 
 import java.util.Map;
 
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ import com.reptile.service.ConstructionService;
 
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Controller
 @RequestMapping("ConstructionController")
 public class ConstructionController {
@@ -24,8 +30,8 @@ public class ConstructionController {
 	@ApiOperation(value = "建设银行信用卡", notes = "参数：用户账号(身份证),银行账号,查询密码")
 	@ResponseBody
 	@RequestMapping(value="Construction",method=RequestMethod.POST)
-	public Map<String,Object> Construction(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserCode") String UserCode,
-											@RequestParam("CodePass") String CodePass,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
-		return con.check(request, UserCard, UserCode, CodePass,UUID,timeCnt);
+	public Map<String,Object> construction(HttpServletRequest request,@RequestParam("UserCard") String userCard,@RequestParam("UserCode") String userCode,
+											@RequestParam("CodePass") String codePass,@RequestParam("UUID")String uuid,@RequestParam("timeCnt")String timeCnt) throws Exception{
+		return con.check(request, userCard, userCode, codePass,uuid,timeCnt);
 	}
 }

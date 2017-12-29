@@ -15,14 +15,17 @@ import com.reptile.service.accumulationfund.GuiYangAccumulationfundService;
 import com.reptile.service.accumulationfund.LiuZhouAccumulationfundService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Controller
 @RequestMapping("LiuZhouAccimulationfundController")
 public class LiuZhouAccimulationfundController {
 	  @Autowired
 	    private LiuZhouAccumulationfundService service;
 	  	
-	  	//柳州住房公积金图片验证码
 	    @RequestMapping(value = "loadImageCode",method = RequestMethod.POST)
 	    @ResponseBody
 	    @ApiOperation(value = "加载图片验证码",notes = "参数：无")

@@ -22,14 +22,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Service
 public class LiuZhouAccumulationfundService {
 	
 	 private Logger logger = LoggerFactory.getLogger(LiuZhouAccumulationfundService.class);
 	 @Autowired
 	 private application applications;
-	 private PushState PushState;
 	  
 	 public Map<String,Object> loginImage(HttpServletRequest request){
 		 	logger.warn("获取柳州公积金图片验证码");
@@ -39,11 +42,11 @@ public class LiuZhouAccumulationfundService {
 			driver.get("http://www.lzzfgjj.com/login.jspx");
 			driver.navigate().refresh();
 			WebElement loginform= driver.findElement(By.id("jvForm"));
-			WebElement Image=	loginform.findElement(ByXPath.xpath("//*[@id='jvForm']/table[1]/tbody/tr[7]/td/img"));
-			WebElement captchaImg=Image;
-			 Map<String,Object>map=new HashMap<String,Object>();
+			WebElement image=	loginform.findElement(ByXPath.xpath("//*[@id='jvForm']/table[1]/tbody/tr[7]/td/img"));
+			WebElement captchaImg=image;
+			 Map<String,Object>map=new HashMap<String,Object>(200);
 			 HttpSession session = request.getSession();
-			 Map<String,Object> data=new HashMap<String,Object>();
+			 Map<String,Object> data=new HashMap<String,Object>(200);
 			BufferedImage fullImg;
 			
 			try {
@@ -83,8 +86,8 @@ public class LiuZhouAccumulationfundService {
 	 
 	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String fundCard,String passWord,String cityCode,String idCardNum ){
 		 System.out.println("欢迎使用柳州公积金");
-		 	Map<String, Object> map = new HashMap<>();
-	        Map<String, Object> dataMap = new HashMap<>();
+		 	Map<String, Object> map = new HashMap<>(200);
+	        Map<String, Object> dataMap = new HashMap<>(200);
 	        HttpSession session = request.getSession();
 	        Object drivers = session.getAttribute("sessionWebDriver-liuzhou");
 	        WebDriver driver =(WebDriver) drivers;
@@ -98,8 +101,10 @@ public class LiuZhouAccumulationfundService {
 					loginform.findElement(By.className("dengluanniu")).click();
 					driver.get("http://www.lzzfgjj.com/grcx/grcx_grjbqk.jspx");
 					WebElement table= driver.findElement(By.tagName("table"));
-					System.out.println(table.getText()); //公积金基本信息
-					if(table.getText().contains("还没有帐号？去注册")){
+					//公积金基本信息
+					System.out.println(table.getText()); 
+					String erro="还没有帐号？去注册";
+					if(table.getText().contains(erro)){
 						map.put("errorInfo","您的输入有误，请正确输入");
 		                map.put("errorCode","0002");
 		                driver.close();
@@ -107,12 +112,12 @@ public class LiuZhouAccumulationfundService {
 		                return map;
 					}
 					String html1= driver.getPageSource();
-					Map<String,Object> data=new HashMap<String,Object>();
+					Map<String,Object> data=new HashMap<String,Object>(200);
 					driver.get("http://www.lzzfgjj.com/grcx/grcx_grzmmx.jspx");
 					WebElement table1= driver.findElement(By.xpath("/html/body/div/div[1]/div[5]/div[2]/div/div[3]/table[2]"));
 					System.out.println(table1.getText());
 					String html2= driver.getPageSource();
-					Map<String,Object> lz=new HashMap<String, Object>();
+					Map<String,Object> lz=new HashMap<String, Object>(200);
 					data.put("item",html2);
 					data.put("base",html1);
 					lz.put("city", cityCode);
@@ -121,7 +126,9 @@ public class LiuZhouAccumulationfundService {
 					Resttemplate resttemplate = new Resttemplate();
 					PushState.state(idCardNum, "accumulationFund",100);
 					map=resttemplate.SendMessage(lz,ConstantInterface.port+"/HSDC/person/accumulationFund");
-					  if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+					String errorCode = "errorCode";
+					String state0 = "0000";
+					  if(map!=null&&state0.equals(map.get(errorCode).toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
 			                map.put("errorInfo","查询成功");
 			                map.put("errorCode","0000");

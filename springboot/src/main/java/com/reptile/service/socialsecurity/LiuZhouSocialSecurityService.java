@@ -19,23 +19,26 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Service
 public class LiuZhouSocialSecurityService {
 	 private Logger logger = LoggerFactory.getLogger(LiuZhouSocialSecurityService.class);
 	 @Autowired
 	 private application applications;
-	 private PushState PushState;
 	 public Map<String,Object> loginImage(HttpServletRequest request){
 		 WebClient webclient=new WebClientFactory().getWebClient();
 			
-		 Map<String,Object>map=new HashMap<String,Object>();
+		 Map<String,Object>map=new HashMap<String,Object>(200);
 		 HttpSession session = request.getSession();
-		 Map<String,Object> data=new HashMap<String,Object>();
-		 	UnexpectedPage Imagepage;
+		 Map<String,Object> data=new HashMap<String,Object>(200);
+		 	UnexpectedPage imagepage;
 			try {
-				Imagepage = webclient.getPage("http://siquery.lzsrsj.com/siqg/VerifyCode.aspx?");
-				BufferedImage bufferedImage  = ImageIO.read(Imagepage.getInputStream());
+				imagepage = webclient.getPage("http://siquery.lzsrsj.com/siqg/VerifyCode.aspx?");
+				BufferedImage bufferedImage  = ImageIO.read(imagepage.getInputStream());
 				String path=request.getServletContext().getRealPath("/liuzhouImger");
 				File file=new File(path);
 				if(!file.exists()){
@@ -65,8 +68,8 @@ public class LiuZhouSocialSecurityService {
 		return map;
 	 }
 	 public Map<String,Object> getDeatilMes(HttpServletRequest request,String idCard,String catpy,String userName,String passWord,String cityCode,String idCardNum ){
-		 Map<String, Object> map = new HashMap<>();
-	        Map<String, Object> dataMap = new HashMap<>();
+		 Map<String, Object> map = new HashMap<>(200);
+	        Map<String, Object> dataMap = new HashMap<>(200);
 	        HttpSession session = request.getSession();
 	        Object webclients = session.getAttribute("sessionwebclient-lzsb");
 	        WebClient webclient=(WebClient) webclients;
@@ -78,25 +81,26 @@ public class LiuZhouSocialSecurityService {
 	    		   HtmlTextInput xm=	(HtmlTextInput) loginPage.getElementById("txtXm");
 	    		   xm.setValueAttribute(userName);
 	    		   
-	    		   HtmlPasswordInput Mm= (HtmlPasswordInput) loginPage.getElementById("txtMm");
-	    		   Mm.setValueAttribute(passWord);
+	    		   HtmlPasswordInput txtMm= (HtmlPasswordInput) loginPage.getElementById("txtMm");
+	    		   txtMm.setValueAttribute(passWord);
 	    		   //
-	    			HtmlTextInput Yzm=(HtmlTextInput) loginPage.getElementById("txtYzm2");
-	    			Yzm.setValueAttribute(catpy);
+	    			HtmlTextInput txtYzm2=(HtmlTextInput) loginPage.getElementById("txtYzm2");
+	    			txtYzm2.setValueAttribute(catpy);
 	    			Thread.sleep(2000);
 	    			HtmlPage nextPage= loginPage.getElementByName("btnLogin").click();
 	    			Thread.sleep(4000);
 	    			
 	    			try{
 	    				HtmlDivision jiben=(HtmlDivision) nextPage.getByXPath("//*[@id='content']/div[2]/div[2]/div[1]").get(0);
-		    			Map<String,Object> data=new HashMap<String,Object>();
+		    			Map<String,Object> data=new HashMap<String,Object>(200);
 		    			data.put("base",jiben.asXml() );
 		    			HtmlPage minxiPage= webclient.getPage("http://siquery.lzsrsj.com/SIQG/grjfmx.aspx");
 		    			List<String> htmls =new ArrayList<String>();
 		    			Date date=new Date();
 		    			String year= new SimpleDateFormat("yyyy").format(date);
 		    			int years=Integer.parseInt(year);
-		    			for (int i = 0; i < 7; i++) {
+		    			int nums=7;
+		    			for (int i = 0; i < nums; i++) {
 		    				System.out.println(years);
 //		    				List<String> html =new ArrayList<String>();
 		    				
@@ -137,22 +141,26 @@ public class LiuZhouSocialSecurityService {
 		    				years--;
 		    				HtmlInput  fristyear= (HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtKssj");
 		    				fristyear.setValueAttribute(years+"-01");
-		    			    HtmlInput Endyear=	(HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtZzsj");
-		    			    Endyear.setValueAttribute(years+"-12");
+		    			    HtmlInput endyear=	(HtmlInput) minxiPage.getElementById("ContentPlaceHolder1_txtZzsj");
+		    			    endyear.setValueAttribute(years+"-12");
 		    			    minxiPage=minxiPage.getElementById("ContentPlaceHolder1_btnQuery").click();
 		    			    htmls.add( aa);
 		    			    Thread.sleep(2000);
-		    			    if(minxiPage.asText().contains("对不起，当前年月范围没有查询到您的缴费明细！"))break;
+		    			    if(minxiPage.asText().contains("对不起，当前年月范围没有查询到您的缴费明细！")){
+		    			    	break;
+		    			    }
 		    			}
 		    		
-		    			Map<String,Object> lz=new HashMap<String, Object>();
+		    			Map<String,Object> lz=new HashMap<String, Object>(200);
 		    			data.put("item", htmls);
 		    			lz.put("data", data);
 		    			lz.put("city", cityCode);
 		    			lz.put("userId", idCardNum);
 		    			Resttemplate resttemplate = new Resttemplate();
 		    			map=resttemplate.SendMessage(lz,applications.getSendip()+"/HSDC/person/socialSecurity");
-		    			if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+		    			String errorCode = "errorCode";
+						String state0 = "0000";
+		    			if(map!=null&&state0.equals(map.get(errorCode).toString())){
 		                	PushState.state(idCardNum, "socialSecurity", 300);
 		                	map.put("errorInfo","推送成功");
 		                	map.put("errorCode","0000");

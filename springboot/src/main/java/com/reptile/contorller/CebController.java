@@ -11,27 +11,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.CEBService;
-import com.reptile.service.SEOandCHSIService;
+import com.reptile.service.CebService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @author liubin
+ *
+ */
 @Controller
 @RequestMapping("CEBController")
-public class CEBController {
+public class CebController {
 	
 	@Autowired
-	private CEBService ceb;
+	private CebService ceb;
 		@ApiOperation(value = "1.发送短信验证码", notes = "参数：用户账号(身份证),银行账号")
 		@ResponseBody
 		@RequestMapping(value="CEBPass",method=RequestMethod.POST)
-		public Map<String,Object> CEBPass(HttpServletRequest request,@RequestParam("UserCard") String UserCard,@RequestParam("UserName") String UserName) throws Exception{
-			return ceb.CEBlogin1(request,UserCard,UserName);
+		public Map<String,Object> cebPass(HttpServletRequest request,@RequestParam("UserCard") String userCard,@RequestParam("UserName") String userName) throws Exception{
+			return ceb.ceblogin1(request,userCard,userName);
 		}
 		@ApiOperation(value = "2.获取信用卡详单", notes = "参数：用户账号(身份证),短信验证码,银行卡号")
 		@ResponseBody
 		@RequestMapping(value="CEBlogin",method=RequestMethod.POST)
-		public Map<String,Object> CEBlogin(HttpServletRequest request,@RequestParam("UserCard")String UserCard,@RequestParam("Password")String Password,@RequestParam("userAccount")String userAccount,@RequestParam("UUID")String UUID,@RequestParam("timeCnt")String timeCnt) throws Exception{
-			return ceb.CEBlogin2(request,UserCard,Password,userAccount,UUID,timeCnt);
+		public Map<String,Object> ceblogin(HttpServletRequest request,@RequestParam("UserCard")String userCard,@RequestParam("Password")String password,@RequestParam("userAccount")String userAccount,@RequestParam("UUID")String uuid,@RequestParam("timeCnt")String timeCnt) throws Exception{
+			return ceb.ceblogin2(request,userCard,password,userAccount,uuid,timeCnt);
 		}
 }
