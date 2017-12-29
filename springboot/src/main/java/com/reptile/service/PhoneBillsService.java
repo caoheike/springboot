@@ -373,12 +373,24 @@ public class PhoneBillsService {
                 int sDate = Integer.parseInt(str);
                 PushSocket.pushnew(map, uuid, "5000", "数据获取中");
                 int boundCount=7;
-                for (int i = 1; i < boundCount; i++) {
+           loop: for (int i = 1; i < boundCount; i++) {
                     String results = "";
                     Object page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
                     if (page9 instanceof HtmlPage) {
-                        continue;
+                        for (int j=0;j<3;j++){
+                            Object page10 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
+                                    "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
+                            if(page10 instanceof  UnexpectedPage){
+                                UnexpectedPage pages = (UnexpectedPage) page10;
+                                results = pages.getWebResponse().getContentAsString();
+                                break;
+                            }else if(j==2){
+                                sDate--;
+                                break  loop;
+                            }
+                            Thread.sleep(2000);
+                        }
                     } else {
                         UnexpectedPage pages = (UnexpectedPage) page9;
                         results = pages.getWebResponse().getContentAsString();
@@ -397,7 +409,7 @@ public class PhoneBillsService {
                     sDate--;
                     Thread.sleep(2000);
                 }
-               int boundCount3=3;
+               int boundCount3=4;
                 if (dataList.size() < boundCount3) {
                     PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新再次认证！");
                     PushState.state(userNumber, "callLog", 200);
