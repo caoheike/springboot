@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.YuLinAccumulationfundService;
+
+/**
+ * 
+ * @ClassName: YuLinAccumulationfundController  
+ * @Description: TODO (玉林公积金)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("yuLinHouseFund")
 public class YuLinAccumulationfundController {

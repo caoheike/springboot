@@ -7,23 +7,40 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @ClassName: LinYiSocialSecurityService  
+ * @Description: TODO (临沂社保)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Service
-public class LYSocialSecurityService {
-	private Logger logger= LoggerFactory.getLogger(LYSocialSecurityService.class);
+public class LinYiSocialSecurityService {
+	private Logger logger= LoggerFactory.getLogger(LinYiSocialSecurityService.class);
 	
-	@Autowired
+	@Autowired 
 	private application application;
+	
+	private static String errorCode = "errorCode";
+	private static String success = "0000";
+	private static String add = "+";
+	private static String delete = "-";
+	private static String multiplication = "*";
+	private static String isEqual = "=";
 	
 	/**
 	 * 临沂社保登录并获取详情
@@ -35,7 +52,7 @@ public class LYSocialSecurityService {
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
 			String userName, String idCard,String cityCode,String idCardNum) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
 			PushState.state(idCardNum, "socialSecurity", 100);
@@ -54,10 +71,11 @@ public class LYSocialSecurityService {
 	        identycode.setValueAttribute(idCard.substring(idCard.length()-8));
 	        
 	        HtmlTableCell yzcon = (HtmlTableCell) loginPage.getElementById("yzcon");
-	        int checkcode = this.calResult(yzcon.asText());//返回计算结果
+	        //返回计算结果
+	        int checkCode = this.calResult(yzcon.asText());
 	        
-	        HtmlTextInput  Checkcode = form.getInputByName("Checkcode");
-	        Checkcode.setValueAttribute(checkcode + "");
+	        HtmlTextInput  checkCodeInput = form.getInputByName("Checkcode");
+	        checkCodeInput.setValueAttribute(checkCode + "");
 	        
 	        HtmlSubmitInput submit = form.getInputByName("xxcxsubmit");
 	        HtmlPage nextPage = (HtmlPage) submit.click();
@@ -94,10 +112,10 @@ public class LYSocialSecurityService {
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,
 			String idCard,String idCardNum,String cityCode,HtmlPage nextPage) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
 		HtmlTable table = (HtmlTable) nextPage.getElementsByTagName("table").get(0);
 		
-		Map<String, Object> infoAll = new HashMap<String, Object>();
+		Map<String, Object> infoAll = new HashMap<String, Object>(16);
 		infoAll.put("item", table.asXml());
 		
 		data.put("errorInfo", "查询成功");
@@ -107,7 +125,7 @@ public class LYSocialSecurityService {
         data.put("userId", idCardNum);
         data = new Resttemplate().SendMessage(data,application.getSendip()+"/HSDC/person/socialSecurity");
         
-        if(data!=null&&"0000".equals(data.get("errorCode").toString())){
+        if( data != null && success.equals(data.get(errorCode).toString())){
         	PushState.state(idCardNum, "socialSecurity", 300);
         	data.put("errorInfo","推送成功");
         	data.put("errorCode","0000");
@@ -128,17 +146,17 @@ public class LYSocialSecurityService {
 	public  int calResult(String str){
 		str = str.trim().replace(" ", "");
 		int a,b,result = 0;
-		if(str.contains("+") && str.contains("=")){
-			a = Integer.parseInt(str.substring(2,str.indexOf("+")).trim());
-			b = Integer.parseInt(str.substring(str.indexOf("+")+1,str.indexOf("=")).trim());
+		if(str.contains(add) && str.contains(isEqual)){
+			a = Integer.parseInt(str.substring(2,str.indexOf(add)).trim());
+			b = Integer.parseInt(str.substring(str.indexOf(add)+1,str.indexOf(isEqual)).trim());
 			result = a + b;
-		}else if(str.contains("-") && str.contains("=")){
-			a = Integer.parseInt(str.substring(2,str.indexOf("-")).trim());
-			b = Integer.parseInt(str.substring(str.indexOf("-")+1,str.indexOf("=")).trim());
+		}else if(str.contains(delete) && str.contains(isEqual)){
+			a = Integer.parseInt(str.substring(2,str.indexOf(delete)).trim());
+			b = Integer.parseInt(str.substring(str.indexOf(delete)+1,str.indexOf(isEqual)).trim());
 			result = a - b;
-		}else if(str.contains("*") && str.contains("=")){
-			a = Integer.parseInt(str.substring(2,str.indexOf("*")).trim());
-			b = Integer.parseInt(str.substring(str.indexOf("*")+1,str.indexOf("=")).trim());
+		}else if(str.contains(multiplication) && str.contains(isEqual)){
+			a = Integer.parseInt(str.substring(2,str.indexOf(multiplication)).trim());
+			b = Integer.parseInt(str.substring(str.indexOf(multiplication)+1,str.indexOf(isEqual)).trim());
 			result = a * b;
 		}
 		return result;

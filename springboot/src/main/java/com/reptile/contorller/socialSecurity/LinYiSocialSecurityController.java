@@ -13,13 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.socialSecurity.LYSocialSecurityService;
+import com.reptile.service.socialSecurity.LinYiSocialSecurityService;
 
+/**
+ * 
+ * @ClassName: LinYiSocialSecurityController  
+ * @Description: TODO (临沂社保)
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("linYiSocialSecurity")
-public class LYSocialSecurityController {
+public class LinYiSocialSecurityController {
 	@Autowired
-	private LYSocialSecurityService lySocialSecurityService;
+	private LinYiSocialSecurityService lySocialSecurityService;
 	
 	
 	/**
