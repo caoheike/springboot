@@ -1,4 +1,4 @@
-package com.reptile.service.socialSecurity;
+package com.reptile.service.socialsecurity;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

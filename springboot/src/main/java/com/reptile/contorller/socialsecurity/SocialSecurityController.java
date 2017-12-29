@@ -1,4 +1,4 @@
-package com.reptile.contorller.socialSecurity;
+package com.reptile.contorller.socialsecurity;
 
 
 import org.springframework.stereotype.Controller;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.model.FormBean;
-import com.reptile.service.socialSecurity.SocialSecurityService;
+import com.reptile.service.socialsecurity.SocialSecurityService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

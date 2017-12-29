@@ -1,4 +1,4 @@
-package com.reptile.contorller.socialSecurity;
+package com.reptile.contorller.socialsecurity;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -13,34 +13,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.socialSecurity.BinZhouSocialSecurityService;
+import com.reptile.service.socialsecurity.QinZhouSocialSecurityService;
 
 /**
  * 
- * @ClassName: BinZhouSocialSecurityController  
- * @Description: TODO (滨州社保)
+ * @ClassName: QinZhouSocialSecurityController  
+ * @Description: TODO (钦州社保)
  * @author: xuesongcui
  * @date 2017年12月29日  
  *
  */
 @Controller
-@RequestMapping("binZhouSocialSecurity")
-public class BinZhouSocialSecurityController {
+@RequestMapping("QinZhouSocialSecurity")
+public class QinZhouSocialSecurityController {
+	
 	@Autowired
-	private BinZhouSocialSecurityService binZhouSocialSecurityService;
+    private QinZhouSocialSecurityService qinZhouSocialSecurityService;
 	
-	
-	@ApiOperation(value = "滨州市社保：获取验证码",notes = "参数：无")
+	@ApiOperation(value = "钦州社保：获取验证码",notes = "参数：无")
 	@ResponseBody
 	@RequestMapping(value = "doGetVerifyImg", method = RequestMethod.POST)
 	public  Map<String,Object> doGetVerifyImg(HttpServletRequest request){
-		return binZhouSocialSecurityService.doGetVerifyImg(request);
+		return qinZhouSocialSecurityService.doGetVerifyImg(request);
 		
 	}
 	
 	
 	/**
-	 * 滨州市社保详情查询
+	 * 钦州社保详情查询
 	 * @param request
 	 * @param idCard 身份证
 	 * @param passWord 密码
@@ -48,10 +48,10 @@ public class BinZhouSocialSecurityController {
 	 * @param cityCode 城市编码
 	 * @return
 	 */
-	@ApiOperation(value = "滨州市社保：详情",notes = "参数：身份证,密码,验证码,城市编码")
+	@ApiOperation(value = "钦州社保：详情",notes = "参数：身份证,密码,验证码,城市编码")
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("idCardNum")String idCardNum,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
-		return binZhouSocialSecurityService.doLogin(request, idCard, passWord, catpy, cityCode,idCardNum);
+		return qinZhouSocialSecurityService.doGetDetail(request, idCard, passWord, catpy, cityCode,idCardNum);
 	}
 }

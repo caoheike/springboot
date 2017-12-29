@@ -1,4 +1,4 @@
-package com.reptile.contorller.socialSecurity;
+package com.reptile.contorller.socialsecurity;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.reptile.service.socialSecurity.ZhenJiangSocialSecurityService;
+import com.reptile.service.socialsecurity.ZhenJiangSocialSecurityService;
 
 import io.swagger.annotations.ApiOperation;
 
