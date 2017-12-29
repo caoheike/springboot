@@ -46,7 +46,7 @@ public class GlobalUnicomController {
     @RequestMapping(value = "UnicomGetCode",method = RequestMethod.POST)
     public Map<String, Object> UnicomGetCode(HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("Useriphone") String Useriphone){
-        return mobileService.GetCode(request, response, Useriphone);
+        return mobileService.getCode(request, response, Useriphone);
     }
     /**
      * 联通登录接口
@@ -68,7 +68,7 @@ public class GlobalUnicomController {
     		@RequestParam("UserCode") String UserCode){
         System.out.println("已经被访问了");
         
-        return mobileService.UnicomLogin(request,Useriphone, password,UserCode);
+        return mobileService.unicomLogin(request,Useriphone, password,UserCode);
     }
    /** 
     * 获取详单验证码
@@ -83,7 +83,7 @@ public class GlobalUnicomController {
     @ResponseBody
     @RequestMapping(value = "getCodeTwo",method = RequestMethod.POST)
     public Map<String, Object> GetCodeTwo(HttpServletRequest request){
-        return mobileService.GetCodeTwo(request);
+        return mobileService.getCodeTwo(request);
         
     }
     /**

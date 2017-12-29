@@ -59,6 +59,7 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import com.reptile.constants.MessageConstamts;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
 import com.reptile.model.UnicomBean;
@@ -72,7 +73,15 @@ import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-
+/**
+ * 
+* @Title: InterfaceController.java  
+* @Package com.reptile.contorller  
+* @Description: TODO(爬虫集合)  
+* @author Administrator  
+* @date 2017年12月29日  
+* @version V1.0
+ */
 @Controller
 @RequestMapping("interface")
 public class InterfaceController {
@@ -84,35 +93,7 @@ public class InterfaceController {
 	Resttemplate resttemplate=new Resttemplate();
 	private static CrawlerUtil crawlerUtil = new CrawlerUtil();
 	
-	// 下载云打码DLL http://yundama.com/apidoc/YDM_SDK.html#DLL
-	// yundamaAPI 32位, yundamaAPI-x64 64位
-	public static String	DLLPATH		= "D://dll//yundamaAPI-x64";
-	//映射
 
-	public interface YDM extends Library
-	{
-		YDM	INSTANCE	= (YDM) Native.loadLibrary(DLLPATH, YDM.class);		
-
-		public void YDM_SetBaseAPI(String lpBaseAPI);
-		public void YDM_SetAppInfo(int nAppId, String lpAppKey);
-		public int YDM_Login(String lpUserName, String lpPassWord);
-		public int YDM_DecodeByPath(String lpFilePath, int nCodeType, byte[] pCodeResult);
-		public int YDM_UploadByPath(String lpFilePath, int nCodeType);
-		public int YDM_EasyDecodeByPath(String lpUserName, String lpPassWord, int nAppId, String lpAppKey, String lpFilePath, int nCodeType, int nTimeOut, byte[] pCodeResult);
-		public int YDM_DecodeByBytes(byte[] lpBuffer, int nNumberOfBytesToRead, int nCodeType, byte[] pCodeResult);
-		public int YDM_UploadByBytes(byte[] lpBuffer, int nNumberOfBytesToRead, int nCodeType);
-		public int YDM_EasyDecodeByBytes(String lpUserName, String lpPassWord, int nAppId, String lpAppKey, byte[] lpBuffer, int nNumberOfBytesToRead, int nCodeType, int nTimeOut, byte[] pCodeResult);
-		public int YDM_GetResult(int nCaptchaId, byte[] pCodeResult);
-		public int YDM_Report(int nCaptchaId, boolean bCorrect);
-		public int YDM_EasyReport(String lpUserName, String lpPassWord, int nAppId, String lpAppKey, int nCaptchaId, boolean bCorrect);
-		public int YDM_GetBalance(String lpUserName, String lpPassWord);
-		public int YDM_EasyGetBalance(String lpUserName, String lpPassWord, int nAppId, String lpAppKey);
-		public int YDM_SetTimeOut(int nTimeOut);
-		public int YDM_Reg(String lpUserName, String lpPassWord, String lpEmail, String lpMobile, String lpQQUin);
-		public int YDM_EasyReg(int nAppId, String lpAppKey, String lpUserName, String lpPassWord, String lpEmail, String lpMobile, String lpQQUin);
-		public int YDM_Pay(String lpUserName, String lpPassWord, String lpCard);
-		public int YDM_EasyPay(String lpUserName, String lpPassWord, long nAppId, String lpAppKey, String lpCard);
-	}
 	/**
 	 * 获取验证码
 	 * 
@@ -125,14 +106,13 @@ public class InterfaceController {
 	 */
 
 	@ApiOperation(value = "获取移动验证码", notes = "")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "GetCode", method = RequestMethod.POST)
 	public Map<String, Object> getBank(HttpServletRequest request,
 			HttpServletResponse response)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
-		return mobileService.TelecomLogins(request, response);
+		return mobileService.telecomLogins(request, response);
 
 	}
 
@@ -153,14 +133,13 @@ public class InterfaceController {
 	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "MobileLogin", method = RequestMethod.POST)
-	// @ApiImplicitParam(name = "mobileBean", value = "移动实体", required = true,
-	// dataType = "MobileBean")添加实体
-	public Map MobileLogin(MobileBean mobileBean, HttpServletRequest request,
+
+	public Map mobileLogin(MobileBean mobileBean, HttpServletRequest request,
 			HttpServletResponse response)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
 		System.out.println(mobileBean.getUserIphone() + "--");
-		return mobileService.Login(mobileBean, request, response);
+		return mobileService.login(mobileBean, request, response);
 	}
 
 	/**
@@ -171,7 +150,7 @@ public class InterfaceController {
 	 */
 
 	@RequestMapping("Rsa")
-	public String Rsa(ModelAndView modole) {
+	public String rsaPass(ModelAndView modole) {
 		modole.setViewName("OperatorView/Rsa");
 		return "OperatorView/Rsa";
 	}
@@ -187,14 +166,14 @@ public class InterfaceController {
 	 */
 
 	@ApiOperation(value = "移动密码加密", notes = "")
-	// 设置标题描述
+
 	@ResponseBody
 	@RequestMapping(value = "RsaPassword", method = RequestMethod.POST)
-	public Map<String, Object> RsaPassword(
+	public Map<String, Object> rsaPassword(
 			@RequestParam("password") String password)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
-		return mobileService.RsaPassword(password);
+		return mobileService.rsaPassword(password);
 	}
 
 	/**
@@ -208,15 +187,14 @@ public class InterfaceController {
 	 */
 
 	@ApiOperation(value = "移动刷新验证码", notes = "")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "UpdateCodeImg", method = RequestMethod.POST)
-	public Map<String, Object> UpdateCodeImg(HttpServletRequest request,
+	public Map<String, Object> updateCodeImg(HttpServletRequest request,
 			HttpServletResponse response)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
 
-		return mobileService.UpdateCodeImgs(request, response);
+		return mobileService.updateCodeImgs(request, response);
 	}
 
 	/**
@@ -232,15 +210,14 @@ public class InterfaceController {
 	 */
 
 	@ApiOperation(value = "手机卡归属地", notes = "")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "MobileBelong", method = RequestMethod.POST)
-	public Map<String, Object> MobileBelong(HttpServletRequest request,
+	public Map<String, Object> mobileBelong(HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("phone") String phone)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
 
-		return mobileService.MobileBelong(request, response, phone);
+		return mobileService.mobileBelong(request, response, phone);
 	}
 
 //	/**
@@ -308,12 +285,12 @@ public class InterfaceController {
 	 */
 	@ResponseBody
 	@RequestMapping("UnicomUpdateCode")
-	public Map<String, Object> UnicomUpdateCode(HttpServletRequest request,
+	public Map<String, Object> unicomUpdateCode(HttpServletRequest request,
 			HttpServletResponse response, UnicomBean unicombean)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
 		System.out.println("已经被访问了");
-		return mobileService.UnicomUpdateCode(request, response, unicombean);
+		return mobileService.unicomUpdateCode(request, response, unicombean);
 	}
 
 	// /**
@@ -334,8 +311,8 @@ public class InterfaceController {
 	 */
 
 	@RequestMapping("UnicomAesPage")
-	public String UnicomAesPage(HttpServletRequest request,
-			HttpServletResponse response, TelecomBean Telecom)
+	public String unicomAesPage(HttpServletRequest request,
+			HttpServletResponse response, TelecomBean teleCom)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
 
@@ -355,17 +332,17 @@ public class InterfaceController {
 	@ResponseBody
 	@RequestMapping(value = "UnicomAes", method = RequestMethod.POST)
 	@ApiOperation(value = "电信密码加密", notes = "电信密码加密")
-	public Map<String, Object> UnicomAes(@RequestParam("AesPwd") String AesPwd)
+	public Map<String, Object> unicomAes(@RequestParam("AesPwd") String aesPwd)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException {
 
-		return mobileService.UnicomAes(AesPwd);
+		return mobileService.unicomAes(aesPwd);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "TelecomLogin", method = RequestMethod.POST)
 	@ApiOperation(value = "电信登录", notes = "电信登录")
-	public Map<String, Object> TelecomLogin(HttpServletRequest req,
+	public Map<String, Object> telecomLogin(HttpServletRequest req,
 			HttpServletResponse response,
 			@RequestParam("userPhone") String userPhone,
 			@RequestParam("userPassword") String userPassword)
@@ -375,17 +352,17 @@ public class InterfaceController {
 		bean.setUserPhone(userPhone);
 		bean.setUserPassword(userPassword);
 
-		return mobileService.TelecomLogin(req, response, bean);
+		return mobileService.telecomLogin(req, response, bean);
 	}
 
 	@ResponseBody
 	@RequestMapping("TelecomQueryInfo")
-	public void TelecomQueryInfo(HttpServletRequest req,
+	public void telecomQueryInfo(HttpServletRequest req,
 			HttpServletResponse response, TelecomBean bean,
 			@RequestParam("papertype") String papertype)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
-		mobileService.TelecomQueryInfo(req, response, bean);
+		mobileService.telecomQueryInfo(req, response, bean);
 	}
 
 	/**
@@ -396,11 +373,11 @@ public class InterfaceController {
 
 	@RequestMapping("encrypt")
 	public String encrypt(HttpServletRequest request,
-			@RequestParam("IdCard") String IdCard)
+			@RequestParam("IdCard") String idCard)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
 		HttpSession session = request.getSession();
-		session.setAttribute("IdCard", IdCard);
+		session.setAttribute("IdCard", idCard);
 		return "OperatorView/encrypt";
 	}
 
@@ -426,14 +403,14 @@ public class InterfaceController {
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
 		HttpSession session = request.getSession();
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>(8);
 		String page = "";
 
 		map = mobileService.test(request, qqnumber, sess, password, code,
 				session.getAttribute("IdCard").toString(), showpwd);
-		if (map.toString().contains("0000")) {
+		if (map.toString().contains(MessageConstamts.STRING_0000)) {
 			page = "OperatorView/indexsuccess";
-		} else if (map.toString().contains("0004")) {
+		} else if (map.toString().contains(MessageConstamts.STRING_0004)) {
 			page = "OperatorView/index";
 		} else {
 			page = "OperatorView/indexone";
@@ -446,7 +423,6 @@ public class InterfaceController {
 	 * 人法网
 	 */
 	@ApiOperation(value = "人法网登陆", notes = "人法网登陆")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "shixinQuery", method = RequestMethod.POST)
 	public Map<String, Object> shixinQuery(HttpServletRequest request,
@@ -461,7 +437,6 @@ public class InterfaceController {
 	}
 
 	@ApiOperation(value = "人法网验证码", notes = "无需参数")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "shixinQueryCode", method = RequestMethod.POST)
 	public Map<String, Object> shixinQueryCode(HttpServletRequest request)
@@ -472,17 +447,16 @@ public class InterfaceController {
 	}
 
 	@ApiOperation(value = "学信网查询", notes = "无需参数")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "AcademicLogin", method = RequestMethod.POST)
-	public Map<String, Object> AcademicLogin(HttpServletRequest request,
-			@RequestParam("Usernumber") String Usernumber,
-			@RequestParam("UserPwd") String UserPwd,
-			@RequestParam("Usercard") String Usercard,
-			@RequestParam("lt") String lt, @RequestParam("code") String code,@RequestParam("UUID")String UUID)
+	public Map<String, Object> academicLogin(HttpServletRequest request,
+			@RequestParam("Usernumber") String userNumber,
+			@RequestParam("UserPwd") String userPwd,
+			@RequestParam("Usercard") String userCard,
+			@RequestParam("lt") String lt, @RequestParam("code") String code,@RequestParam("UUID")String uuId)
 			throws Exception {
-		return mobileService.AcademicLogin(request, Usernumber, UserPwd, code,
-				lt, Usercard,UUID);
+		return mobileService.academicLogin(request, userNumber, userPwd, code,
+				lt, userCard,uuId);
 
 	}
 
@@ -598,19 +572,18 @@ public class InterfaceController {
 			@RequestParam("userCard") String userCard)
 			throws Exception {
 
-		return mobileService.Taobao(request, userName, userPassword, userCard);
+		return mobileService.taoBao(request, userName, userPassword, userCard);
 
 	}
 
 	@ApiOperation(value = "学信网获得验证码", notes = "无需参数")
-	// 设置标题描述
 	@ResponseBody
 	@RequestMapping(value = "XuexinGetCode", method = RequestMethod.POST)
-	public Map<String, Object> XuexinGetCode(HttpServletRequest request,
+	public Map<String, Object> xuexinGetCode(HttpServletRequest request,
 			HttpServletResponse response)
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
-		return mobileService.XuexinGetCode(request, response);
+		return mobileService.xuexinGetCode(request, response);
 
 	}
 
@@ -645,9 +618,12 @@ public class InterfaceController {
 	@ResponseBody
 	@RequestMapping(value = "tab.html", method = RequestMethod.POST)
 	public Map<String,Object> test(HttpServletRequest request, HttpServletResponse response)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-		String sessid=new CrawlerUtil().getUUID(); //生成UUid 用于区分浏览器
+		new CrawlerUtil();
+		//生成UUid 用于区分浏览器
+		String sessid=CrawlerUtil.getUUID(); 
 		WebClient webClient = new WebClientFactory().getWebClientJs();
-			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); // 此目录保存缩小后的关键图
+		// 此目录保存缩小后的关键图
+			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); 
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
 		  JSONObject jsonObject=JSONObject.fromObject(page.getContent());
 		  UnexpectedPage paerwm= webClient.getPage("https:"+jsonObject.get("url"));
@@ -670,17 +646,18 @@ public class InterfaceController {
 	        BinaryBitmap binaryBitmap=new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
 
 	        //定义二维码的参数:
-	        HashMap hints=new HashMap();
-	        hints.put(EncodeHintType.CHARACTER_SET,"utf-8");//定义字符集
-
-	        Result result=formatReader.decode(binaryBitmap,hints);//开始解析
+	        HashMap hints=new HashMap(8);
+	      //定义字符集
+	        hints.put(EncodeHintType.CHARACTER_SET,"utf-8");
+	      //开始解析
+	        Result result=formatReader.decode(binaryBitmap,hints);
 
 	        System.out.println("解析结果:"+result.toString());
 	        System.out.println("二维码的格式类型是:"+result.getBarcodeFormat());
 	        System.out.println("二维码的文本内容是:"+result.getText());
 
-			Map<String, Object> map = new HashMap<String, Object>();
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>(8);
+			Map<String, Object> data = new HashMap<String, Object>(8);
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 			data.put("url", result.getText());
@@ -701,30 +678,30 @@ public class InterfaceController {
 	 * @param sessid
 	 * @param Token
 	 * @param idCard
-	 * @param UUID
+	 * @param uuId
 	 * @return
 	 * @throws Exception 
 	 */
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
-	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String Token,@RequestParam("idCard") String idCard,@RequestParam("UUID")String UUID)throws Exception {
+	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String toKen ,@RequestParam("idCard") String idCard,@RequestParam("UUID")String uuId)throws Exception {
 	    System.out.println("---------------"+"");
-	    Map<String, Object> map = new HashMap<String, Object>();
-	    Map<String, Object> data = new HashMap<String, Object>();
+	    Map<String, Object> map = new HashMap<String, Object>(8);
+	    Map<String, Object> data = new HashMap<String, Object>(8);
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
-	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+Token+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
+	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+toKen+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 	    PushState.state(idCard, "TaoBao",100);
-	    PushSocket.pushnew(map, UUID, "1000","登录中");
+	    PushSocket.pushnew(map, uuId, "1000","登录中");
 	    Thread.sleep(2000);
 	    System.out.println(pages.getContent());
 	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
-	    if(jsonObject2.get("code").equals("10006")){
+	    if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_10086)){
 	    	HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 		    System.out.println(pageinfo.asXml());
-		    PushSocket.pushnew(map, UUID, "2000","登录成功");
+		    PushSocket.pushnew(map, uuId, "2000","登录成功");
 		    PushState.state(idCard, "TaoBao",100);
-		    PushSocket.pushnew(map, UUID, "5000","获取数据中");
+		    PushSocket.pushnew(map, uuId, "5000","获取数据中");
 		    map.put("errorCode", "0000");
 		    map.put("errorInfo", "成功");
 		    HtmlPage pagev= webClient.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
@@ -733,9 +710,9 @@ public class InterfaceController {
 		    
 		    HtmlPage html = webClient.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
 		    String href = ((HtmlAnchor)html.getByXPath("//*[@id='main-content']/div/div[2]/div/div[2]/p/a[1]").get(0)).getAttribute("href");
-		    String sign_account_no = this.getSignNo(href);
-		    webClient.getPage("https://login.taobao.com/member/login.jhtml?tpl_redirect_url=https%3A%2F%2Fauthgtj.alipay.com%3A443%2Flogin%2FtrustLoginResultDispatch.htm%3FredirectType%3D%26sign_from%3D3000%26goto%3Dhttps%253A%252F%252Fmy.alipay.com%252Fportal%252Fi.htm%253Fsrc%253Dyy_taobao_gl_01%2526sign_from%253D3000%2526sign_account_no%253D"+sign_account_no+"%2526guide_q_control%253Dtop%2526guide_q_control%253Dtop%2526src%253Dyy_taobao_gl_01&from_alipay=1");
-		    webClient.getPage("https://authgtj.alipay.com/login/trustLoginResultDispatch.htm?redirectType=&sign_from=3000&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsrc%3Dyy_taobao_gl_01%26sign_from%3D3000%26sign_account_no%3D"+sign_account_no+"%26guide_q_control%3Dtop%26guide_q_control%3Dtop%26src%3Dyy_taobao_gl_01&sign_from=3000&sign_account_no="+sign_account_no+"&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
+		    String signAccountno = this.getSignNo(href);
+		    webClient.getPage("https://login.taobao.com/member/login.jhtml?tpl_redirect_url=https%3A%2F%2Fauthgtj.alipay.com%3A443%2Flogin%2FtrustLoginResultDispatch.htm%3FredirectType%3D%26sign_from%3D3000%26goto%3Dhttps%253A%252F%252Fmy.alipay.com%252Fportal%252Fi.htm%253Fsrc%253Dyy_taobao_gl_01%2526sign_from%253D3000%2526sign_account_no%253D"+signAccountno+"%2526guide_q_control%253Dtop%2526guide_q_control%253Dtop%2526src%253Dyy_taobao_gl_01&from_alipay=1");
+		    webClient.getPage("https://authgtj.alipay.com/login/trustLoginResultDispatch.htm?redirectType=&sign_from=3000&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsrc%3Dyy_taobao_gl_01%26sign_from%3D3000%26sign_account_no%3D"+signAccountno+"%26guide_q_control%3Dtop%26guide_q_control%3Dtop%26src%3Dyy_taobao_gl_01&sign_from=3000&sign_account_no="+signAccountno+"&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
 	    
 		    //现在开始爬取 支付宝信息
 	       WebRequest requests=new WebRequest(new URL("https://authet15.alipay.com/login/certCheck.htm"));
@@ -767,7 +744,7 @@ public class InterfaceController {
 	       HtmlPage pageinfos= webClient.getPage(requests);
 	       
 	       WebRequest detailInfo = new WebRequest(new URL("https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
-	       Map<String,String> headers = new HashMap<String, String>();
+	       Map<String,String> headers = new HashMap<String, String>(8);
 	       headers.put("cookie", this.getCookie(webClient));
 	 
 	       detailInfo.setHttpMethod(HttpMethod.GET);
@@ -777,7 +754,7 @@ public class InterfaceController {
 	       
 	       
 	       HtmlPage pageinfoss= webClient.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
-	       PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+	       PushSocket.pushnew(map, uuId, "6000","获取数据成功");
 	       
 	       //获取收货地址
 	       data.put("addresses",this.getAddress(webClient));
@@ -790,48 +767,48 @@ public class InterfaceController {
 	       
 	       map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
 
-			if(map!=null&&"0000".equals(map.get("errorCode").toString())) {
+			if(map!=null&&MessageConstamts.STRING_0000.equals(map.get(MessageConstamts.ERRORCODE).toString())) {
 				PushState.state(idCard, "TaoBao", 300);
 				map.put("errorInfo", "查询成功");
 				map.put("errorCode", "0000");
-				PushSocket.pushnew(map, UUID, "8000","淘宝查询成功");
+				PushSocket.pushnew(map, uuId, "8000","淘宝查询成功");
 			}else{
 				//--------------------数据中心推送状态----------------------
 				PushState.state(idCard, "TaoBao",200);
 				//---------------------数据中心推送状态----------------------
 				map.put("errorInfo","查询失败");
 				map.put("errorCode","0001");
-				PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+				PushSocket.pushnew(map, uuId, "9000",map.get("errorInfo").toString());
 			}
-	    }else if(jsonObject2.get("code").equals("10004")){
+	    }else if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_1004)){
 	      PushState.state(idCard, "TaoBao",200);
 	      System.out.println("二维码过期");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "二维码过期");
-	      PushSocket.pushnew(map, UUID, "3000","二维码过期");
-	    }else if(jsonObject2.get("code").equals("10001")) {
+	      PushSocket.pushnew(map, uuId, "3000","二维码过期");
+	    }else if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_1001)) {
 	      if(map.size()==0){
 	        map.put("errorCode", "0001");
 	        map.put("errorInfo", "请勿乱操作");
 		      PushState.state(idCard, "TaoBao",200);
-		      PushSocket.pushnew(map, UUID, "3000","登录失败，操作异常");
+		      PushSocket.pushnew(map, uuId, "3000","登录失败，操作异常");
 	      }else{
 	        map.put("errorCode", "0000");
 	        map.put("errorInfo", "成功");
 	      }
-	    }else if(jsonObject2.get("code").equals("10000")){
+	    }else if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_10000)){
 	    	
 	      System.out.println("等待授权");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "等待授权");
 	      PushState.state(idCard, "TaoBao",200);
-	      PushSocket.pushnew(map, UUID, "3000","登录失败，等待授权");
+	      PushSocket.pushnew(map, uuId, "3000","登录失败，等待授权");
 	      
 	    }else{
 	    	PushState.state(idCard, "TaoBao",200);
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "非法操作！请重试");
-	      PushSocket.pushnew(map, UUID, "3000","非法操作！请重试");
+	      PushSocket.pushnew(map, uuId, "3000","非法操作！请重试");
 	    }
 	    return map;
 
@@ -896,7 +873,7 @@ public class InterfaceController {
 		       lists.add(new NameValuePair("prePageNo","1"));
 		       requests.setHttpMethod(HttpMethod.POST);
 		       requests.setRequestParameters(lists);
-		       Map<String,String> headers = new HashMap<String, String>();
+		       Map<String,String> headers = new HashMap<String, String>(8);
 		       headers.put("origin", "https://buyertrade.taobao.com");
 		       headers.put("referer", "https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm?");
 		       requests.setAdditionalHeaders(headers);
@@ -963,7 +940,7 @@ public class InterfaceController {
 		       lists.add(new NameValuePair("prePageNo",(count-1)+""));
 		       requests.setHttpMethod(HttpMethod.POST);
 		       requests.setRequestParameters(lists);
-		       Map<String,String> headers = new HashMap<String, String>();
+		       Map<String,String> headers = new HashMap<String, String>(8);
 		       headers.put("origin", "https://buyertrade.taobao.com");
 		       headers.put("referer", "https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm?");
 		       requests.setAdditionalHeaders(headers);
@@ -1022,124 +999,124 @@ public class InterfaceController {
 			
 		}
 	
-	/**
-	 * OA学信网
-	 */
-	@ResponseBody
-	@RequestMapping(value = "xuexin.html", method = RequestMethod.GET)
-	public Map<String,Object> tabLogin1(HttpServletRequest request, HttpServletResponse response,@RequestParam("UserName") String UserName,@RequestParam("UserPwd") String UserPwd)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
-		System.out.println(application.getPort());
-		WebClient webClient =	crawlerUtil.WebClientXuexin();
-		Map<String,Object>map=new HashMap<String, Object>();
-		Map<String,Object>data=new HashMap<String, Object>();
-		HtmlPage pagelt = webClient.getPage(crawlerUtil.XueXinLogin);
-		HtmlHiddenInput hiddenInput= pagelt.getElementByName("lt");
-		String lt=hiddenInput.getValueAttribute();
-		UnexpectedPage pageimg=webClient.getPage(crawlerUtil.XueXinGetCode);
-		BufferedImage img=ImageIO.read(pageimg.getInputStream());
-		String  fileName = System.currentTimeMillis() + "xuexin.png";
-
-		
-	 	File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/");
-
-	 	// 此目录保存缩小后的关键图
-	 	if (!path.isDirectory()){
-			path.mkdirs();
-	 	}
-		ImageIO.write(img,"png",new File(path,fileName));
-		
-	  //开始大吗
-		
-		// 注意这里是普通会员账号，不是开发者账号，注册地址 http://www.yundama.com/index/reg/user
-		// 开发者可以联系客服领取免费调试题分
-		String username = "caoheike";
-		String password	= "598415805";
-
-		// 测试时可直接使用默认的软件ID密钥，但要享受开发者分成必须使用自己的软件ID和密钥
-		// 1. http://www.yundama.com/index/reg/developer 注册开发者账号
-		// 2. http://www.yundama.com/developer/myapp 添加新软件
-		// 3. 使用添加的软件ID和密钥进行开发，享受丰厚分成
-		int 	appid	= 1;									
-		String 	appkey	= "22cc5376925e9387a23cf797cb9ba745";
-		
-		// 图片路径
-		String	imagepath	=request.getSession().getServletContext().getRealPath("/upload") + "/"+fileName;
-		System.out.println("地址"+imagepath);
-		//  例：1004表示4位字母数字，不同类型收费不同。请准确填写，否则影响识别率。在此查询所有类型 http://www.yundama.com/price.html
-		int codetype = 1004;
-		
-		// 只需要在初始的时候登陆一次
-		int uid = 0;
-		YDM.INSTANCE.YDM_SetAppInfo(appid, appkey);			// 设置软件ID和密钥
-		uid = YDM.INSTANCE.YDM_Login(username, password);	// 登陆到云打码
-
-		if(uid > 0){
-			System.out.println("登陆成功,正在提交识别...");
-			
-			byte[] byteResult = new byte[30];
-			int cid = YDM.INSTANCE.YDM_DecodeByPath(imagepath, codetype, byteResult);
-			String strResult = new String(byteResult, "UTF-8").trim();
-			
-			// 返回其他错误代码请查询 http://www.yundama.com/apidoc/YDM_ErrorCode.html
-			System.out.println("识别返回代码:" + cid);
-			System.out.println("识别返回结果:" + strResult); 
-			
-			//如果返回结果继续执行
-			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
-			List<NameValuePair> list=new ArrayList<NameValuePair>();
-			list.add(new NameValuePair("username",UserName));
-			list.add(new NameValuePair("password",UserPwd));
-			list.add(new NameValuePair("captcha", strResult));
-
-			list.add(new NameValuePair("lt", lt));
-			list.add(new NameValuePair("_eventId","submit"));
-			list.add(new NameValuePair("submit","登  录"));
-			
-			webRequest.setHttpMethod(HttpMethod.POST);
-			webRequest.setRequestParameters(list);
-			 try {
-			HtmlPage pages= webClient.getPage(webRequest);
-			
-		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
-			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
-		
-		        HtmlPage pagess= webClient.getPage(crawlerUtil.Xuexininfo);
-	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
-	 	         data.put("info", table.asXml());
-	 	         map.put("data", data);
-	 	         map.put("Usernumber",UserName); 
-	 	         map.put("UserPwd",UserPwd);
-	 	 
-	 	  
-	 	 
-			}else if(pages.asText().contains("您输入的用户名或密码有误")){
-		 		map.put("errorCode","0002");
-		 		map.put("errorInfo","您输入的用户名或密码有误");
-	
-			}else if(pages.asText().contains("图片验证码输入有误")){
-		 		map.put("errorCode","0001");
-		 		map.put("errorInfo","图片验证码输入有误");
-	
-			}
-		   	} catch (Exception e) {
-		   		System.out.print(e);
-		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","密码错误");	
-		   		}else{
-		   			map.put("errorCode","0002");
-			 		map.put("errorInfo","网络错误");
-		   		}
- 	    		
-			}
-
-		}else{
-			System.out.println("登录失败，错误代码为：" + uid);
-		}  
-		
-		return map;
-
-		
-	}
+//	/**
+//	 * OA学信网
+//	 */
+//	@ResponseBody
+//	@RequestMapping(value = "xuexin.html", method = RequestMethod.GET)
+//	public Map<String,Object> tabLogin1(HttpServletRequest request, HttpServletResponse response,@RequestParam("UserName") String UserName,@RequestParam("UserPwd") String UserPwd)throws FailingHttpStatusCodeException, MalformedURLException,IOException, InterruptedException, NotFoundException {
+//		System.out.println(application.getPort());
+//		WebClient webClient =	crawlerUtil.WebClientXuexin();
+//		Map<String,Object>map=new HashMap<String, Object>();
+//		Map<String,Object>data=new HashMap<String, Object>();
+//		HtmlPage pagelt = webClient.getPage(CrawlerUtil.getXueXinLogin());
+//		HtmlHiddenInput hiddenInput= pagelt.getElementByName("lt");
+//		String lt=hiddenInput.getValueAttribute();
+//		UnexpectedPage pageimg=webClient.getPage(CrawlerUtil.getXueXinGetCode());
+//		BufferedImage img=ImageIO.read(pageimg.getInputStream());
+//		String  fileName = System.currentTimeMillis() + "xuexin.png";
+//
+//		
+//	 	File path = new File(request.getSession().getServletContext().getRealPath("/upload") + "/");
+//
+//	 	// 此目录保存缩小后的关键图
+//	 	if (!path.isDirectory()){
+//			path.mkdirs();
+//	 	}
+//		ImageIO.write(img,"png",new File(path,fileName));
+//		
+//	  //开始大吗
+//		
+//		// 注意这里是普通会员账号，不是开发者账号，注册地址 http://www.yundama.com/index/reg/user
+//		// 开发者可以联系客服领取免费调试题分
+//		String username = "caoheike";
+//		String password	= "598415805";
+//
+//		// 测试时可直接使用默认的软件ID密钥，但要享受开发者分成必须使用自己的软件ID和密钥
+//		// 1. http://www.yundama.com/index/reg/developer 注册开发者账号
+//		// 2. http://www.yundama.com/developer/myapp 添加新软件
+//		// 3. 使用添加的软件ID和密钥进行开发，享受丰厚分成
+//		int 	appid	= 1;									
+//		String 	appkey	= "22cc5376925e9387a23cf797cb9ba745";
+//		
+//		// 图片路径
+//		String	imagepath	=request.getSession().getServletContext().getRealPath("/upload") + "/"+fileName;
+//		System.out.println("地址"+imagepath);
+//		//  例：1004表示4位字母数字，不同类型收费不同。请准确填写，否则影响识别率。在此查询所有类型 http://www.yundama.com/price.html
+//		int codetype = 1004;
+//		
+//		// 只需要在初始的时候登陆一次
+//		int uid = 0;
+//		YDM.INSTANCE.YDM_SetAppInfo(appid, appkey);			// 设置软件ID和密钥
+//		uid = YDM.INSTANCE.YDM_Login(username, password);	// 登陆到云打码
+//
+//		if(uid > 0){
+//			System.out.println("登陆成功,正在提交识别...");
+//			
+//			byte[] byteResult = new byte[30];
+//			int cid = YDM.INSTANCE.YDM_DecodeByPath(imagepath, codetype, byteResult);
+//			String strResult = new String(byteResult, "UTF-8").trim();
+//			
+//			// 返回其他错误代码请查询 http://www.yundama.com/apidoc/YDM_ErrorCode.html
+//			System.out.println("识别返回代码:" + cid);
+//			System.out.println("识别返回结果:" + strResult); 
+//			
+//			//如果返回结果继续执行
+//			WebRequest webRequest=new  WebRequest(new java.net.URL(crawlerUtil.XuexinPOST));
+//			List<NameValuePair> list=new ArrayList<NameValuePair>();
+//			list.add(new NameValuePair("username",UserName));
+//			list.add(new NameValuePair("password",UserPwd));
+//			list.add(new NameValuePair("captcha", strResult));
+//
+//			list.add(new NameValuePair("lt", lt));
+//			list.add(new NameValuePair("_eventId","submit"));
+//			list.add(new NameValuePair("submit","登  录"));
+//			
+//			webRequest.setHttpMethod(HttpMethod.POST);
+//			webRequest.setRequestParameters(list);
+//			 try {
+//			HtmlPage pages= webClient.getPage(webRequest);
+//			
+//		//	HtmlDivision Logindiv= (HtmlDivision) pages.getElementById("status");
+//			if(!pages.asText().contains("您输入的用户名或密码有误")&&!pages.asText().contains("图片验证码输入有误")){
+//		
+//		        HtmlPage pagess= webClient.getPage(CrawlerUtil.getXuexininfo());
+//	 	        HtmlTable table=(HtmlTable) pagess.querySelector(".mb-table");  
+//	 	         data.put("info", table.asXml());
+//	 	         map.put("data", data);
+//	 	         map.put("Usernumber",UserName); 
+//	 	         map.put("UserPwd",UserPwd);
+//	 	 
+//	 	  
+//	 	 
+//			}else if(pages.asText().contains("您输入的用户名或密码有误")){
+//		 		map.put("errorCode","0002");
+//		 		map.put("errorInfo","您输入的用户名或密码有误");
+//	
+//			}else if(pages.asText().contains("图片验证码输入有误")){
+//		 		map.put("errorCode","0001");
+//		 		map.put("errorInfo","图片验证码输入有误");
+//	
+//			}
+//		   	} catch (Exception e) {
+//		   		System.out.print(e);
+//		   		if(e.toString().contains("com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException")){
+//		   			map.put("errorCode","0002");
+//			 		map.put("errorInfo","密码错误");	
+//		   		}else{
+//		   			map.put("errorCode","0002");
+//			 		map.put("errorInfo","网络错误");
+//		   		}
+// 	    		
+//			}
+//
+//		}else{
+//			System.out.println("登录失败，错误代码为：" + uid);
+//		}  
+//		
+//		return map;
+//
+//		
+//	}
 	
 }

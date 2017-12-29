@@ -10,6 +10,7 @@ import javax.imageio.ImageReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -34,8 +35,8 @@ public class htmlUtil {
 
 	}
 
-	public List getsix() {
-		List list = new ArrayList();
+	public List<BigDecimal> getsix() {
+		List<BigDecimal> list = new ArrayList<BigDecimal>();
 
 		for (int i = -2; i < 1; i++) {
 
@@ -75,8 +76,8 @@ public class htmlUtil {
 		return lastDayOfMonth;
 	}
 
-	public static List<Map> liantong() {
-		List list = new ArrayList();
+	public List<Map<String, String>> liantong() {
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
 		for (int i = -2; i < 1; i++) {
 
@@ -95,7 +96,7 @@ public class htmlUtil {
 			String s1 = mattery.format(date02);
 			String s2 = matterm.format(date02);
 			String end = getLastDayOfMonth(Integer.valueOf(s1), Integer.valueOf(s2));
-			Map map = new HashMap();
+			Map<String, String> map = new HashMap<String, String>();
 			map.put("begin", s1 + "-" + s2 + "-01");
 			map.put("end", end);
 			list.add(map);
