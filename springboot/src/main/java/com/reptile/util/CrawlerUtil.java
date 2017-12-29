@@ -35,11 +35,11 @@ public class CrawlerUtil {
 //	public static final String sendip="http://192.168.3.4:8081";
 
 
-	public static String XueXinLogin="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-	public static String XueXinGetCode="https://account.chsi.com.cn/passport/captcha.image?id=68.95757530327288";
+	private static String XueXinLogin="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
+	private static String XueXinGetCode="https://account.chsi.com.cn/passport/captcha.image?id=68.95757530327288";
 	public static String XuexinPOST="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
 	
-	public static String Xuexininfo="https://my.chsi.com.cn/archive/gdjy/xj/show.action";
+	private static String Xuexininfo="https://my.chsi.com.cn/archive/gdjy/xj/show.action";
 	
 	public final WebClient webClient = new WebClient(BrowserVersion.CHROME);
 	private static Logger logger=Logger.getLogger(CrawlerUtil.class);
@@ -229,6 +229,24 @@ public class CrawlerUtil {
 			HtmlDivision division=(HtmlDivision) page.getElementById("sina_keyword_ad_area2");
 			
 			return division.asText();
+		}
+		public static String getXuexininfo() {
+			return Xuexininfo;
+		}
+		public static void setXuexininfo(String xuexininfo) {
+			Xuexininfo = xuexininfo;
+		}
+		public static String getXueXinLogin() {
+			return XueXinLogin;
+		}
+		public static void setXueXinLogin(String xueXinLogin) {
+			XueXinLogin = xueXinLogin;
+		}
+		public static String getXueXinGetCode() {
+			return XueXinGetCode;
+		}
+		public static void setXueXinGetCode(String xueXinGetCode) {
+			XueXinGetCode = xueXinGetCode;
 		}
 	
 }
