@@ -35,7 +35,14 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
-
+/**
+ * 
+ * @ClassName: ChongQingAccumulationfundService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class ChongQingAccumulationfundService {
 	@Autowired 
@@ -44,8 +51,8 @@ public class ChongQingAccumulationfundService {
     
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取重庆公积金图片验证码");
-        Map<String, Object> map = new HashMap<>();
-        Map<String, String> datamap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, String> datamap = new HashMap<>(10);
         String path = request.getServletContext().getRealPath("ImageCode");
         HttpSession session = request.getSession();
 
@@ -78,12 +85,13 @@ public class ChongQingAccumulationfundService {
         }
         return map;
     }
-    public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> loansdata = new HashMap<>();
-        List<Object> beanList=new ArrayList<Object>();
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String idCardNum) {
+        Map<String, Object> map = new HashMap<>(10);
+        Map<String, Object> dataMap = new HashMap<>(10);
+        Map<String, Object> data = new HashMap<>(10);
+        Map<String, Object> loansdata = new HashMap<>(10);
+        List<Object> beanList=new ArrayList<Object>(10);
         Date date=new Date();
         List<String> alert=new ArrayList<>();
         CollectingAlertHandler alertHandler=new CollectingAlertHandler(alert);
@@ -97,21 +105,26 @@ public class ChongQingAccumulationfundService {
             
             webClient.setAlertHandler(alertHandler);
             try {
-//            	HtmlPage loginPage = page.getElementById("page").click();
+            	//HtmlPage loginPage = page.getElementById("page").click();
             	loginPage.getElementById("txt_loginname").setAttribute("value",userCard);
             	loginPage.getElementById("txt_pwd").setAttribute("value",password);
             	loginPage.getElementById("txt_code").setAttribute("value",imageCode);
                 HtmlPage infoPage = loginPage.getElementById("loginBtn").click();
                 Thread.sleep(2000);
-                String numMsg = infoPage.getElementsByTagName("div").get(8).getTextContent();//账号密码错误提示
-                String imgMsg = infoPage.getElementsByTagName("div").get(9).getTextContent();//验证码错误提示   要是拿不到就在整个页面判断
-                if(imgMsg.indexOf("验证码")!=-1){               	
+                //账号密码错误提示
+                String numMsg = infoPage.getElementsByTagName("div").get(8).getTextContent();
+                //验证码错误提示   要是拿不到就在整个页面判断
+                String imgMsg = infoPage.getElementsByTagName("div").get(9).getTextContent();
+                final String yanzhengMa = "验证码";
+                if(imgMsg.indexOf(yanzhengMa)!=-1){               	
                 	map.put("errorInfo", "验证码输入错误，请重新获取验证码");                	
                 	logger.warn("验证码输入错误，请重新获取验证码");
                     map.put("errorCode", "0005");
                     return map;
                 } 
-                if(numMsg.indexOf("密码")!=-1||numMsg.indexOf("登录账号")!=-1){               	
+                final String miMa ="密码";
+                final String zhangHao = "登录账号";
+                if(numMsg.indexOf(miMa)!=-1||numMsg.indexOf(zhangHao)!=-1){               	
                 	map.put("errorInfo", "用户名或密码错误，请重新获取验证码后登陆");                	
                 	logger.warn("用户名或密码错误，请重新获取验证码后登陆");
                     map.put("errorCode", "0005");
@@ -120,15 +133,19 @@ public class ChongQingAccumulationfundService {
                 /*
                  * 获取基本信息
                  */
-                HtmlPage baseInfo = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjyecx.aspx");//个人基本信息
+                //个人基本信息
+                HtmlPage baseInfo = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjyecx.aspx");
                 Thread.sleep(2000);
-                if(baseInfo.asText().indexOf("请输入验证码后继续")!=-1){
+                final String jiXu = "请输入验证码后继续";
+                if(baseInfo.asText().indexOf(jiXu)!=-1){
                 	String url = "http://www.cqgjj.cn/Member/gr/gjjyecx.aspx";
                 	getImgCode(webClient,request,url);
-                	baseInfo = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjyecx.aspx");//个人明细信息
+                	//个人明细信息
+                	baseInfo = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjyecx.aspx");
                     Thread.sleep(2000);
                 }
-                if(baseInfo.asText().indexOf("公积金余额查询")==-1){
+                final String yue = "公积金余额查询";
+                if(baseInfo.asText().indexOf(yue)==-1){
                 	logger.warn("重庆住房公积金基本信息获取失败");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "当前网络繁忙，请刷新后重试");
@@ -140,20 +157,24 @@ public class ChongQingAccumulationfundService {
                 /*
                  * 	获取明细信息
                  */
-                HtmlPage Infos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjmxcx.aspx");//个人明细信息
+                //个人明细信息
+                HtmlPage inFos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjmxcx.aspx");
                 Thread.sleep(2000);
-                if(baseInfo.asText().indexOf("请输入验证码后继续")!=-1){//操作频繁出现再次验证验证码页面
+                //操作频繁出现再次验证验证码页面
+                
+                if(baseInfo.asText().indexOf(jiXu)!=-1){
                 	String url = "http://www.cqgjj.cn/Member/gr/gjjmxcx.aspx";
                 	getImgCode(webClient,request,url);
-                	Infos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjmxcx.aspx");//个人明细信息
+                	//个人明细信息
+                	inFos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjmxcx.aspx");
                     Thread.sleep(2000);
                 }
-                String pageNum = Infos.getElementById("ContentPlaceHolder1_PageNavigator1_LblPageCount").getTextContent();
+                String pageNum = inFos.getElementById("ContentPlaceHolder1_PageNavigator1_LblPageCount").getTextContent();
                 AccumulationFlows flows = new AccumulationFlows();
                 data = (Map<String, Object>) dataMap.get("basicInfos");
                 String companyName = (String) data.get("companyName");
                 for(int i=1;i<=Integer.parseInt(pageNum);i++){      
-                	HtmlTable tableInfo = (HtmlTable) Infos.getElementsByTagName("table").get(0);
+                	HtmlTable tableInfo = (HtmlTable) inFos.getElementsByTagName("table").get(0);
                 	DomNodeList trList = tableInfo.getElementsByTagName("tr");
 	                for(int tr=1;tr<trList.size();tr++){
 	                	String type1 = tableInfo.getCellAt(tr,1).asText();
@@ -167,35 +188,45 @@ public class ChongQingAccumulationfundService {
 	    					type1="补缴";
 	    				}
 	    				String time = tableInfo.getCellAt(tr,0).asText().substring(0, 7).replace("-", "");
-	    				String bizDesc = type1+time+"公积金";//业务描述
-	    				flows.setAmount(tableInfo.getCellAt(tr,3).asText());//操作金额
+	    				//业务描述
+	    				String bizDesc = type1+time+"公积金";
+	    				//操作金额
+	    				flows.setAmount(tableInfo.getCellAt(tr,3).asText());
 	    				flows.setBizDesc(bizDesc);
-	    				flows.setOperatorDate(tableInfo.getCellAt(tr,0).asText());//操作时间
-	    				flows.setPayMonth(time);//缴费月份
-	    				flows.setType(type1);//操作类型
-	    				flows.setCompanyName(companyName);//公司名
+	    				//操作时间
+	    				flows.setOperatorDate(tableInfo.getCellAt(tr,0).asText());
+	    				//缴费月份
+	    				flows.setPayMonth(time);
+	    				//操作类型
+	    				flows.setType(type1);
+	    				//公司名
+	    				flows.setCompanyName(companyName);
 	    				JSONObject jsonObject = JSONObject.fromObject(flows);
 		    			String jsonBean = jsonObject.toString();
 		    			System.out.println(jsonBean);
 	    				beanList.add(jsonBean);
 	    			}
-	                if(i<Integer.parseInt(pageNum)){//下一页
-	                	Infos = Infos.getElementById("ContentPlaceHolder1_PageNavigator1_LnkBtnNext").click();
+	                //下一页
+	                if(i<Integer.parseInt(pageNum)){
+	                	inFos = inFos.getElementById("ContentPlaceHolder1_PageNavigator1_LnkBtnNext").click();
 	                }
                 }
     			dataMap.put("flows", beanList);
                 /*
                  * 贷款信息
                  */
-    			HtmlPage loansInfos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjgrdk.aspx");//个人贷款信息
+    			//个人贷款信息
+    			HtmlPage loansInfos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjgrdk.aspx");
                 Thread.sleep(2000);
-                if(loansInfos.asText().indexOf("请输入验证码后继续")!=-1){
+                if(loansInfos.asText().indexOf(jiXu)!=-1){
                 	String url = "http://www.cqgjj.cn/Member/gr/gjjgrdk.aspx";
                 	getImgCode(webClient,request,url);
-                	loansInfos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjgrdk.aspx");//个人贷款信息
+                	//个人贷款信息
+                	loansInfos = webClient.getPage("http://www.cqgjj.cn/Member/gr/gjjgrdk.aspx");
                     Thread.sleep(2000);
                 }
-                if(loansInfos.asText().indexOf("没有查询到贷款信息")!=-1){
+                final String daiKuan = "没有查询到贷款信息";
+                if(loansInfos.asText().indexOf(daiKuan)!=-1){
                 	dataMap.put("loans", null);   
                 }else {
                 	loansdata.put("loanAccNo", "");
@@ -233,7 +264,9 @@ public class ChongQingAccumulationfundService {
         
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
-        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        final String errorCode = "errorCode";
+        final String o = "0000";
+        if(map!=null&&o.equals(map.get(errorCode).toString())){
 	    	PushState.state(idCardNum, "accumulationFund",300);
 	    	map.put("errorInfo","推送成功");
 	    	map.put("errorCode","0000");
@@ -249,13 +282,15 @@ public class ChongQingAccumulationfundService {
         }
         return map;
     }
-    
-    /*
+    /**
      * 基本信息
-     */  
-    public Map<String, Object> getBaseInfos(HttpServletRequest request){
-    	Map<String, Object> dataMap = new HashMap<>();
-    	Map<String, Object> data = new HashMap<>();
+     * @param request
+     * @return
+     */   
+    @SuppressWarnings({ "unused", "resource" })
+	public Map<String, Object> getBaseInfos(HttpServletRequest request){
+    	Map<String, Object> dataMap = new HashMap<>(10);
+    	Map<String, Object> data = new HashMap<>(10);
         HttpSession session = request.getSession();
     	Object htmlWebClient = session.getAttribute("htmlWebClient-chongqing");
         Object htmlPage = session.getAttribute("htmlPage-chongqing");
@@ -266,19 +301,32 @@ public class ChongQingAccumulationfundService {
             data.put("companyName", page.getElementById("ContentPlaceHolder1_lb_dwmc").getTextContent().trim());
             data.put("name", page.getElementById("ContentPlaceHolder1_lb_name").getTextContent().trim());
             data.put("userCard", page.getElementById("ContentPlaceHolder1_Label1").getTextContent().trim());
-        	data.put("personDepositAmount", page.getElementById("ContentPlaceHolder1_lb_grjje").getTextContent().trim());//个人缴费金额
-        	data.put("personFundAccount", page.getElementById("ContentPlaceHolder1_lb_grjjjzh").getTextContent().trim());//个人公积金账号
-        	data.put("baseDeposit", "");//缴费基数
-        	String personFundCard = page.getElementById("ContentPlaceHolder1_lb_grxh").getTextContent().trim();//个人公积金卡号
-        	String companyDepositAmount = page.getElementById("ContentPlaceHolder1_lb_dwyje").getTextContent().trim();//公司缴费金额
-        	data.put("personFundCard", personFundCard);//个人公积金卡号
-        	data.put("companyRatio", "");//公司缴费比例//////
-        	data.put("personRatio", "");//个人缴费比例/////////////
-        	data.put("companyFundAccount", "");//公司公积金账号
-        	data.put("companyDepositAmount", companyDepositAmount);//公司缴费金额
-        	data.put("lastDepositDate", "");//最后缴费日期
-        	data.put("balance", page.getElementById("ContentPlaceHolder1_lb_dqye").getTextContent().trim());//余额
-        	data.put("status", page.getElementById("ContentPlaceHolder1_lb_dwzcs").getTextContent().trim());//状态        				
+            //个人缴费金额
+        	data.put("personDepositAmount", page.getElementById("ContentPlaceHolder1_lb_grjje").getTextContent().trim());
+        	//个人公积金账号
+        	data.put("personFundAccount", page.getElementById("ContentPlaceHolder1_lb_grjjjzh").getTextContent().trim());
+        	//缴费基数
+        	data.put("baseDeposit", "");
+        	//个人公积金卡号
+        	String personFundCard = page.getElementById("ContentPlaceHolder1_lb_grxh").getTextContent().trim();
+        	//公司缴费金额
+        	String companyDepositAmount = page.getElementById("ContentPlaceHolder1_lb_dwyje").getTextContent().trim();
+        	//个人公积金卡号
+        	data.put("personFundCard", personFundCard);
+        	//公司缴费比例//////
+        	data.put("companyRatio", "");
+        	//个人缴费比例/////////////
+        	data.put("personRatio", "");
+        	//公司公积金账号
+        	data.put("companyFundAccount", "");
+        	//公司缴费金额
+        	data.put("companyDepositAmount", companyDepositAmount);
+        	//最后缴费日期
+        	data.put("lastDepositDate", "");
+        	//余额
+        	data.put("balance", page.getElementById("ContentPlaceHolder1_lb_dqye").getTextContent().trim());
+        	//状态  
+        	data.put("status", page.getElementById("ContentPlaceHolder1_lb_dwzcs").getTextContent().trim());      				
         	dataMap.put("basicInfos", data);
             
         }else{
@@ -289,22 +337,25 @@ public class ChongQingAccumulationfundService {
         }
         return dataMap;
     }
-    /*
+    /**
      * 网页提醒操作频繁，重新获取验证码
-     */
-    public void getImgCode(WebClient webClient,HttpServletRequest request,String url) throws Exception{
+     * @param webClient
+     * @param request
+     * @param url
+     * @throws Exception
+     */   
+    @SuppressWarnings("unused")
+	public void getImgCode(WebClient webClient,HttpServletRequest request,String url) throws Exception{
     	 HttpSession session = request.getSession();
-    	 HtmlPage Infos = webClient.getPage(url);
+    	 HtmlPage infos = webClient.getPage(url);
          Thread.sleep(2000);
-         HtmlImage imgCode = (HtmlImage) Infos.getElementById("imgCode");
+         HtmlImage imgCode = (HtmlImage) infos.getElementById("imgCode");
          BufferedImage read = imgCode.getImageReader().read(0);
          ImageIO.write(read, "png", new File("C://aa.png"));
          Map<String, Object> code = MyCYDMDemo.getCode("C://aa.png");
          String vecCode = code.get("strResult").toString();
-         Infos.getElementById("rand").setAttribute("value", vecCode);
-         HtmlPage ImgCodePage = Infos.getElementById("ContentPlaceHolder1_Button_Select").click();
+         infos.getElementById("rand").setAttribute("value", vecCode);
+         HtmlPage imgCodePage = infos.getElementById("ContentPlaceHolder1_Button_Select").click();
     }
-    /*
-     * 
-     */
+   
 }

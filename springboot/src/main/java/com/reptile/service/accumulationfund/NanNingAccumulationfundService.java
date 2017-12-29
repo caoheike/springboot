@@ -29,7 +29,14 @@ import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 import com.reptile.util.application;
-
+/**
+ * 
+ * @ClassName: NanNingAccumulationfundService  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Service
 public class NanNingAccumulationfundService {
 	@Autowired 
@@ -37,12 +44,13 @@ public class NanNingAccumulationfundService {
     private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 	DecimalFormat df= new DecimalFormat("#.00");
 	Date date=new Date();
-    public Map<String, Object> getDeatilMes(HttpServletRequest request,String userCard, String password,String idCardNum) {
+    @SuppressWarnings({ "rawtypes", "unused" })
+	public Map<String, Object> getDeatilMes(HttpServletRequest request,String userCard, String password,String idCardNum) {
         logger.warn("获取南宁公积金数据");
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> datamap = new HashMap<>();
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> loansdata = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(20);
+        Map<String, Object> datamap = new HashMap<>(20);
+        Map<String, Object> data = new HashMap<>(20);
+        Map<String, Object> loansdata = new HashMap<>(20);
         List<Object> beanList=new ArrayList<Object>();
         WebClient webClient = new WebClientFactory().getWebClient();
         HtmlPage page = null;
@@ -64,7 +72,8 @@ public class NanNingAccumulationfundService {
                 return map;
             }
             System.out.println(posthtml.asText());
-            if(posthtml.asText().indexOf("职工住房公积金基本情况")==-1){
+            final String zhiGong = "职工住房公积金基本情况";
+            if(posthtml.asText().indexOf(zhiGong)==-1){
             	logger.warn("宁波住房公积金获取失败");
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "当前网络繁忙，请刷新后重试");
@@ -77,22 +86,35 @@ public class NanNingAccumulationfundService {
             	String companyName = mytable.getElementsByTagName("td").get(15).getTextContent();
             	String company = mytable.getElementsByTagName("td").get(19).getTextContent();
             	String person = mytable.getElementsByTagName("td").get(21).getTextContent();
-            	Double companybi = Double.valueOf(company)/(Double.valueOf(company)+Double.valueOf(person));//公司缴费比例
-            	Double personbi = Double.valueOf(person)/(Double.valueOf(company)+Double.valueOf(person));//个人缴费比例
+            	//公司缴费比例
+            	Double companybi = Double.valueOf(company)/(Double.valueOf(company)+Double.valueOf(person));
+            	//个人缴费比例
+            	Double personbi = Double.valueOf(person)/(Double.valueOf(company)+Double.valueOf(person));
             	data.put("companyName", companyName);
             	data.put("name", mytable.getElementsByTagName("td").get(1).getTextContent());
             	data.put("userCard", userCard);
-            	data.put("personDepositAmount", person);//个人缴费金额
-            	data.put("personFundAccount", userCard);//个人公积金账号
-            	data.put("baseDeposit", null);//缴费基数
-            	data.put("personFundCard", null);//个人公积金卡号
-            	data.put("companyRatio", String.valueOf(companybi));//公司缴费比例
-            	data.put("personRatio", String.valueOf(personbi));//个人缴费比例
-            	data.put("companyFundAccount", mytable.getElementsByTagName("td").get(7).getTextContent());//公司公积金账号
-            	data.put("companyDepositAmount", company);//公司缴费金额
-            	data.put("lastDepositDate", mytable.getElementsByTagName("td").get(29).getTextContent());//最后缴费日期
-            	data.put("balance", mytable.getElementsByTagName("td").get(27).getTextContent());//余额
-            	data.put("status", mytable.getElementsByTagName("td").get(5).getTextContent());//状态
+            	//个人缴费金额
+            	data.put("personDepositAmount", person);
+            	//个人公积金账号
+            	data.put("personFundAccount", userCard);
+            	//缴费基数
+            	data.put("baseDeposit", null);
+            	//个人公积金卡号
+            	data.put("personFundCard", null);
+            	//公司缴费比例
+            	data.put("companyRatio", String.valueOf(companybi));
+            	//个人缴费比例
+            	data.put("personRatio", String.valueOf(personbi));
+            	//公司公积金账号
+            	data.put("companyFundAccount", mytable.getElementsByTagName("td").get(7).getTextContent());
+            	//公司缴费金额
+            	data.put("companyDepositAmount", company);
+            	//最后缴费日期
+            	data.put("lastDepositDate", mytable.getElementsByTagName("td").get(29).getTextContent());
+            	//余额
+            	data.put("balance", mytable.getElementsByTagName("td").get(27).getTextContent());
+            	//状态
+            	data.put("status", mytable.getElementsByTagName("td").get(5).getTextContent());
             	datamap.put("basicInfos", data);
             	/*
             	 * 明细,查找六年
@@ -107,7 +129,8 @@ public class NanNingAccumulationfundService {
                 String startDate = sdf.format(y);            	
             	timeForm.getElementsByTagName("input").get(0).setAttribute("value", startDate);
             	timeForm.getElementsByTagName("input").get(1).setAttribute("value", today);
-            	HtmlTable querytable = (HtmlTable) posthtml.getElementsByTagName("table").get(16);//查找table
+            	//查找table
+            	HtmlTable querytable = (HtmlTable) posthtml.getElementsByTagName("table").get(16);
             	HtmlPage infohtml = querytable.getElementsByTagName("a").get(0).click();
                 Thread.sleep(500);
             	System.out.println(alert.size());
@@ -117,7 +140,8 @@ public class NanNingAccumulationfundService {
                     map.put("errorInfo", alert.get(0));
                     return map;
                 }
-                HtmlTable infotable = (HtmlTable) posthtml.getElementsByTagName("table").get(18);//明细table                
+                //明细table
+                HtmlTable infotable = (HtmlTable) posthtml.getElementsByTagName("table").get(18);                
                 DomNodeList tr = infotable.getElementsByTagName("tr");
             	for(int i=1; i<tr.size();i++){
             		AccumulationFlows flows = new AccumulationFlows();
@@ -125,10 +149,10 @@ public class NanNingAccumulationfundService {
     				if(type1.indexOf("汇交分配")==-1&&type1.indexOf("补交分配")==-1){
     					continue;
     				}
-    				if(type1.equals("补交分配")){
+    				if("补交分配".equals(type1)){
     					type1="补缴";
     				}
-    				if(type1.equals("汇交分配")){
+    				if("汇交分配".equals(type1)){
     					type1="汇缴";
     				}
     				String operatorDate = infotable.getCellAt(i,0).asText();
@@ -161,7 +185,9 @@ public class NanNingAccumulationfundService {
                     map.put("errorInfo", alert.get(0));
                     return map;
                 }
-                if(daikuanlogon.asText().contains("该职工无贷款信息")){//没有贷款信息时   	               	
+                //没有贷款信息时 
+                final String daiKuan = "该职工无贷款信息";
+                if(daikuanlogon.asText().contains(daiKuan)){  	               	
                 	datamap.put("loans", null);            	
                 }else{
                 	loansdata.put("loanAccNo", "");
@@ -193,7 +219,9 @@ public class NanNingAccumulationfundService {
         
         Resttemplate resttemplate=new Resttemplate();
         map = resttemplate.SendMessage(map, applicat.getSendip()+"/HSDC/person/accumulationFund");
-        if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+        final String tuiSong = "0000";
+        final String errorCode = "errorCode";
+        if(map!=null&&tuiSong.equals(map.get(errorCode).toString())){
           	 PushState.state(idCardNum, "accumulationFund", 300);
               map.put("errorInfo","推送成功");
               map.put("errorCode","0000");

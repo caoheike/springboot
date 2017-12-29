@@ -14,7 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.socialSecurity.ChongQingSocialSecurityService;
-
+/**
+ * 
+ * @ClassName: ChongQingSocialSecurityController  
+ * @Description: TODO  
+ * @author: fangshuang
+ * @date 2017年12月29日  
+ *
+ */
 @Controller
 @RequestMapping("ChongQingSocialSecurityController")
 public class ChongQingSocialSecurityController {
