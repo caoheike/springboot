@@ -1,4 +1,4 @@
-package com.reptile.service.socialSecurity;
+package com.reptile.service.socialsecurity;
 
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;

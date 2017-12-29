@@ -1,7 +1,7 @@
-package com.reptile.contorller.socialSecurity;
+package com.reptile.contorller.socialsecurity;
 
 
-import com.reptile.service.socialSecurity.GuiYangSocialSecurityService;
+import com.reptile.service.socialsecurity.GuiYangSocialSecurityService;
 
 import io.swagger.annotations.ApiOperation;
 

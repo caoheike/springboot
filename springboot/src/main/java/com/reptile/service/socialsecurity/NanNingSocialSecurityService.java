@@ -1,4 +1,4 @@
-package com.reptile.service.socialSecurity;
+package com.reptile.service.socialsecurity;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;

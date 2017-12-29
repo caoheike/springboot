@@ -1,4 +1,4 @@
-package com.reptile.service.socialSecurity;
+package com.reptile.service.socialsecurity;
 
 
 import com.reptile.util.ConstantInterface;
