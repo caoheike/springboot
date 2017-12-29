@@ -17,10 +17,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 滨州公积金
+ * @ClassName: BinZhouHousingFundService  
+ * @Description: TODO  
+ * @author: xuesongcui
+ * @date 2017年12月29日  
+ *
+ */
 @Service
-public class BZHousingFundService {
+public class BinZhouHousingFundService {
 	
-	private Logger logger = LoggerFactory.getLogger(BZHousingFundService.class);
+	private Logger logger = LoggerFactory.getLogger(BinZhouHousingFundService.class);
+	
+	
+	private static String codeStr = "验证码不正确，请重新输入";
+	private static String success = "0000";
+	private static String accumulationFund = "accumulationFund";
+	private static String accumulationFundPath = "/HSDC/person/accumulationFund";
+	private static String errorCode = "errorCode";
 
 	/**
 	 * 登录并获取详情
@@ -33,8 +48,8 @@ public class BZHousingFundService {
 	 */
 	public Map<String, Object> doLogin(HttpServletRequest request,
 			String userName, String passWord,String idCard,String cityCode,String idCardNum) {
-		
-		Map<String, Object> data = new HashMap<String, Object>();//返回信息
+		//返回信息
+		Map<String, Object> data = new HashMap<String, Object>(128);
 		
 		WebClient webClient = new WebClientFactory().getWebClient();
 		try {
@@ -43,8 +58,9 @@ public class BZHousingFundService {
 			HtmlImage imageField= (HtmlImage) loginPage.getElementByName("imageField");
 			String verifyImagesPath = request.getSession().getServletContext().getRealPath("/verifyImages");
 			String imgPath = ImgUtil.saveImg(imageField, "bz", verifyImagesPath, "png");
-			Map<String,Object> result = MyCYDMDemo.Imagev(imgPath);
-			String checkCode =  (String) result.get("strResult");//转码后的动态码
+			Map<String,Object> result = MyCYDMDemo.Imagev(imgPath); 
+			//转码后的动态码
+			String checkCode =  (String) result.get("strResult");
 			//获取登录表单
 			HtmlForm form = (HtmlForm) loginPage.getElementByName("ilogin");
 			
@@ -63,7 +79,7 @@ public class BZHousingFundService {
 	        submit.click();
 	        
 	        if(list.size() > 0){
-	        	if((list.get(0).trim()).equals("验证码不正确，请重新输入")){
+	        	if(codeStr.equals((list.get(0).trim()))){
 	        		data.put("errorCode", "0002");
 	        		data.put("errorInfo", "系统繁忙，请重试！");
 	        	}else{
@@ -96,7 +112,7 @@ public class BZHousingFundService {
 	 * @return
 	 */
 	public Map<String, Object> doGetDetail(HttpServletRequest request,String idCard,String cityCode,String idCardNum,WebClient webClient) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<String, Object>(16);
 		  PushState.state(idCardNum, "accumulationFund", 100);
 		try {
 			WebRequest webRequest = new WebRequest(new URL("http://www.bzgjj.cn/usermain2.php"));
@@ -107,8 +123,9 @@ public class BZHousingFundService {
 		    
 		    HtmlTable table = (HtmlTable) detailPage.getElementsByTagName("table").get(1);
 		    
-		    Map<String,Object> map = new HashMap<String, Object>();
-		    map.put("baseMes",table.asXml());//基本数据
+		    Map<String,Object> map = new HashMap<String, Object>(16);
+		    //基本数据
+		    map.put("baseMes",table.asXml());
 		    
 		    data.put("errorCode", "0000");
 		    data.put("errorInfo", "查询成功"); 
@@ -116,19 +133,20 @@ public class BZHousingFundService {
 		    data.put("city", cityCode);
 		    data.put("userId", idCardNum);
 		    //数据推送
-		    data = new Resttemplate().SendMessage(data, ConstantInterface.port+"/HSDC/person/accumulationFund");
-		    if(data!=null&&"0000".equals(data.get("errorCode").toString())){
-           	 PushState.state(idCardNum, "accumulationFund", 300);
-           	data.put("errorInfo","推送成功");
-           	data.put("errorCode","0000");
-           }else{
-           	 PushState.state(idCardNum, "accumulationFund", 200);
-           	data.put("errorInfo","推送失败");
-           	data.put("errorCode","0001");
+		    data = new Resttemplate().SendMessage(data, ConstantInterface.port + accumulationFundPath);
+		    
+		    if(data != null && success.equals(data.get(errorCode).toString())){
+           	 	PushState.state(idCardNum, accumulationFund, 300);
+           	 	data.put("errorInfo","推送成功");
+           	 	data.put("errorCode","0000");
+		    }else{
+	           	PushState.state(idCardNum, accumulationFund, 200);
+	           	data.put("errorInfo","推送失败");
+	           	data.put("errorCode","0001");
            }
 		} catch (Exception e) {
-			 PushState.state(idCardNum, "accumulationFund", 200);
 			logger.error("滨州市公积金查询失败",e);
+			PushState.state(idCardNum, accumulationFund, 200);
 			data.put("errorCode", "0002");
 			data.put("errorInfo", "网络繁忙，请重试");
 		}
