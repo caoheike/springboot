@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- * 识别图片中的问题
+ * 识别图片
+ *
+ * @author mrlu
+ * @date 2016/10/31
  */
 public class RecognizeImage {
     private static String appId = "10532232";
@@ -40,7 +43,7 @@ public class RecognizeImage {
 //		aipOcr.setHttpProxy("proxy_host", proxy_port);  // 设置http代理
 //		aipOcr.setSocketProxy("proxy_host", proxy_port);  // 设置socket代理
         String path = filePath;
-        JSONObject res = aipOcr.basicGeneral(path, new HashMap<String, String>());
+        JSONObject res = aipOcr.basicGeneral(path, new HashMap<String, String>(16));
         return res;
     }
 

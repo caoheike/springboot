@@ -6,7 +6,10 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.reptile.springboot.Scheduler;
 
 /**
- * Created by Administrator on 2017/8/18.
+ * webClient对象创建工厂
+ *
+ * @author mrlu
+ * @date 2016/10/31
  */
 public class WebClientFactory {
 
@@ -15,7 +18,8 @@ public class WebClientFactory {
 //    public WebClient webClient = new WebClient();
 
     public WebClient getWebClient() {
-        webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+        // 开启cookie管理
+        webClient.getCookieManager().setCookiesEnabled(true);
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setTimeout(30000);
         webClient.getOptions().setJavaScriptEnabled(true);
@@ -31,7 +35,7 @@ public class WebClientFactory {
      * @return
      */
     public WebClient getWebClientJs() {
-    	webClient.getCookieManager().setCookiesEnabled(true);// 开启cookie管理
+    	webClient.getCookieManager().setCookiesEnabled(true);
     	webClient.getOptions().setCssEnabled(false);
     	webClient.getOptions().setTimeout(30000);
     	webClient.getOptions().setJavaScriptEnabled(true);

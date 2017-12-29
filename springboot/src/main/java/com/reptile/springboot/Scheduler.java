@@ -18,6 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * 定时器 定时检查代理ip是否过去
+ *
+ * @author mrlu
+ * @date 2016/10/31
+ */
 @Component
 public class Scheduler {
     private static Logger logger = LoggerFactory.getLogger(Scheduler.class);
@@ -26,10 +32,10 @@ public class Scheduler {
     public static String ip = "";
     public static int port = 0;
     public static String expire_time = "";
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static boolean flag = true;
 
     static {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Scheduler.sendGet(getIp);
         System.out.println(ip + ":" + port + "     time " + dateFormat.format(System.currentTimeMillis()) + " expire_time" + expire_time);
         logger.info(ip + ":" + port + "     time " + dateFormat.format(System.currentTimeMillis()) + " expire_time" + expire_time);
@@ -37,9 +43,11 @@ public class Scheduler {
 
     @Scheduled(fixedRate = 5000)
     public static void judeValid() throws Exception {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (flag) {
             Date date = dateFormat.parse(expire_time);
-            if (date.getTime() - 60000 < System.currentTimeMillis()) {
+            long count=6000;
+            if (date.getTime() - count < System.currentTimeMillis()) {
                 Scheduler.sendGet(getIp);
                 System.out.println(ip + ":" + port + "     time " + dateFormat.format(System.currentTimeMillis()) + " expire_time" + expire_time);
                 logger.info(ip + ":" + port + "     time " + dateFormat.format(System.currentTimeMillis()) + " expire_time" + expire_time);
@@ -82,6 +90,7 @@ public class Scheduler {
             ip = fromObject2.getJSONObject(0).getString("ip");
             port = Integer.parseInt(fromObject2.getJSONObject(0).getString("port"));
             expire_time = fromObject2.getJSONObject(0).getString("expire_time");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             logger.info(ip + ":" + port + "     time " + dateFormat.format(System.currentTimeMillis()) + " expire_time" + expire_time);
         } catch (Exception e) {
             flag=false;

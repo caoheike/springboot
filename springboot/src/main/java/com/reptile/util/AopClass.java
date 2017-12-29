@@ -13,11 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by ldw on 2017-9-14
- * <p>
  * 使用注解形式的aop，在类明上增加@aspect注解
  * 通过aop的方式返回认证状态
+ * @author mrlu
+ * @date 2016/10/31
  */
+
 @Component
 @Aspect
 public class AopClass {
