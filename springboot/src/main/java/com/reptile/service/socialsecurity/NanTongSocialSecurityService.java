@@ -40,7 +40,6 @@ import com.reptile.util.WebClientFactory;
 public class NanTongSocialSecurityService {
     private Logger logger = LoggerFactory.getLogger(NanTongSocialSecurityService.class);
 
-	private static String success = "0000";
 	private static String errorCode = "errorCode";
     
 
