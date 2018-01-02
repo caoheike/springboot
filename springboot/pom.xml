@@ -24,7 +24,8 @@
 		<java.version>1.8</java.version>
 	</properties>
 
-
+	
+	<!-- phantomjsdriver -->
 	<dependencies>
 		<dependency>
 			<groupId>com.codeborne</groupId>
@@ -336,6 +337,12 @@
 		<dependency>
 			<groupId>com.hoomsun.keyBoard</groupId>
 			<artifactId>keyBoard</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+		<!-- HOOMSUN -->
+		<dependency>
+			<groupId>com.hoomsun.PhantomJs</groupId>
+			<artifactId>PhantomJs</artifactId>
 			<version>0.0.2</version>
 		</dependency>
 	</dependencies>

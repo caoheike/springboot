@@ -15,7 +15,14 @@ import com.reptile.service.accumulationfund.WuXiAccumulationfundService;
 import com.reptile.service.accumulationfund.ZhenJiangAccumulationfundService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @ClassName: WuXiAccumulationfundController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("WuXiAccumulationfundController")
 public class WuXiAccumulationfundController {

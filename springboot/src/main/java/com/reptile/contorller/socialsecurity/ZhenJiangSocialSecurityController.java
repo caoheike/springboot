@@ -14,13 +14,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.socialsecurity.ZhenJiangSocialSecurityService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @ClassName: ZhenJiangSocialSecurityController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 
 @Controller
 @RequestMapping("ZhenJiangSocialSecurity")
 public class ZhenJiangSocialSecurityController {
 	@Autowired
-	private ZhenJiangSocialSecurityService Service;
+	private ZhenJiangSocialSecurityService service;
  
 	
 	/**
@@ -36,6 +43,6 @@ public class ZhenJiangSocialSecurityController {
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("passWord")String passWord,@RequestParam("cityCode")String cityCode,@RequestParam("idCardNum")String idCardNum){
-		return Service.doLogin(request, idCard, passWord,cityCode,idCardNum);
+		return service.doLogin(request, idCard, passWord,cityCode,idCardNum);
 	}
 }
