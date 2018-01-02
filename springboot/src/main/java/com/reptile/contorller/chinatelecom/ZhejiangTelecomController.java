@@ -15,10 +15,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.chinatelecom.ZhejiangTelecomService;
 import com.reptile.util.CustomAnnotation;
-
+/**
+ * 
+ * @ClassName: ZhejiangTelecomController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("zheJiangTelecom")
 public class ZhejiangTelecomController {
+
 	@Autowired
 	private ZhejiangTelecomService zheJiangTelecomService;
 	
@@ -34,8 +42,8 @@ public class ZhejiangTelecomController {
 	@ResponseBody
 	@RequestMapping(value = "zheJiangDetial", method = RequestMethod.POST)
 	@CustomAnnotation
-	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
+	public Map<String,Object> zheJiangDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("name")String name,@RequestParam("idCard")String idCard,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
 		
-		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code,longitude,latitude,UUID);
+		return zheJiangTelecomService.zheJiangDetial(request,phoneNumber,servePwd,name,idCard,code,longitude,latitude,uuid);
 	}
 }

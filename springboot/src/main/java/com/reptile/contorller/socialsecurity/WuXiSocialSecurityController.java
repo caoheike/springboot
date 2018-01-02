@@ -15,19 +15,26 @@ import com.reptile.service.socialsecurity.WuXiSocialSecurityService;
 import com.reptile.service.socialsecurity.ZhenJiangSocialSecurityService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @ClassName: WuXiSocialSecurityController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 
 @Controller
 @RequestMapping("WuXiSocialSecurity")
 public class WuXiSocialSecurityController {
 	@Autowired
-	private WuXiSocialSecurityService Service;
+	private WuXiSocialSecurityService service;
  
 	@ApiOperation(value = "无锡社保：获取验证码",notes = "参数：无")
 	@ResponseBody
 	@RequestMapping(value = "doGetVerifyImg", method = RequestMethod.POST)
 	public  Map<String,Object> doGetVerifyImg(HttpServletRequest request){
-		return Service.doGetVerifyImg(request);
+		return service.doGetVerifyImg(request);
 		
 	}
 	
@@ -44,6 +51,6 @@ public class WuXiSocialSecurityController {
 	@ResponseBody
 	@RequestMapping(value = "doGetDetail", method = RequestMethod.POST)
 	public  Map<String,Object> doGetDetail(HttpServletRequest request,@RequestParam("idCard")String idCard,@RequestParam("userName")String  userName,@RequestParam("passWord")String passWord,@RequestParam("catpy")String catpy,@RequestParam("cityCode")String cityCode,@RequestParam("socialCard")String socialCard){
-		return Service.doLogin(request, idCard, passWord, catpy, cityCode);
+		return service.doLogin(request, idCard, passWord, catpy, cityCode);
 	}
 }
