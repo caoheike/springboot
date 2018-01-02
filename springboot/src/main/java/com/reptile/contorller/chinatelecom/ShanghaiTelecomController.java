@@ -15,7 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.chinatelecom.ShanghaiTelecomService;
 import com.reptile.util.CustomAnnotation;
-
+/**
+ * 
+ * @ClassName: ShanghaiTelecomController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("shhaiTelecom")
 public class ShanghaiTelecomController {
@@ -32,7 +39,7 @@ public  Map<String,Object> afterLogin(HttpServletRequest request){
 @ResponseBody
 @CustomAnnotation
 @RequestMapping(value = "shhaigetDetial", method = RequestMethod.POST)
-public  Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
-	return telecomService.getDetial(phoneNumber,servePwd, request, code,longitude,latitude,UUID);
+public  Map<String,Object> getDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
+	return telecomService.getDetial(phoneNumber,servePwd, request, code,longitude,latitude,uuid);
 }
 }

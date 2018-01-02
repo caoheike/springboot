@@ -31,6 +31,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+/**
+ * 
+ * @ClassName: BaoJiFundService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class BaoJiFundService {
 private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
@@ -40,15 +48,17 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 	
 	public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 		WebClient webclient=new WebClientFactory().getWebClient();
-		 Map<String, Object> map = new HashMap<String, Object>();
-		 Map<String, Object> dataMap = new HashMap<String, Object>();
+		 Map<String, Object> map = new HashMap<String, Object>(16);
+		 Map<String, Object> dataMap = new HashMap<String, Object>(16);
 		
 		try {
 			webclient.getPage("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/index.jsp");
 			WebRequest request1 =new WebRequest(new URL("http://61.134.23.147:7004/wscx/zfbzgl/zfbzsq/login_hidden.jsp?pass="+passWord+"&zh="+idCard));
-			request1.setHttpMethod(HttpMethod.GET);//提交方式
+			//提交方式
+			request1.setHttpMethod(HttpMethod.GET);
 		 HtmlPage page1=	webclient.getPage(request1);
-		  if(page1.asXml().contains("alert")){
+		 String aler="alert";
+		  if(page1.asXml().contains(aler)){
 			  String tip=page1.asXml().split("alert")[1].split("\\(")[1].split("\\)")[0];
 			  map.put("errorCode", "0001");
 			  map.put("errorInfo", tip);
@@ -56,7 +66,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 		  }else{
 			  PushState.state(idCardNum, "accumulationFund", 100);
 			  System.out.println("登陆成功");
-			  Map<String, String>  basicInfos=new HashMap<String, String>();//存放基本信息
+			  //存放基本信息
+			  Map<String, String>  basicInfos=new HashMap<String, String>(16);
 			  String zgzh=page1.getElementByName("zgzh").getAttribute("value");
 			  String sfzh=page1.getElementByName("sfzh").getAttribute("value");
 			  String zgxm=page1.getElementByName("zgxm").getAttribute("value");
@@ -68,7 +79,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			 // System.out.println(page2.asXml());//基本信息
 			  HtmlTable table= (HtmlTable) page2.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[4]/tbody/tr/td/table/tbody/tr/td/table[1]").get(0);
 			//  System.out.println(table.asXml());//宝鸡公积金基本信息(需要解析)
-			  basicInfos=this.parseBasicInfos(table.asXml(), idCard, basicInfos);//基本信息
+			  //基本信息
+			  basicInfos=this.parseBasicInfos(table.asXml(), idCard, basicInfos);
 			  String url="http://61.134.23.147:7004/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
 			  List<NameValuePair> list = new ArrayList<NameValuePair>();
 				//设置参数
@@ -78,20 +90,23 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 				list.add(new NameValuePair("dwbm", dwbm));
 				list.add(new NameValuePair("cxyd", URLEncoder.encode("当前年度", "gb2312")));
 				list.add(new NameValuePair("zgzt", null));
-		    	HtmlPage detailPage=getPages(webclient, url, list, HttpMethod.POST); //当前年度详单	
+				//当前年度详单	
+		    	HtmlPage detailPage=getPages(webclient, url, list, HttpMethod.POST); 
 			    Thread.sleep(3000);
 			  //==============宝鸡所有明细==================
-			      List<Map<String, String>> flows=new ArrayList<Map<String,String>>();//存放明细的list
+			    //存放明细的list
+			      List<Map<String, String>> flows=new ArrayList<Map<String,String>>();
 				  HtmlTable tables=   (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
 				  HtmlElement totalPage =(HtmlElement) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[2]/td").get(0);
 				  String details=totalPage.asText().split("共")[1].split("页")[0];
 				  int num=new Integer(details);
-				  if(num==1&&tables.asXml().contains("jtpsoft")){
+				  String jtps="jtpsoft";
+				  if(num==1&&tables.asXml().contains(jtps)){
 					  flows=this.parseFlows(detailPage.asXml(), flows);
 				  }else{
 					 // System.out.println(detailPage.asText()+"-------------"); //当前年度第一页(需要解析)
 					  flows=this.parseFlows(detailPage.asXml(), flows);
-					  if(num>1&&tables.asXml().contains("jtpsoft")){
+					  if(num>1&&tables.asXml().contains(jtps)){
 						//当前年度其余页
 						  for(int j=1;j<num;j++){
 							  
@@ -101,7 +116,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 						  }
 						  
 					  }else{
-						  flows.add(new HashMap<String, String>());//没有清单
+						  //没有清单
+						  flows.add(new HashMap<String, String>(16));
 					  }
 				  }
 				//=========================  其余年度明细==============
@@ -129,9 +145,12 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 						  }
 					  }  
 				  }
-				  dataMap.put("basicInfos", basicInfos);//基本信息
-			      dataMap.put("flows", flows);//流水 
-			      dataMap.put("loans","");//贷款
+				  //基本信息
+				  dataMap.put("basicInfos", basicInfos);
+				  //流水 
+			      dataMap.put("flows", flows);
+			      //贷款
+			      dataMap.put("loans","");
 				  SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 				  map.put("userId", idCardNum);
 			      System.out.println(idCardNum);
@@ -141,7 +160,9 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			      map.put("data", dataMap);  
 			      //map=new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");//张浩敏
 			      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
-			      if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+			      String sgll="0000";
+			      String errorCode="errorCode";
+			      if(map!=null&&sgll.equals(map.get(errorCode).toString())){
 				    	PushState.state(idCardNum, "accumulationFund",300);
 				    	map.put("errorInfo","查询成功");
 				    	map.put("errorCode","0000");
@@ -240,10 +261,11 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 			  Elements trs= infotable.getElementsByTag("tr");
 			  Elements tds=null;
 			  List<String> basicInfosList=new ArrayList<String>();
-			  for (int i = 0; i < trs.size(); i++) {//行
+			  //行
+			  for (int i = 0; i < trs.size(); i++) {
 				  tds=trs.get(i).getElementsByTag("td");
-				  for (int j = 0; j < tds.size(); j++) {//列
-					  //System.out.println(tds.get(j).text()+"---------"+i+"  "+j+"----------");
+				  //列
+				  for (int j = 0; j < tds.size(); j++) {
 					  //筛选数据
 					  if(i!=4){
 						  if(j==1||j==3){
@@ -259,21 +281,35 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 				}
 				
 			}
-			  basicInfos.put("name", basicInfosList.get(0).trim());//姓名
-			  basicInfos.put("personFundCard", basicInfosList.get(1).trim());//个人公积金卡号
-			  basicInfos.put("idCard", idCard);//身份证号码
-			  basicInfos.put("personFundAccount", basicInfosList.get(3).trim());//个人公积金账号
-			  basicInfos.put("companyFundAccount","");//单位公积金账号
-			  basicInfos.put("companyName",basicInfosList.get(4).trim());//公司名称
-			  basicInfos.put("status",basicInfosList.get(7).trim());//状态
-			  basicInfos.put("baseDeposit", basicInfosList.get(8).replace(",", "").replace("元", "").trim());//缴费基数
+			  //姓名
+			  basicInfos.put("name", basicInfosList.get(0).trim());
+			  //个人公积金卡号
+			  basicInfos.put("personFundCard", basicInfosList.get(1).trim());
+			  //身份证号码
+			  basicInfos.put("idCard", idCard);
+			  //个人公积金账号
+			  basicInfos.put("personFundAccount", basicInfosList.get(3).trim());
+			  //单位公积金账号
+			  basicInfos.put("companyFundAccount","");
+			  //公司名称
+			  basicInfos.put("companyName",basicInfosList.get(4).trim());
+			  //状态
+			  basicInfos.put("status",basicInfosList.get(7).trim());
+			  //缴费基数
+			  basicInfos.put("baseDeposit", basicInfosList.get(8).replace(",", "").replace("元", "").trim());
 			  String ratio=basicInfosList.get(9).toString();
-			  basicInfos.put("companyRatio",ratio.split("\\/")[1].trim());//公司缴费比例
-			  basicInfos.put("personRatio", ratio.split("\\/")[0].trim());//个人缴费比例
-			  basicInfos.put("personDepositAmount", basicInfosList.get(14).replace(",", "").replace("元", "").trim());//个人缴费金额
-			  basicInfos.put("companyDepositAmount",basicInfosList.get(12).replace(",", "").replace("元", "").trim());//公司缴费金额
-			  basicInfos.put("balance",basicInfosList.get(19).replace(",", "").replace("元", "").trim());//余额
-			  basicInfos.put("lastDepositDate", basicInfosList.get(20).trim());//最后缴费日期	  
+			  //公司缴费比例
+			  basicInfos.put("companyRatio",ratio.split("\\/")[1].trim());
+			  //个人缴费比例
+			  basicInfos.put("personRatio", ratio.split("\\/")[0].trim());
+			  //个人缴费金额
+			  basicInfos.put("personDepositAmount", basicInfosList.get(14).replace(",", "").replace("元", "").trim());
+			  //公司缴费金额
+			  basicInfos.put("companyDepositAmount",basicInfosList.get(12).replace(",", "").replace("元", "").trim());
+			  //余额
+			  basicInfos.put("balance",basicInfosList.get(19).replace(",", "").replace("元", "").trim());
+			  //最后缴费日期	  
+			  basicInfos.put("lastDepositDate", basicInfosList.get(20).trim());
 			return basicInfos;
         }
      /**   
@@ -286,12 +322,15 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
     	  Document  infotable=  Jsoup.parse(detailXml);  
 		  Elements trs= infotable.getElementsByClass("jtpsoft");
 		  Elements tds=null;
-		  for (int i = 2; i < trs.size(); i++) {//行
+		  //行
+		  for (int i = 2; i < trs.size(); i++) {
 			  tds=trs.get(i).getElementsByTag("td");
-			  Map<String, String> flow=new HashMap<String, String>();
+			  Map<String, String> flow=new HashMap<String, String>(16);
 			  if(tds.get(5).text().contains("汇缴")||tds.get(5).text().contains("补缴")){
-			   flow.put("operatorDate", tds.get(0).text());//操作时间
-			   flow.put("bizDesc", tds.get(5).text());//业务描述
+				  //操作时间
+			   flow.put("operatorDate", tds.get(0).text());
+			   //业务描述
+			   flow.put("bizDesc", tds.get(5).text());
 				if(tds.get(5).text().contains("汇缴")){
 					flow.put("type", "汇缴");
 				}else if (tds.get(5).text().contains("补缴")) {
@@ -299,7 +338,8 @@ private Logger logger = LoggerFactory.getLogger(BaoJiFundService.class);
 				} else{
 					flow.put("type", "");
 				}
-				flow.put("payMonth", tds.get(0).text().split("-")[0]+tds.get(0).text().split("-")[1]);//缴费月份
+				//缴费月份
+				flow.put("payMonth", tds.get(0).text().split("-")[0]+tds.get(0).text().split("-")[1]);
 				
 			    flow.put("amount", tds.get(2).text());
 			    flows.add(flow);

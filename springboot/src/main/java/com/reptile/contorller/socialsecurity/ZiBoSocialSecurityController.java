@@ -15,7 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.KunMingFundService;
 import com.reptile.service.socialsecurity.ZiBoSocialSecuritySercice;
-
+/**
+ * 
+ * @ClassName: ZiBoSocialSecurityController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("ZiBoSocialSecurityController")
 public class ZiBoSocialSecurityController {

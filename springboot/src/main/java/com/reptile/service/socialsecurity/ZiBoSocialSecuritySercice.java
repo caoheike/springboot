@@ -21,7 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
+/**
+ * 
+ * @ClassName: ZiBoSocialSecuritySercice  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class ZiBoSocialSecuritySercice {
 	private Logger logger= LoggerFactory.getLogger(ZiBoSocialSecuritySercice.class);
@@ -31,8 +38,8 @@ public class ZiBoSocialSecuritySercice {
 	   * 获取图形验证码
 	   * */
 	  public Map<String, Object> getImageCode(HttpServletRequest request,String passWord){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String,String> mapPath=new HashMap<String, String>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String,String> mapPath=new HashMap<String, String>(16);
 	        HttpSession session = request.getSession();
 	        
 	        WebClient webClient=new WebClientFactory().getWebClient();
@@ -49,7 +56,8 @@ public class ZiBoSocialSecuritySercice {
 				
 	 			String usermm= "";
 				if(alertList.size() > 0){
-					usermm = alertList.get(0).toString();//加密后的密码
+					//加密后的密码
+					usermm = alertList.get(0).toString();
 					
 				}else{
 					logger.warn("淄博市社保--系统繁忙，请稍后再试！");
@@ -89,8 +97,8 @@ public class ZiBoSocialSecuritySercice {
 	  
 	  
 	  public  Map<String, Object> getDetails(HttpServletRequest request,String idCard,String catpy,String idCardNum){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String, Object> dateMap = new HashMap<String, Object>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String, Object> dateMap = new HashMap<String, Object>(16);
 		  List<Object> dataList = new ArrayList<Object>();
 		  List<Object> dataL = new ArrayList<Object>();
 		  HttpSession session = request.getSession();
@@ -105,7 +113,8 @@ public class ZiBoSocialSecuritySercice {
 		  try {
 				PushState.state(idCardNum, "socialSecurity", 100);
 			  WebClient webClient = (WebClient) client;
-			 String usermm = (String) session.getAttribute("GMpassWord");//从session中获得GMpassWord
+			  //从session中获得GMpassWord
+			 String usermm = (String) session.getAttribute("GMpassWord");
           
 			 String url1="http://sdzb.hrss.gov.cn:8001/logon.do";
 			 WebRequest requests1 = new WebRequest(new URL(url1));
@@ -126,7 +135,8 @@ public class ZiBoSocialSecuritySercice {
 			   // System.out.println(page2.asXml());	
 			
 			    String tip=page2.asText();
-			    if(tip.contains("__usersession_uuid")){
+			    String usersession="__usersession_uuid";
+			    if(tip.contains(usersession)){
 			    	logger.warn("淄博市社保基本信息获取中");
 			    	String userSessionUuid = (String) JSONObject.fromObject(tip).get("__usersession_uuid");
 		        	System.out.println("登陆成功");
@@ -159,10 +169,12 @@ public class ZiBoSocialSecuritySercice {
 					map.put("errorCode", "0000");
 					map.put("data", dateMap);
 					map.put("city", "");
-					map.put("userId", idCardNum);//TODO
+					map.put("userId", idCardNum);
 	                 map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
 		        	Thread.sleep(200);
-		        	if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+		        	String ssl="0000";
+		        	String errorCode="errorCode";
+		        	if(map!=null&&ssl.equals(map.get(errorCode).toString())){
 			          	PushState.state(idCardNum, "socialSecurity", 300);
 			          	map.put("errorInfo","推送成功");
 			          	map.put("errorCode","0000");
@@ -215,25 +227,29 @@ public class ZiBoSocialSecuritySercice {
 			String response = webRequest(url, list, HttpMethod.POST, webClient);
 			
 			List<String> responseInfo = new ArrayList<String>();
+			String tabl="table";
+			String select="select";
 			if(isFlag){
-				if(response.contains("table")){
+				if(response.contains(tabl)){
 					responseInfo.add(response.substring(response.indexOf("table")-1,response.lastIndexOf("table")+6));
 				}
 			}else{
-				if(response.contains("select")){
+				if(response.contains(select)){
 					
 					String selectInfo = response.substring(response.indexOf("select")+6,response.lastIndexOf("select")+6);
 					//获取可查到的所有年限
 					Set<String> years = new HashSet<String>();
-					for (int i = 0; i < selectInfo.length()-4; i++) {
+					int nm=4;
+					for (int i = 0; i < selectInfo.length()-nm; i++) {
 						String str = selectInfo.substring(i, i+4);
 						if(str.matches("^2[0-9]{3}")){
 							years.add(str);
 						}
 					}
 					//获取每年的社保信息,养老保险年限用ny，其余保险年限为year
+					String queryAgedPayHis="queryAgedPayHis";
 					for (String item : years) {
-						if(method.equals("queryAgedPayHis")){
+						if(method.equals(queryAgedPayHis)){
 							if(list.size() == 4){
 								list.add(4,new NameValuePair("nd", item));
 							}else{

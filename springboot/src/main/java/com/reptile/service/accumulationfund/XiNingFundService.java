@@ -38,8 +38,8 @@ public class XiNingFundService {
 	  private application applications;
 	  
 	  public Map<String, Object> getImageCode(HttpServletRequest request){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String,String> mapPath=new HashMap<String, String>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String,String> mapPath=new HashMap<String, String>(16);
 		  WebClient webClient=new WebClientFactory().getWebClient();
 	        HttpSession session = request.getSession();
 	        
@@ -77,8 +77,8 @@ public class XiNingFundService {
 		  
 	  }
 	  public  Map<String, Object> login(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String, Object> dateMap = new HashMap<String, Object>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String, Object> dateMap = new HashMap<String, Object>(16);
 		  List<Object> dataList = new ArrayList<Object>();
 		  List<Object> dataL = new ArrayList< Object>();
 		  HttpSession session = request.getSession();
@@ -113,7 +113,8 @@ public class XiNingFundService {
             list.add(new NameValuePair("gjjszd","1"));
             list.add(new NameValuePair("spcode",idCard));
             list.add(new NameValuePair("sppassword",passWord));
-            list.add(new NameValuePair("rand",catpy));//图形验证码
+            //图形验证码
+            list.add(new NameValuePair("rand",catpy));
             requests.setRequestParameters(list);
 			requests.setHttpMethod(HttpMethod.POST);
 			HtmlPage page1 = webClient.getPage(requests);
@@ -133,7 +134,8 @@ public class XiNingFundService {
 		                HtmlElement tables=(HtmlElement)pages.getElementsByTagName("table").get(0);
 		               // System.out.println(pages.asXml());
 		                dataList.add(tables.asXml());
-		                dateMap.put("base", dataList);//基本信息
+		                //基本信息
+		                dateMap.put("base", dataList);
 		                logger.warn("西宁住房公积金查询基本信息获取完成");
 		                
 		        	//===============个人明细============================
@@ -151,7 +153,8 @@ public class XiNingFundService {
 		                
 		                WebRequest  request2 =null;
 		                logger.warn("西宁住房公积金明细信息获取中");
-		                for(int i=0;i<5;i++){
+		                int fiv=5;
+		                for(int i=0;i<fiv;i++){
 		                	
 		                	request2= new WebRequest(new URL("https://www.qhgjj.gov.cn/searchGrmx.do?year="+nowYear));
 		                	request2.setHttpMethod(HttpMethod.GET);
@@ -170,13 +173,16 @@ public class XiNingFundService {
 		  	               map.put("data", dateMap);
 				          
 			               map.put("userId", idCardNum);
-                           map.put("city", cityCode);//002
+			               //002
+                           map.put("city", cityCode);
 //				           map.put("errorInfo", "查询成功");
 				           Resttemplate resttemplate = new Resttemplate();
 //				           //
 			            // map=resttemplate.SendMessage(map, "http://192.168.3.16:8089/HSDC/person/accumulationFund");//张海敏
 				         map=resttemplate.SendMessage(map, applications.getSendip()+"/HSDC/person/accumulationFund");  
-			             if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+			             String lll="0000";
+			             String errorCode="errorCode";
+				         if(map!=null&&lll.equals(map.get(errorCode).toString())){
 						    	PushState.state(idCardNum, "accumulationFund",300);
 						    	map.put("errorInfo","查询成功");
 						    	map.put("errorCode","0000");
