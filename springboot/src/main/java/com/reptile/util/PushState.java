@@ -21,8 +21,8 @@ public class PushState {
     /**
      * 认证项失败原因推送
      * @param cardNumber 身份证
-     * @param message消息内容
-     * @param approveItem  认证项标识
+     * @param message消息内容（失败原因）
+     * @param approveItem  认证项标识 （淘宝）
      */
     public static void endstate(Map<String,Object> map) {
         Map<String,Object> map1=new HashMap<>();
