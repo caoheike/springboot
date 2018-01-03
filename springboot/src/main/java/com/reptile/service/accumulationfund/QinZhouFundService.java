@@ -24,16 +24,18 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
+/**
+ *  * @author: 111
+ */
 @Service
 public class QinZhouFundService {
 	 private Logger logger= LoggerFactory.getLogger(QinZhouFundService.class);
 	  
 	  public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
 
-		  Map<String,Object> dataMap=new HashMap<String, Object>();
+		  Map<String,Object> dataMap=new HashMap<String, Object>(16);
 
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>(16);
 			System.setProperty(ConstantInterface.chromeDriverKey,ConstantInterface.chromeDriverValue);
 
 			ChromeOptions options = new ChromeOptions();
@@ -51,18 +53,24 @@ public class QinZhouFundService {
 	        }
 			  WebElement captchaImg = driver.findElement(By.id("captcha_img"));
 		      File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		      BufferedImage  fullImg = ImageIO.read(screenshot);//全屏截图
-		      Point point = captchaImg.getLocation();//坐标
-		      int eleWidth = captchaImg.getSize().getWidth();//宽
-		      int eleHeight = captchaImg.getSize().getHeight();//高
+		      //全屏截图
+		      BufferedImage  fullImg = ImageIO.read(screenshot);
+		      //坐标
+		      Point point = captchaImg.getLocation();
+		      //宽
+		      int eleWidth = captchaImg.getSize().getWidth();
+		      //高
+		      int eleHeight = captchaImg.getSize().getHeight();
 		      BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
-		          eleWidth, eleHeight);//图形验证码截图
+		    		  //图形验证码截图
+		          eleWidth, eleHeight);
 		      
 		      String filename="qz"+System.currentTimeMillis()+".png";
 		      ImageIO.write(eleScreenshot, "png", new File(file ,filename));
 		      Thread.sleep(2000);
 		    
-		     Map<String,Object> map1=MyCYDMDemo.Imagev(file + "/" +filename);//图片验证，打码平台
+		      //图片验证，打码平台
+		     Map<String,Object> map1=MyCYDMDemo.Imagev(file + "/" +filename);
 		     System.out.println(map1);
 		     String catph= (String) map1.get("strResult");
 		         WebElement userName=	 driver.findElement(By.id("username"));
@@ -78,7 +86,8 @@ public class QinZhouFundService {
 	        	button.click();
 		        Thread.sleep(1000);
 	        	 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-		      if(driver.getPageSource().contains("欢迎您")){
+		         String huany="欢迎您";
+	        	 if(driver.getPageSource().contains(huany)){
 		    	  PushState.state(idCardNum, "accumulationFund",100);
 		    	  //System.out.println("成功");
 		    	 Thread.sleep(1000);
@@ -118,27 +127,43 @@ public class QinZhouFundService {
 		 	     NameValuePair[] parameters={new NameValuePair("ffbm",ffbm),new NameValuePair("ywfl",ywfl),new NameValuePair("ywlb",ywlb),new NameValuePair("cxlx","01")};
 		 	     post.addParameters(parameters);
 		 	     client.executeMethod(post);
-		 	     System.out.println(post.getResponseBodyAsString());//基本信息
+		 	     //基本信息
+		 	     System.out.println(post.getResponseBodyAsString());
 		 	    JSONObject basicInfos=new JSONObject().fromObject(post.getResponseBodyAsString());
 		        Map<String, Object>	baseData= (Map<String, Object>) basicInfos.get("data");
 		        
-		        List<Object>  baseList=new ArrayList<Object>();//用来存放基本信息
-		        baseList.add(baseData.get("xingming"));//用户姓名
-		        baseList.add(baseData.get("zjhm"));//身份证号码
-		        baseList.add(baseData.get("dwzh"));//单位公积金账号
-		        baseList.add(baseData.get("grzh"));//个人公积金账号
-		        baseList.add(baseData.get("dwmc"));//公司名称
-		        baseList.add(baseData.get("grckzhhm"));//个人公积金卡号
-		        baseList.add(baseData.get("grjcjs"));//缴费基数
-		        baseList.add(baseData.get("dwjcl"));//公司缴费比例
-		        baseList.add(baseData.get("grjcl"));//个人缴费比例
+		        //用来存放基本信息
+		        List<Object>  baseList=new ArrayList<Object>();
+		        //用户姓名
+		        baseList.add(baseData.get("xingming"));
+		        //身份证号码
+		        baseList.add(baseData.get("zjhm"));
+		        //单位公积金账号
+		        baseList.add(baseData.get("dwzh"));
+		        //个人公积金账号
+		        baseList.add(baseData.get("grzh"));
+		        //公司名称
+		        baseList.add(baseData.get("dwmc"));
+		        //个人公积金卡号
+		        baseList.add(baseData.get("grckzhhm"));
+		        //缴费基数
+		        baseList.add(baseData.get("grjcjs"));
+		        //公司缴费比例
+		        baseList.add(baseData.get("dwjcl"));
+		        //个人缴费比例
+		        baseList.add(baseData.get("grjcl"));
 		        
 		        
-		        baseList.add(baseData.get("gryjce"));//个人缴费金额
-		        baseList.add(baseData.get("dwyjce"));//公司缴费金额
-		        baseList.add(baseData.get("rzrq"));//最后缴费日期
-		        baseList.add(baseData.get("grzhye"));//余额
-		        baseList.add(baseData.get("grzhzt"));//状态
+		        //个人缴费金额
+		        baseList.add(baseData.get("gryjce"));
+		        //公司缴费金额
+		        baseList.add(baseData.get("dwyjce"));
+		        //最后缴费日期
+		        baseList.add(baseData.get("rzrq"));
+		        //余额
+		        baseList.add(baseData.get("grzhye"));
+		        //状态
+		        baseList.add(baseData.get("grzhzt"));
 		      
 		 		  String today=GetMonth.today1();
 		 		  int year= Integer.parseInt(today.substring(0,4)); 
@@ -151,18 +176,26 @@ public class QinZhouFundService {
 			 		get.addRequestHeader("Referer","http://wangting.qzsgjj.com/wt-web/home?logintype=1");
 			        client.executeMethod(get);  
 		 		
-		 	    	System.out.println(get.getResponseBodyAsString());//流水详细信息
+			        //流水详细信息
+		 	    	System.out.println(get.getResponseBodyAsString());
 		 	    	
 		 	    	JSONObject flows=new JSONObject().fromObject(get.getResponseBodyAsString());
-			         List<Map<String, Object>>	resultsData= (List<Map<String, Object>>) flows.get("results");//获取的流水详细信息
+		 	    	//获取的流水详细信息
+			         List<Map<String, Object>>	resultsData= (List<Map<String, Object>>) flows.get("results");
 			         List<String> flowsName=new ArrayList<String>();
-			         flowsName.add("czbz");//业务描述
-			         flowsName.add("jzrq");//操作时间
-			         flowsName.add("fse");//操作金额
-			         flowsName.add("gjhtqywlx");//操作类型
-			         flowsName.add("jzrq");  //   缴费月份
+			         //业务描述
+			         flowsName.add("czbz");
+			         //操作时间
+			         flowsName.add("jzrq");
+			         //操作金额
+			         flowsName.add("fse");
+			         //操作类型
+			         flowsName.add("gjhtqywlx");
+			         //缴费月份
+			         flowsName.add("jzrq");  
 	 	    	     NewAccumulation accumulation=new NewAccumulation();
-				      accumulation.setBasicInfos(baseList);//基本信息
+	 	    	     //基本信息
+				      accumulation.setBasicInfos(baseList);
 				    //  accumulation.setData(dataInfo);//推送信息
 				      accumulation.setFlows(flowsName, resultsData);
 				      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
@@ -178,7 +211,8 @@ public class QinZhouFundService {
 				      map.put("data", dataMap);
 				      System.out.println(new JSONArray().fromObject(map));
 				      map=new Resttemplate().SendMessage(map,ConstantInterface.port+"/HSDC/person/accumulationFund");
-				      driver.findElements(By.className("hover_img")).get(2).click();//关闭网页
+				      //关闭网页
+				      driver.findElements(By.className("hover_img")).get(2).click();
 			     		try {
 							Thread.sleep(300);
 						} catch (InterruptedException e) {
@@ -186,7 +220,9 @@ public class QinZhouFundService {
 							e.printStackTrace();
 						}
 			     		driver.findElement(By.name("logout_btn")).click();
-				      if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+				      String kkk="0000";
+				      String errorCode="errorCode";
+			     		if(map!=null&&kkk.equals(map.get(errorCode).toString())){
 					    	PushState.state(idCardNum, "accumulationFund",300);
 					    	map.put("errorInfo","查询成功");
 					    	map.put("errorCode","0000");
@@ -214,27 +250,32 @@ public class QinZhouFundService {
 		   	   } 
 		    
 		      }else{
-		    	  WebElement username_tip=	 driver.findElement(By.id("username_tip"));
-		    	  if(username_tip.getText()!=null&&(username_tip.getText().contains("不")||username_tip.getText().contains("错")||username_tip.getText().contains("无"))){
+		    	  WebElement usernametip=	 driver.findElement(By.id("username_tip"));
+		    	  String bu0="不";
+		    	  String bu1="错";
+		    	  String bu2="无";
+		    	  boolean bool=usernametip.getText()!=null&&(usernametip.getText().contains(bu0)||usernametip.getText().contains(bu1)||usernametip.getText().contains(bu2));
+		    	  if(bool){
 		    			//PushState.state(idCardNum, "accumulationFund",200);
-		    		  logger.warn("钦州住房公积金"+username_tip.getText());
+		    		  logger.warn("钦州住房公积金"+usernametip.getText());
 		         		map.put("errorCode", "0001");
-		                map.put("errorInfo", username_tip.getText()) ;
+		                map.put("errorInfo", usernametip.getText()) ;
 		                driver.close();
 		                return map;
 		    	  }else{
 		    			//PushState.state(idCardNum, "accumulationFund",200);
-		    		  WebElement pwd_tip=	 driver.findElement(By.id("pwd_tip"));
-			    		 if (pwd_tip.getText()!=null&&(pwd_tip.getText().contains("不")||pwd_tip.getText().contains("错"))) {
-			    			
-			    			 logger.warn("钦州住房公积金"+pwd_tip.getText());
+		    		  WebElement pwdtip=	 driver.findElement(By.id("pwd_tip"));
+		    		  boolean boole=pwdtip.getText()!=null&&(pwdtip.getText().contains(bu0)||pwdtip.getText().contains(bu1));
+			    		 if (boole) {
+			    			 logger.warn("钦州住房公积金"+pwdtip.getText());
 				         		map.put("errorCode", "0001");
-				                map.put("errorInfo", pwd_tip.getText()) ;
+				                map.put("errorInfo", pwdtip.getText()) ;
 				                driver.close();
 				                return map;
 						}else{
-							 WebElement yzm_tip=	 driver.findElement(By.id("yzm_tip"));
-			    			 if(yzm_tip.getText()!=null&&(yzm_tip.getText().contains("不")||yzm_tip.getText().contains("错"))){
+							 WebElement yzmtip=	 driver.findElement(By.id("yzm_tip"));
+			    			 boolean boolea=yzmtip.getText()!=null&&(yzmtip.getText().contains(bu0)||yzmtip.getText().contains(bu1));
+							 if(boolea){
 			    				    logger.warn("钦州住房公积金 系统繁忙请稍后再试");
 			    				  
 					         		map.put("errorCode", "0001");

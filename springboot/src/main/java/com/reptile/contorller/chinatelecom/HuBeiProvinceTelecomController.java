@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.chinatelecom.HuBeiProviceService;
 
 import io.swagger.annotations.ApiOperation;
+/**
+ * 
+ * @author liubin
+ *
+ */
 
 @Controller
 @RequestMapping("HuBeiProvinceTelecomController")
@@ -24,22 +29,20 @@ public class HuBeiProvinceTelecomController {
 		@ApiOperation(value = "1.发送短信验证码", notes = "参数：手机号,查询密码")
 	  	@ResponseBody
 	    @RequestMapping(value = "HubeiPhoneCode", method = RequestMethod.POST)
-	    //湖北电信发送手机验证码
-	    public Map<String, Object> HubeiPhoneCode(HttpServletRequest request,@RequestParam("PhoneCode") String PhoneCode,@RequestParam("PhonePass") String PhonePass) {
-	        return huebi.hubeicode(request,PhoneCode,PhonePass);
+	    public Map<String, Object> hubeiPhoneCode(HttpServletRequest request,@RequestParam("PhoneCode") String phoneCode,@RequestParam("PhonePass") String phonePass) {
+	        return huebi.hubeicode(request,phoneCode,phonePass);
 	    }
 		@ApiOperation(value = "2.获取详单", notes = "参数：短信验证码,手机号,服务密码")
 	  	@ResponseBody
 	    @RequestMapping(value = "HubeiPhone", method = RequestMethod.POST)
-	    //湖北电信获取通话详单
-	    public Map<String, Object> HubeiPhone(HttpServletRequest request,
-	    		@RequestParam("PassCode") String PassCode,
-	    		@RequestParam("PhoneNum") String PhoneNum,
-	    		@RequestParam("PhonePass") String PhonePass,
+	    public Map<String, Object> hubeiPhone(HttpServletRequest request,
+	    		@RequestParam("PassCode") String passCode,
+	    		@RequestParam("PhoneNum") String phoneNum,
+	    		@RequestParam("PhonePass") String phonePass,
 	    		@RequestParam("longitude")String longitude,
 	    		@RequestParam("latitude")String latitude,
-	    		@RequestParam("UUID")String UUID) {
+	    		@RequestParam("UUID")String uuid) {
 	        
-			return huebi.hubeiphone(request,PassCode,PhoneNum,PhonePass,longitude,latitude,UUID);
+			return huebi.hubeiphone(request,passCode,phoneNum,phonePass,longitude,latitude,uuid);
 	    }
 }

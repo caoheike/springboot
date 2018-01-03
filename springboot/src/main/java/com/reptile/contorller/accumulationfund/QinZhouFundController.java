@@ -14,7 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.QinZhouFundService;
-
+/**
+ * 
+ * @ClassName: QinZhouFundController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("QinZhouFundController")
 public class QinZhouFundController {

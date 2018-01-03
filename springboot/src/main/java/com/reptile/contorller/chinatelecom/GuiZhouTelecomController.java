@@ -15,7 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.chinatelecom.GuiZhouTelecomService;
 import com.reptile.util.CustomAnnotation;
-
+/**
+ * 
+ * @ClassName: GuiZhouTelecomController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("guizhouTelecom")
 public class GuiZhouTelecomController {
@@ -33,9 +40,9 @@ public class GuiZhouTelecomController {
 	@ResponseBody
 	@CustomAnnotation
 	@RequestMapping(value = "guiZhouDetial", method = RequestMethod.POST)
-	public  Map<String,Object> guiZhouDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String UUID){
+	public  Map<String,Object> guiZhouDetial(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd") String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
 		
-		return guizhouTelecomService.guiZhouDetial(code, request, phoneNumber,servePwd,longitude,latitude,UUID);
+		return guizhouTelecomService.guiZhouDetial(code, request, phoneNumber,servePwd,longitude,latitude,uuid);
 	}
 	
 }

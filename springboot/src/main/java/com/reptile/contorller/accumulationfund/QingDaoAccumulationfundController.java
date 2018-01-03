@@ -14,7 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.accumulationfund.QingDaoAccumulationfundService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @ClassName: QingDaoAccumulationfundController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("QingDaoAccumulationfundController")
 public class QingDaoAccumulationfundController {

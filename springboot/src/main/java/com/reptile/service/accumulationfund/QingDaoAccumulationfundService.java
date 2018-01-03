@@ -39,20 +39,29 @@ import com.reptile.util.Resttemplate;
 import com.reptile.util.WebClientFactory;
 
 import net.sf.json.JSONObject;
-
+/**
+ * 
+ * @ClassName: QingDaoAccumulationfundService  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class QingDaoAccumulationfundService {
 
 	private Logger logger = LoggerFactory.getLogger(QingDaoAccumulationfundService.class);
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idCard,String passWord, String cityCode, String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
+        Map<String, Object> dataMap = new HashMap<>(16);
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
             HtmlPage page = webClient.getPage("http://219.147.7.52:89/grptLogin.htm");
-            page.getElementById("name").setAttribute("value", idCard); //身份证号
-            page.getElementByName("password").setAttribute("value", passWord);//密码
+            //身份证号
+            page.getElementById("name").setAttribute("value", idCard); 
+            //密码
+            page.getElementByName("password").setAttribute("value", passWord);
             //验证码grptlogin_yzm
 		    HtmlImage image=   (HtmlImage) page.getElementById("grptlogin_yzm");
 			BufferedImage read = image.getImageReader().read(0);
@@ -64,24 +73,28 @@ public class QingDaoAccumulationfundService {
 			HtmlPage  loginpage= (HtmlPage) page.executeJavaScript("$(\".log_in\").click()").getNewPage();
 			loginpage= (HtmlPage) page.executeJavaScript("$(\".log_in\").click()").getNewPage();
             Thread.sleep(5000);
-            if(!(loginpage.asXml().contains("退出系统"))) {
+            String str="退出系统";
+            if(!(loginpage.asXml().contains(str))) {
             	dataMap.put("errorCode", "0002");
             	dataMap.put("errorInfo", " 登录失败");
 	        	System.out.println("登录失败");
             }else {
             	System.out.println("登录成功");
            
-            Map<String,Object> parseBaseInfo=parseBaseInfo(webClient);//基本信息
+            	//基本信息
+            Map<String,Object> parseBaseInfo=parseBaseInfo(webClient);
             
-            HtmlPage Flowspage= webClient.getPage("http://219.147.7.52:89/GR/gjcx/gjjmxz.aspx?_=1511510855803");
-            List<Map<String,Object>> Flows=Flows(webClient);
+            List<Map<String,Object>> flows=flows(webClient);
          
-            HtmlPage Loanspage= webClient.getPage("http://219.147.7.52:89/GR/dkcx/dkhtxx.htm?_=1511765035077");
-            Map<String, Object> Loans=Loans(Loanspage);
+            HtmlPage loanspage= webClient.getPage("http://219.147.7.52:89/GR/dkcx/dkhtxx.htm?_=1511765035077");
+            Map<String, Object> loans=loans(loanspage);
                 
-                dataMap.put("basicInfos", parseBaseInfo);//个人信息
-                dataMap.put("flows", Flows);//流水
-                dataMap.put("loans", Loans);//贷款信息  无贷款信息测试
+            //个人信息
+                dataMap.put("basicInfos", parseBaseInfo);
+                //流水
+                dataMap.put("flows", flows);
+                //贷款信息  无贷款信息测试
+                dataMap.put("loans", loans);
                 map.put("data", dataMap);
                 map.put("userId", idCardNum);
                 map.put("city", cityCode);
@@ -89,7 +102,7 @@ public class QingDaoAccumulationfundService {
                 map.put("insertTime", Dates.currentTime());
             }
           //数据推送
-          //map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
+          map = new Resttemplate().SendMessage(map,"http://192.168.3.16:8089/HSDC/person/accumulationFund");
         } catch (Exception e) {
             logger.warn("青岛公积金认证失败", e);
             e.printStackTrace();
@@ -102,36 +115,49 @@ public class QingDaoAccumulationfundService {
         }
         return map;
     }
-    //基本信息
+    
   	private static Map<String, Object> parseBaseInfo(WebClient webClient) {
-  		Map<String,Object> baseInfo = new HashMap<String, Object>();	
+  		Map<String,Object> baseInfo = new HashMap<String, Object>(16);	
   		UnexpectedPage basicInfos;
 		try {
 			basicInfos = webClient.getPage("http://219.147.7.52:89/Controller/GR/gjcx/gjjzlcx.ashx?dt=1511506147131");
     	String result=basicInfos.getWebResponse().getContentAsString();
     	JSONObject obj = JSONObject.fromObject(result);
-	    	baseInfo.put("name",obj.get("hm"));//用户姓名
-			baseInfo.put("idCard",obj.get("sfz"));//身份证号码
-			baseInfo.put("companyFundAccount","");//单位公积金账号
-			baseInfo.put("personFundAccount","");//个人公积金账号
-			baseInfo.put("companyName","");//公司名称
-			baseInfo.put("personFundCard","");//个人公积金卡号
-			baseInfo.put("baseDeposit", "");//缴费基数
-			baseInfo.put("companyRatio",obj.get("dwjcbl"));//公司缴费比例
-			baseInfo.put("personRatio",obj.get("grjcbl"));//个人缴费比例
-			baseInfo.put("personDepositAmount",obj.get("gryhjje"));//个人缴费金额
-			baseInfo.put("companyDepositAmount",obj.get("dwyhjje"));//公司缴费金额
-			baseInfo.put("lastDepositDate","");//最后缴费日期
-			baseInfo.put("balance",obj.get("zhye"));//余额
-			baseInfo.put("status",obj.get("zt"));//状态（正常）
+    	//用户姓名
+	    	baseInfo.put("name",obj.get("hm"));
+	    	//身份证号码
+			baseInfo.put("idCard",obj.get("sfz"));
+			//单位公积金账号
+			baseInfo.put("companyFundAccount","");
+			//个人公积金账号
+			baseInfo.put("personFundAccount","");
+			//公司名称
+			baseInfo.put("companyName","");
+			//个人公积金卡号
+			baseInfo.put("personFundCard","");
+			//缴费基数
+			baseInfo.put("baseDeposit", "");
+			//公司缴费比例
+			baseInfo.put("companyRatio",obj.get("dwjcbl"));
+			//个人缴费比例
+			baseInfo.put("personRatio",obj.get("grjcbl"));
+			//个人缴费金额
+			baseInfo.put("personDepositAmount",obj.get("gryhjje"));
+			//公司缴费金额
+			baseInfo.put("companyDepositAmount",obj.get("dwyhjje"));
+			//最后缴费日期
+			baseInfo.put("lastDepositDate","");
+			//余额
+			baseInfo.put("balance",obj.get("zhye"));
+			//状态（正常）
+			baseInfo.put("status",obj.get("zt"));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		 
 		return baseInfo;
 }
-	private  List<Map<String,Object>> Flows(WebClient webClient) {
+	private  List<Map<String,Object>> flows(WebClient webClient) {
 		List<Map<String,Object>> flows = new ArrayList<Map<String,Object>>();
 		String url="http://219.147.7.52:89/Controller/GR/gjcx/gjjmx.ashx?dt=1511512508637&transDateBegin=1900-01-01&transDateEnd=2017-11-24&page=1&rows=20&sort=mxbc&order=desc";
     	WebRequest requests;
@@ -140,7 +166,8 @@ public class QingDaoAccumulationfundService {
 		requests.setHttpMethod(HttpMethod.GET);
 		TextPage flowspage=webClient.getPage(requests);
 		String result=flowspage.getWebResponse().getContentAsString();
-		if("连接服务器错误！".equals(result)) {
+		String str="连接服务器错误！";
+		if(str.equals(result)) {
 			System.out.println("连接服务器错误！");
 		}else {
 		JSONObject obj = JSONObject.fromObject(result);
@@ -148,32 +175,41 @@ public class QingDaoAccumulationfundService {
 		for (int j = lis1.size()-1; j >1 ; j--) {
 			Map<String,Object>  mapp= lis1.get(j); 
 			System.out.println("mapp---"+mapp.get("fse"));
-			mapp.get("fse");//发生额
-			mapp.get("jylxzh");//
-			mapp.get("jyrq");//交易日期
-			mapp.get("mxbc");//
-			mapp.get("ssny");//所属年月
-			mapp.get("ye");//
-			mapp.get("zymzh");//类型
+			//发生额
+			mapp.get("fse");
+			mapp.get("jylxzh");
+			//交易日期
+			mapp.get("jyrq");
+			mapp.get("mxbc");
+			//所属年月
+			mapp.get("ssny");
+			mapp.get("ye");
+			//类型
+			mapp.get("zymzh");
 				if((mapp.get("zymzh")+"").contains("汇缴") || (mapp.get("zymzh")+"").contains("补缴")){
-					Map<String,Object> item = new HashMap<String, Object>();
-					item.put("operatorDate",mapp.get("jyrq"));//操作时间（2015-08-19）
-				item.put("amount",mapp.get("fse"));//操作金额
+					Map<String,Object> item = new HashMap<String, Object>(16);
+					//操作时间（2015-08-19）
+					item.put("operatorDate",mapp.get("jyrq"));
+					//操作金额
+				item.put("amount",mapp.get("fse"));
 					String type = "";
 					if((mapp.get("zymzh")+"").contains("汇缴")){
 						type = "汇缴";
 					}else{
 						type = "补缴";
 					}
-					item.put("type",type);//操作类型
-					item.put("bizDesc",type +  (mapp.get("ssny"))+"公积金");//业务描述（汇缴201508公积金）
-					item.put("companyName","");//单位名称
-					item.put("payMonth",mapp.get("ssny"));//缴费月份
+					//操作类型
+					item.put("type",type);
+					//业务描述（汇缴201508公积金）
+					item.put("bizDesc",type +  (mapp.get("ssny"))+"公积金");
+					//单位名称
+					item.put("companyName","");
+					//缴费月份
+					item.put("payMonth",mapp.get("ssny"));
 					flows.add(item);
 				}
 			}
 		}} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
    		return flows;
@@ -187,20 +223,28 @@ public class QingDaoAccumulationfundService {
      * @throws MalformedURLException
      * @throws IOException
      */
-    public Map<String,Object> Loans(HtmlPage loanspage) throws Exception{
+    public Map<String,Object> loans(HtmlPage loanspage) throws Exception{
     	
-    	Map<String,Object> loans = new HashMap<String, Object>();
+    	Map<String,Object> loans = new HashMap<String, Object>(16);
 		String table = loanspage.getElementsByTagName("table").get(0).asXml();
 		List<List<String>> list = table(table);
 		if(list.size()>0) {
-		loans.put("loanAccNo", "");//贷款账号
-		loans.put("loanLimit", list.get(2).get(1));//贷款期限
-		loans.put("openDate",   list.get(1).get(0));//开户日期
-		loans.put("loanAmount",   (list.get(2).get(0)));//贷款总额
-		loans.put("lastPaymentDate", list.get(4).get(0));//最近还款日期
-		loans.put("status",  "");//还款状态
-		loans.put("loanBalance",   (list.get(3).get(1)));//贷款余额
-		loans.put("paymentMethod", list.get(5).get(0));//还款方式
+			//贷款账号
+		loans.put("loanAccNo", "");
+		//贷款期限
+		loans.put("loanLimit", list.get(2).get(1));
+		//开户日期
+		loans.put("openDate",   list.get(1).get(0));
+		//贷款总额
+		loans.put("loanAmount",   (list.get(2).get(0)));
+		//最近还款日期
+		loans.put("lastPaymentDate", list.get(4).get(0));
+		//还款状态
+		loans.put("status",  "");
+		//贷款余额
+		loans.put("loanBalance",   (list.get(3).get(1)));
+		//还款方式
+		loans.put("paymentMethod", list.get(5).get(0));
 		} 
     	return loans;
     	
@@ -232,8 +276,8 @@ public class QingDaoAccumulationfundService {
 	   * 获取图形验证码
 	   * */
 	  public Map<String, Object> getImageCode(HttpServletRequest request){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String,String> mapPath=new HashMap<String, String>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String,String> mapPath=new HashMap<String, String>(16);
 	        HttpSession session = request.getSession();
 	        
 	        WebClient webClient=new WebClientFactory().getWebClient();

@@ -14,7 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Map;
-
+/**
+ * 
+ * @ClassName: GuiYangAccumulationfundController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("GuiYangAccumulationfundController")
 public class GuiYangAccumulationfundController {

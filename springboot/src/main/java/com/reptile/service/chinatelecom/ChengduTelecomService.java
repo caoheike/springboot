@@ -131,7 +131,7 @@ public class ChengduTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "手机验证码错误,请重新获取!");
-            PushState.state(phoneNumber, "callLog",200);
+            PushState.state(phoneNumber, "callLog",200,"手机验证码错误,请重新获取!");
             PushSocket.pushnew(map, uuid, "3000","手机验证码错误,请重新获取!");
             return map;
         } else {
@@ -156,7 +156,7 @@ public class ChengduTelecomService {
                     if (!result.contains(resultInfo)) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
-                        PushState.state(phoneNumber, "callLog",200);  
+                        PushState.state(phoneNumber, "callLog",200,jsonObject.get("retMsg").toString());  
                         PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString());
                         return map;
                     }
@@ -209,14 +209,14 @@ public class ChengduTelecomService {
             	   PushSocket.pushnew(map, uuid, "8000","认证成功");
             	   PushState.state(phoneNumber, "callLog",300);
                }else{
-            	   PushSocket.pushnew(map, uuid, "9000",map.get("errorCode").toString());
-            	   PushState.state(phoneNumber, "callLog",200);
+            	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
+            	   PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
                }
             } catch (Exception e) {
                 logger.warn("成都获取详情mrlu", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200);
+                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }

@@ -26,15 +26,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+/**
+ * 
+ * @ClassName: GuiYangAccumulationfundService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class GuiYangAccumulationfundService {
     private Logger logger = LoggerFactory.getLogger(GuiYangAccumulationfundService.class);
 
     public Map<String, Object> loadImageCode(HttpServletRequest request) {
         logger.warn("获取贵阳公积金图片验证码");
-        Map<String, Object> map = new HashMap<>();
-        Map<String, String> datamap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
+        Map<String, String> datamap = new HashMap<>(16);
         String path = request.getServletContext().getRealPath("ImageCode");
         HttpSession session = request.getSession();
 
@@ -69,8 +76,8 @@ public class GuiYangAccumulationfundService {
     }
 
     public Map<String, Object> getDeatilMes(HttpServletRequest request, String userCard, String password, String imageCode,String cityCode,String idCardNum) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> dataMap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
+        Map<String, Object> dataMap = new HashMap<>(16);
         HttpSession session = request.getSession();
         Object htmlWebClient = session.getAttribute("htmlWebClient-guiyang");
         Object htmlPage = session.getAttribute("htmlPage-guiyang");
@@ -119,13 +126,15 @@ public class GuiYangAccumulationfundService {
                 HtmlPage page1 = webClient.getPage(getMethod);
                 Thread.sleep(3000);
                 System.out.println(page1.asXml());
-                if(page1.asXml().contains("此网页使用了框架，但您的浏览器不支持框架")){
+                String ciwang="此网页使用了框架，但您的浏览器不支持框架";
+                if(page1.asXml().contains(ciwang)){
                 	PushState.state(idCardNum, "accumulationFund", 200);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", "认证失败，请重新认证");
                     return map;
                 }
-                dataMap.put("base", page1.asXml()); //存入基本信息
+                //存入基本信息
+                dataMap.put("base", page1.asXml()); 
                 logger.warn("贵阳住房公积金缴纳信息详情获取");
                 List<String> detailMes = new ArrayList<>();
                 WebRequest post = new WebRequest(new URL("http://zxcx.gygjj.gov.cn/PersonAccountsList.do?method=list"));
@@ -182,7 +191,9 @@ public class GuiYangAccumulationfundService {
                 map.put("userId", idCardNum);
                 map.put("city", cityCode);
                 map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
-                if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+                String slll="0000";
+                String errorCode="errorCode";
+                if(map!=null&&slll.equals(map.get(errorCode).toString())){
                	 PushState.state(idCardNum, "accumulationFund", 300);
                    map.put("errorInfo","推送成功");
                    map.put("errorCode","0000");

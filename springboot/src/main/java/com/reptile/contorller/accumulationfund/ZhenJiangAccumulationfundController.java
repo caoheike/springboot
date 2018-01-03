@@ -14,19 +14,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.reptile.service.accumulationfund.ZhenJiangAccumulationfundService;
 
 import io.swagger.annotations.ApiOperation;
-
+/**
+ * 
+ * @ClassName: ZhenJiangAccumulationfundController  
+ * @Description: TODO  
+ * @author: lusiqin
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("ZhenJiangAccumulationfundController")
 public class ZhenJiangAccumulationfundController {
-
+/**
+ * 
+ */
     @Autowired
     private ZhenJiangAccumulationfundService service;
-    /*@ApiOperation(value = "镇江公积金获取图形验证码", notes = "参数：无")
-    @ResponseBody
-    @RequestMapping(value = "ZhenJiangImageCode", method = RequestMethod.POST)
-	 public Map<String, Object> getImageCode(HttpServletRequest request){
-		return service.getImageCode(request);
-	}*/
     @RequestMapping(value = "getDetailMes",method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "获取公积金详情",notes = "参数：身份证，密码，城市id,身份证号")
