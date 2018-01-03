@@ -50,7 +50,7 @@ public class XiNingTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushState.state(phoneNumber, "callLog",200);
+            PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
             PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
             return map;
         } else {
@@ -130,8 +130,11 @@ public class XiNingTelecomService {
                 } catch (Exception e) {
                     logger.warn(e.getMessage()+"  青海获取过程中ip被封  mrlu",e);
                     Scheduler.sendGet(Scheduler.getIp);
-                    PushState.state(phoneNumber, "callLog",200);
+                    map.put("errorCode", "0001");
+                    map.put("errorInfo", "数据获取失败，网络异常");
+                    PushState.state(phoneNumber, "callLog",200,"数据获取失败，网络异常");
                     PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常");
+                    return map;
                 }
                 
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
@@ -152,14 +155,14 @@ public class XiNingTelecomService {
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorinfo").toString());
-					PushState.state(phoneNumber, "callLog",200);
+					PushState.state(phoneNumber, "callLog",200,map.get("errorinfo").toString());
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  青海获取详单  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200);
+                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
             }finally {
                 if(webClient!=null){
                     webClient.close();

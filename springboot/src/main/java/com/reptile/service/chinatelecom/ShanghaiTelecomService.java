@@ -103,7 +103,7 @@ public class ShanghaiTelecomService {
 			 logger.warn("上海电信未获取验证码");
 	    	 map.put("errorCode", "0001");
 		     map.put("errorInfo", "请先获取验证码");	
-		     PushState.state(phoneNumber, "callLog",200);
+		     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
 		     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
 			 return map;
 	    }
@@ -120,7 +120,7 @@ public class ShanghaiTelecomService {
 				logger.warn("上海电信","输入的验证码错误！");
 				map.put("errorCode", "0001");
 		        map.put("errorInfo", "输入的验证码错误！");
-		        PushState.state(phoneNumber, "callLog",200);
+		        PushState.state(phoneNumber, "callLog",200,"输入的验证码错误！");
 		        PushSocket.pushnew(map, uuid, "3000","输入的验证码错误！");
 		        return map;
 			}else{
@@ -276,14 +276,14 @@ public class ShanghaiTelecomService {
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get(strr1).toString());
-					PushState.state(phoneNumber, "callLog",200);
+					PushState.state(phoneNumber, "callLog",200,map.get(strr1).toString());
 				}
 			}
 		  } catch (Exception e) {
 			  logger.warn("上海电信",e);
 			  map.put("errorCode", "0001");
 	          map.put("errorInfo", "网络连接异常!");
-	          PushState.state(phoneNumber, "callLog",200);
+	          PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
 	          PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
 		}    
 		return map;

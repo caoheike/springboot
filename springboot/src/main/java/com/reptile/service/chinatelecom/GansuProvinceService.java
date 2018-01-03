@@ -84,7 +84,7 @@ public class GansuProvinceService {
 	        Object attribute = session.getAttribute("sessionWebClient-GANSU");
 	        if (attribute == null) {
 	        	PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
-	        	PushState.state(userNum, "callLog",200);
+	        	PushState.state(userNum, "callLog",200,"登录失败,操作异常!");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
@@ -138,15 +138,14 @@ public class GansuProvinceService {
 			                map.put("errorCode","0000");
 			                PushSocket.pushnew(map, uuid, "8000","认证成功");
 			         }else{
-			        	 PushState.state(userNum, "callLog",200);
+			        	 PushState.state(userNum, "callLog",200,map.get("errorInfo").toString());
 			        	 PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-			            	//--------------------数据中心推送状态----------------------
 			            	//---------------------数据中心推送状态----------------------
 			          }
 					webClient.close();
 					} catch (Exception e) {
 						e.printStackTrace();
-						PushState.state(userNum, "callLog",200);
+						PushState.state(userNum, "callLog",200,"服务繁忙，请稍后再试");
 						PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
 						//---------------------------数据中心推送状态----------------------------------
 						 map.clear();

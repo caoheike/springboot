@@ -65,7 +65,9 @@ public class ConstructionService {
 				//进行登录效验
 				if(detailedpage1.contains(erro)){
 					if(isok==true) {
-						PushState.state(userCard, "bankBillFlow",200);
+						PushState.state(userCard, "bankBillFlow",200,"建设银行信用卡账号或卡号与账户类型不匹配");
+					}else{
+						PushState.statenew(userCard, "bankBillFlow",200,"建设银行信用卡账号或卡号与账户类型不匹配");
 					}
 					driver.close();
 					map.clear();
@@ -77,7 +79,9 @@ public class ConstructionService {
 				String erro1="您输入的密码不正确";
 				if(detailedpage1.contains(erro1)){
 					if(isok==true) {
-						PushState.state(userCard, "bankBillFlow",200);
+						PushState.state(userCard, "bankBillFlow",200,"建设银行信用卡您输入的密码不正确");
+					}else{
+						PushState.statenew(userCard, "bankBillFlow",200,"建设银行信用卡您输入的密码不正确");
 					}
 					driver.close();
 					map.clear();
@@ -142,7 +146,9 @@ public class ConstructionService {
 		            	//--------------------数据中心推送状态----------------------
 		            	logger.warn("建设推送失败"+userCode+map);
 		            	if(isok==true) {
-		            		PushState.state(userCard, "bankBillFlow",200);
+		            		PushState.state(userCard, "bankBillFlow",200,"建设银行账单认证失败");
+		            	}else{
+		            		PushState.statenew(userCard, "bankBillFlow",200,"建设银行账单认证失败");
 		            	}
 		            	//---------------------数据中心推送状态----------------------
 		            	PushSocket.pushnew(map, uuid, "9000","建设银行账单认证失败");
@@ -150,21 +156,36 @@ public class ConstructionService {
 		            } 
 			} catch (Exception e) { 
 					e.printStackTrace();
-					if(isok==true) {
-						PushState.state(userCard, "bankBillFlow",200);
-					}
 					String state = "2000";
 					String state1 = "5000";
 					String state2 = "6000";
 					logger.warn("建设银行账单获取失败"+userCard+e);
-					if(flag.equals(state)){
-						PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
-					}else if(flag.equals(state1)){
-						PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
-					}else if(flag.equals(state2)){
-						PushSocket.pushnew(map, uuid, "9000","认证失败");
+					
+					if(isok==true) {
+						PushState.state(userCard, "bankBillFlow",200);
+						if(flag.equals(state)){
+							PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
+						}else if(flag.equals(state1)){
+							PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
+						}else if(flag.equals(state2)){
+							PushSocket.pushnew(map, uuid, "9000","认证失败");
+						}else{
+							PushSocket.pushnew(map, uuid, "3000","登录失败");
+						}
 					}else{
-						PushSocket.pushnew(map, uuid, "3000","登录失败");
+						if(flag.equals(state)){
+							PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
+							PushState.statenew(userCard, "bankBillFlow",200,"建设银行账单获取失败");
+						}else if(flag.equals(state1)){
+							PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
+							PushState.statenew(userCard, "bankBillFlow",200,"建设银行账单获取失败");
+						}else if(flag.equals(state2)){
+							PushSocket.pushnew(map, uuid, "9000","认证失败");
+							PushState.statenew(userCard, "bankBillFlow",200,"认证失败");
+						}else{
+							PushSocket.pushnew(map, uuid, "3000","登录失败");
+							PushState.statenew(userCard, "bankBillFlow",200,"登录失败");
+						}
 					}
 					driver.close();
 					e.printStackTrace();

@@ -139,7 +139,7 @@ public class HeNanTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushState.state(phoneNumber, "callLog",200);
+            PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
             PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
             return map;
         } else {
@@ -180,7 +180,7 @@ public class HeNanTelecomService {
                 if (result.contains(flagStr)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
-                    PushState.state(phoneNumber, "callLog",200);
+                    PushState.state(phoneNumber, "callLog",200,"您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     PushSocket.pushnew(map, uuid, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     return map;
                 }
@@ -232,7 +232,7 @@ public class HeNanTelecomService {
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-					PushState.state(phoneNumber, "callLog",200);
+					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
 				
                 System.out.println("河南电信拿到的数据条数：" + dataList.size());
@@ -240,7 +240,7 @@ public class HeNanTelecomService {
                 logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200);
+                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }

@@ -318,7 +318,7 @@ public class PhoneBillsService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             PushSocket.pushnew(map, uuid, "3000", "登录超时");
-            PushState.state(userNumber, "callLog", 200);
+            PushState.state(userNumber, "callLog", 200,"登录超时");
             return map;
         } else {
             try {
@@ -363,7 +363,7 @@ public class PhoneBillsService {
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                     PushSocket.pushnew(map, uuid, "3000", jsonObject.get("retMsg").toString());
-                    PushState.state(userNumber, "callLog", 200);
+                    PushState.state(userNumber, "callLog", 200,jsonObject.get("retMsg").toString());
                     return map;
                 }
                 PushSocket.pushnew(map, uuid, "2000", "登录成功");
@@ -412,7 +412,7 @@ public class PhoneBillsService {
                int boundCount3=4;
                 if (dataList.size() < boundCount3) {
                     PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新认证！");
-                    PushState.state(userNumber, "callLog", 200);
+                    PushState.state(userNumber, "callLog", 200,"数据获取不完全，请重新认证！");
                     map.put("errorCode", "0009");
                     map.put("errorInfo", "数据获取不完全，请重新再次认证！");
                     return map;
@@ -441,7 +441,7 @@ public class PhoneBillsService {
                     PushState.state(userNumber, "callLog", 300);
                 } else {
                     PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo").toString());
-                    PushState.state(userNumber, "callLog", 200);
+                    PushState.state(userNumber, "callLog", 200, map.get("errorInfo").toString());
                 }
 
                 webClient.close();
@@ -449,7 +449,7 @@ public class PhoneBillsService {
                 logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
-                PushState.state(userNumber, "callLog", 200);
+                PushState.state(userNumber, "callLog", 200,"认证失败,系统繁忙");
                 PushSocket.pushnew(map, uuid, "9000", "认证失败,系统繁忙");
             }
         }

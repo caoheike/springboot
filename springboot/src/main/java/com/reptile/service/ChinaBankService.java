@@ -76,7 +76,9 @@ public class ChinaBankService {
                 map.put("errorInfo", msgContent);
                 PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败");
                 if(isok==true) {
-                    PushState.state(userCard, "bankBillFlow",200);
+                    PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败");
+                }else{
+                	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败");
                 }
                 states="3";
                 driver.quit();              
@@ -92,7 +94,9 @@ public class ChinaBankService {
                         map.put("errorInfo", "请使用信用卡号登录");
                         PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败请使用信用卡号登录");
                         if(isok==true) {
-                            PushState.state(userCard, "bankBillFlow",200);
+                            PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请使用信用卡号登录");
+                        }else{
+                        	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请使用信用卡号登录");
                         }
                         states="3";
                         driver.quit();                       
@@ -109,7 +113,9 @@ public class ChinaBankService {
                 map.put("errorInfo", "请输入正确的信用卡号");
                 PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败请输入正确的信用卡号");
                 if(isok==true) {
-                    PushState.state(userCard, "bankBillFlow",200);
+                    PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请输入正确的信用卡号");
+                }else{
+                	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请输入正确的信用卡号");
                 }
                 states="3";
                 driver.quit();              
@@ -150,7 +156,9 @@ public class ChinaBankService {
                 states="3";
                 PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
                 if(isok==true) {
-                    PushState.state(userCard, "bankBillFlow",200);
+                    PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                }else{
+                	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
                 }
                 driver.quit();
                 return map;
@@ -162,7 +170,9 @@ public class ChinaBankService {
                 map.put("errorInfo", "登录失败，系统繁忙");
                 PushSocket.pushnew(map, uuid, "3000","登录失败，系统繁忙");
                 if(isok==true) {
-    				PushState.state(userCard, "bankBillFlow",200);
+    				PushState.state(userCard, "bankBillFlow",200,"登录失败，系统繁忙");
+    			}else{
+    				PushState.statenew(userCard, "bankBillFlow",200,"登录失败，系统繁忙");
     			}
                 driver.quit();
                 return map;
@@ -235,8 +245,10 @@ public class ChinaBankService {
             }else{
             	//--------------------数据中心推送状态----------------------
             	if(isok==true) {
-					PushState.state(userCard, "bankBillFlow",200);
-				}		            	//---------------------数据中心推送状态----------------------
+					PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
+				}	else{
+					PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
+				}	            	//---------------------数据中心推送状态----------------------
             	logger.warn("中国银行账单推送失败"+userCard);
             	 PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
             	 states="9";
@@ -247,17 +259,33 @@ public class ChinaBankService {
             int signle1=3;
             int signle2=7;
             int signle3=9;
-            if(states.equals(signle1)){
-            	PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
-            }
-            if(states.equals(signle3)){
-            	PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
-            }
-            if(states.equals(signle2)){
-            	PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
-            }
             if(isok==true) {
-				PushState.state(userCard, "bankBillFlow",200);
+				if(states.equals(signle1)){
+					PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
+					PushState.state(userCard, "bankBillFlow",200,"登录失败,网络繁忙");
+				}
+				if(states.equals(signle3)){
+					PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
+					PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
+				}
+				if(states.equals(signle2)){
+					PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
+					PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡信息获取失败");
+				}
+			}else{
+				if(states.equals(signle1)){
+					PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
+					PushState.statenew(userCard, "bankBillFlow",200,"登录失败,网络繁忙");
+				}
+				if(states.equals(signle3)){
+					PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
+					PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
+				}
+				if(states.equals(signle2)){
+					PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
+					PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡信息获取失败");
+				}
+
 			}
             driver.quit();
             map.put("errorCode", "0002");

@@ -48,7 +48,7 @@ public class JiangSuTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushState.state(phoneNumber, "callLog",200);
+            PushState.state(phoneNumber, "callLog",200,"操作异常!");
             PushSocket.pushnew(map, uuid, "3000","操作异常!");       
             } else {
 
@@ -127,13 +127,13 @@ public class JiangSuTelecomService {
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-					 PushState.state(phoneNumber, "callLog",200);
+					 PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200);
+                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }finally {
                 if(webClient!=null){

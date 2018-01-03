@@ -122,7 +122,7 @@ public class ChongQingTelecomService {
 	        if (attribute == null) {
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信验证码!");
-	            PushState.state(phoneNumber, "callLog",200);
+	            PushState.state(phoneNumber, "callLog",200,"请先获取短信验证码!");
 	            PushSocket.pushnew(map, uuid, "3000","请先获取短信验证码!");  
 	            return map;
 		        } else {
@@ -158,7 +158,8 @@ public class ChongQingTelecomService {
 						}catch (Exception e){
 								 map.put("errorCode", "0001");
 	    				         map.put("errorInfo", "验证码错误");	
-	    				         PushSocket.pushnew(map, uuid, "3000","验证码错误");  
+	    				         PushSocket.pushnew(map, uuid, "3000","验证码错误");
+	    				         PushState.state(phoneNumber, "callLog",200,"验证码错误");
 	    				         return map;
 						}
 					    
@@ -193,6 +194,8 @@ public class ChongQingTelecomService {
 	        				 map.put("errorCode", "0001");
 					         map.put("errorInfo", "系统繁忙!");
 					         PushSocket.pushnew(map, uuid, "3000","登录失败,系统繁忙!");
+					         PushState.state(phoneNumber, "callLog",200,"登录失败,系统繁忙!");
+    				         return map;
 	        			}
 					}
 				//------------推数据------------------------
@@ -215,15 +218,15 @@ public class ChongQingTelecomService {
 					 PushState.state(phoneNumber, "callLog",300);
 				 }else {
 					 PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-					 PushState.state(phoneNumber, "callLog",200);
+					 PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				 }
 	                //------------推数据------------------------
 					} catch (Exception e) {
-						map.put("errorCode", "0001");
+						 map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
-				         PushState.state(phoneNumber, "callLog",200);
+				         PushState.state(phoneNumber, "callLog",200,"网络异常!");
 				         PushSocket.pushnew(map, uuid, "9000","网络异常!");
-						e.printStackTrace();
+						 e.printStackTrace();
 					}finally{
 						 driver.close();
 						 try {

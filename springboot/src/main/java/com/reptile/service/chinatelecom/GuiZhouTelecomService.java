@@ -113,7 +113,7 @@ public class GuiZhouTelecomService {
 	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
-			     PushState.state(phoneNumber, "callLog",200);
+			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
 			     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
 				 return map;
 		    }
@@ -136,7 +136,7 @@ public class GuiZhouTelecomService {
 			//======================验证码正确性验证===============================	
 				 if(code==null||code.equals("")){
 					 PushSocket.pushnew(map, uuid, "3000","验证码不能为空");
-					 PushState.state(phoneNumber, "callLog",200);
+					 PushState.state(phoneNumber, "callLog",200,"验证码不能为空");
 					 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码不能为空");
             		 return map; 
@@ -145,7 +145,7 @@ public class GuiZhouTelecomService {
 				 if( detial.getElementById("tilte").asXml().contains("验证码错误")){
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
- 					PushState.state(phoneNumber, "callLog",200);
+ 					PushState.state(phoneNumber, "callLog",200,"验证码错误");
  					PushSocket.pushnew(map, uuid, "3000","验证码错误");
             		 return map; 
             	 }else{		 
@@ -158,7 +158,7 @@ public class GuiZhouTelecomService {
 				logger.warn("贵州电信",e);
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
-	            PushState.state(phoneNumber, "callLog",200);
+	            PushState.state(phoneNumber, "callLog",200,"网络连接异常");
 	            PushSocket.pushnew(map, uuid, "3000","网络连接异常");
 				return map;
 			}
@@ -190,14 +190,14 @@ public class GuiZhouTelecomService {
         	   PushSocket.pushnew(map, uuid, "8000","认证成功");
         	   PushState.state(phoneNumber, "callLog",300);
            }else {
-        	   PushState.state(phoneNumber, "callLog",200);
+        	   PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
         	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
            }
            if(map.get(errorCode).equals(sanl)){
         	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
-        	   PushState.state(phoneNumber, "callLog",200);
+        	   PushState.state(phoneNumber, "callLog",200,"查询失败，稍后再试！！");
         	   PushSocket.pushnew(map, uuid, "9000","查询失败，稍后再试！！");
            }
 		return map;

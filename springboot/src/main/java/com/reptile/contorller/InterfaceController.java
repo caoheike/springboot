@@ -774,14 +774,14 @@ public class InterfaceController {
 				PushSocket.pushnew(map, uuId, "8000","淘宝查询成功");
 			}else{
 				//--------------------数据中心推送状态----------------------
-				PushState.state(idCard, "TaoBao",200);
+				PushState.state(idCard, "TaoBao",200,map.get("errorInfo").toString());
 				//---------------------数据中心推送状态----------------------
 				map.put("errorInfo","查询失败");
 				map.put("errorCode","0001");
 				PushSocket.pushnew(map, uuId, "9000",map.get("errorInfo").toString());
 			}
 	    }else if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_1004)){
-	      PushState.state(idCard, "TaoBao",200);
+	      PushState.state(idCard, "TaoBao",200,"二维码过期");
 	      System.out.println("二维码过期");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "二维码过期");
@@ -790,7 +790,7 @@ public class InterfaceController {
 	      if(map.size()==0){
 	        map.put("errorCode", "0001");
 	        map.put("errorInfo", "请勿乱操作");
-		      PushState.state(idCard, "TaoBao",200);
+		      PushState.state(idCard, "TaoBao",200,"登录失败，操作异常");
 		      PushSocket.pushnew(map, uuId, "3000","登录失败，操作异常");
 	      }else{
 	        map.put("errorCode", "0000");
@@ -801,11 +801,11 @@ public class InterfaceController {
 	      System.out.println("等待授权");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "等待授权");
-	      PushState.state(idCard, "TaoBao",200);
+	      PushState.state(idCard, "TaoBao",200,"登录失败，等待授权");
 	      PushSocket.pushnew(map, uuId, "3000","登录失败，等待授权");
 	      
 	    }else{
-	    	PushState.state(idCard, "TaoBao",200);
+	    	PushState.state(idCard, "TaoBao",200,"非法操作！请重试");
 	      map.put("errorCode", "0001");
 	      map.put("errorInfo", "非法操作！请重试");
 	      PushSocket.pushnew(map, uuId, "3000","非法操作！请重试");
