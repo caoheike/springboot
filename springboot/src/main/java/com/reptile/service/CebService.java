@@ -42,7 +42,7 @@ public class CebService {
 		WebDriver driver = new InternetExplorerDriver();
 		try {
 			// 光大银行信用卡登录页面地址
-			driver.get("https://xyk.cebbank.com/mall/login");
+			driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");
 			driver.navigate().refresh();
 			// 隐式等待
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -168,6 +168,11 @@ public class CebService {
 		}
 		try {
 			WebElement loginform = driver.findElement(By.id("login"));
+			if (isok) {
+				loginform.findElement(By.id("yzmcode"));
+			} else {
+
+			}
 			// 输入app前端传输过来的短信验证码
 			loginform.findElement(By.id("verification-code")).sendKeys(passWord);
 			// 点击光大银行信用卡登录按钮
@@ -197,6 +202,7 @@ public class CebService {
 				driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");
 				System.out.println("开始进入个人中心");
 				// 获取到页面元素进行定位
+				Thread.sleep(3000);
 				WebElement table = driver.findElement(ByClassName.className("tab_one"));
 				List<WebElement> tr = table.findElements(By.tagName("tr"));
 				List<String> html = new ArrayList<String>();
