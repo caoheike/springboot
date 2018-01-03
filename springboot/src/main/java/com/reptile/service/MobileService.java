@@ -8,7 +8,6 @@ import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.reptile.constants.MessageConstamts;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
-
 import com.reptile.model.UnicomBean;
 import com.reptile.util.*;
 
@@ -1721,6 +1720,10 @@ public class MobileService {
 			throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException, InterruptedException {
 		Map<String, Object> map = new HashMap<String, Object>(8);
+		//认证失败原因推送
+		Map<String ,Object> endstatemap=new HashMap<String, Object>(16);
+		endstatemap.put("cardNumber", userCard);
+		endstatemap.put("approveItem", "CHSI");
 		// ---------------------数据中心推送状态----------------------
 		PushState.state(userCard, "CHSI", 100);
 		PushSocket.pushnew(map, uuId, "1000", "登录中");
@@ -1875,8 +1878,10 @@ public class MobileService {
 					PushSocket.pushnew(map, uuId, "8000", "认证成功");
 				} else {
 					PushState.state(userCard, "CHSI", 200);
-					PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo")
-							.toString());
+					PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo").toString());
+					//认证失败原因推送
+					endstatemap.put("message", map.get("errorInfo").toString());
+					PushState.endstate(endstatemap);
 				}
 
 				// ---------------------数据中心推送状态----------------------
@@ -1886,6 +1891,9 @@ public class MobileService {
 				// --------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
 				PushSocket.pushnew(map, uuId, "3000", "您输入的用户名或密码有误");
+				//认证失败原因推送
+				endstatemap.put("message", "您输入的用户名或密码有误");
+				PushState.endstate(endstatemap);
 				// ---------------------数据中心推送状态----------------------
 
 			} else if (pages.asText().contains(MessageConstamts.MESSAGE_15)) {
@@ -1894,6 +1902,9 @@ public class MobileService {
 				// --------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
 				PushSocket.pushnew(map, uuId, "3000", "图片验证码输入有误");
+				//认证失败原因推送
+				endstatemap.put("message", "图片验证码输入有误");
+				PushState.endstate(endstatemap);
 				// ---------------------数据中心推送状态----------------------
 			}
 		} catch (Exception e) {
@@ -1905,6 +1916,9 @@ public class MobileService {
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "密码错误");
 				PushSocket.pushnew(map, uuId, "3000", "密码错误");
+				//认证失败原因推送
+				endstatemap.put("message", "密码错误");
+				PushState.endstate(endstatemap);
 			} else {
 				// --------------------数据中心推送状态----------------------
 				PushState.state(userCard, "CHSI", 200);
@@ -1912,6 +1926,9 @@ public class MobileService {
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "网络错误");
 				PushSocket.pushnew(map, uuId, "3000", "网络错误");
+				//认证失败原因推送
+				endstatemap.put("message", "网络错误");
+				PushState.endstate(endstatemap);
 			}
 		}
 		return map;

@@ -411,7 +411,7 @@ public class PhoneBillsService {
                 }
                int boundCount3=4;
                 if (dataList.size() < boundCount3) {
-                    PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新再次认证！");
+                    PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新认证！");
                     PushState.state(userNumber, "callLog", 200);
                     map.put("errorCode", "0009");
                     map.put("errorInfo", "数据获取不完全，请重新再次认证！");
