@@ -1868,8 +1868,7 @@ public class MobileService {
 				map.put("CHSIAcount", username);
 				map.put("CHSIPassword", userpwd);
 				map.put("Usercard", userCard);
-				map = resttemplate.SendMessage(map, ConstantInterface.port
-						+ "/HSDC/authcode/hireright");
+				map = resttemplate.SendMessage(map, ConstantInterface.port+ "/HSDC/authcode/hireright");
 				System.out.println("学信网数据中心返回结果----" + map);
 				// --------------------数据中心推送状态----------------------
 				if (map.get(MessageConstamts.MESSAGE_13).equals(
@@ -1877,11 +1876,8 @@ public class MobileService {
 					PushState.state(userCard, "CHSI", 300);
 					PushSocket.pushnew(map, uuId, "8000", "认证成功");
 				} else {
-					PushState.state(userCard, "CHSI", 200);
+					PushState.state(userCard, "CHSI", 200,map.get("errorInfo").toString());
 					PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo").toString());
-					//认证失败原因推送
-					endstatemap.put("message", map.get("errorInfo").toString());
-					PushState.endstate(endstatemap);
 				}
 
 				// ---------------------数据中心推送状态----------------------
@@ -1889,46 +1885,37 @@ public class MobileService {
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "您输入的用户名或密码有误");
 				// --------------------数据中心推送状态----------------------
-				PushState.state(userCard, "CHSI", 200);
+				PushState.state(userCard, "CHSI", 200,map.get("errorInfo").toString());
 				PushSocket.pushnew(map, uuId, "3000", "您输入的用户名或密码有误");
-				//认证失败原因推送
-				endstatemap.put("message", "您输入的用户名或密码有误");
-				PushState.endstate(endstatemap);
 				// ---------------------数据中心推送状态----------------------
 
 			} else if (pages.asText().contains(MessageConstamts.MESSAGE_15)) {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "图片验证码输入有误");
 				// --------------------数据中心推送状态----------------------
-				PushState.state(userCard, "CHSI", 200);
+				PushState.state(userCard, "CHSI", 200,map.get("errorInfo").toString());
 				PushSocket.pushnew(map, uuId, "3000", "图片验证码输入有误");
-				//认证失败原因推送
-				endstatemap.put("message", "图片验证码输入有误");
-				PushState.endstate(endstatemap);
+				 
 				// ---------------------数据中心推送状态----------------------
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (e.toString().contains(MessageConstamts.MESSAGE_16)) {
 				// --------------------数据中心推送状态----------------------
-				PushState.state(userCard, "CHSI", 200);
+				PushState.state(userCard, "CHSI", 200,map.get("errorInfo").toString());
 				// ---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "密码错误");
 				PushSocket.pushnew(map, uuId, "3000", "密码错误");
-				//认证失败原因推送
-				endstatemap.put("message", "密码错误");
-				PushState.endstate(endstatemap);
+				
 			} else {
 				// --------------------数据中心推送状态----------------------
-				PushState.state(userCard, "CHSI", 200);
+				PushState.state(userCard, "CHSI", 200,map.get("errorInfo").toString());
 				// ---------------------数据中心推送状态----------------------
 				map.put("errorCode", "0002");
 				map.put("errorInfo", "网络错误");
 				PushSocket.pushnew(map, uuId, "3000", "网络错误");
-				//认证失败原因推送
-				endstatemap.put("message", "网络错误");
-				PushState.endstate(endstatemap);
+				 
 			}
 		}
 		return map;
