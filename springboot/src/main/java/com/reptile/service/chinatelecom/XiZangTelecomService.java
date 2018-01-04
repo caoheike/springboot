@@ -23,7 +23,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-
+/**
+ * 
+ * @ClassName: XiZangTelecomService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class XiZangTelecomService {
 	private Logger logger= LoggerFactory.getLogger(XiZangTelecomService.class);
@@ -35,8 +42,8 @@ public class XiZangTelecomService {
 	  * @return
 	  */
 	  public Map<String, Object> getImageCode(HttpServletRequest request){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String,String> mapPath=new HashMap<String, String>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String,String> mapPath=new HashMap<String, String>(16);
 	        HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("GBmobile-webclient");
 	        if (attribute == null) {
@@ -51,16 +58,12 @@ public class XiZangTelecomService {
 		                HtmlPage page1 = webClient.getPage(requests);
 		                Thread.sleep(500);
 		                String page=page1.asXml();
-		                //System.out.println(page);
-		                if(page.contains("语音清单查询")){
+		                String yuyin="语音清单查询";
+		                if(page.contains(yuyin)){
 		                	WebRequest  request1 = new WebRequest(new URL("http://xz.189.cn/service/bill/xz/initQueryTicket.action?fastcode=10000436&cityCode=xz"));
 							requests.setHttpMethod(HttpMethod.GET);
 			                HtmlPage pages = webClient.getPage(request1);
 			                Thread.sleep(500);
-			              //System.out.println(pages.asXml());
-		                //=============图形验证码=====================
-			             /* HtmlTextInput randomCode=  (HtmlTextInput) pages.getElementById("randomcode");  
-			              randomCode.click();*/
 			              Thread.sleep(200);
 			              Random random = new Random();  
 			              //random必须要做为成员变量或者静态变量，不能每次都new一个，否则就不具有随机性了。  
@@ -106,7 +109,7 @@ public class XiZangTelecomService {
  */
 	  public Map<String, Object> getSMCode(HttpServletRequest request,String phoneNumber,String imageCode){
 
-	        Map<String, Object> map = new HashMap<String, Object>();
+	        Map<String, Object> map = new HashMap<String, Object>(16);
 	        HttpSession session = request.getSession();
 
 	        Object client = session.getAttribute("XZ-WebClient");
@@ -119,8 +122,6 @@ public class XiZangTelecomService {
 	        	List<String>  alertList=new ArrayList<String>();   
 		        CollectingAlertHandler head=new CollectingAlertHandler(alertList);
 		        webClient.setAlertHandler(head);
-	           //HtmlPage page=(HtmlPage) session.getAttribute("XZ-page");
-	          
 	           try { 
 	        	 String url="http://xz.189.cn/service/bill/sendValidReq.action"; 
 	        	 WebRequest requests = new WebRequest(new URL(url));
@@ -138,7 +139,9 @@ public class XiZangTelecomService {
 	              String result=   page1.getWebResponse().getContentAsString();
 	               JSONObject json=new JSONObject().fromObject(result);
 	               System.out.println(json);
-	           if(json!=null&&json.get("success").toString().contains("true")){
+	               String success="success";
+	               String truee="true";
+	           if(json!=null&&json.get(success).toString().contains(truee)){
 	        	   map.put("errorCode", "0000");
 	               map.put("errorInfo","验证码发送成功" );
 	               session.setAttribute("XZC-WebClient", webClient);
@@ -161,8 +164,8 @@ public class XiZangTelecomService {
 	  }  
 	  
 	  public Map<String, Object> getDetail(HttpServletRequest request,String phoneNumber, String serverPwd,String code,String longitude,String latitude){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String, Object> mapDate = new HashMap<String, Object>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String, Object> mapDate = new HashMap<String, Object>(16);
 		  PushState.state(phoneNumber, "callLog",100);
 		  List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 	        HttpSession session = request.getSession();
@@ -188,7 +191,9 @@ public class XiZangTelecomService {
 	               JSONObject json=new JSONObject().fromObject(result);
 	               System.out.println(json);
 	               String tip=  json.get("success").toString();
-	               if(tip!=null&&tip.contains("true")){
+	               String tru="true";
+	               String fsl="false";
+	               if(tip!=null&&tip.contains(tru)){
 	            	  System.out.println("校验成功！");
 	            	  //=====================获取详单=======================
 	            	  String detailUrl=	"http://xz.189.cn/service/bill/xz/feeDetailrecordList.action";
@@ -202,8 +207,10 @@ public class XiZangTelecomService {
 	  	             list.add(new NameValuePair("currentPage","1"));
 	  	             list.add(new NameValuePair("pageSize","2000"));
 	  	            
-	  	             list.add(new NameValuePair("operListID","1"));//语音详单
-	  	             list.add(new NameValuePair("isPrepay","0"));//手机号第0个
+	  	             //语音详单
+	  	             list.add(new NameValuePair("operListID","1"));
+	  	             //手机号第0个
+	  	             list.add(new NameValuePair("isPrepay","0"));
 	  	             list.add(new NameValuePair("pOffrType","481"));
 	  	             int[] nowYearMonth=GetMonth.nowYearMonth();
 	  	             int year=nowYearMonth[0];
@@ -211,20 +218,20 @@ public class XiZangTelecomService {
 	  	             String effDate=GetMonth.firstDateOfMonth(year,month);
 	  	             String expDate=GetMonth.lastDateOfMonth(year,month);
 	  	             list.add(new NameValuePair("serviceNbr",phoneNumber));
-	  	             for(int i=1;i<7;i++){
+	  	             int numb=7;
+	  	             for(int i=1;i<numb;i++){
 	  	            	
-	  	               list.add(new NameValuePair("effDate",effDate));//开始时间
-	  	               list.add(new NameValuePair("expDate",expDate));//结束时间
+	  	            	 //开始时间
+	  	               list.add(new NameValuePair("effDate",effDate));
+	  	               //结束时间
+	  	               list.add(new NameValuePair("expDate",expDate));
 	  	             
 	  	              request1.setRequestParameters(list);
 					  request1.setHttpMethod(HttpMethod.POST);
 		              HtmlPage detail = webClient.getPage(request1);
 		              Thread.sleep(500);
 		              String results=detail.asXml();
-		              System.out.println(results);
 	  	            if(results.contains("错误")){
-	  	            	//System.out.println(year+"*****"+month);
-	  	            	//System.out.println(results);
 	  	            	mapDate.put("item", "暂无法获取详单，您可以通过手机发送短信代码 103至 10001，查询上月账单；104 #查询年月（如： 104#201201）至 10001，查询前6个月的账单。"); 
 	  	            	dataList.add(mapDate);
 	  	            }else{
@@ -256,13 +263,14 @@ public class XiZangTelecomService {
 	  	         //===================推数据=====================   
 	  	             
 	  	             
-	              }else if(tip!=null&&tip.contains("false")){
+	              }else if(tip!=null&&tip.contains(fsl)){
 	            	  map.put("errorCode", "0001");
 		              map.put("errorInfo", json.get("tipValue").toString());
 		              return map;
 	              }else{
 	            	String tips=  json.get("flag").toString();
-	            	if(tips.equals("2")){
+	            	String er="2";
+	            	if(tips.equals(er)){
 	            		 map.put("errorCode", "0001");
 			             map.put("errorInfo", "验证码失效");
 			             return map;

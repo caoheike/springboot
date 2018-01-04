@@ -23,7 +23,14 @@ import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+/**
+ * 
+ * @ClassName: KunMingFundService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class KunMingFundService {
 	  private Logger logger= LoggerFactory.getLogger(KunMingFundService.class);
@@ -31,8 +38,8 @@ public class KunMingFundService {
 	   * 获取图形验证码
 	   * */
 	  public Map<String, Object> getImageCode(HttpServletRequest request){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String,String> mapPath=new HashMap<String, String>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String,String> mapPath=new HashMap<String, String>(16);
 	        HttpSession session = request.getSession();
 	        
 	        WebClient webClient=new WebClientFactory().getWebClient();
@@ -75,8 +82,8 @@ public class KunMingFundService {
 	   */
 	  
 	  public  Map<String, Object> getDetail(HttpServletRequest request,String idCard,String passWord,String catpy,String cityCode,String idCardNum){
-		  Map<String, Object> map = new HashMap<String, Object>();
-		  Map<String, Object> dateMap = new HashMap<String, Object>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+		  Map<String, Object> dateMap = new HashMap<String, Object>(16);
 		  List<Object> dataList = new ArrayList<Object>();
 		  List<Object> dataL = new ArrayList<Object>();
 		  HttpSession session = request.getSession();
@@ -103,7 +110,8 @@ public class KunMingFundService {
             list.add(new NameValuePair("unitcode",""));
             list.add(new NameValuePair("devcode",""));
             list.add(new NameValuePair("pwd",passWord));
-            list.add(new NameValuePair("vericode",catpy));//图形验证码
+            //图形验证码
+            list.add(new NameValuePair("vericode",catpy));
             requests.setRequestParameters(list);
 			requests.setHttpMethod(HttpMethod.POST);
 			HtmlPage page1 = webClient.getPage(requests);
@@ -111,24 +119,27 @@ public class KunMingFundService {
 			//System.out.println(page1.asXml());
 			String tip=page1.asXml();
 			System.out.println(tip);
-			if(tip.contains("操作失败")){
+			String canzuo="操作失败";
+			if(tip.contains(canzuo)){
 				PushState.state(idCardNum, "accumulationFund", 200);
 				logger.warn("昆明住房公积金获取失败--"+page1.executeJavaScript("$('.text').text()").getJavaScriptResult());
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", page1.executeJavaScript("$('.text').text()").getJavaScriptResult());
 	            //System.out.println();
 			}else{
-				
-				if(tip.contains("公积金基本信息查询")){
+				String gongj="公积金基本信息查询";
+				if(tip.contains(gongj)){
 					  logger.warn("昆明住房公积金基本信息获取中");
 					   WebRequest  request1 = new WebRequest(new URL("http://222.172.223.90:8081/kmnbp/init.summer?_PROCID=70000013"));
 						request1.setHttpMethod(HttpMethod.GET);
 		                HtmlPage pages = webClient.getPage(request1);
 		                Thread.sleep(100);
 		                HtmlTable table=   (HtmlTable) pages.getElementById("ct_form");
-		                dataList.add(table.asXml());//基本数据
+		                //基本数据
+		                dataList.add(table.asXml());
 					    System.out.println(table.asXml());
-		                dateMap.put("base", dataList);//基本信息
+					    //基本信息
+		                dateMap.put("base", dataList);
 					//=====================明细======================
 		                logger.warn("昆明住房公积金明细信息获取中");
 	                WebRequest  request2 = new WebRequest(new URL("http://222.172.223.90:8081/kmnbp/init.summer?_PROCID=70000002"));
@@ -278,12 +289,16 @@ public class KunMingFundService {
   	               map.put("data", dateMap);
 		          
 	               map.put("userId", idCardNum);
-                   map.put("city", cityCode);//004
+	               //004
+                   map.put("city", cityCode);
                    map.put("errorCode", "0000");
 	               map.put("errorInfo", "查询成功");
 		           Resttemplate resttemplate = new Resttemplate();
-	              map=resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");//张浩敏
-	              if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+		           //张浩敏
+	              map=resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/person/accumulationFund");
+	              String sss="0000";
+	              String errorCode="errorCode";
+	              if(map!=null&&sss.equals(map.get(errorCode).toString())){
 	                	 PushState.state(idCardNum, "accumulationFund", 300);
 	                    map.put("errorInfo","推送成功");
 	                    map.put("errorCode","0000");

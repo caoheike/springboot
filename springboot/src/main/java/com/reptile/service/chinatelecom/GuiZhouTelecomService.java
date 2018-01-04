@@ -20,7 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 
+ * @ClassName: GuiZhouTelecomService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class GuiZhouTelecomService {
 	 private Logger logger= LoggerFactory.getLogger(GuiZhouTelecomService.class);
@@ -32,8 +39,9 @@ public class GuiZhouTelecomService {
 	 * @return
 	 */
 	public  Map<String,Object> guiZhouLogin(HttpServletRequest request){
-		 Map<String, Object> map = new HashMap<String, Object>(); 
-	     Object attribute = request.getSession().getAttribute("GBmobile-webclient");//从session中获得webClient
+		 Map<String, Object> map = new HashMap<String, Object>(16); 
+		 //从session中获得webClient
+	     Object attribute = request.getSession().getAttribute("GBmobile-webclient");
 	     WebClient webClient=(WebClient)attribute; 
 	     if(webClient==null){
 	    	 logger.warn("贵州电信","请先登录!");
@@ -43,21 +51,23 @@ public class GuiZhouTelecomService {
 	     }
 	     try {
 			 HtmlPage nextPage=webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00320353");
-			//HtmlPage ifrPage=webClient.getPage("http://service.gz.189.cn/web/query.php?action=call&fastcode=00320353&cityCode=gz");
 	    	 HtmlPage ifrPage=webClient.getPage("http://www.189.cn//dqmh/ssoLink.do?method=linkTo&platNo=10024&toStUrl=http://service.gz.189.cn/web/query.php?action=call&fastcode=00320353&cityCode=gz");	
 	    	
 				Thread.sleep(1000);
 			
-			//System.out.println(P.asXml());
 	    	 HtmlButtonInput button= (HtmlButtonInput) ifrPage.getElementById("getcheckcode");
-	    	 button.click();//发送验证码
+	    	 //发送验证码
+	    	 button.click();
 	    	 Thread.sleep(500);
-	    	 if(button.getAttribute("value").contains("发送次数过多")){
+	    	 String valu="value";
+	    	 String fs="发送次数过多";
+	    	 String miaoh="秒后可重新获取";
+	    	 if(button.getAttribute(valu).contains(fs)){
 	    		 logger.warn("贵州电信","发送次数过多，请稍后重试");
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "发送次数过多，请稍后重试");
 				 return map;
-			   }else if(button.getAttribute("value").contains("秒后可重新获取")){
+			   }else if(button.getAttribute(valu).contains(miaoh)){
 				   logger.warn("贵州电信","验证码已发送!");
 	    		 map.put("errorCode", "0000");
 	             map.put("errorInfo", "验证码已发送!");
@@ -66,8 +76,10 @@ public class GuiZhouTelecomService {
 				 map.put("errorCode", "0001");
 		         map.put("errorInfo", "网络连接异常");
 			 }
-			request.getSession().setAttribute("ifrPage",ifrPage );//把页面放到session
-   		    request.getSession().setAttribute("webClient", webClient);//把webClient放到session
+	    	 //把页面放到session
+			request.getSession().setAttribute("ifrPage",ifrPage );
+			//把webClient放到session
+   		    request.getSession().setAttribute("webClient", webClient);
 			
 			
 		} catch (Exception e) {
@@ -85,84 +97,78 @@ public class GuiZhouTelecomService {
 	 * @return
 	 */
 	
-	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String UUID) {
-		    Map<String, Object> map = new HashMap<String, Object>();
+	public Map<String,Object> guiZhouDetial(String code,HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String uuid) {
+		    Map<String, Object> map = new HashMap<String, Object>(16);
 		    PushState.state(phoneNumber, "callLog",100);
-		    PushSocket.pushnew(map, UUID, "1000","登录中");
+		    PushSocket.pushnew(map, uuid, "1000","登录中");
 		    try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		    WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");//从session中获得webClient;
+		    //从session中获得webClient;
+		    WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");
 	        if(webClient==null){
-	        	//PushSocket.push(map, UUID, "0001");
 	        	logger.warn("贵州电信","请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
-			     PushState.state(phoneNumber, "callLog",200);
-			     PushSocket.pushnew(map, UUID, "3000","请先获取验证码");
+			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
+			     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
 				 return map;
 		    }
 		      
 	        HtmlPage ifrPage=(HtmlPage) request.getSession().getAttribute("ifrPage");
 	        List<Map<String, Object>> dataList=new ArrayList<Map<String, Object>>();
 	        
-			ifrPage.getElementById("checkcode").setAttribute("value", code);//输入验证码
-			List<DomElement>  radio=ifrPage.getElementsByName("ACCTMONTH");//获取月份复选框//System.out.println(radio.get(0).asXml());
+	        //输入验证码
+			ifrPage.getElementById("checkcode").setAttribute("value", code);
+			List<DomElement>  radio=ifrPage.getElementsByName("ACCTMONTH");
 			HtmlButtonInput button= ifrPage.getElementByName("input");
 			logger.warn("贵州电信数据获取中...");
-             for(int i=0;i<radio.size();i++){//六个月数据
-            	 Map<String, Object> dmap = new HashMap<String, Object>();
+			//六个月数据
+             for(int i=0;i<radio.size();i++){
+            	 Map<String, Object> dmap = new HashMap<String, Object>(16);
         	 try {
 				 radio.get(i).click(); 
 				 HtmlPage detial= button.click();
 				 Thread.sleep(1000);
 			//======================验证码正确性验证===============================	
 				 if(code==null||code.equals("")){
-					 //PushSocket.push(map, UUID, "0001");
-					 PushSocket.pushnew(map, UUID, "3000","验证码不能为空");
-					 PushState.state(phoneNumber, "callLog",200);
+					 PushSocket.pushnew(map, uuid, "3000","验证码不能为空");
+					 PushState.state(phoneNumber, "callLog",200,"验证码不能为空");
 					 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码不能为空");
             		 return map; 
 				 }
 				 
 				 if( detial.getElementById("tilte").asXml().contains("验证码错误")){
-					 //PushSocket.push(map, UUID, "0001");
             		 map.put("errorCode", "0001");
  					 map.put("errorInfo", "验证码错误");
- 					PushState.state(phoneNumber, "callLog",200);
- 					PushSocket.pushnew(map, UUID, "3000","验证码错误");
+ 					PushState.state(phoneNumber, "callLog",200,"验证码错误");
+ 					PushSocket.pushnew(map, uuid, "3000","验证码错误");
             		 return map; 
             	 }else{		 
-				 //System.out.println(detial.getWebResponse().getContentAsString());
-            		 PushSocket.pushnew(map, UUID, "5000","获取数据中");
+            		 PushSocket.pushnew(map, uuid, "5000","获取数据中");
 		        	dmap.put("item", detial.asXml());
-		         // System.out.println(detial.asXml());
 		      	    dataList.add(dmap);
 		      	    
             	 }
 			} catch (Exception e) {
 				logger.warn("贵州电信",e);
-				//PushSocket.push(map, UUID, "0001");
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
-	            PushState.state(phoneNumber, "callLog",200);
-	            PushSocket.pushnew(map, UUID, "3000","网络连接异常");
-				//e.printStackTrace();
+	            PushState.state(phoneNumber, "callLog",200,"网络连接异常");
+	            PushSocket.pushnew(map, uuid, "3000","网络连接异常");
 				return map;
 			}
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						logger.warn("贵州电信",e);
-						//e.printStackTrace();
 					}
        }    
-            // PushSocket.push(map, UUID, "0000");
-             PushSocket.pushnew(map, UUID, "6000","获取数据成功");
+             PushSocket.pushnew(map, uuid, "6000","获取数据成功");
              
            map.put("data", dataList);
            map.put("UserPassword",servePwd );
@@ -176,20 +182,23 @@ public class GuiZhouTelecomService {
            webClient.close();
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
-           System.out.println(map);
-           if(map.get("errorCode").equals("0000")) {
-        	   PushSocket.pushnew(map, UUID, "8000","认证成功");
+ 
+           String sss="0000";
+           String errorCode="errorCode";
+           String sanl="0003";
+           if(map.get(errorCode).equals(sss)) {
+        	   PushSocket.pushnew(map, uuid, "8000","认证成功");
         	   PushState.state(phoneNumber, "callLog",300);
            }else {
-        	   PushState.state(phoneNumber, "callLog",200);
-        	   PushSocket.pushnew(map, UUID, "9000",map.get("errorInfo").toString());
+        	   PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
+        	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
            }
-           if(map.get("errorCode").equals("0003")){
+           if(map.get(errorCode).equals(sanl)){
         	   logger.warn("贵州电信查询失败，稍后再试！！");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
-        	   PushState.state(phoneNumber, "callLog",200);
-        	   PushSocket.pushnew(map, UUID, "9000","查询失败，稍后再试！！");
+        	   PushState.state(phoneNumber, "callLog",200,"查询失败，稍后再试！！");
+        	   PushSocket.pushnew(map, uuid, "9000","查询失败，稍后再试！！");
            }
 		return map;
 	}

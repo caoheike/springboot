@@ -30,25 +30,15 @@ public class SendMail {
 
 	private static Logger logger = Logger.getLogger(SendMail.class);
 	
-	/**
-	 * host
-	 */
+	//host
 	private static String mailSmtpHost; 
-	/**
-	 * 端口号
-	 */
+	//端口号
 	private static String mailSmtpPort;
-	/**
-	 * 邮箱登录用户名
-	 */
+	//邮箱登录用户名
 	private static String fromUserName;
-	/**
-	 * 邮箱应用密码
-	 */
+	//邮箱应用密码
 	private static String fromUserPassword;
-	/**
-	 * 收件人邮箱，如有多个收件人，使用英文逗号进行分割
-	 */
+	//收件人邮箱，如有多个收件人，使用英文逗号进行分割
 	private static String toEmail;
 
 	public static String getMailSmtpHost() {
@@ -163,5 +153,5 @@ class MyAuthenticator extends Authenticator {
 	protected PasswordAuthentication getPasswordAuthentication() {
 		return new PasswordAuthentication(userName, password);
 	}
-
+	
 }

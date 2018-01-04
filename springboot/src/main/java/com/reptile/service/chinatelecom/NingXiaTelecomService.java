@@ -237,12 +237,12 @@ public class NingXiaTelecomService {
 				"driver1");
 		Map<String, Object> map = new HashMap<String, Object>(16);
 		PushSocket.pushnew(map, uuid, "1000", "登录中");
-		PushState.state(phoneNumber, "callLog", 200);
+		PushState.state(phoneNumber, "callLog", 100);
 		if (driver == null) {
 			logger.warn("宁夏电信请先获取验证码");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先获取验证码");
-			PushState.state(phoneNumber, "callLog", 200);
+			PushState.state(phoneNumber, "callLog", 200, "请先获取验证码");
 			PushSocket.pushnew(map, uuid, "3000", "请先获取验证码");
 			return map;
 		}
@@ -251,7 +251,7 @@ public class NingXiaTelecomService {
 			logger.warn("宁夏电信验证码不能为空");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "验证码不能为空");
-			PushState.state(phoneNumber, "callLog", 200);
+			PushState.state(phoneNumber, "callLog", 200, "验证码不能为空");
 			PushSocket.pushnew(map, uuid, "3000", "验证码不能为空");
 			return map;
 		}
@@ -262,7 +262,7 @@ public class NingXiaTelecomService {
 			logger.warn("宁夏电信验证码错误");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "验证码错误");
-			PushState.state(phoneNumber, "callLog", 200);
+			PushState.state(phoneNumber, "callLog", 200, "验证码错误");
 			PushSocket.pushnew(map, uuid, "3000", "验证码错误");
 			return map;
 		}
@@ -349,7 +349,7 @@ public class NingXiaTelecomService {
 				} else if (html.contains("二次短信验证失败")) {
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "验证码错误");
-					PushState.state(phoneNumber, "callLog", 200);
+					PushState.state(phoneNumber, "callLog", 200, "验证码错误");
 
 					return map;
 				} else {
@@ -370,7 +370,7 @@ public class NingXiaTelecomService {
 				logger.warn("宁夏电信", e);
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
-				PushState.state(phoneNumber, "callLog", 200);
+				PushState.state(phoneNumber, "callLog", 200, "获取数据失败，网络连接异常");
 				PushSocket.pushnew(map, uuid, "7000", "获取数据失败，网络连接异常");
 				return map;
 			}
@@ -392,9 +392,8 @@ public class NingXiaTelecomService {
 			PushSocket.pushnew(map, uuid, "8000", "认证成功");
 			PushState.state(phoneNumber, "callLog", 300);
 		} else {
-			PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo")
-					.toString());
-			PushState.state(phoneNumber, "callLog", 200);
+			PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo").toString());
+			PushState.state(phoneNumber, "callLog", 200, map.get("errorInfo").toString());
 		}
 		driver.quit();
 		return map;

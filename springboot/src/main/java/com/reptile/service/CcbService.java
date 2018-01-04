@@ -101,7 +101,7 @@ public class CcbService {
 					// TODO: handle exception
 				}
 	        	PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的登录密码错误");
-	        	PushState.state(iDNumber, "savings",200);
+	        	PushState.state(iDNumber, "savings",200,"建设银行储蓄卡输入的登录密码错误");
 	            return map;  
 	        }
 	        state="您输入的信息有误";
@@ -115,7 +115,7 @@ public class CcbService {
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
 	            PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的信息有误");
-	            PushState.state(iDNumber, "savings",200);
+	            PushState.state(iDNumber, "savings",200,"建设银行储蓄卡输入的信息有误");
 	        	return map;  
 	        }
 	        
@@ -161,7 +161,7 @@ public class CcbService {
 				 driver.findElement(ByXPath.xpath("/html/body/div/div[2]/table/tbody/tr/td[6]/a")).click();
 				 Thread.sleep(5000);
 				} catch (Exception e) {
-					PushState.state(iDNumber, "savings",200);
+					PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
@@ -321,7 +321,7 @@ public class CcbService {
 								}
 				                
 				            }else{
-				            	PushState.state(iDNumber, "savings",200);
+				            	PushState.state(iDNumber, "savings",200,"建设银行储蓄卡认证失败");
 				            	PushSocket.pushnew(map, uuid, "9000","建设银行储蓄卡认证失败");
 				            	logger.warn("建设银行数据推送失败"+iDNumber);
 				                //PushSocket.push(map, UUID, "0001");
@@ -340,7 +340,7 @@ public class CcbService {
 			        }  
 			    } catch (Exception e) { 
 			    	 e.printStackTrace();
-			    	 PushState.state(iDNumber, "savings",200);
+			    	 PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
 			    	 map.clear();
 					 logger.warn("建设银行详单获取失败"+iDNumber);
 					 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");

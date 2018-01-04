@@ -130,7 +130,7 @@ public class ZhejiangTelecomService {
 		    	logger.warn("浙江电信，请先获取验证码");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");
-			     PushState.state(phoneNumber, "callLog",200);
+			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
 			     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
 				 return map;
 		    }
@@ -177,6 +177,7 @@ public class ZhejiangTelecomService {
 					 PushSocket.pushnew(map, uuid, "3000",alertList.get(0).toString());
 		             map.put("errorCode", "0001");
 				     map.put("errorInfo", alertList.get(0).toString());	
+				     PushState.state(phoneNumber, "callLog",200,alertList.get(0).toString());
 					 return map;
 				 }else if(i==0){
 					 PushSocket.pushnew(map, uuid, "2000","登录成功");
@@ -206,8 +207,8 @@ public class ZhejiangTelecomService {
 					logger.warn("浙江电信","暂无数据");
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
-					PushSocket.pushnew(map, uuid, "7000","获取数据失败");
-					PushState.state(phoneNumber, "callLog",200);
+					PushSocket.pushnew(map, uuid, "7000","暂无数据");
+					PushState.state(phoneNumber, "callLog",200,"暂无数据");
 					return map;
 				}
 		}
@@ -232,14 +233,14 @@ public class ZhejiangTelecomService {
 				 PushState.state(phoneNumber, "callLog",300);
 			}else {
 				PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-				PushState.state(phoneNumber, "callLog",200);
+				PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 			}
 		    } catch (InterruptedException e) {
 			logger.warn("浙江电信",e);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常！");
 			PushSocket.pushnew(map, uuid, "9000","网络异常！");
-			PushState.state(phoneNumber, "callLog",200);
+			PushState.state(phoneNumber, "callLog",200,"网络异常！");
 			}
 	        return map;
 	}

@@ -197,7 +197,7 @@ public class ShanDongTelecomService {
         if (attribute == null || htmlpage == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushState.state(userIphone, "callLog",200);
+            PushState.state(userIphone, "callLog",200,"登录失败，操作异常!");
             PushSocket.pushnew(map, uuid, "3000","登录失败，操作异常!");
         } else {
             try {
@@ -284,13 +284,13 @@ public class ShanDongTelecomService {
 					 PushState.state(userIphone, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-					 PushState.state(userIphone, "callLog",200);
+					 PushState.state(userIphone, "callLog",200,map.get("errorInfo").toString());
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(userIphone, "callLog",200);
+                PushState.state(userIphone, "callLog",200,"网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
             }
         }

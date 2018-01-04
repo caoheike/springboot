@@ -22,14 +22,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+/**
+ * 
+ * @ClassName: TaiAnSocialSecurityService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class TaiAnSocialSecurityService {
 	private Logger logger= LoggerFactory.getLogger(TaiAnSocialSecurityService.class);
 	 @Autowired
 	  private application applications;
 	 public Map<String, Object> getImageCode(HttpServletRequest request,String idCard,String passWord,String cityCode,String idCardNum){
-		  Map<String, Object> map = new HashMap<String, Object>();
-	      Map<String, Object> dateMap = new HashMap<String, Object>();
+		  Map<String, Object> map = new HashMap<String, Object>(16);
+	      Map<String, Object> dateMap = new HashMap<String, Object>(16);
 		  List<Object> dataList = new ArrayList<Object>();
 		 
 	        HttpSession session = request.getSession();
@@ -49,7 +57,8 @@ public class TaiAnSocialSecurityService {
 						
 						String password="";
 						if(alertList.size() > 0){
-							password = alertList.get(0).toString();//加密后的密码
+							 //加密后的密码
+							password = alertList.get(0).toString();
 							
 						}else{
 							logger.warn("泰安市社保--系统繁忙，请稍后再试！");
@@ -65,7 +74,8 @@ public class TaiAnSocialSecurityService {
 			ImageIO.write(bi, "png", new File("C:\\Shimage", findImage));
 			//2.转码
 			Map<String, Object> imagev = MyCYDMDemo.Imagev("C:\\Shimage\\" + findImage);
-			String catpy1 = (String) imagev.get("strResult");//转码后的动态码
+			//转码后的动态码
+			String catpy1 = (String) imagev.get("strResult");
 
 			
 			  try {
@@ -81,8 +91,8 @@ public class TaiAnSocialSecurityService {
 		            list1.add(new NameValuePair("appversion","1.1.84"));
 		            HtmlPage page2 =this.getPages(webClient, "http://124.130.146.14:8002/hso/logon.do", list1, HttpMethod.POST);
 					Thread.sleep(100);
-				  //  System.out.println(page2.asXml());	
-					if(page2.asText().contains("true")){
+					String trueee="true";
+					if(page2.asText().contains(trueee)){
 						logger.warn("泰安市社保基本信息获取中");
 						//=================获取基本信息=================
 				  HtmlPage page3=webClient.getPage("http://124.130.146.14:8002/hso/hsoPer.do?method=enterPerHome");
@@ -96,9 +106,11 @@ public class TaiAnSocialSecurityService {
 				            list2.add(new NameValuePair("method","queryZgYanglaozh"));
 				            list2.add(new NameValuePair("__logon_ticket","null"));
 						    HtmlPage detail=this.getPages(webClient, "http://124.130.146.14:8002/hso/persi.do", list2, HttpMethod.POST);
-						    if(detail.asXml().contains("select")){
+						    String sele="select";
+						    if(detail.asXml().contains(sele)){
 						    	HtmlSelect select= (HtmlSelect) detail.getElementById("nd");
-						    	int num=select.getChildElementCount();//获取年份
+						    	//获取年份
+						    	int num=select.getChildElementCount();
 						    	String nd="";
 						    	String result="";
 						    	int tableNum=0;
@@ -124,8 +136,8 @@ public class TaiAnSocialSecurityService {
 						        	   }
 								   }
 						           
-						        
-						           if(!tabl2.equals("")){
+						        String kongg="";
+						           if(!tabl2.equals(kongg)){
 						        	   dataList.add(tabl2);   
 						           }
 						           
@@ -133,14 +145,17 @@ public class TaiAnSocialSecurityService {
 						    	logger.warn("泰安市社保信息获取完成");
 						    	dataList.add(table1.asXml());
 						    	dateMap.put("item", dataList);
-						    	map.put("name", name);//TODO
+						    	map.put("name", name);
 						    	map.put("errorInfo", "查询成功");
 								map.put("errorCode", "0000");
 								map.put("data", dateMap);
-								map.put("city", cityCode);//007
-								map.put("userId", idCardNum);//TODO
+								//007
+								map.put("city", cityCode);
+								map.put("userId", idCardNum);
 								map = new Resttemplate().SendMessage(map,applications.getSendip()+"/HSDC/person/socialSecurity");
-								if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+								String sll="0000";
+								String errorCode="errorCode";
+								if(map!=null&&sll.equals(map.get(errorCode).toString())){
 						          	PushState.state(idCardNum, "socialSecurity", 300);
 						          	map.put("errorInfo","推送成功");
 						          	map.put("errorCode","0000");
@@ -159,7 +174,8 @@ public class TaiAnSocialSecurityService {
 					}else{
 						logger.warn("泰安市社保信息获取登陆失败");
 						 map.put("errorCode", "0001");
-						 if(page2.asText().contains("未生成验证码")){
+						 String weis="未生成验证码";
+						 if(page2.asText().contains(weis)){
 					     map.put("errorInfo", "网路繁忙，请重试");	 
 						 }else{
 							 map.put("errorInfo", page2.asText()); 

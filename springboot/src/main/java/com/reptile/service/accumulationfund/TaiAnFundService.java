@@ -25,16 +25,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 
+ * @ClassName: TaiAnFundService  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Service
 public class TaiAnFundService {
     private Logger logger = LoggerFactory.getLogger(TaiAnFundService.class);
 
-    private final static String detailUrl = "http://tagjj.com:7001/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
+    private final static String DETAILURL = "http://tagjj.com:7001/wscx/zfbzgl/gjjmxcx/gjjmx_cx.jsp";
 
     public Map<String, Object> login(HttpServletRequest request, String idCard, String passWord, String cityCode, String idCardNum) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, Object> dateMap = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(16);
+        Map<String, Object> dateMap = new HashMap<String, Object>(16);
         List<String> dataList = new ArrayList<String>();
         WebClient webClient = new WebClientFactory().getWebClient();
 
@@ -45,7 +52,8 @@ public class TaiAnFundService {
             requests.setHttpMethod(HttpMethod.GET);
             HtmlPage page1 = webClient.getPage(requests);
             Thread.sleep(3000);
-            if (page1.asXml().contains("alert")) {
+            String alert="alert";
+            if (page1.asXml().contains(alert)) {
                 String tip = page1.asXml().split("alert")[1].split("\\(")[1].split("\\)")[0];
                 logger.warn("泰安市公积金" + tip);
                 map.put("errorCode", "0001");
@@ -68,7 +76,8 @@ public class TaiAnFundService {
                 HtmlTable table = (HtmlTable) page2.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[4]/tbody/tr/td/table/tbody/tr/td/table[1]").get(0);
                 //  System.out.println(table.asXml());
 
-                dateMap.put("base", table.asXml());//基本数据
+                //基本数据
+                dateMap.put("base", table.asXml());
                 logger.warn("泰安市公积金基本数据获取完成");
                 //=============================明细========================
                 logger.warn("泰安市公积金数据明细获取中");
@@ -81,14 +90,15 @@ public class TaiAnFundService {
                 list.add(new NameValuePair("cxyd", URLEncoder.encode("当前年度", "gb2312")));
                 list.add(new NameValuePair("zgzt", URLEncoder.encode(zgzt, "gb2312")));
 
-                HtmlPage detailPage = getPages(webClient, detailUrl, list, HttpMethod.POST);
+                HtmlPage detailPage = getPages(webClient, DETAILURL, list, HttpMethod.POST);
 
                 HtmlTable tables = (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
                 HtmlElement totalPage = (HtmlElement) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[2]/td").get(0);
                 String details = totalPage.asText().split("共")[1].split("页")[0];
                 int num = new Integer(details);
                 // if(num==1&&tables.asXml().contains("jtpsoft")){
-                dataList.add(tables.asXml());//当前年度
+                //当前年度
+                dataList.add(tables.asXml());
                 //System.out.println(tables.asXml());
                 // }
                 //=========================  其余年度明细==============
@@ -97,7 +107,7 @@ public class TaiAnFundService {
 
                 for (int i = 1; i < seleNum - 1; i++) {
                     String da = "";
-                    detailPage = getPages2(webClient, detailUrl, select.getOption(i).asText(), select.getOption(i).asText(), "1", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
+                    detailPage = getPages2(webClient, DETAILURL, select.getOption(i).asText(), select.getOption(i).asText(), "1", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
                     Thread.sleep(500);
                     tables = (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
                     Thread.sleep(500);
@@ -110,12 +120,13 @@ public class TaiAnFundService {
                         System.out.println(tables.asXml());
                     } else if (num > 1) {
                         for (int j = 1; j <= num; j++) {
-                            detailPage = getPages2(webClient, detailUrl, select.getOption(i).asText(), select.getOption(i).asText(), j + "", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
+                            detailPage = getPages2(webClient, DETAILURL, select.getOption(i).asText(), select.getOption(i).asText(), j + "", details, "当前年度", zgzh, sfzh, zgxm, dwbm, HttpMethod.POST);
                             tables = (HtmlTable) detailPage.getByXPath("/html/body/table[2]/tbody/tr[1]/td[2]/table[5]/tbody/tr[1]/td/table").get(0);
                             da = da + tables.asXml();
 
                         }
-                        dataList.add(da);//当前年度
+                        //当前年度
+                        dataList.add(da);
                         System.out.println(da);
                     }
                 }
@@ -124,10 +135,13 @@ public class TaiAnFundService {
                 map.put("errorInfo", "查询成功");
                 map.put("errorCode", "0000");
                 map.put("data", dateMap);
-                map.put("city", cityCode);//007
-                map.put("userId", idCardNum);//TODO
+                //007
+                map.put("city", cityCode);
+                map.put("userId", idCardNum);
                 map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/person/accumulationFund");
-                if (map != null && "0000".equals(map.get("errorCode").toString())) {
+                String hhh="0000";
+                String errorCode="errorCode";
+                if (map != null && hhh.equals(map.get(errorCode).toString())) {
                     PushState.state(idCardNum, "accumulationFund", 300);
                     map.put("errorInfo", "查询成功");
                     map.put("errorCode", "0000");

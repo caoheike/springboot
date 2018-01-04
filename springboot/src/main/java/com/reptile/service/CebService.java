@@ -42,7 +42,7 @@ public class CebService {
 		WebDriver driver = new InternetExplorerDriver();
 		try {
 			// 光大银行信用卡登录页面地址
-			driver.get("https://xyk.cebbank.com/mall/login");
+			driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");
 			driver.navigate().refresh();
 			// 隐式等待
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -149,6 +149,8 @@ public class CebService {
 		if (sessiondriver == null) {
 			if (isok == true) {
 				PushState.state(userCard, "bankBillFlow", 200);
+			}else{
+				PushState.statenew(userCard, "bankBillFlow", 200, "连接超时！请重新获取验证码");
 			}
 			// 当session为空时，返回map状态
 			logger.warn("连接超时！请重新获取验证码" + userCard);
@@ -168,6 +170,11 @@ public class CebService {
 		}
 		try {
 			WebElement loginform = driver.findElement(By.id("login"));
+			if (isok) {
+				loginform.findElement(By.id("yzmcode"));
+			} else {
+
+			}
 			// 输入app前端传输过来的短信验证码
 			loginform.findElement(By.id("verification-code")).sendKeys(passWord);
 			// 点击光大银行信用卡登录按钮
@@ -178,7 +185,9 @@ public class CebService {
 				driver.findElement(ByClassName.className(error));
 				Thread.sleep(2000);
 				if (isok == true) {
-					PushState.state(userCard, "bankBillFlow", 200);
+					PushState.state(userCard, "bankBillFlow", 200, "短信验证码输入有误");
+				}else{
+					PushState.statenew(userCard, "bankBillFlow", 200, "短信验证码输入有误");
 				}
 				logger.warn("光大银行登录时发送验证码输入有误" + userCard);
 				map.put("errorInfo", "短信验证码输入有误");
@@ -197,6 +206,7 @@ public class CebService {
 				driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");
 				System.out.println("开始进入个人中心");
 				// 获取到页面元素进行定位
+				Thread.sleep(3000);
 				WebElement table = driver.findElement(ByClassName.className("tab_one"));
 				List<WebElement> tr = table.findElements(By.tagName("tr"));
 				List<String> html = new ArrayList<String>();
@@ -254,8 +264,11 @@ public class CebService {
 				} else {
 					// --------------------数据中心推送状态----------------------
 					if (isok == true) {
-						PushState.state(userCard, "bankBillFlow", 200);
-					} // ---------------------数据中心推送状态----------------------
+						PushState.state(userCard, "bankBillFlow", 200, "光大银行信用卡认证失败");
+					}else{
+						PushState.statenew(userCard, "bankBillFlow", 200, "光大银行信用卡认证失败");
+					}
+					// ---------------------数据中心推送状态----------------------
 					logger.warn("光大银行账单推送失败" + userCard);
 					PushSocket.pushnew(map, uuid, "9000", "光大银行信用卡认证失败");
 				}
@@ -270,21 +283,39 @@ public class CebService {
 				e3.printStackTrace();
 			}
 			// ---------------------------数据中心推送状态----------------------------------
-			if (isok == true) {
-				PushState.state(userCard, "bankBillFlow", 200);
-			}
 			String state = "2000";
 			String state1 = "5000";
 			String state2 = "6000";
-			if (state.equals(flag)) {
-				PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
-			} else if (state1.equals(flag)) {
-				PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
-			} else if (state2.equals(flag)) {
-				PushSocket.pushnew(map, uuid, "9000", "认证失败");
-			} else {
-				PushSocket.pushnew(map, uuid, "3000", "登录失败，验证码错误");
+			if (isok == true) {
+				if (state.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
+					PushState.state(userCard, "bankBillFlow", 200, "光大银行账单获取失败");
+				} else if (state1.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
+					PushState.state(userCard, "bankBillFlow", 200, "光大银行账单获取失败");
+				} else if (state2.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "9000", "认证失败");
+					PushState.state(userCard, "bankBillFlow", 200,"认证失败");
+				} else {
+					PushSocket.pushnew(map, uuid, "3000", "登录失败，验证码错误");
+					PushState.state(userCard, "bankBillFlow", 200, "登录失败，验证码错误");
+				}
+			}else{
+				if (state.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
+					PushState.statenew(userCard, "bankBillFlow", 200, "光大银行账单获取失败");
+				} else if (state1.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "7000", "光大银行账单获取失败");
+					PushState.statenew(userCard, "bankBillFlow", 200, "光大银行账单获取失败");
+				} else if (state2.equals(flag)) {
+					PushSocket.pushnew(map, uuid, "9000", "认证失败");
+					PushState.statenew(userCard, "bankBillFlow", 200, "认证失败");
+				} else {
+					PushSocket.pushnew(map, uuid, "3000", "登录失败，验证码错误");
+					PushState.statenew(userCard, "bankBillFlow", 200, "登录失败，验证码错误");
+				}
 			}
+			
 			// ---------------------------数据中心推送状态----------------------------------
 			e.printStackTrace();
 			map.clear();

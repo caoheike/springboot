@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.reptile.service.accumulationfund.BaoJiFundService;
+/**
+ * 
+ * @ClassName: BaoJiFundController  
+ * @Description: TODO  
+ * @author: 111
+ * @date 2018年1月2日  
+ *
+ */
 @Controller
 @RequestMapping("BaoJiFundController")
 public class BaoJiFundController {

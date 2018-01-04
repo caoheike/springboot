@@ -116,7 +116,7 @@ public class YunNanTelecomService {
         if (yunNanWebClient == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常");
-            PushState.state(phoneNumber, "callLog",200);
+            PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常");
             PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常");
         } else {
             WebClient webClient = (WebClient) yunNanWebClient;
@@ -144,7 +144,7 @@ public class YunNanTelecomService {
                     if (!popup.contains(validateYan)) {
                         map.put("errorCode", "0003");
                         map.put("errorInfo", popup);
-                        PushState.state(phoneNumber, "callLog",200);
+                        PushState.state(phoneNumber, "callLog",200,popup);
                         PushSocket.pushnew(map, uuid, "3000",popup);
                         return map;
                     }
@@ -209,14 +209,14 @@ public class YunNanTelecomService {
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-					PushState.state(phoneNumber, "callLog",200);
+					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
             } catch (Exception e) {
                 logger.warn(e.getMessage()+"  云南详单获取  mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常");
-                PushState.state(phoneNumber, "callLog",200);
+                PushState.state(phoneNumber, "callLog",200,"网络连接异常");
             }
         }
 
