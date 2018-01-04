@@ -35,7 +35,7 @@ public class PushState {
         data.put("data", stati);
         System.out.println("-200--state开始推送-"+data);
         Resttemplate resttemplatestati = new Resttemplate();
-        resttemplatestati.SendMessage(data, "http://192.168.3.4:8081/HSDC/authcode/Autherized");
+        resttemplatestati.SendMessage(data, ConstantInterface.port+"/HSDC/authcode/Autherized");
     }
     /**
      * 银行的  200
@@ -55,7 +55,7 @@ public class PushState {
         data.put("data", stati);
         System.out.println("-200--state开始推送-"+data);
         Resttemplate resttemplatestati = new Resttemplate();
-        resttemplatestati.SendMessage(data, "http://192.168.3.4:8081/HSDC/authcode/messagePush");
+        resttemplatestati.SendMessage(data, ConstantInterface.port+"/HSDC/authcode/messagePush");
     }
   
 }

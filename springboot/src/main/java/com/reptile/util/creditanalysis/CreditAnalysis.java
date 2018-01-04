@@ -1,6 +1,7 @@
 package com.reptile.util.creditanalysis;
 
 import com.reptile.util.CustomException;
+import com.reptile.util.Resttemplate;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -10,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.midi.Soundbank;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,25 +28,24 @@ import java.util.Map;
 public class CreditAnalysis {
     private static Logger logger = LoggerFactory.getLogger(CreditConstant.class);
 
-    public static void main(String[] args) throws IOException {
-    }
+    public static Map<String, Object> analysisCredit(Map<String, Object> dataMap) throws IOException {
 
-    public static Map<String, String> analysisCredit(Map<String, Object> dataMap) throws IOException {
-//        Document parse = Jsoup.parse(new File("f://zhufang.htm"), "utf-8");
         //解析结果信息
-        Map<String, String> resultDataMap = new HashMap<>();
-        logger.warn("开始解析征信数据...");
-        Object userId = dataMap.get("userId");
-        if (userId == null || userId.toString().length() == 0) {
-            logger.warn("征信解析时身份证不明确...");
-            return CreditConstant.setErrorFailMap("0002", "身份证不明确");
-        }
-        Map<String, Object> data = (Map<String, Object>) dataMap.get("data");
-        String reportHtml = data.get("reportHtml").toString();
+        Map<String, Object> resultDataMap = new HashMap<>();
+//        logger.warn("开始解析征信数据...");
+//        Object userId = dataMap.get("userId");
+//        if (userId == null || userId.toString().length() == 0) {
+//            logger.warn("征信解析时身份证不明确...");
+//            return CreditConstant.setErrorFailMap("0002", "身份证不明确");
+//        }
+//        Map<String, Object> data = (Map<String, Object>) dataMap.get("data");
+//        String reportHtml = data.get("reportHtml").toString();
         Elements table = null;
         Document parse = null;
+        String userId = "610403199112021515";
         try {
-            parse = Jsoup.parse(reportHtml);
+            parse = Jsoup.parse(new File("f://zhufang.htm"), "utf-8");
+//            parse = Jsoup.parse(reportHtml);
             table = parse.getElementsByTag("table");
             logger.warn(userId.toString() + "此次解析征信页面含有的table数量为:" + table.size());
         } catch (Exception e) {
@@ -237,7 +238,7 @@ public class CreditAnalysis {
             //个人查询明细
             Element personElement = table.get(11);
             personQueryData = analysisOrgQuery(personElement, "per");
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             logger.warn(e.getExceptionInfo(), e.getException());
             return CreditConstant.setErrorFailMap("0010", e.exceptionInfo);
         } catch (Exception e) {
@@ -248,7 +249,14 @@ public class CreditAnalysis {
         resultObj.put("credit_chaxun2", personQueryData);
         resultData.put("idcode", userId.toString());
         System.out.println(resultData);
-        return null;
+        try {
+            Resttemplate resttemplate = new Resttemplate();
+            resultDataMap = resttemplate.SendMessageCredit(resultObj, "http://117.34.70.217:8089/HSDC/person/creditInvestigation");
+            return resultDataMap;
+        } catch (Exception e) {
+            logger.warn("征信推送数据过程中出现异常");
+            return CreditConstant.setErrorFailMap("0012", "征信推送数据过程中出现异常");
+        }
     }
 
     /**

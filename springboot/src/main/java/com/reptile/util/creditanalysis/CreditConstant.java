@@ -13,8 +13,8 @@ public class CreditConstant {
         successMap.put("errorCode","0000");
     }
 
-    public static Map<String,String> setErrorFailMap(String errorcode,String errorInfo){
-        Map<String,String> failMap=new HashMap<>();
+    public static Map<String,Object> setErrorFailMap(String errorcode,String errorInfo){
+        Map<String,Object> failMap=new HashMap<>();
         failMap.put("ResultInfo",errorInfo);
         failMap.put("ResultCode",errorcode);
         failMap.put("errorInfo",errorInfo);
