@@ -39,13 +39,14 @@ public class MessageConstamts {
 	public static String STRING_04="04";
 	public static String STRING_5000="5000";
 	public static String STRING_10000="10000";
-	public static String STRING_1001="1001";
-	public static String STRING_1004="1004";
+	public static String STRING_1001="10001";
+	public static String STRING_1004="10004";
 	public static String STRING_10086="10086";
 	public static String STRING_6000="6000";
 	public static String STRING_CODE="code";
 	public static String CODEFAIL="codefail";
 	public static String STRING_0301="0301";
+	public static String STRING_10006="10006";
 	public static String STRING_7098="7098";
 	public static String SEND_CODE_OK="验证码发送成功";
 	public static String SEND_CODE_YES="验证码";
