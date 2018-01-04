@@ -1,8 +1,8 @@
 package com.reptile.contorller;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.reptile.service.MobileService;
-
+import com.reptile.service.GlobalUnicomService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import io.swagger.annotations.ApiOperation;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
@@ -25,16 +22,16 @@ import java.util.Map;
 @Controller
 @RequestMapping("GlobalUnicomController")
 public class GlobalUnicomController {
+
     @Autowired
-    private com.reptile.util.application application;
-    @Resource
-    private MobileService mobileService;
+    private GlobalUnicomService mobileService;
+
     /**
      * 中国联通 获取登陆验证码
      *
      * @param request
      * @param response
-     * @param unicombean
+     * @param
      * @return
      * @throws FailingHttpStatusCodeException
      * @throws MalformedURLException
@@ -52,7 +49,7 @@ public class GlobalUnicomController {
      * 联通登录接口
      * 
      * @param request
-     * @param response
+     * @param
      * @param
      * @return
      * @throws FailingHttpStatusCodeException
@@ -86,6 +83,7 @@ public class GlobalUnicomController {
         return mobileService.getCodeTwo(request);
         
     }
+
     /**
      * 获取详单
      * @param request
@@ -106,6 +104,5 @@ public class GlobalUnicomController {
     		@RequestParam("UUID")String UUID) {
 				
     	return mobileService.getDetial(request, Useriphone, UserPassword,code,longitude,latitude,UUID);
-    } 
- 
+    }
 }
