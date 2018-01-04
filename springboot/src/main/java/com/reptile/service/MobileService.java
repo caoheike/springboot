@@ -943,7 +943,7 @@ public class MobileService {
 			System.out.println(tips);
 			JSONObject json = JSONObject.fromObject(tips);
 			String tipInfo = json.get("resultCode").toString();
-			if (MessageConstamts.STATUS_TRUE.equals(tipInfo)
+			if (MessageConstamts.STRING_0000.equals(tipInfo)
 					|| MessageConstamts.STRING_0301.equals(tipInfo)) {
 
 				map.put("errorCode", "0000");

@@ -4,11 +4,7 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.WebClientFactory;
+import com.reptile.util.*;
 
 import net.sf.json.JSONObject;
 
@@ -58,7 +54,7 @@ public class PhoneBillsService {
         //验证是否是移动用户
         try {
             TextPage page = webClient.getPage("https://login.10086.cn/chkNumberAction.action?userName=" + userNumber);
-            String statusFalse="false";
+            String statusFalse = "false";
             if (statusFalse.equals(page.getContent())) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "非移动用户请注册互联网用户登录");
@@ -67,11 +63,11 @@ public class PhoneBillsService {
             }
             //发送登录手机验证码
             TextPage page1 = webClient.getPage("https://login.10086.cn/sendRandomCodeAction.action?userName=" + userNumber + "&type=01&channelID=12003");
-            String returnBack1="0";
-            String returnBack2="4005";
-            String returnBack3="1";
-            String returnBack4="2";
-            String returnBack5="3";
+            String returnBack1 = "0";
+            String returnBack2 = "4005";
+            String returnBack3 = "1";
+            String returnBack4 = "2";
+            String returnBack5 = "3";
             if (returnBack1.equals(page1.getContent())) {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "已将短信随机码发送至手机，请查收!");
@@ -144,8 +140,8 @@ public class PhoneBillsService {
                 UnexpectedPage page2 = webClient.getPage(webRequest);
 
                 JSONObject jsonObject = JSONObject.fromObject(page2.getWebResponse().getContentAsString());
-                String keyResult="result";
-                String keyCode="code";
+                String keyResult = "result";
+                String keyCode = "code";
                 if (jsonObject.get(keyResult) == null || jsonObject.get(keyCode) == null) {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "服务器繁忙");
@@ -154,10 +150,10 @@ public class PhoneBillsService {
 
                 String result = jsonObject.get("result").toString();
                 String code = jsonObject.get("code").toString();
-                String backCode="0";
+                String backCode = "0";
                 if (!backCode.equals(result)) {
-                    String backCode2="6001";
-                    String backCode3="6002";
+                    String backCode2 = "6001";
+                    String backCode3 = "6002";
                     if (backCode2.equals(code) || backCode3.equals(code)) {
                         map.put("errorCode", "0002");
                         map.put("errorInfo", "短信随机码不正确或已过期，请重新获取");
@@ -184,8 +180,8 @@ public class PhoneBillsService {
                 UnexpectedPage page5 = webClient.getPage("http://shop.10086.cn/i/v1/res/funcavl?_=" + System.currentTimeMillis());
 
                 JSONObject jsonObject1 = JSONObject.fromObject(page5.getWebResponse().getContentAsString());
-                String retMsg="retMsg";
-                String accessMsg="可用性成功";
+                String retMsg = "retMsg";
+                String accessMsg = "可用性成功";
                 if (jsonObject1.get(retMsg) == null || !jsonObject1.get(retMsg).toString().contains(accessMsg)) {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", "抱歉，暂时不提供该地区用户信息");
@@ -265,7 +261,7 @@ public class PhoneBillsService {
                 webRequest1.setHttpMethod(HttpMethod.GET);
                 webRequest1.setAdditionalHeader("Referer", "http://shop.10086.cn/i/?f=home&welcome=" + System.currentTimeMillis());
                 UnexpectedPage page6 = webClient.getPage(webRequest1);
-                String statusSuccess="success";
+                String statusSuccess = "success";
                 if (!page6.getWebResponse().getContentAsString().contains(statusSuccess)) {
                     try {
                         String results = page6.getWebResponse().getContentAsString();
@@ -318,7 +314,7 @@ public class PhoneBillsService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
             PushSocket.pushnew(map, uuid, "3000", "登录超时");
-            PushState.state(userNumber, "callLog", 200,"登录超时");
+            PushState.state(userNumber, "callLog", 200, "登录超时");
             return map;
         } else {
             try {
@@ -351,9 +347,9 @@ public class PhoneBillsService {
                 UnexpectedPage page8 = webClient.getPage(webRequest2);
                 Thread.sleep(1000);
                 String result = page8.getWebResponse().getContentAsString();
-                String successStatus="认证成功";
+                String successStatus = "认证成功";
                 if (!page8.getWebResponse().getContentAsString().contains(successStatus)) {
-                    String jquerys="jQuery";
+                    String jquerys = "jQuery";
                     if (result.contains(jquerys)) {
                         int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
                         String json = result.substring(s);
@@ -363,56 +359,70 @@ public class PhoneBillsService {
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                     PushSocket.pushnew(map, uuid, "3000", jsonObject.get("retMsg").toString());
-                    PushState.state(userNumber, "callLog", 200,jsonObject.get("retMsg").toString());
+                    PushState.state(userNumber, "callLog", 200, jsonObject.get("retMsg").toString());
                     return map;
                 }
                 PushSocket.pushnew(map, uuid, "2000", "登录成功");
-                Date date = new Date();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
-                String str = simpleDateFormat.format(date);
-                int sDate = Integer.parseInt(str);
+
+                Calendar cal = Calendar.getInstance();
+                String sDate = simpleDateFormat.format(cal.getTime());
+
                 PushSocket.pushnew(map, uuid, "5000", "数据获取中");
-                int boundCount=7;
-           loop: for (int i = 1; i < boundCount; i++) {
+                int boundCount = 7;
+                loop:
+                for (int i = 1; i < boundCount; i++) {
+                    logger.warn(i+"次开始获取数据   "+sDate);
                     String results = "";
                     Object page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
-                            "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
+                            "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=200&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
                     if (page9 instanceof HtmlPage) {
-                        for (int j=0;j<3;j++){
+                        logger.warn("第一次请求出错  "+sDate);
+                        for (int j = 0; j < 3; j++) {
+                            logger.warn("请出错，现在开始第"+j+"次请求  "+sDate);
                             Object page10 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
-                                    "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=300&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
-                            if(page10 instanceof  UnexpectedPage){
+                                    "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=200&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
+                            if (page10 instanceof UnexpectedPage) {
+                                logger.warn(j+":本次请求成功 "+sDate);
                                 UnexpectedPage pages = (UnexpectedPage) page10;
                                 results = pages.getWebResponse().getContentAsString();
                                 break;
-                            }else if(j==2){
-                                sDate--;
-                                break  loop;
+                            } else if (j == 2) {
+                                cal.add(Calendar.MONTH,-1);
+                                sDate = simpleDateFormat.format(cal.getTime());
+                                break loop;
                             }
                             Thread.sleep(2000);
                         }
                     } else {
+                        logger.warn(i+"次请求成功!"+sDate);
                         UnexpectedPage pages = (UnexpectedPage) page9;
                         results = pages.getWebResponse().getContentAsString();
                     }
 
-                    if (!results.contains("retCode\":\"000000")) {
-                        map.put("errorCode", "0003");
-                        map.put("errorInfo", "哪里好像出错了");
-                    }
+//                    if (!results.contains("retCode\":\"000000")) {
+//                        map.put("errorCode", "0003");
+//                        map.put("errorInfo", "数据获取出错");
+//                        PushSocket.pushnew(map, uuid, "9000", "数据获取出错，请重新认证！");
+//                        return map;
+//                    }
+                    logger.warn(i + "mrludw本次获取数据为:" + results);
+                    System.out.println("本次获取的数据为" + results);
+
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
                     String json = results.substring(s);
                     results = json.substring(0, json.length() - 1);
                     if (results.contains("startTime") && results.contains("commPlac")) {
                         dataList.add(results);
                     }
-                    sDate--;
+                    cal.add(Calendar.MONTH,-1);
+                    sDate = simpleDateFormat.format(cal.getTime());
                     Thread.sleep(2000);
                 }
-               int boundCount3=4;
+                int boundCount3 = 4;
                 if (dataList.size() < boundCount3) {
                     PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新认证！");
-                    PushState.state(userNumber, "callLog", 200,"数据获取不完全，请重新认证！");
+                    PushState.state(userNumber, "callLog", 200, "数据获取不完全，请重新认证！");
                     map.put("errorCode", "0009");
                     map.put("errorInfo", "数据获取不完全，请重新再次认证！");
                     return map;
@@ -434,8 +444,8 @@ public class PhoneBillsService {
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/mobileCallRecord");
                 //推送结果  未写
-                String statusResukt="0000";
-                String statusCode="errorCode";
+                String statusResukt = "0000";
+                String statusCode = "errorCode";
                 if (statusResukt.equals(map.get(statusCode))) {
                     PushSocket.pushnew(map, uuid, "8000", "认证成功");
                     PushState.state(userNumber, "callLog", 300);
@@ -449,10 +459,22 @@ public class PhoneBillsService {
                 logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
-                PushState.state(userNumber, "callLog", 200,"认证失败,系统繁忙");
+                PushState.state(userNumber, "callLog", 200, "认证失败,系统繁忙");
                 PushSocket.pushnew(map, uuid, "9000", "认证失败,系统繁忙");
             }
         }
         return map;
+    }
+
+    public static void main(String[] args) {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMM");
+
+        Calendar cal = Calendar.getInstance();
+        String sDate = simpleDateFormat.format(cal.getTime());
+        for(int i=1;i<7;i++){
+            System.out.println(sDate);
+        cal.add(Calendar.MONTH,-1);
+        sDate = simpleDateFormat.format(cal.getTime());
+        }
     }
 }
