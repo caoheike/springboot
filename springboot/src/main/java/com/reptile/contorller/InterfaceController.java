@@ -24,7 +24,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document;	
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -667,9 +667,6 @@ public class InterfaceController {
 			data.put("Token", jsonObject.get("lgToken"));
 			map.put("data", data);
 			return map;
-		
-
-
 	}
 	/**
 	 * 获得详情
@@ -696,7 +693,7 @@ public class InterfaceController {
 	    Thread.sleep(2000);
 	    System.out.println(pages.getContent());
 	    JSONObject jsonObject2=JSONObject.fromObject(pages.getContent());
-	    if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_10086)){
+	    if(jsonObject2.get(MessageConstamts.STRING_CODE).equals(MessageConstamts.STRING_10006)){
 	    	HtmlPage pageinfo= webClient.getPage(jsonObject2.getString("url"));
 		    System.out.println(pageinfo.asXml());
 		    PushSocket.pushnew(map, uuId, "2000","登录成功");
