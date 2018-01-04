@@ -296,8 +296,10 @@ public class PhoneBillsService {
                                                 String fuwuSec, String imageCode, String longitude, String latitude, String uuid) {
         Map<String, Object> map = new HashMap<String, Object>(16);
         System.out.println("---移动---" + userNumber);
+
         PushSocket.pushnew(map, uuid, "1000", "登录中");
         PushState.state(userNumber, "callLog", 100);
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
@@ -313,8 +315,10 @@ public class PhoneBillsService {
         if (client == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
+
             PushSocket.pushnew(map, uuid, "3000", "登录超时");
             PushState.state(userNumber, "callLog", 200, "登录超时");
+
             return map;
         } else {
             try {
@@ -358,8 +362,10 @@ public class PhoneBillsService {
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0002");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
+
                     PushSocket.pushnew(map, uuid, "3000", jsonObject.get("retMsg").toString());
                     PushState.state(userNumber, "callLog", 200, jsonObject.get("retMsg").toString());
+
                     return map;
                 }
                 PushSocket.pushnew(map, uuid, "2000", "登录成功");
@@ -400,13 +406,7 @@ public class PhoneBillsService {
                         results = pages.getWebResponse().getContentAsString();
                     }
 
-//                    if (!results.contains("retCode\":\"000000")) {
-//                        map.put("errorCode", "0003");
-//                        map.put("errorInfo", "数据获取出错");
-//                        PushSocket.pushnew(map, uuid, "9000", "数据获取出错，请重新认证！");
-//                        return map;
-//                    }
-                    logger.warn(i + "mrludw本次获取数据为:" + results);
+
                     System.out.println("本次获取的数据为" + results);
 
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
@@ -473,8 +473,8 @@ public class PhoneBillsService {
         String sDate = simpleDateFormat.format(cal.getTime());
         for(int i=1;i<7;i++){
             System.out.println(sDate);
-        cal.add(Calendar.MONTH,-1);
-        sDate = simpleDateFormat.format(cal.getTime());
+            cal.add(Calendar.MONTH,-1);
+            sDate = simpleDateFormat.format(cal.getTime());
         }
     }
 }

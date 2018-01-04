@@ -1236,8 +1236,7 @@ public class MobileService {
 						// ---------------------数据中心推送状态---------------------
 						map.put("errorInfo", map.get("errorInfo").toString());
 						map.put("errorCode", "0001");
-						PushSocket.pushnew(map, uuId, "9000",
-								map.get("errorInfo").toString());
+						PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo").toString());
 					}
 				} else {
 					// ---------------推-------------------
@@ -1283,7 +1282,6 @@ public class MobileService {
 				}
 				return map;
 			}
-
 		} catch (Exception e) {
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常");

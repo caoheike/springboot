@@ -179,6 +179,7 @@ public class TelecomLoadVerificationService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络错误，请重试！");
         } catch (Exception e) {
+            Scheduler.sendGet(Scheduler.getIp);
             logger.warn(e.getMessage() + "mrlu",e);
             map.put("errorCode", "0002");
             map.put("errorInfo", "系统繁忙!");

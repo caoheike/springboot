@@ -83,7 +83,7 @@ public class ShanXiTelecomService {
                 webRequest.setRequestParameters(reqParamsinfo);
                 HtmlPage infopage = webClient.getPage(webRequest);
                 String judge="无话单记录";
-                if(!infopage.asXml().contains(judge)){
+                if(!infopage.asXml().contains("无话单记录")&&!infopage.asXml().contains("欢迎登录")){
                     dataList.add(infopage.asXml());
                 }
                 Thread.sleep(1000);
@@ -108,10 +108,17 @@ public class ShanXiTelecomService {
                     webRequest.setRequestParameters(reqParamsinfo);
                     infopage = webClient.getPage(webRequest);
                     Thread.sleep(1000);
-                    if(!infopage.asXml().contains("无话单记录")){
+                    if(!infopage.asXml().contains("无话单记录")&&!infopage.asXml().contains("欢迎登录")){
                         dataList.add(infopage.asXml());
                     }
 
+                }
+                if(dataList.size()<3){
+                    map.put("errorCode", "0001");
+                    map.put("errorInfo", "数据过程中出现未知错误!请重试！");
+                    PushState.state(phoneNumber, "callLog",200,"数据过程中出现未知错误!请重试！");
+                    PushSocket.pushnew(map, uuid, "7000","数据过程中出现未知错误!请重试！");
+                    return map;
                 }
                 	PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                     map.put("UserIphone",phoneNumber);
