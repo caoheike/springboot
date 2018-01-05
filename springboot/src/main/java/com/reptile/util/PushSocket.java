@@ -20,8 +20,8 @@ public class PushSocket {
 	 */
 	public static Map<String, Object> push1(Map<String, Object> map,String UUID,String errorInfo){
 		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	talkFrame.getWsUserMap().get(UUID);
-		String seq_id=talkFrame.getWsInfoMap().get(UUID);
+		Session se=	LongLink.getWsUserMap().get(UUID);
+		String seq_id=LongLink.getWsInfoMap().get(UUID);
 		System.out.println(se);
 		System.out.println(seq_id);
 		try {
@@ -52,8 +52,8 @@ public class PushSocket {
 	 */
 	public static Map<String, Object> pushnew(Map<String, Object> map,String UUID,String resultCode,String errorInfor){
 		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	talkFrame.getWsUserMap().get(UUID);
-		String seq_id=talkFrame.getWsInfoMap().get(UUID);
+		Session se=	LongLink.getWsUserMap().get(UUID);
+		String seq_id=LongLink.getWsInfoMap().get(UUID);
 		System.out.println("se==="+se);
 		System.out.println("seq==="+seq_id);
 		System.out.println(errorInfor+resultCode);
