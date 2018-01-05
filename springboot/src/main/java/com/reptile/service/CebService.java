@@ -179,6 +179,7 @@ public class CebService {
 			loginform.findElement(By.id("verification-code")).sendKeys(passWord);
 			// 点击光大银行信用卡登录按钮
 			loginform.findElement(ByClassName.className("login-style-bt")).click();
+			loginform.findElement(ByClassName.className("login-style-bt")).click();
 			// 判断验证码是否正确
 			String error = "popup-dialog-message";
 			if (driver.getPageSource().contains(error)) {
@@ -201,6 +202,7 @@ public class CebService {
 				PushSocket.pushnew(map, uuid, "3000", "短信验证码输入有误");
 				return map;
 			} else {
+				Thread.sleep(3000);
 				System.out.println("点击成功");
 				// 通过下面的网址进入个人中心
 				driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");

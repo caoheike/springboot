@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;	
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.portlet.ModelAndView;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -621,7 +623,8 @@ public class InterfaceController {
 		new CrawlerUtil();
 		//生成UUid 用于区分浏览器
 		String sessid=CrawlerUtil.getUUID(); 
-		WebClient webClient = new WebClientFactory().getWebClientJs();
+//		WebClient webClient = new WebClientFactory().getWebClientJs();
+		WebClient webClient = new CrawlerUtil().WebClientNice();
 		// 此目录保存缩小后的关键图
 			File path = new File(request.getSession().getServletContext().getRealPath("/upload")+"/"); 
 		  TextPage page= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do");
@@ -682,9 +685,14 @@ public class InterfaceController {
 		@ResponseBody
 	  @RequestMapping(value = "tabLogin.html", method = RequestMethod.POST)
 	  public Map<String,Object> tabLogin(HttpServletRequest request, HttpServletResponse response,@RequestParam("sessid") String sessid,@RequestParam("Token") String toKen ,@RequestParam("idCard") String idCard,@RequestParam("UUID")String uuId)throws Exception {
-	    System.out.println("---------------"+"");
+		
+				
+		
+		System.out.println("---------------"+"");
 	    Map<String, Object> map = new HashMap<String, Object>(8);
 	    Map<String, Object> data = new HashMap<String, Object>(8);
+
+		
 	    HttpSession session=request.getSession();
 	    WebClient webClient = (WebClient) session.getAttribute(sessid);
 	    TextPage pages= webClient.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="+toKen+"&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
@@ -763,16 +771,18 @@ public class InterfaceController {
 	       map.put("userCard", idCard);
 	       
 	       map=resttemplate.SendMessage(map, application.getSendip()+"/HSDC/authcode/taobaoPush");
-
+	       logger.warn("淘宝推送数据为:"+map);
 			if(map!=null&&MessageConstamts.STRING_0000.equals(map.get(MessageConstamts.ERRORCODE).toString())) {
 				PushState.state(idCard, "TaoBao", 300);
 				map.put("errorInfo", "查询成功");
 				map.put("errorCode", "0000");
 				PushSocket.pushnew(map, uuId, "8000","淘宝查询成功");
 			}else{
+				logger.warn("淘宝推送数据失败:"+map);
 				//--------------------数据中心推送状态----------------------
 				PushState.state(idCard, "TaoBao",200,map.get("errorInfo").toString());
 				//---------------------数据中心推送状态----------------------
+				logger.warn("淘宝推送认证状态200成功:"+map);
 				map.put("errorInfo","查询失败");
 				map.put("errorCode","0001");
 				PushSocket.pushnew(map, uuId, "9000",map.get("errorInfo").toString());
@@ -807,6 +817,8 @@ public class InterfaceController {
 	      map.put("errorInfo", "非法操作！请重试");
 	      PushSocket.pushnew(map, uuId, "3000","非法操作！请重试");
 	    }
+		
+	
 	    return map;
 
 	    
