@@ -14,8 +14,8 @@ import com.reptile.springboot.Scheduler;
 public class WebClientFactory {
 
 
-    public WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
-//    public WebClient webClient = new WebClient();
+//    public WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
+    public WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
 
     public WebClient getWebClient() {
         // 开启cookie管理
