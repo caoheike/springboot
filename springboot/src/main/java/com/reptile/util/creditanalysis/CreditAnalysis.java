@@ -2,6 +2,7 @@ package com.reptile.util.creditanalysis;
 
 import com.reptile.util.CustomException;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.SimpleHttpClient;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -14,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import javax.sound.midi.Soundbank;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +32,12 @@ import java.util.Map;
 public class CreditAnalysis {
     private static Logger logger = LoggerFactory.getLogger(CreditConstant.class);
 
-    public static Map<String, Object> analysisCredit(Map<String, Object> dataMap) throws IOException {
+    public static void main(String[] args) throws MalformedURLException {
+        Map<String,Object> dataMap=new HashMap<>();
+        analysisCredit(dataMap);
+    }
+
+    public static Map<String, Object> analysisCredit(Map<String, Object> dataMap){
 
         //解析结果信息
         Map<String, Object> resultDataMap = new HashMap<>();
@@ -52,8 +61,6 @@ public class CreditAnalysis {
             logger.warn("征信数据解析失败，页面无法转换为正常html页面...");
             return CreditConstant.setErrorFailMap("0003", "征信页面数据格式异常");
         }
-
-        System.out.println("table的数量" + table.size());
         //推送数据包;
         JSONObject resultData = new JSONObject();
         //数据集合
@@ -250,8 +257,18 @@ public class CreditAnalysis {
         resultData.put("idcode", userId.toString());
         System.out.println(resultData);
         try {
-            Resttemplate resttemplate = new Resttemplate();
-            resultDataMap = resttemplate.SendMessageCredit(resultObj, "http://117.34.70.217:8089/HSDC/person/creditInvestigation");
+            Map<String,Object> postData=new HashMap<>();
+            postData.put("data",resultObj.toString());
+            String post = SimpleHttpClient.post("http://192.168.3.16:8099/HSDC/person/creditInvestigation", postData, null);
+            JSONObject jsonObject = JSONObject.fromObject(post);
+
+            if(jsonObject.get("errorCode").equals("0000")){
+                resultDataMap.put("errorCode","0000");
+                resultDataMap.put("errorInfo","查询成功");
+            }else{
+                resultDataMap.put("errorCode",jsonObject.get("errorCode"));//异常处理
+                resultDataMap.put("errorInfo",jsonObject.get("errorInfo"));
+            }
             return resultDataMap;
         } catch (Exception e) {
             logger.warn("征信推送数据过程中出现异常");

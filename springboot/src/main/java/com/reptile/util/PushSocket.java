@@ -1,5 +1,8 @@
 package com.reptile.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.websocket.Session;
 
 import java.text.SimpleDateFormat;
@@ -8,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PushSocket {
+	private static Logger logger= LoggerFactory.getLogger(PushSocket.class);
 	/**
 	 * 0001 失败 0000 成功
 	 * @param map
@@ -16,8 +20,8 @@ public class PushSocket {
 	 */
 	public static Map<String, Object> push1(Map<String, Object> map,String UUID,String errorInfo){
 		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	talkFrame.getWsUserMap().get(UUID);
-		String seq_id=talkFrame.getWsInfoMap().get(UUID);
+		Session se=	LongLink.getWsUserMap().get(UUID);
+		String seq_id=LongLink.getWsInfoMap().get(UUID);
 		System.out.println(se);
 		System.out.println(seq_id);
 		try {
@@ -32,9 +36,9 @@ public class PushSocket {
 				}
 			}
 		} catch (Exception e) {
-			  map.put("errorCode", "0001");
-			  map.put("errorInfo", "网络异常");
-			e.printStackTrace();
+			logger.warn("推送状态时，链接出现问题",e);
+			map.put("errorCode", "1100");
+			map.put("errorInfo", "推送状态时，连接已关闭");
 		}
 		return map;
 	}
@@ -48,8 +52,8 @@ public class PushSocket {
 	 */
 	public static Map<String, Object> pushnew(Map<String, Object> map,String UUID,String resultCode,String errorInfor){
 		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	talkFrame.getWsUserMap().get(UUID);
-		String seq_id=talkFrame.getWsInfoMap().get(UUID);
+		Session se=	LongLink.getWsUserMap().get(UUID);
+		String seq_id=LongLink.getWsInfoMap().get(UUID);
 		System.out.println("se==="+se);
 		System.out.println("seq==="+seq_id);
 		System.out.println(errorInfor+resultCode);
@@ -64,9 +68,9 @@ public class PushSocket {
 				}
 			}
 		} catch (Exception e) {
-			  map.put("errorCode", "0001");
-			  map.put("errorInfo", "网络异常");
-			e.printStackTrace();
+			logger.warn("推送状态时，链接出现问题",e);
+			map.put("errorCode", "1100");
+			map.put("errorInfo", "推送状态时，连接已关闭");
 		}
 		return map;
 	}
