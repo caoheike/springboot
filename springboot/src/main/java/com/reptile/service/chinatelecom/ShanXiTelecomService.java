@@ -1,6 +1,7 @@
 package com.reptile.service.chinatelecom;
 
 import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
@@ -61,7 +62,12 @@ public class ShanXiTelecomService {
             	Thread.sleep(2000);
             	PushSocket.pushnew(map, uuid, "5000","获取数据中");
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
+                Thread.sleep(1000);
+                HtmlPage page = webClient.getPage("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=ticket&fastcode=10000202&cityCode=sn");
                 Thread.sleep(3000);
+                //获取isPrepayID
+                String isPrepayID = page.getElementById("isPrepayID").getAttribute("value");
+                String callTypeID = page.getElementById("callTypeID").getAttribute("value");
 
                 WebRequest webRequest = new WebRequest(new URL("http://sn.189.cn/service/bill/feeDetailrecordList.action"));
                 SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,8 +82,8 @@ public class ShanXiTelecomService {
                 reqParamsinfo.add(new NameValuePair("effDate", startTime));
                 reqParamsinfo.add(new NameValuePair("expDate", endTime));
                 reqParamsinfo.add(new NameValuePair("serviceNbr", phoneNumber));
-                reqParamsinfo.add(new NameValuePair("operListID", "1"));
-                reqParamsinfo.add(new NameValuePair("isPrepay", "0"));
+                reqParamsinfo.add(new NameValuePair("operListID", callTypeID));
+                reqParamsinfo.add(new NameValuePair("isPrepay", isPrepayID));
                 reqParamsinfo.add(new NameValuePair("pOffrType", "481"));
                 webRequest.setHttpMethod(HttpMethod.POST);
                 webRequest.setRequestParameters(reqParamsinfo);
@@ -101,8 +107,8 @@ public class ShanXiTelecomService {
                     reqParamsinfo.add(new NameValuePair("effDate", startTime));
                     reqParamsinfo.add(new NameValuePair("expDate", endTime));
                     reqParamsinfo.add(new NameValuePair("serviceNbr", phoneNumber));
-                    reqParamsinfo.add(new NameValuePair("operListID", "1"));
-                    reqParamsinfo.add(new NameValuePair("isPrepay", "0"));
+                    reqParamsinfo.add(new NameValuePair("operListID", callTypeID));
+                    reqParamsinfo.add(new NameValuePair("isPrepay", isPrepayID));
                     reqParamsinfo.add(new NameValuePair("pOffrType", "481"));
                     webRequest.setHttpMethod(HttpMethod.POST);
                     webRequest.setRequestParameters(reqParamsinfo);
