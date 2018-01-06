@@ -10,17 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7256fdb1-d365-44c9-bb03-f2381a438d63" name="Default" comment="取消代理ip  修改推送状态 mrlu 2018 1 5">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/upload/1515142324295renxin.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/upload/1515142531379renxin.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/upload/1515142630562renxin.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/upload/1515142988372renxin.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/LongLink.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/springboot.iml" afterPath="$PROJECT_DIR$/springboot.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" afterPath="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -45,81 +35,142 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="LongLink.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/LongLink.java">
+      <file leaf-file-name="PushState.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-335">
-              <caret line="73" column="23" lean-forward="false" selection-start-line="73" selection-start-column="19" selection-end-line="73" selection-end-column="23" />
+            <state relative-caret-position="-582">
+              <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#744#760#0" expanded="true" />
+                <element signature="e#1676#1692#0" expanded="true" />
+                <element signature="e#1743#1759#0" expanded="true" />
+                <marker date="1515207082169" expanded="false" signature="2599:2615" ph="&lt;~&gt;" />
+                <marker date="1515207082169" expanded="false" signature="2666:2682" ph="&lt;~&gt;" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JSONObject.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.2.2/json-lib-2.2.2-jdk15.jar!/net/sf/json/JSONObject.class">
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
-              <caret line="1406" column="23" lean-forward="false" selection-start-line="1406" selection-start-column="19" selection-end-line="1406" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="talkFrame.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="45" column="9" lean-forward="true" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
+            <state relative-caret-position="375">
+              <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
               <folding>
-                <marker date="1515144540389" expanded="false" signature="578:594" ph="&lt;~&gt;" />
-                <marker date="1515144540389" expanded="false" signature="659:674" ph="&lt;~&gt;" />
+                <marker date="1515206993874" expanded="true" signature="2425:2564" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="2579:2700" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="2715:2845" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="2877:2970" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3001:3134" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3149:3284" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3319:3440" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3455:3585" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3600:3714" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3730:3855" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="3870:3987" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4003:4121" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4136:4260" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4276:4383" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4399:4501" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4516:4622" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4637:4750" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4766:4887" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="4904:5012" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5027:5137" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5154:5288" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5303:5422" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5437:5560" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5576:5762" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5778:5893" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="5909:6032" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6047:6157" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6173:6299" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6314:6442" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6457:6575" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6590:6717" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6733:6848" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="6864:6984" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7000:7109" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7307:7425" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7440:7573" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7610:7721" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7736:7860" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="7895:8116" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8132:8260" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8276:8369" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8402:8519" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8549:8690" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8725:8855" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="8886:9004" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9035:9159" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9193:9319" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9347:9787" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9359:9777" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9371:9637" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9519:9624" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9649:9764" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9820:9969" ph="..." />
+                <marker date="1515206993874" expanded="true" signature="9836:9950" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InterfaceController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/InterfaceController.java">
+      <file leaf-file-name="ShanghaiTelecomController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/chinatelecom/ShanghaiTelecomController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-541">
-              <caret line="768" column="45" lean-forward="true" selection-start-line="768" selection-start-column="45" selection-end-line="768" selection-end-column="45" />
+            <state relative-caret-position="374">
+              <caret line="42" column="29" lean-forward="false" selection-start-line="42" selection-start-column="29" selection-end-line="42" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WebClientFactory.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java">
+      <file leaf-file-name="ShanghaiTelecomService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/chinatelecom/ShanghaiTelecomService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="36" column="21" lean-forward="false" selection-start-line="36" selection-start-column="21" selection-end-line="36" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application-dev.yml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="37" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/application.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="17" column="18" lean-forward="false" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
+            <state relative-caret-position="779">
+              <caret line="265" column="44" lean-forward="false" selection-start-line="265" selection-start-column="44" selection-end-line="265" selection-end-column="44" />
               <folding>
-                <element signature="e#427#428#0" expanded="true" />
-                <element signature="e#447#448#0" expanded="true" />
+                <element signature="e#3135#3151#0" expanded="true" />
+                <element signature="e#3403#3424#0" expanded="true" />
+                <element signature="e#5319#5334#0" expanded="true" />
+                <element signature="e#6688#6703#0" expanded="true" />
+                <element signature="e#7853#7869#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShanXiTelecomService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/chinatelecom/ShanXiTelecomService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="854">
+              <caret line="66" column="33" lean-forward="false" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
+              <folding>
+                <marker date="1515207021526" expanded="true" signature="5309:7741" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConstantInterface.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/ConstantInterface.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="417">
+              <caret line="19" column="50" lean-forward="false" selection-start-line="19" selection-start-column="50" selection-end-line="19" selection-end-column="50" />
+              <folding>
+                <marker date="1515206993876" expanded="true" signature="568:801" ph="//..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Resttemplate.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/Resttemplate.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="147">
+              <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -127,30 +178,30 @@
       <file leaf-file-name="PushSocket.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="40" column="46" lean-forward="false" selection-start-line="40" selection-start-column="46" selection-end-line="40" selection-end-column="46" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WebSocketConfig.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="15" column="2" lean-forward="true" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="2" />
+            <state relative-caret-position="32">
+              <caret line="52" column="38" lean-forward="false" selection-start-line="52" selection-start-column="38" selection-end-line="52" selection-end-column="38" />
               <folding>
-                <element signature="e#0#427#0" expanded="true" />
+                <marker date="1515146000760" expanded="true" signature="2461:2484" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GlobalUnicomService.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/GlobalUnicomService.java">
+      <file leaf-file-name="talkFrame.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="448" column="26" lean-forward="true" selection-start-line="448" selection-start-column="26" selection-end-line="448" selection-end-column="26" />
+            <state relative-caret-position="398">
+              <caret line="60" column="40" lean-forward="false" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShanXiTelecomController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/contorller/chinatelecom/ShanXiTelecomController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="182">
+              <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -206,7 +257,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="master" />
+        <entry key="$PROJECT_DIR$/.." value="branch" />
       </map>
     </option>
     <favorite-branches>
@@ -273,7 +324,6 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaBankService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/ChinaTelecom/NingXiaTelecomService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/PhoneBillsService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" />
         <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
         <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/WebClientFactory.java" />
@@ -282,6 +332,7 @@
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/LongLink.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/reptile/service/WebSocketConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java" />
       </list>
     </option>
   </component>
@@ -397,15 +448,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="reptile" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="springboot" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="reptile" type="462c0819:PsiDirectoryNode" />
-              <item name="contorller" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="springboot" type="b2602c69:ProjectViewProjectNode" />
@@ -1367,11 +1409,18 @@
       <option name="project" value="LOCAL" />
       <updated>1515128902239</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="陕西电信调整，上海电信调整，失败情况下推送状态格式化 mrlu 2018 1 6">
+      <created>1515206980794</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1515206980794</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="466839000" />
+    <option name="totallyTimeSpent" value="466940000" />
   </component>
   <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
@@ -1397,7 +1446,7 @@
       <window_info id="JSF" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.37433723" sideWeight="0.49791667" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39130434" sideWeight="0.49791667" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826087" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32661718" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -1450,6 +1499,7 @@
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25963062" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
     </layout>
@@ -1591,7 +1641,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="670">
           <caret line="56" column="33" lean-forward="true" selection-start-line="56" selection-start-column="33" selection-end-line="56" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1599,7 +1648,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1925">
           <caret line="212" column="31" lean-forward="false" selection-start-line="212" selection-start-column="31" selection-end-line="212" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1615,7 +1663,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
           <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1623,14 +1670,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
           <caret line="29" column="27" lean-forward="true" selection-start-line="29" selection-start-column="27" selection-end-line="29" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/Resttemplate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="32" column="62" lean-forward="false" selection-start-line="32" selection-start-column="59" selection-end-line="32" selection-end-column="62" />
+        <state relative-caret-position="147">
+          <caret line="32" column="28" lean-forward="false" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -1639,7 +1685,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-643">
           <caret line="129" column="31" lean-forward="false" selection-start-line="129" selection-start-column="31" selection-end-line="129" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1655,9 +1700,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#780#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1665,7 +1707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-525">
           <caret line="18" column="17" lean-forward="false" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1673,7 +1714,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4875">
           <caret line="44" column="13" lean-forward="false" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1681,7 +1721,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-225">
           <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1689,7 +1728,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
           <caret line="7" column="12" lean-forward="false" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1697,7 +1735,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1705,7 +1742,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-300">
           <caret line="17" column="6" lean-forward="false" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1713,7 +1749,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1721,7 +1756,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-682">
           <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1729,7 +1763,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1737,7 +1770,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
           <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1745,7 +1777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1753,7 +1784,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-575">
           <caret line="70" column="13" lean-forward="false" selection-start-line="70" selection-start-column="13" selection-end-line="70" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1761,7 +1791,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1769,7 +1798,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1777,7 +1805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
           <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1785,7 +1812,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1507">
           <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1793,7 +1819,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1801,7 +1826,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
           <caret line="15" column="18" lean-forward="false" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1809,7 +1833,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="12" column="17" lean-forward="false" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1817,7 +1840,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-107">
           <caret line="12" column="12" lean-forward="false" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1825,7 +1847,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
           <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1833,15 +1854,69 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
           <caret line="7" column="22" lean-forward="false" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="76" column="0" lean-forward="true" selection-start-line="76" selection-start-column="0" selection-end-line="77" selection-end-column="20" />
-          <folding />
+        <state relative-caret-position="375">
+          <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+          <folding>
+            <marker date="1515206993874" expanded="true" signature="2425:2564" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="2579:2700" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="2715:2845" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="2877:2970" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3001:3134" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3149:3284" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3319:3440" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3455:3585" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3600:3714" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3730:3855" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="3870:3987" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4003:4121" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4136:4260" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4276:4383" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4399:4501" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4516:4622" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4637:4750" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4766:4887" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="4904:5012" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5027:5137" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5154:5288" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5303:5422" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5437:5560" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5576:5762" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5778:5893" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="5909:6032" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6047:6157" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6173:6299" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6314:6442" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6457:6575" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6590:6717" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6733:6848" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="6864:6984" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7000:7109" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7307:7425" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7440:7573" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7610:7721" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7736:7860" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="7895:8116" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8132:8260" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8276:8369" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8402:8519" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8549:8690" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8725:8855" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="8886:9004" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9035:9159" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9193:9319" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9347:9787" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9359:9777" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9371:9637" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9519:9624" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9649:9764" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9820:9969" ph="..." />
+            <marker date="1515206993874" expanded="true" signature="9836:9950" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1859,7 +1934,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
           <caret line="28" column="11" lean-forward="false" selection-start-line="28" selection-start-column="11" selection-end-line="28" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1877,7 +1951,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
           <caret line="77" column="0" lean-forward="false" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1885,7 +1958,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
           <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1893,23 +1965,29 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="392">
           <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-825">
-          <caret line="7" column="23" lean-forward="false" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
-          <folding />
+        <state relative-caret-position="-582">
+          <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+          <folding>
+            <element signature="e#1676#1692#0" expanded="true" />
+            <element signature="e#1743#1759#0" expanded="true" />
+            <marker date="1515207082169" expanded="false" signature="2599:2615" ph="&lt;~&gt;" />
+            <marker date="1515207082169" expanded="false" signature="2666:2682" ph="&lt;~&gt;" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/service/chinatelecom/ShanXiTelecomService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="57" column="27" lean-forward="false" selection-start-line="57" selection-start-column="27" selection-end-line="57" selection-end-column="27" />
-          <folding />
+        <state relative-caret-position="854">
+          <caret line="66" column="33" lean-forward="false" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
+          <folding>
+            <marker date="1515207021526" expanded="true" signature="5309:7741" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1917,7 +1995,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
           <caret line="105" column="34" lean-forward="false" selection-start-line="105" selection-start-column="34" selection-end-line="105" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1925,7 +2002,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="188">
           <caret line="448" column="26" lean-forward="true" selection-start-line="448" selection-start-column="26" selection-end-line="448" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1944,7 +2020,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
           <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1952,7 +2027,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="36" column="21" lean-forward="false" selection-start-line="36" selection-start-column="21" selection-end-line="36" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1966,9 +2040,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/PushSocket.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="40" column="46" lean-forward="false" selection-start-line="40" selection-start-column="46" selection-end-line="40" selection-end-column="46" />
-          <folding />
+        <state relative-caret-position="32">
+          <caret line="52" column="38" lean-forward="false" selection-start-line="52" selection-start-column="38" selection-end-line="52" selection-end-column="38" />
+          <folding>
+            <marker date="1515146000760" expanded="true" signature="2461:2484" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1976,7 +2052,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="355">
           <caret line="1406" column="23" lean-forward="false" selection-start-line="1406" selection-start-column="19" selection-end-line="1406" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1995,20 +2070,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="15" column="2" lean-forward="true" selection-start-line="15" selection-start-column="2" selection-end-line="15" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#427#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/reptile/util/talkFrame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="45" column="9" lean-forward="true" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
-          <folding>
-            <marker date="1515144540389" expanded="false" signature="578:594" ph="&lt;~&gt;" />
-            <marker date="1515144540389" expanded="false" signature="659:674" ph="&lt;~&gt;" />
-          </folding>
+        <state relative-caret-position="398">
+          <caret line="60" column="40" lean-forward="false" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>
