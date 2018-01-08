@@ -162,7 +162,7 @@ public class ConstructionService {
 					logger.warn("建设银行账单获取失败"+userCard+e);
 					
 					if(isok==true) {
-						PushState.state(userCard, "bankBillFlow",200);
+						PushState.state(userCard, "bankBillFlow",200,"认证失败");
 						if(flag.equals(state)){
 							PushSocket.pushnew(map, uuid, "7000","建设银行账单获取失败");
 						}else if(flag.equals(state1)){
@@ -192,7 +192,7 @@ public class ConstructionService {
 					map.clear();
 					map.put("errorInfo","获取账单失败");
 					map.put("errorCode","0002");
-			}
+					}
 			
 		return map;
 		  
