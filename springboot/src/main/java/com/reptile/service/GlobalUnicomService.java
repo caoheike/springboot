@@ -603,14 +603,14 @@ public class GlobalUnicomService {
                     if (resultCode.equals(MessageConstamts.STRING_01)) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "验证码已过期，请从新获取新的验证码");
-                        PushState.state(userIphone, "callLog", 200, "验证码已过期，请从新获取新的验证码");
+                        PushState.state(userIphone, "callLog", 200, "验证码已过期，请从新获取新的验证码！");
                         PushSocket.pushnew(map, uuId, "3000","验证码已过期，请从新获取新的验证码");
                         // 验证码错误
                     } else if (resultCode.equals(MessageConstamts.STRING_02)) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "校验失败");
                         PushSocket.pushnew(map, uuId, "3000", "校验失败");
-                        PushState.state(userIphone, "callLog", 200, "校验失败");
+                        PushState.state(userIphone, "callLog", 200, "校验失败！");
                         // sessionFail//session失效
                     } else if (resultCode.equals(MessageConstamts.STRING_03)) {
                         map.put("errorCode", "0001");
@@ -621,7 +621,7 @@ public class GlobalUnicomService {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "验证码不能为空");
                         PushSocket.pushnew(map, uuId, "3000", "验证码不能为空");
-                        PushState.state(userIphone, "callLog", 200, "验证码不能为空");
+                        PushState.state(userIphone, "callLog", 200, "验证码不能为空！");
                     } else {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", json3.get("error").toString());
@@ -634,10 +634,10 @@ public class GlobalUnicomService {
                 map.put("errorCode", "0001");
                 if (flag.equals(MessageConstamts.STRING_5000)) {
                     PushSocket.pushnew(map, uuId, "7000", "数据获失败");
-                    PushState.state(userIphone, "callLog", 200, "验证失败,稍后再试");
+                    PushState.state(userIphone, "callLog", 200, "验证失败,稍后再试！");
                 } else if (flag.equals(MessageConstamts.STRING_6000)) {
                     PushSocket.pushnew(map, uuId, "9000", "认证失败,网络异常");
-                    PushState.state(userIphone, "callLog", 200, "认证失败,网络异常");
+                    PushState.state(userIphone, "callLog", 200, "认证失败,网络异常!");
                 }
                 return map;
             }
@@ -645,7 +645,7 @@ public class GlobalUnicomService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络异常");
             PushSocket.pushnew(map, uuId, "3000", "登录失败，网络异常");
-            PushState.state(userIphone, "callLog", 200, "登录失败，网络异常");
+            PushState.state(userIphone, "callLog", 200, "登录失败，网络异常!");
             e.printStackTrace();
         }
         return map;

@@ -317,7 +317,7 @@ public class PhoneBillsService {
             map.put("errorInfo", "登录超时");
 
             PushSocket.pushnew(map, uuid, "3000", "登录超时");
-            PushState.state(userNumber, "callLog", 200, "登录超时");
+            PushState.state(userNumber, "callLog", 200, "登录超时。");
 
             return map;
         } else {
@@ -459,7 +459,7 @@ public class PhoneBillsService {
                 logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
-                PushState.state(userNumber, "callLog", 200, "认证失败,系统繁忙");
+                PushState.state(userNumber, "callLog", 200, "认证失败,系统繁忙！");
                 PushSocket.pushnew(map, uuid, "9000", "认证失败,系统繁忙");
             }
         }

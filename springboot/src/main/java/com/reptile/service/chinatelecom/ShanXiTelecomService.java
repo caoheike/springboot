@@ -53,7 +53,7 @@ public class ShanXiTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
-            PushState.state(phoneNumber, "callLog",200,"登录失败，操作异常");
+            PushState.state(phoneNumber, "callLog",200,"登录失败，操作异常！");
             PushSocket.pushnew(map, uuid, "3000","登录失败，操作异常");
         } else {
         	PushSocket.pushnew(map, uuid, "2000","登录成功");
