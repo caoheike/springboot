@@ -269,7 +269,7 @@ public class ShanghaiTelecomService {
 	           Resttemplate resttemplate = new Resttemplate();
                map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 		 
                String strr="0000";
-               String strr1="errorInfo";
+               String strr1="errorCode";
                
                if(map.get(strr1).equals(strr)) {
 					PushSocket.pushnew(map, uuid, "8000","认证成功");
