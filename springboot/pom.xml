@@ -374,7 +374,7 @@
 		<repository>
 			<id>test</id>
 			<name>test</name>
-			<url>http://192.168.2.116:8081/repository/NexusGr/</url>
+			<url>http://192.168.3.241:8081/repository/NexusGr/</url>
 		</repository>
 
 
