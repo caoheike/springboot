@@ -120,8 +120,8 @@ public class ChinaBankDepositCardService {
                 if (msgContent.contains(validateStr)) {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
-                    PushSocket.pushnew(map, uuid, "3000","验证码输入错误");
-                    PushState.state(idNumber, "savings",200,"验证码输入错误");
+                    PushSocket.pushnew(map, uuid, "3000","当前系统繁忙，请刷新页面重新认证！");
+                    PushState.state(idNumber, "savings",200,"当前系统繁忙，请刷新页面重新认证！");
                 } else {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", msgContent);

@@ -32,7 +32,7 @@ public class PushState {
     	}else if("TaoBao".equals(approveName)){
     		message = "您提交的淘宝网认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}else if("creditInvestigation".equals(approveName)){
-    		message = "您提交的个人征信认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    		message = "您提交的个人征信认证失败，失败原因："+message+"您可以重新认证或者选择其他产品。";
     	}else if("bankBillFlow".equals(approveName)){
     		message = "您提交的信用卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}else if("savings".equals(approveName)){

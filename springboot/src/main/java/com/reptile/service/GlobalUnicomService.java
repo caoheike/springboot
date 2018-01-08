@@ -148,10 +148,15 @@ public class GlobalUnicomService {
                 BufferedImage bufferedImage = ImageIO.read(imagePage
                         .getInputStream());
                 String findImage = "gd" + System.currentTimeMillis() + ".png";
-                ImageIO.write(bufferedImage, "png", new File("C:\\Shimage",
+                String path=request.getServletContext().getRealPath("/unicomImage");
+                File file=new File(path);
+                if(!file.exists()){
+                    file.mkdirs();
+                }
+                ImageIO.write(bufferedImage, "png", new File(file,
                         findImage));
                 // 2.转码
-                Map<String, Object> imagev = MyCYDMDemo.Imagev("C:\\Shimage\\"
+                Map<String, Object> imagev = MyCYDMDemo.Imagev(path+File.separator
                         + findImage);
                 // 转码后的动态码
                 String catpy = (String) imagev.get("strResult");
