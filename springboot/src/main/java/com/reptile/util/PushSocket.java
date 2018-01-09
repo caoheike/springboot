@@ -25,9 +25,6 @@ public class PushSocket {
 		System.out.println(se);
 		System.out.println(seq_id);
 		try {
-//			mapData.put("resultCode", errorInfo);
-//			mapData.put("seq_id", seq_id);
-//			JSONObject json=JSONObject.fromObject(mapData);
 			if(se!=null&&seq_id!=null){
 				if(seq_id.equals("hello")){
 					se.getBasicRemote().sendText("{\"resultCode\":\""+errorInfo+"\",\"seq_id\":\""+seq_id+"\"}");
