@@ -229,8 +229,7 @@ public class ShanDongTelecomService {
                 Calendar cal = Calendar.getInstance();
 
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
-                String format = sim.format(cal.getTime());
-                int date = Integer.parseInt(format);
+                String date = sim.format(cal.getTime());
                 int boundCount=6;
                 for (int i = 0; i < boundCount; i++) {
                     resultPage.executeJavaScript("\tvar params = {\n" +
@@ -256,7 +255,8 @@ public class ShanDongTelecomService {
                             "      alert(myArray)\n" +
                             "\t\t}\n" +
                             "\t});");
-                    date--;
+                    cal.add(Calendar.MONTH,-1);
+                    date=sim.format(cal.getTime());
                     Thread.sleep(4000);
                 }
                 for (int i = 0; i < list.size(); i++) {
