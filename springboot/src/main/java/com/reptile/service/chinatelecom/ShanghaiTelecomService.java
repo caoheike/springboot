@@ -72,7 +72,7 @@ public class ShanghaiTelecomService {
    		    request.getSession().setAttribute("webClient", webClient);
    		   
 	     } catch (Exception e) {
-	    	 logger.warn("上海电信",e);
+	    	 logger.error("上海电信",e);
 	    	map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常!");
 		}
@@ -153,10 +153,8 @@ public class ShanghaiTelecomService {
 			        list.add(new NameValuePair("startDate",""));
 			        list.add(new NameValuePair("endDate",""));
 			        list.add(new NameValuePair("queryDate",month));
-			        WebRequest webRequest = new WebRequest(new URL("http://service.sh.189.cn/service/service/authority/query/billdetailQuery.do?begin=0&end=10&flag=1&devNo="+phoneNumber+"&dateType=his&bill_type=SCP&moPingType=LOCAL&queryDate="+month+"&startDate=&endDate="));
-			      
+			        WebRequest webRequest = new WebRequest(new URL("http://service.sh.189.cn/service/service/authority/query/billdetailQuery.do?begin=0&end=10&flag=1&devNo="+phoneNumber+"&dateType=his&bill_type=SCP&moPingType=LOCAL&queryDate="+month+"&startDate=&endDate="));	      
 					Thread.sleep(2000);
-					
 			        webRequest.setRequestParameters(list);
 					webRequest.setHttpMethod(HttpMethod.GET);
 					//第一次请求目的是获取总条数
@@ -280,7 +278,7 @@ public class ShanghaiTelecomService {
 				}
 			}
 		  } catch (Exception e) {
-			  logger.warn("上海电信",e);
+			  logger.error("上海电信",e);
 			  map.put("errorCode", "0001");
 	          map.put("errorInfo", "网络连接异常!");
 	          PushState.state(phoneNumber, "callLog",200,"网络连接异常!");

@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -71,7 +69,6 @@ public class NingXiaTelecomService {
 	 * @return
 	 * @throws IOException
 	 */
-
 	public  Map<String, Object> ningXiaLogin(HttpServletRequest request,
 			String phoneNumber, String servePwd) {
 
@@ -147,14 +144,11 @@ public class NingXiaTelecomService {
 				} else {
 					map.put("errorInfo", divErr);
 				}
-
 			}
-
 		} catch (Exception e) {
-			logger.error("宁夏电信登录失败", e);
+			logger.error("---------宁夏电信登录失败-----------", e);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络连接异常");
-
 			driver.quit();
 		}
 		// 把driver放到session
@@ -182,7 +176,6 @@ public class NingXiaTelecomService {
 			map.put("errorInfo", "请先登录!");
 			return map;
 		}
-
 		try {
 			driver.get("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000501");
 			driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
@@ -191,9 +184,6 @@ public class NingXiaTelecomService {
 					.presenceOfElementLocated(By.id("hqyzm")));
 			// 获取验证码
 			driver.findElement(By.id("hqyzm")).click();
-//			new WebDriverWait(driver, 15).until(ExpectedConditions
-//					.presenceOfElementLocated(By
-//							.xpath("//*[@id='myAlert3']/div[2]/div[1]")));
 			Thread.sleep(1000);
 			String sendInfo = driver.findElement(
 					By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
@@ -209,7 +199,7 @@ public class NingXiaTelecomService {
 				map.put("errorInfo", "验证码发送失败");
 			}
 		} catch (Exception e) {
-			logger.error("宁夏电信网络异常，请稍后",e);
+			logger.error("---------宁夏电信网络异常-------",e);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常，请稍后");
 			driver.quit();
@@ -368,7 +358,7 @@ public class NingXiaTelecomService {
 				}
 				Thread.sleep(500);
 			} catch (Exception e) {
-				logger.warn("宁夏电信", e);
+				logger.error("-------宁夏电信------------", e);
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
 				PushState.state(phoneNumber, "callLog", 200, "获取数据失败，网络连接异常");
