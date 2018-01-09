@@ -44,7 +44,7 @@ public class GuiZhouTelecomService {
 	     Object attribute = request.getSession().getAttribute("GBmobile-webclient");
 	     WebClient webClient=(WebClient)attribute; 
 	     if(webClient==null){
-	    	 logger.warn("贵州电信","请先登录!");
+	    	 logger.warn("-----------贵州电信请先登录!--------------------");
 	    	 map.put("errorCode", "0001");
 			 map.put("errorInfo", "请先登录!");
 			 return map;
@@ -63,16 +63,16 @@ public class GuiZhouTelecomService {
 	    	 String fs="发送次数过多";
 	    	 String miaoh="秒后可重新获取";
 	    	 if(button.getAttribute(valu).contains(fs)){
-	    		 logger.warn("贵州电信","发送次数过多，请稍后重试");
+	    		 logger.warn("--------------贵州电信发送次数过多，请稍后重试--------------------");
 				 map.put("errorCode", "0001");
 				 map.put("errorInfo", "发送次数过多，请稍后重试");
 				 return map;
 			   }else if(button.getAttribute(valu).contains(miaoh)){
-				   logger.warn("贵州电信","验证码已发送!");
+				   logger.warn("---------------------------贵州电信,验证码已发送!--------------------");
 	    		 map.put("errorCode", "0000");
 	             map.put("errorInfo", "验证码已发送!");
 			 }else{
-				 logger.warn("贵州电信","网络连接异常");
+				 logger.warn("---------------------贵州电信,网络连接异常--------------------");
 				 map.put("errorCode", "0001");
 		         map.put("errorInfo", "网络连接异常");
 			 }
@@ -83,7 +83,7 @@ public class GuiZhouTelecomService {
 			
 			
 		} catch (Exception e) {
-			logger.warn("贵州电信",e);
+			logger.error("-----------------贵州电信----------------",e);
 			map.put("errorCode", "0001");
             map.put("errorInfo", "网络连接异常");
 		}
@@ -110,7 +110,7 @@ public class GuiZhouTelecomService {
 		    //从session中获得webClient;
 		    WebClient webClient=(WebClient)request.getSession().getAttribute("webClient");
 	        if(webClient==null){
-	        	logger.warn("贵州电信","请先获取验证码");
+	        	logger.warn("---------------------------贵州电信,请先获取验证码-------------------------");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
 			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
@@ -125,7 +125,7 @@ public class GuiZhouTelecomService {
 			ifrPage.getElementById("checkcode").setAttribute("value", code);
 			List<DomElement>  radio=ifrPage.getElementsByName("ACCTMONTH");
 			HtmlButtonInput button= ifrPage.getElementByName("input");
-			logger.warn("贵州电信数据获取中...");
+			logger.warn("-------------------------贵州电信数据获取中...----------------------");
 			//六个月数据
              for(int i=0;i<radio.size();i++){
             	 Map<String, Object> dmap = new HashMap<String, Object>(16);
@@ -155,7 +155,7 @@ public class GuiZhouTelecomService {
 		      	    
             	 }
 			} catch (Exception e) {
-				logger.warn("贵州电信",e);
+				logger.error("-------------------贵州电信--------------------",e);
 				map.put("errorCode", "0001");
 	            map.put("errorInfo", "网络连接异常");
 	            PushState.state(phoneNumber, "callLog",200,"网络连接异常");
@@ -165,7 +165,7 @@ public class GuiZhouTelecomService {
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
-						logger.warn("贵州电信",e);
+						logger.error("----------------贵州电信---------------------",e);
 					}
        }    
              PushSocket.pushnew(map, uuid, "6000","获取数据成功");
@@ -178,7 +178,7 @@ public class GuiZhouTelecomService {
            map.put("flag", "10");
            map.put("errorCode", "0000");
            map.put("errorInfo", "查询成功");
-           logger.warn("贵州电信数据获取成功");
+           logger.warn("-------------贵州电信数据获取成功----------------");
            webClient.close();
            Resttemplate resttemplate = new Resttemplate();
            map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord");
@@ -194,7 +194,7 @@ public class GuiZhouTelecomService {
         	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
            }
            if(map.get(errorCode).equals(sanl)){
-        	   logger.warn("贵州电信查询失败，稍后再试！！");
+        	   logger.warn("------------贵州电信查询失败，稍后再试！！-----------------");
         	   map.put("errorCode", "0001");
         	   map.put("errorInfo", "查询失败，稍后再试！！");
         	   PushState.state(phoneNumber, "callLog",200,"查询失败，稍后再试！！");
