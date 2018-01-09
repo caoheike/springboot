@@ -82,11 +82,19 @@ public class ChongQingTelecomService {
 			         map.put("errorInfo", "验证码发送成功");
 			         session.setAttribute("driverGT", driver);   
 	        	}else{
-        		Alert alert = driver.switchTo().alert();
-	        		if(alert!=null){
-	        			map.put("errorCode", "0001");
-			        map.put("errorInfo", alert.getText());
-	        		}
+	        		try {
+	        			Alert alert = driver.switchTo().alert();
+		        		if(alert!=null){
+		        		map.put("errorCode", "0001");
+				        map.put("errorInfo", alert.getText());
+		        		}
+		        		alert.accept();
+					} catch (Exception e) {
+						map.put("errorCode", "0001");
+				        map.put("errorInfo", "信息不正确");
+						e.printStackTrace();
+					}
+        		
 	        	}
 	        	
 	        	

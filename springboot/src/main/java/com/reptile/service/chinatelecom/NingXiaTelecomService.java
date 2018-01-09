@@ -191,9 +191,10 @@ public class NingXiaTelecomService {
 					.presenceOfElementLocated(By.id("hqyzm")));
 			// 获取验证码
 			driver.findElement(By.id("hqyzm")).click();
-			new WebDriverWait(driver, 15).until(ExpectedConditions
-					.presenceOfElementLocated(By
-							.xpath("//*[@id='myAlert3']/div[2]/div[1]")));
+//			new WebDriverWait(driver, 15).until(ExpectedConditions
+//					.presenceOfElementLocated(By
+//							.xpath("//*[@id='myAlert3']/div[2]/div[1]")));
+			Thread.sleep(1000);
 			String sendInfo = driver.findElement(
 					By.xpath("//*[@id='myAlert3']/div[2]/div[1]")).getText();
 			if (sendInfo.contains(phoneNumber)) {
