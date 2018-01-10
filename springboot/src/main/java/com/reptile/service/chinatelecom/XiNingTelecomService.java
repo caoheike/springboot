@@ -33,6 +33,7 @@ public class XiNingTelecomService {
     private Logger logger= LoggerFactory.getLogger(XiNingTelecomService.class);
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String uuid){
+        logger.warn(phoneNumber+"：---------------------西宁电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
@@ -48,12 +49,14 @@ public class XiNingTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+            logger.warn(phoneNumber+"：---------------------西宁电信获取详单未调用公共接口---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
             PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
             return map;
         } else {
+            logger.warn(phoneNumber+"：---------------------西宁电信获取详单开始---------------------");
         	PushSocket.pushnew(map, uuid, "2000","登录成功");
             WebClient webClient = (WebClient) attribute;
             try {
@@ -61,25 +64,6 @@ public class XiNingTelecomService {
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
                 PushSocket.pushnew(map, uuid, "5000","数据 获取中");
-
-//                WebRequest webRequest = new WebRequest(new URL("http://qh.189.cn/service/bill/feeDetailrecordList.action"));
-//                        webRequest.setHttpMethod(HttpMethod.POST);
-//                        List<NameValuePair> list = new ArrayList<NameValuePair>();
-//                        list.add(new NameValuePair("currentPage", "1"));
-//                        list.add(new NameValuePair("pageSize", "5"));
-//                        list.add(new NameValuePair("effDate", "2017-09-01"));
-//                        list.add(new NameValuePair("expDate", "2017-09-06"));
-//                        list.add(new NameValuePair("serviceNbr", "18194551655"));
-//                        list.add(new NameValuePair("operListID", "12"));
-//                        list.add(new NameValuePair("pOffrType", "4"));
-//                        list.add(new NameValuePair("sendsmsflag", "true"));
-//                        list.add(new NameValuePair("num", "1"));
-//                        list.add(new NameValuePair("callTypeVal", "0"));
-//                        webRequest.setRequestParameters(list);
-//                        HtmlPage page = webClient.getPage(webRequest);
-//                        String result = page.asXml();
-//                System.out.println(result);
-
 
                 SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd");
                 Calendar calendar = Calendar.getInstance();
@@ -128,7 +112,7 @@ public class XiNingTelecomService {
                         endTime = simple.format(calendar.getTime());
                     }
                 } catch (Exception e) {
-                    logger.warn(e.getMessage()+"  青海获取过程中ip被封  mrlu",e);
+                    logger.warn(phoneNumber+"：----------------西宁获取过程中出现异常---------------",e);
                     Scheduler.sendGet(Scheduler.getIp);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "数据获取失败，网络异常");
@@ -136,7 +120,7 @@ public class XiNingTelecomService {
                     PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常");
                     return map;
                 }
-                
+                logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 map.put("data", dataList);
                 map.put("flag", "2");
@@ -146,8 +130,12 @@ public class XiNingTelecomService {
                 map.put("longitude", longitude);
                 //纬度
                 map.put("latitude", latitude);
+
+                logger.warn(phoneNumber+"：---------------------西宁电信获取详单推送数据中--------------------");
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
+                logger.warn(phoneNumber+"：---------------------西宁电信获取详单推送数据完成--------------------本次推送返回："+map);
+
                 String validateResult="0000";
                 String errorCode="errorCode";
                 if(validateResult.equals(map.get(errorCode))) {
@@ -157,8 +145,9 @@ public class XiNingTelecomService {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorinfo").toString());
 					PushState.state(phoneNumber, "callLog",200,map.get("errorinfo").toString());
 				}
+                logger.warn(phoneNumber+"：---------------------西宁电信获取详单完毕--------------------");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  青海获取详单  mrlu",e);
+                logger.warn(phoneNumber+"：---------------------西宁电信获取详单异常--------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushSocket.pushnew(map, uuid, "9000","网络连接异常!");

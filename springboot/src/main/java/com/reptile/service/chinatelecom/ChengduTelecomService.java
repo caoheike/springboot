@@ -34,47 +34,13 @@ import java.util.*;
 public class ChengduTelecomService {
     private Logger logger = LoggerFactory.getLogger(ChengduTelecomService.class);
 
-//    public Map<String, Object> getImageCode(HttpServletRequest request) {
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        Map<String, String> imageMap = new HashMap<String, String>();
-//        HttpSession session = request.getSession();
-//
-//        WebClient webClient = new WebClientFactory().getWebClient();
-//        try {
-//            File file = new File(request.getServletContext().getRealPath("/imageCode"));
-//            if (!file.exists()) {
-//                file.mkdirs();
-//            }
-//            String fileName = "sc" + System.currentTimeMillis() + ".png";
-//            HtmlPage page = webClient.getPage("http://login.189.cn/web/login");
-//            UnexpectedPage page1 = webClient.getPage("http://login.189.cn/web/captcha?undefined&source=login&width=100&height=37&" + Math.random());
-//            InputStream inputStream = page1.getInputStream();
-//            BufferedImage read = ImageIO.read(inputStream);
-//            ImageIO.write(read, "png", new File(file, fileName));
-//
-//            map.put("errorCode", "0000");
-//            map.put("errorInfo", "操作成功");
-//            imageMap.put("imagePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/imageCode/" + fileName);
-//            map.put("data", imageMap);
-//            session.setAttribute("vecHtmlPage-sc", page);
-//            session.setAttribute("vecWebClinet-sc", webClient);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            map.put("errorCode", "0001");
-//            map.put("errorInfo", "网络连接异常!");
-//        }
-//        return map;
-//    }
-
-
     public Map<String, String> sendPhoneCode(HttpServletRequest request) {
+        logger.warn("---------------------成都电信发送短信验证码---------------------");
         Map<String, String> map = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
-
         Object attribute = session.getAttribute("GBmobile-webclient");
-
         if (attribute == null) {
+            logger.warn("---------------------成都电信发送短信验证码未进行前置操作---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             return map;
@@ -86,6 +52,7 @@ public class ChengduTelecomService {
                 HtmlPage page1 = webClient.getPage(requests);
                 String flagPhone="手机验证码";
                 if (!page1.asText().contains(flagPhone)) {
+                    logger.warn("---------------------成都电信未到达发送短信页面---------------------");
                     map.put("errorCode", "0007");
                     map.put("errorInfo", "操作异常！");
                     return map;
@@ -97,19 +64,20 @@ public class ChengduTelecomService {
                 String result = page.getWebResponse().getContentAsString();
                 String flagSuccess="成功";
                 if (!result.contains(flagSuccess)) {
+                    logger.warn("---------------------成都电信短信验证码发送失败---------------------");
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
                 } else {
+                    logger.warn("---------------------成都电信短信验证码发送成功---------------------");
                     map.put("errorCode", "0000");
                     map.put("errorInfo", "短信发送成功!");
                     session.setAttribute("SCmobile-webclient2", webClient);
                     session.setAttribute("SCmobile-benginTime", beginTime);
                     session.setAttribute("SCmobile-EndTime", endTime);
                 }
-
             } catch (Exception e) {
-                logger.warn("成都发送手机验证码mrlu", e);
+                logger.warn("---------------------成都发送手机验证码出错---------------------", e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -120,6 +88,7 @@ public class ChengduTelecomService {
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String phoneCode,
                                             String servePwd, String longitude, String latitude, String uuid) {
+        logger.warn(phoneNumber+"：---------------------成都电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         Map<String, Object> dataMap = new HashMap<String, Object>(16);
         PushState.state(phoneNumber, "callLog",100);
@@ -129,12 +98,14 @@ public class ChengduTelecomService {
         Object attribute = session.getAttribute("SCmobile-webclient2");
 
         if (attribute == null) {
+            logger.warn(phoneNumber+"：---------------------成都电信获取详单未获取手机验证码---------------------");
             map.put("errorCode", "0001");
-            map.put("errorInfo", "手机验证码错误,请重新获取!");
-            PushState.state(phoneNumber, "callLog",200,"手机验证码错误,请重新获取!");
-            PushSocket.pushnew(map, uuid, "3000","手机验证码错误,请重新获取!");
+            map.put("errorInfo", "请先获取验证码");
+            PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
+            PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
             return map;
         } else {
+            logger.warn(phoneNumber+"：---------------------成都电信获取详单开始---------------------");
             WebClient webClient = (WebClient) attribute;
             try {
                 String beginTime = session.getAttribute("SCmobile-benginTime").toString();
@@ -154,6 +125,7 @@ public class ChengduTelecomService {
                 if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
                     String resultInfo="没有查询到相应记录";
                     if (!result.contains(resultInfo)) {
+                        logger.warn(phoneNumber+"：---------------------成都电信获取详单时，未能请求到正确数据---------------------");
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog",200,jsonObject.get("retMsg").toString());  
@@ -191,6 +163,7 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
+                logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
@@ -202,7 +175,11 @@ public class ChengduTelecomService {
                 dataMap.put("data", list);
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
+
+                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据中--------------------");
                 map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
+                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据完成--------------------本次推送返回："+map);
+
                 String flagResult="0000";
                 String errorCode="errorCode";
                if(flagResult.equals(map.get(errorCode))) {
@@ -212,8 +189,9 @@ public class ChengduTelecomService {
             	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
             	   PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
                }
+                logger.warn(phoneNumber+"：---------------------成都电信获取详单完毕--------------------");
             } catch (Exception e) {
-                logger.warn("成都获取详情mrlu", e);
+                logger.warn(phoneNumber+":---------------------成都获取详情异常--------------------", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");

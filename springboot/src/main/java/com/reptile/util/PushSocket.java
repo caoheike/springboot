@@ -33,7 +33,7 @@ public class PushSocket {
 				}
 			}
 		} catch (Exception e) {
-			logger.warn("推送状态时，链接出现问题",e);
+			logger.warn("-----------------推送状态时，长链接出现问题-------------------",e);
 			map.put("errorCode", "1100");
 			map.put("errorInfo", "推送状态时，连接已关闭");
 		}
@@ -65,7 +65,7 @@ public class PushSocket {
 				}
 			}
 		} catch (Exception e) {
-			logger.warn("推送状态时，链接出现问题",e);
+			logger.warn("------------------------推送状态时，长链接出现问题----------------------",e);
 			map.put("errorCode", "1100");
 			map.put("errorInfo", "推送状态时，连接已关闭");
 		}
