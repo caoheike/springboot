@@ -216,8 +216,8 @@ public class CebService {
 				map.put("errorInfo", "短信验证码输入有误");
 				map.put("errorCode", "0002");
 				try {
-//					driver.quit();
-//					InvokeBat4.runbat();
+					driver.quit();
+					InvokeBat4.runbat();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -270,8 +270,8 @@ public class CebService {
 				Resttemplate resttemplate = new Resttemplate();
 				map = resttemplate.SendMessage(seo, applications.getSendip() + "/HSDC/BillFlow/BillFlowByreditCard");
 				try {
-//					driver.quit();
-//					InvokeBat4.runbat();
+					driver.quit();
+					InvokeBat4.runbat();
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -301,8 +301,8 @@ public class CebService {
 		} catch (Exception e) {
 			// 当页面获取的过程中
 			try {
-//				driver.quit();
-//				InvokeBat4.runbat();
+				driver.quit();
+				InvokeBat4.runbat();
 			} catch (Exception e3) {
 				e3.printStackTrace();
 			}
