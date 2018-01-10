@@ -84,7 +84,6 @@ public class CebService {
 				logger.info("光大银行登录时输入有误" + usercard);
 				map.put("errorInfo", "光大银行登录时输入有误");
 				map.put("errorCode", "0002");
-
 				try {
 					driver.quit();
 					// 关闭浏览器
@@ -172,6 +171,32 @@ public class CebService {
 			} else {
 
 			}
+			//如果光大的验证码输入时间较晚，页面上的图片验证码会刷新，需要进行判断是否刷新，然后重新打码进行输入。
+		    String 	yzmcode= loginform.findElement(By.id("yzmcode")).getText();
+		    if (yzmcode.length()==0) {
+		    	System.out.println(loginform.findElement(By.id("yzmcode")).getText()+"-*-*-*-*-*-*-");
+		    	List<WebElement> image = loginform.findElements(By.tagName("img"));
+				WebElement captchaImg = image.get(0);
+				// 通过driver获得图片信息
+				File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				// 进行 图片的读写处理
+				BufferedImage fullImg = ImageIO.read(screenshot);
+				Point point = captchaImg.getLocation();
+				int eleWidth = captchaImg.getSize().getWidth();
+				int eleHeight = captchaImg.getSize().getHeight();
+				BufferedImage eleScreenshot = fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
+				ImageIO.write(eleScreenshot, "png", screenshot);
+				// 将图片存在本地
+				String filename = "CEB//" + System.currentTimeMillis() + ".png";
+				File screenshotLocation = new File("C://" + filename);
+				FileUtils.copyFile(screenshot, screenshotLocation);
+				// 图片验证，打码平台
+				Map<String, Object> map1 = MyCYDMDemo.Imagev("C://" + filename);
+				String strResult = (String) map1.get("strResult");
+				// 将图片打码结果放入输入框
+				loginform.findElement(By.id("yzmcode")).sendKeys(strResult);
+			} 
+		    
 			// 输入app前端传输过来的短信验证码
 			loginform.findElement(By.id("verification-code")).sendKeys(passWord);
 			// 点击光大银行信用卡登录按钮
@@ -191,8 +216,8 @@ public class CebService {
 				map.put("errorInfo", "短信验证码输入有误");
 				map.put("errorCode", "0002");
 				try {
-					driver.quit();
-					InvokeBat4.runbat();
+//					driver.quit();
+//					InvokeBat4.runbat();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -245,8 +270,8 @@ public class CebService {
 				Resttemplate resttemplate = new Resttemplate();
 				map = resttemplate.SendMessage(seo, applications.getSendip() + "/HSDC/BillFlow/BillFlowByreditCard");
 				try {
-					driver.quit();
-					InvokeBat4.runbat();
+//					driver.quit();
+//					InvokeBat4.runbat();
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -276,8 +301,8 @@ public class CebService {
 		} catch (Exception e) {
 			// 当页面获取的过程中
 			try {
-				driver.quit();
-				InvokeBat4.runbat();
+//				driver.quit();
+//				InvokeBat4.runbat();
 			} catch (Exception e3) {
 				e3.printStackTrace();
 			}
