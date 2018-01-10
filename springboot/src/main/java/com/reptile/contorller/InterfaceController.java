@@ -1213,8 +1213,8 @@ public class InterfaceController {
 		Map<String,Object> map=new HashMap<String,Object>(8);
 
 		client = crawlerUtil.RfWebClient();
-		HtmlPage page= client.getPage("http://blog.sina.com.cn/s/blog_1688effdf0102zmk2.html");
-		 HtmlDivision division=(HtmlDivision) page.getElementById("sina_keyword_ad_area2");
+		HtmlPage page= client.getPage(MessageConstamts.RF_URL);
+		 HtmlDivision division=(HtmlDivision) page.getElementById(MessageConstamts.RF_ID);
 		 if(division.asText().equals(MessageConstamts.OPEN_YES)){
 			 map.put("errorCode",MessageConstamts.STRING_0000);
 			 map.put("errorInfo", MessageConstamts.STRING_RENFA);
