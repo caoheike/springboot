@@ -248,5 +248,22 @@ public class CrawlerUtil {
 		public static void setXueXinGetCode(String xueXinGetCode) {
 			XueXinGetCode = xueXinGetCode;
 		}
+		
+		public WebClient RfWebClient(){
+			webClient.getCookieManager().setCookiesEnabled(false);// 开启cookie管理
+			webClient.getOptions().setTimeout(90000);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.setJavaScriptTimeout(8000);
+			webClient.getOptions().setRedirectEnabled(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+	        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+	        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+	        //启动ajax代理
+	        return webClient;
+			
+			
+		}
+		
 	
 }
