@@ -46,7 +46,7 @@ public class ZhejiangTelecomService {
 	     
 	     WebClient webClient=(WebClient)attribute;
 	     if(webClient==null){
-	    	 logger.warn("浙江电信","请先登录!");
+	    	 logger.warn("-----------------------浙江电信，请先登录!-----------------");
 	    	 map.put("errorCode", "0001");
 			map.put("errorInfo", "请先登录!");
 			return map;
@@ -81,7 +81,7 @@ public class ZhejiangTelecomService {
 				String str="成功";
 				if(alertList.size()>0){
 					if(alertList.get(0).toString().contains(str)){
-						logger.warn("浙江电信","验证码发送成功!");
+						logger.warn("-------------------浙江电信,验证码发送成功!----------------------");
 						 map.put("errorCode", "0000");
 				         map.put("errorInfo", "验证码发送成功!");
 					}else{
@@ -98,7 +98,7 @@ public class ZhejiangTelecomService {
 	   		    request.getSession().setAttribute("selectMonth",selectMonth );
 	   		   	
 			} catch (Exception e) {
-				 logger.warn("浙江电信",e);
+				logger.error("-----------------浙江电信-----------------",e);
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常!");
 			}
@@ -127,7 +127,7 @@ public class ZhejiangTelecomService {
 				e1.printStackTrace();
 			}
 		    if(webClient==null){
-		    	logger.warn("浙江电信，请先获取验证码");
+		    	 logger.warn("---------------浙江电信，请先获取验证码-----------------------");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");
 			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
@@ -164,6 +164,7 @@ public class ZhejiangTelecomService {
 			//2.
 			idcard.setValueAttribute(idCard);
 			int intz=6;
+			logger.warn("------------------------浙江电信，数据获取中...----------------------");
 			//六个月数据
 			for(int i=0;i<intz;i++){
 				//选择对应月份
@@ -204,7 +205,7 @@ public class ZhejiangTelecomService {
 						dlist.add(dataMap);
 					}
 				} else { 
-					logger.warn("浙江电信","暂无数据");
+					logger.warn("----------------浙江电信，暂无数据-----------");
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "暂无数据");
 					PushSocket.pushnew(map, uuid, "7000","暂无数据");
@@ -222,7 +223,7 @@ public class ZhejiangTelecomService {
             map.put("flag", "9");
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
-			logger.warn("浙江电信","查询成功");
+			logger.warn("------------------------浙江电信，查询成功----------------------");
 			webClient.close();
 			Resttemplate resttemplate = new Resttemplate();
 	        map = resttemplate.SendMessage(map, application.getSendip()+"/HSDC/message/telecomCallRecord"); 	
@@ -236,7 +237,7 @@ public class ZhejiangTelecomService {
 				PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 			}
 		    } catch (InterruptedException e) {
-			logger.warn("浙江电信",e);
+			logger.error("------------------浙江电信----------------",e);
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常！");
 			PushSocket.pushnew(map, uuid, "9000","网络异常！");

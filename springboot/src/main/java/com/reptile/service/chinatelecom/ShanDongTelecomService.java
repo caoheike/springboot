@@ -44,6 +44,7 @@ public class ShanDongTelecomService {
      * @return
      */
     public Map<String, Object> getImageCode(HttpServletRequest request) {
+        logger.warn("---------------------山东电信获取图片验证码---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         Map<String, String> dataMap = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
@@ -51,6 +52,7 @@ public class ShanDongTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+            logger.warn("---------------------山东电信获取图片验证码，未进行前置操作---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
@@ -76,8 +78,9 @@ public class ShanDongTelecomService {
                 map.put("errorInfo", "验证码获取成功!");
                 session.setAttribute("SDDXwebclient", webClient);
                 session.setAttribute("SDDXhtmlPage", page1);
+                logger.warn("---------------------山东电信获取图片验证码成功---------------------");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  山东获取验证码  mrlu",e);
+                logger.warn("---------------------山东获取图片验证码异常------------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -85,47 +88,8 @@ public class ShanDongTelecomService {
         return map;
     }
 
-
-//    public Map<String, Object> reGetImageCode(HttpServletRequest request) {
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        Map<String, String> dataMap = new HashMap<String, String>();
-//        HttpSession session = request.getSession();
-//
-//        Object attribute = session.getAttribute("SDDXwebclient");
-//
-//        if (attribute == null) {
-//            map.put("errorCode", "0001");
-//            map.put("errorInfo", "操作异常!");
-//        } else {
-//            try {
-//                WebClient webClient = (WebClient) attribute;
-//
-//
-//                File file = new File(request.getServletContext().getRealPath("/SDDXimageCode"));
-//                if (!file.exists()) {
-//                    file.mkdirs();
-//                }
-//                String fileName = "SD" + System.currentTimeMillis() + ".png";
-//
-//                UnexpectedPage page1 = webClient.getPage("http://sd.189.cn/selfservice/validatecode/codeimg.jpg?" + Math.random());
-//                InputStream inputStream = page1.getInputStream();
-//                BufferedImage read = ImageIO.read(inputStream);
-//                ImageIO.write(read, "png", new File(file, fileName));
-//
-//                dataMap.put("CodePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/SDDXimageCode/" + fileName);
-//                map.put("data", dataMap);
-//                map.put("errorCode", "0000");
-//                map.put("errorInfo", "验证码获取成功!");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                map.put("errorCode", "0001");
-//                map.put("errorInfo", "网络连接异常!");
-//            }
-//        }
-//        return map;
-//    }
-
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String imageCode) {
+        logger.warn("---------------------山东电信发送短信验证码---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         Map<String, String> dataMap = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
@@ -134,6 +98,7 @@ public class ShanDongTelecomService {
         Object htmlpage = session.getAttribute("SDDXhtmlPage");
 
         if (attribute == null || htmlpage == null) {
+            logger.warn("---------------------山东电信发送短信验证码未进行前置操作---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
         } else {
@@ -168,8 +133,9 @@ public class ShanDongTelecomService {
                     map.put("errorInfo", "短信发送失败");
                 }
                 session.setAttribute("SDDXsendMesPage", easyDialogYesBtn);
+                logger.warn("---------------------山东电信发送短信验证码完成---------------------");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  山东发送手机验证码  mrlu",e);
+                logger.warn("----------------山东发送手机验证码异常-------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
             }
@@ -179,6 +145,7 @@ public class ShanDongTelecomService {
 
     public Map<String, Object> getDetailMes(HttpServletRequest request,String userIphone, String imageCode, String userName,
                                             String userCard, String phoneCode, String userPassword,String longitude,String latitude,String uuid){
+        logger.warn(userIphone + "：---------------------山东电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(userIphone, "callLog",100);
@@ -195,6 +162,7 @@ public class ShanDongTelecomService {
         Object htmlpage = session.getAttribute("SDDXsendMesPage");
 
         if (attribute == null || htmlpage == null) {
+            logger.warn(userIphone + "：---------------------山东电信获取详单...未进行前置操作---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(userIphone, "callLog",200,"登录失败，操作异常!");
@@ -203,6 +171,8 @@ public class ShanDongTelecomService {
             try {
                 WebClient webClient = (WebClient) attribute;
                 HtmlPage page = (HtmlPage) htmlpage;
+
+                logger.warn(userIphone + "：---------------------山东电信二次身份认证中...---------------------");
 
                 page.getElementById("validatecode_2busi").setAttribute("value", imageCode);
                 page.getElementById("username_2busi").setAttribute("value", userName);
@@ -226,11 +196,11 @@ public class ShanDongTelecomService {
                 List<String> list = new ArrayList<String>();
                 CollectingAlertHandler alert = new CollectingAlertHandler(list);
                 webClient.setAlertHandler(alert);
-                Calendar cal = Calendar.getInstance();
 
+                logger.warn(userIphone + "：---------------------山东电信获取详单开始---------------------");
+                Calendar cal = Calendar.getInstance();
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
-                String format = sim.format(cal.getTime());
-                int date = Integer.parseInt(format);
+                String date = sim.format(cal.getTime());
                 int boundCount=6;
                 for (int i = 0; i < boundCount; i++) {
                     resultPage.executeJavaScript("\tvar params = {\n" +
@@ -256,13 +226,14 @@ public class ShanDongTelecomService {
                             "      alert(myArray)\n" +
                             "\t\t}\n" +
                             "\t});");
-                    date--;
+                    cal.add(Calendar.MONTH,-1);
+                    date=sim.format(cal.getTime());
                     Thread.sleep(4000);
                 }
                 for (int i = 0; i < list.size(); i++) {
                     listData.add(list.get(i));
                 }
-                
+                logger.warn(userIphone + "：---------------------山东电信获取详单完成--------------------本次获取账单数目：" + listData.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功"); 
                 map.put("UserPassword", "'"+userPassword+"'");
                 map.put("UserIphone", userIphone);
@@ -275,8 +246,12 @@ public class ShanDongTelecomService {
                 map.put("errorCode", "0000");
                 map.put("errorInfo", "'查询成功'");
                 webClient.close();
+
+                logger.warn(userIphone + "：---------------------山东电信获取详单推送数据中--------------------");
                 Resttemplate resttemplate=new Resttemplate();
                 map = resttemplate.SendSDYDMessage(map, ConstantInterface.port+"/HSDC/message/SdTelecomCallRecord");
+                logger.warn(userIphone + "：---------------------山东电信获取详单推送数据完成--------------------本次推送返回：" + map);
+
                 validateError="errorCode";
                 String resultCount="0000";
                 if(map.get(validateError).equals(resultCount)) {
@@ -286,8 +261,11 @@ public class ShanDongTelecomService {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					 PushState.state(userIphone, "callLog",200,map.get("errorInfo").toString());
 				}
+
+                logger.warn(userIphone + "：---------------------山东电信获取详单完毕--------------------");
+
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  山东获取详单信息  mrlu",e);
+                logger.warn(userIphone+"  ：---------------------山东电信获取详单异常--------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(userIphone, "callLog",200,"网络连接异常!");

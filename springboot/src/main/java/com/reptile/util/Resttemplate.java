@@ -53,8 +53,7 @@ public class Resttemplate {
           }
            
 		} catch (Exception e) {
-	  		logger.warn("推送数据过程中出现错误 loggerError",e);
-	  		e.printStackTrace();
+	  		logger.warn("---------------------推送数据过程中出现错误----------------",e);
 			message.put("errorCode","0003");//异常处理
 			message.put("errorInfo","推送失败");
 		}
@@ -84,8 +83,7 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  logger.warn("推送数据过程中出现错误 loggerError",e);
-		  e.printStackTrace();
+		  logger.warn("---------------------推送数据过程中出现错误----------------",e);
 		  message.put("errorCode","0003");//异常处理
 		  message.put("errorCode","推送失败");
 	  }
@@ -116,8 +114,7 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  logger.warn("推送数据过程中出现错误 loggerError",e);
-		  e.printStackTrace();
+		  logger.warn("---------------------推送数据过程中出现错误----------------",e);
 		  message.put("ResultCode","0003");//异常处理
 		  message.put("ResultInfo","推送失败");
 	  }
@@ -148,8 +145,7 @@ public class Resttemplate {
 			}
 
 		} catch (Exception e) {
-			logger.warn("推送数据过程中出现错误 loggerError",e);
-			e.printStackTrace();
+			logger.warn("---------------------推送数据过程中出现错误----------------",e);
 			message.put("errorCode","0003");//异常处理
 			message.put("errorInfo","操作失败");
 		}
@@ -181,8 +177,7 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  logger.warn("推送数据过程中出现错误 loggerError",e);
-		  e.printStackTrace();
+		  logger.warn("---------------------推送数据过程中出现错误----------------",e);
 		  message.put("ResultCode","0003");//异常处理
 		  message.put("ResultInfo","推送失败");
 	  }
@@ -218,8 +213,7 @@ public class Resttemplate {
 		  }
 		  
 	  } catch (Exception e) {
-		  logger.warn("推送数据过程中出现错误 loggerError",e);
-		  e.printStackTrace();
+		  logger.warn("---------------------推送数据过程中出现错误----------------",e);
 		  message.put("errorCode","0003");//异常处理
 		  message.put("errorInfo","推送失败");
           PushState.state(card, "CHSI",200);

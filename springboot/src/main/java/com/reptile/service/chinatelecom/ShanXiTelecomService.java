@@ -40,7 +40,7 @@ public class ShanXiTelecomService {
      * @throws InterruptedException
      */
     public Map<String, Object>  telecomLogin(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String uuid) throws IOException, InterruptedException {
-
+        logger.warn(phoneNumber+"：---------------------陕西电信获取账单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         Thread.sleep(2000);
         List<String> dataList = new ArrayList<String>();
@@ -51,6 +51,7 @@ public class ShanXiTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+            logger.warn(phoneNumber+"：---------------------陕西电信获取账单...未访问公共登录接口---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200,"登录失败，操作异常！");
@@ -59,8 +60,8 @@ public class ShanXiTelecomService {
         	PushSocket.pushnew(map, uuid, "2000","登录成功");
             WebClient webClient = (WebClient) attribute;
             try {
-            	Thread.sleep(2000);
             	PushSocket.pushnew(map, uuid, "5000","获取数据中");
+                logger.warn(phoneNumber+"：---------------------陕西电信获取账单开始---------------------");
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
                 Thread.sleep(1000);
                 HtmlPage page = webClient.getPage("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=ticket&fastcode=10000202&cityCode=sn");
@@ -119,6 +120,7 @@ public class ShanXiTelecomService {
                     }
 
                 }
+                logger.warn(phoneNumber+"：---------------------陕西电信获取账单结束---------------------本次获取账单数量："+dataList.size());
                 if(dataList.size()<3){
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "数据过程中出现未知错误!请重试！");
@@ -136,7 +138,11 @@ public class ShanXiTelecomService {
                     map.put("data",dataList);
                     map.put("flag","0");
                     Resttemplate resttemplate=new Resttemplate();
+
+                    logger.warn(phoneNumber+"：---------------------陕西电信获取详单推送数据中--------------------");
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
+                    logger.warn(phoneNumber+"：---------------------陕西电信获取详单推送数据完成--------------------本次推送返回："+map);
+
                     String resultCon="0000";
                     String errorCodeInfo="errorCode";
                     if(resultCon.equals(map.get(errorCodeInfo))) {
@@ -146,8 +152,9 @@ public class ShanXiTelecomService {
     					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
     					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
     				}
+                    logger.warn(phoneNumber+"：---------------------陕西电信获取详单完毕--------------------");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  陕西详单获取  mrlu",e);
+                logger.warn(phoneNumber+"：---------------------陕西详单获取异常---------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");

@@ -32,6 +32,7 @@ import java.util.*;
 public class JiangSuTelecomService {
     private Logger logger= LoggerFactory.getLogger(JiangSuTelecomService.class);
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String userPassword,String longitude,String latitude,String uuid) {
+        logger.warn(phoneNumber+"：---------------------江苏电信获取详单---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
@@ -46,6 +47,7 @@ public class JiangSuTelecomService {
         Object attribute = session.getAttribute("GBmobile-webclient");
 
         if (attribute == null) {
+            logger.warn(phoneNumber+"：---------------------江苏电信获取详单未调用公共接口---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200,"操作异常!");
@@ -56,6 +58,7 @@ public class JiangSuTelecomService {
             	WebClient webClient = (WebClient) attribute;
             try {
             	Thread.sleep(2000);
+                logger.warn(phoneNumber+"：---------------------江苏电信获取详单开始---------------------");
             	PushSocket.pushnew(map, uuid, "5000","获取数据中"); 
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
                 requests.setHttpMethod(HttpMethod.GET);
@@ -107,6 +110,7 @@ public class JiangSuTelecomService {
                     dataList.add(page.getWebResponse().getContentAsString());
                     Thread.sleep(500);
                 }
+                logger.warn(phoneNumber+"：---------------------江苏电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功"); 
                 map.put("data",dataList);
                 map.put("errorCode","0000");
@@ -118,8 +122,12 @@ public class JiangSuTelecomService {
                 map.put("longitude", longitude);
                 //纬度
                 map.put("latitude", latitude);
+
+                logger.warn(phoneNumber+"：---------------------江苏电信获取详单推送数据中--------------------");
                 Resttemplate rest=new Resttemplate();
                 map= rest.SendMessage(map, ConstantInterface.port + "HSDC/message/telecomCallRecord");
+                logger.warn(phoneNumber+"：---------------------江苏电信获取详单推送数据完成--------------------本次推送返回："+map);
+
                 String errorCode="errorCode";
                 String resultValid="0000";
             	if(map.get(errorCode).equals(resultValid)) {
@@ -129,8 +137,9 @@ public class JiangSuTelecomService {
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					 PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
+                logger.warn(phoneNumber+"：---------------------江苏电信获取详单完毕--------------------");
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  江苏详单获取  mrlu",e);
+                logger.warn(phoneNumber+"：---------------------江苏详单获取异常---------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");

@@ -47,6 +47,7 @@ public class ChongQingTelecomService {
 	        Object attribute = session.getAttribute("driverCQ");
 
 	        if (attribute == null) {
+	        	logger.warn("----------------重庆电信，操作异常---------------------");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            return map;
@@ -68,6 +69,7 @@ public class ChongQingTelecomService {
     			Thread.sleep(200);
     			String bzq="不正确";
     			if(checkName.getText().contains(bzq)||card.getText().contains(bzq)){
+    				logger.warn("----------------重庆电信，登陆信息不正确---------------------");
     				 map.put("errorCode", "0001");
 			         map.put("errorInfo", "信息不正确，请仔细核对后再输入");
 			         return map;
@@ -78,6 +80,7 @@ public class ChongQingTelecomService {
 	            String tip=	driver.findElement(By.id("send_sms")).getText();
 	        	String mih="秒后";
 	            if(tip.contains(mih)){
+	            	 logger.warn("----------------重庆电信，短信验证码发送成功---------------------");
 	        		 map.put("errorCode", "0000");
 			         map.put("errorInfo", "验证码发送成功");
 			         session.setAttribute("driverGT", driver);   
@@ -87,21 +90,21 @@ public class ChongQingTelecomService {
 		        		if(alert!=null){
 		        		map.put("errorCode", "0001");
 				        map.put("errorInfo", alert.getText());
+				        logger.warn("----------------重庆电信，"+alert.getText()+"---------------------");
 		        		}
 		        		alert.accept();
 					} catch (Exception e) {
 						map.put("errorCode", "0001");
 				        map.put("errorInfo", "信息不正确");
-						e.printStackTrace();
+				        logger.error("---------重庆电信---------",e);
 					}
         		
 	        	}
-	        	
-	        	
+
 	        	} catch (Exception e) {
 					 map.put("errorCode", "0001");
 			         map.put("errorInfo", "网络异常!");
-					e.printStackTrace();
+			         logger.error("----------重庆电信-----------",e);
 				}
 	        } 
 		return map;
@@ -128,6 +131,7 @@ public class ChongQingTelecomService {
 	        Object attribute = session.getAttribute("driverGT");
 
 	        if (attribute == null) {
+	        	logger.warn("----------------重庆电信，操作异常---------------------");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "请先获取短信验证码!");
 	            PushState.state(phoneNumber, "callLog",200,"请先获取短信验证码!");
@@ -143,7 +147,7 @@ public class ChongQingTelecomService {
 		        		//验证码
 			        	sms.sendKeys(code);
 						Thread.sleep(500);
-		        	}	
+		        	}		
 	//===========================获取数据=========================================
 					 JavascriptExecutor js = (JavascriptExecutor) driver;
 	                 js.executeScript("$('#xdcx_tr,#time_tr,#qd_xdcx_div').show();");
@@ -164,27 +168,30 @@ public class ChongQingTelecomService {
 							 check.click();
 							 Thread.sleep(1000);
 						}catch (Exception e){
+							    logger.error("--------------重庆电信------------",e);
 								 map.put("errorCode", "0001");
 	    				         map.put("errorInfo", "验证码错误");	
 	    				         PushSocket.pushnew(map, uuid, "3000","验证码错误");
 	    				         PushState.state(phoneNumber, "callLog",200,"验证码错误");
 	    				         return map;
 						}
-					    
+						if(nmu==1){
+							logger.warn("----------------重庆电信，正在获取数据...---------------------");
+						}
 					if(driver.getPageSource().contains("使用地点")){
 						PushSocket.pushnew(map, uuid, "2000","登录成功");
 						Thread.sleep(2000);
 						PushSocket.pushnew(map, uuid, "5000","数据获取中");
+						
 						HttpClient httpClient = new HttpClient(); 
 	        				 Set<Cookie> cookie=driver.manage().getCookies();
 	        				 StringBuffer cookies=new StringBuffer();
 	        				 for (Cookie c : cookie) {   
 	        					 cookies.append(c.toString()+";");
 	        				 } 
-	        				 
+	 
 	        				 PostMethod post = new PostMethod("http://cq.189.cn/new-bill/bill_XDCX_Page"); 
 	        				 post.setRequestHeader("Accept","application/json, text/javascript, */*; q=0.01");
-	        				 
 	        				 post.setRequestHeader("Connection","keep-alive");
 	        				 post.setRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
 	        				 post.setRequestHeader("Origin","http://nx.189.cn");
@@ -199,6 +206,7 @@ public class ChongQingTelecomService {
 	 				      	 arrayList.add(dataMap);		 
 	 				      	PushSocket.pushnew(map, uuid, "6000","数据获取成功");
 	        			}else{
+	        				logger.warn("----------------重庆电信,数据获取失败---------------------");
 	        				 map.put("errorCode", "0001");
 					         map.put("errorInfo", "系统繁忙!");
 					         PushSocket.pushnew(map, uuid, "3000","登录失败,系统繁忙!");
@@ -206,6 +214,7 @@ public class ChongQingTelecomService {
     				         return map;
 	        			}
 					}
+					logger.warn("----------------重庆电信,数据获取成功---------------------");
 				//------------推数据------------------------
 					map.put("errorCode", "0000");
 		            map.put("errorInfo", "查询成功!");
@@ -234,13 +243,13 @@ public class ChongQingTelecomService {
 				         map.put("errorInfo", "网络异常!");
 				         PushState.state(phoneNumber, "callLog",200,"网络异常!");
 				         PushSocket.pushnew(map, uuid, "9000","网络异常!");
-						 e.printStackTrace();
+				         logger.error("-------------重庆电信-------------",e);
 					}finally{
 						 driver.close();
 						 try {
 								Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 							} catch (IOException e) {
-								logger.warn("宁夏电信",e);
+								logger.error("--------------重庆电信------------------",e);
 							}
 					}
 		        }
@@ -319,12 +328,13 @@ public class ChongQingTelecomService {
 	        	driver.get("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10004&toStUrl=http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq");
 	        	Thread.sleep(1000);
 				WebElement	name=driver.findElement(By.xpath("/html/body/div/div/table[2]/tbody/tr[1]/td/span[1]"));
-				
+				logger.warn("----------------重庆电信,登陆成功---------------------");
 				map.put("name", name.getText());
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "登陆成功");
 				
 				}else{
+					logger.warn("----------------重庆电信,登陆失败---------------------");
 					String divErr = driver.findElement(By.id("divErr")).getText();
 					map.put("errorCode", "0001");
 					String yanz="验证码不正确";
@@ -339,7 +349,7 @@ public class ChongQingTelecomService {
 				}
 		 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("----------------重庆电信--------------",e);
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络连接异常");
 				driver.close();

@@ -51,9 +51,9 @@ public class CreditAnalysis {
 //        String reportHtml = data.get("reportHtml").toString();
         Elements table = null;
         Document parse = null;
-        String userId = "610403199112021515";
+        String userId = "**************271X";
         try {
-            parse = Jsoup.parse(new File("f://zhufang.htm"), "utf-8");
+            parse = Jsoup.parse(new File("f://90overdue.html"), "utf-8");
 //            parse = Jsoup.parse(reportHtml);
             table = parse.getElementsByTag("table");
             logger.warn(userId.toString() + "此次解析征信页面含有的table数量为:" + table.size());
@@ -104,7 +104,7 @@ public class CreditAnalysis {
             Elements tdBasic2 = trBasic2.get(0).getElementsByTag("td");
             if (tdBasic2.get(0).text().contains(nameFlag)) {
                 //报告姓名
-                creditBasic.put("name", tdBasic2.get(0).text().substring(3));
+                creditBasic.put("name", tdBasic2.get(0).text().substring(3).trim());
                 //证件类型
                 creditBasic.put("type", tdBasic2.get(1).text().substring(5));
                 //证件号码
@@ -236,7 +236,7 @@ public class CreditAnalysis {
         onePbData.put("public_record", "公共记录");
         publicData.add(onePbData);
         resultObj.put("credit_ggjl", publicData);
-        resultData.put("data", resultObj);
+
 
         try {
             //机构查询明细
@@ -254,11 +254,12 @@ public class CreditAnalysis {
         }
         resultObj.put("credit_chaxun1", orgQueryData);
         resultObj.put("credit_chaxun2", personQueryData);
+        resultData.put("data", resultObj);
         resultData.put("idcode", userId.toString());
         System.out.println(resultData);
         try {
             Map<String,Object> postData=new HashMap<>();
-            postData.put("data",resultObj.toString());
+            postData.put("data",resultData.toString());
             String post = SimpleHttpClient.post("http://192.168.3.16:8099/HSDC/person/creditInvestigation", postData, null);
             JSONObject jsonObject = JSONObject.fromObject(post);
 
