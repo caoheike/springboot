@@ -97,11 +97,11 @@ public class HuBeiProviceService {
 		     			System.out.println(backtrack.asText()+"--成功--");
 		     			session.setAttribute("sessionWebClient-HUBEI", webClient);
 		     			map.put("errorCode", "0000");
-		     			map.put("errorInfo", "验证码发送成功!");
+		     			map.put("errorInfo", backtrack.asText());
 		     		}else{
 		     			System.out.println(backtrack.asText()+"-----失败-----");
 		     			map.put("errorCode", "0001");
-		     			map.put("errorInfo", "服务器异常!");
+		     			map.put("errorInfo", backtrack.asText());
 		     		}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -112,8 +112,10 @@ public class HuBeiProviceService {
 	        }
 		return map;
 	}
+	@SuppressWarnings("resource")
 	public Map<String,Object> hubeiphone(HttpServletRequest request, String phoneCode,String phoneNume,String phonePass,String longitude,String latitude, String uuid){
 		 Map<String,Object> map = new HashMap<String,Object>(200);
+		 WebClient webClient = null;
 		 PushState.state(phoneCode, "callLog",100);
 		 PushSocket.pushnew(map, uuid, "1000","登录中");
 		 try {
@@ -133,7 +135,7 @@ public class HuBeiProviceService {
 	            return map;
 	        } else {
 	        try {
-	        	WebClient webClient = (WebClient) attribute;
+	        	 webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));
 				//提交方式
 				requests.setHttpMethod(HttpMethod.POST);
@@ -231,7 +233,7 @@ public class HuBeiProviceService {
 	            	PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 	            	//---------------------数据中心推送状态----------------------
 	          }
-				webClient.close();
+			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				
@@ -244,6 +246,7 @@ public class HuBeiProviceService {
 				 PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
 			}
 	        }
+	    	webClient.close();
 		return map;
 	}
 }
