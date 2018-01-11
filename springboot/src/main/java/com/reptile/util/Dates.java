@@ -65,8 +65,15 @@ public class Dates {
 		return c.getTime().getTime();
 	}
 	
-	
-	public static void main(String[] args) {
-		System.out.println(getBeforeTime());
+	/**
+	 * 获取当前时间（格式：yyyyMM）
+	 * @return
+	 */
+	public static String getCurrentDate(){
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
+		Calendar calendar = Calendar.getInstance();
+		String lastTime = sim.format(calendar.getTime());
+		return lastTime;
 	}
+	
 }
