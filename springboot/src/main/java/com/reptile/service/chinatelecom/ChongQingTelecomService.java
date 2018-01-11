@@ -77,14 +77,14 @@ public class ChongQingTelecomService {
 	        	
 	        	driver.findElement(By.id("send_sms")).click();
 	        	Thread.sleep(500);
-	            String tip=	driver.findElement(By.id("send_sms")).getText();
-	        	String mih="秒后";
-	            if(tip.contains(mih)){
-	            	 logger.warn("----------------重庆电信，短信验证码发送成功---------------------");
-	        		 map.put("errorCode", "0000");
-			         map.put("errorInfo", "验证码发送成功");
-			         session.setAttribute("driverGT", driver);   
-	        	}else{
+	           // String tip=	driver.findElement(By.id("send_sms")).getText();
+	        	//String mih="秒后";
+	           // if(tip.contains(mih)){
+	            
+//	        		 map.put("errorCode", "0000");
+//			         map.put("errorInfo", "验证码发送成功");
+			           
+	        	//}else{
 	        		try {
 	        			Alert alert = driver.switchTo().alert();
 		        		if(alert!=null){
@@ -94,12 +94,13 @@ public class ChongQingTelecomService {
 		        		}
 		        		alert.accept();
 					} catch (Exception e) {
-						map.put("errorCode", "0001");
-				        map.put("errorInfo", "信息不正确");
-				        logger.error("---------重庆电信---------",e);
+						session.setAttribute("driverGT", driver); 
+						map.put("errorCode", "0000");
+				        map.put("errorInfo", "验证码发送成功");
+				   	    logger.error("----------------重庆电信，短信验证码发送成功---------------------");
 					}
         		
-	        	}
+	        	//}
 
 	        	} catch (Exception e) {
 					 map.put("errorCode", "0001");

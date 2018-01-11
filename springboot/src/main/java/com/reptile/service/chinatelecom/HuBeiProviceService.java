@@ -3,10 +3,12 @@ package com.reptile.service.chinatelecom;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -14,8 +16,12 @@ import com.reptile.util.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,17 +49,32 @@ public class HuBeiProviceService {
 	        } else {
 	        	try {
 	        		WebClient webClient = (WebClient) attribute;
-		            WebRequest requests = new WebRequest(new URL("http://hb.189.cn/pages/selfservice/order/orderIndex_new.jsp?trackPath=shouyezuodao-feiyong-dingdanchaxun"));
-		            requests.setHttpMethod(HttpMethod.GET);
-		            HtmlPage page = webClient.getPage(requests);
-		            Thread.sleep(4000);
 		            WebRequest request1 = new WebRequest(new URL("http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp"));
 		            request1.setHttpMethod(HttpMethod.GET);
 		            HtmlPage page1 = webClient.getPage(request1);
-		            Thread.sleep(4000);
+		            Thread.sleep(2000);
 		            page1.getElementById("txtAccount").setAttribute("value", phoneCode);
 		            page1.getElementById("txtPassword").setAttribute("value", passPhone);
+		            Thread.sleep(2000);
+		            
+		            //---------------------------------------------------------------------
+		            String realPath = request.getServletContext().getRealPath("/imageFile");
+		            File file = new File(realPath);
+		            if (!file.exists()) {
+		                file.mkdirs();
+		            }
+		            String fileName = "loadImageCode" + System.currentTimeMillis() + ".png";
+		            HtmlImage imgCaptcha = (HtmlImage) page1.getElementById("imgCaptcha");
+		            BufferedImage read = imgCaptcha.getImageReader().read(0);
+		            ImageIO.write(read, "png", new File(file, fileName));
+		            Map<String, Object> imagev = MyCYDMDemo.Imagev(realPath + "/" + fileName);
+		            String code = imagev.get("strResult").toString();
+		            HtmlInput txtCaptcha = (HtmlInput) page1.getElementById("txtCaptcha");
+		            txtCaptcha.setValueAttribute(code);
+		            //----------------------------------------------------------------------
+		           
 		            HtmlPage page2 = page1.getElementById("loginbtn").click();
+		            System.out.println(page2.asText());
 		            HtmlInput hiiden=  (HtmlInput) page2.getElementById("CITYCODE");
 		            String citycode= hiiden.getAttribute("value");
 		            Thread.sleep(4000);
@@ -76,11 +97,11 @@ public class HuBeiProviceService {
 		     			System.out.println(backtrack.asText()+"--成功--");
 		     			session.setAttribute("sessionWebClient-HUBEI", webClient);
 		     			map.put("errorCode", "0000");
-		     			map.put("errorInfo", "验证码发送成功!");
+		     			map.put("errorInfo", backtrack.asText());
 		     		}else{
 		     			System.out.println(backtrack.asText()+"-----失败-----");
 		     			map.put("errorCode", "0001");
-		     			map.put("errorInfo", "服务器异常!");
+		     			map.put("errorInfo", backtrack.asText());
 		     		}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -91,8 +112,10 @@ public class HuBeiProviceService {
 	        }
 		return map;
 	}
+	@SuppressWarnings("resource")
 	public Map<String,Object> hubeiphone(HttpServletRequest request, String phoneCode,String phoneNume,String phonePass,String longitude,String latitude, String uuid){
 		 Map<String,Object> map = new HashMap<String,Object>(200);
+		 WebClient webClient = null;
 		 PushState.state(phoneCode, "callLog",100);
 		 PushSocket.pushnew(map, uuid, "1000","登录中");
 		 try {
@@ -112,7 +135,7 @@ public class HuBeiProviceService {
 	            return map;
 	        } else {
 	        try {
-	        	WebClient webClient = (WebClient) attribute;
+	        	 webClient = (WebClient) attribute;
 				WebRequest requests=new WebRequest(new URL("http://hb.189.cn/validateWhiteList.action"));
 				//提交方式
 				requests.setHttpMethod(HttpMethod.POST);
@@ -191,8 +214,8 @@ public class HuBeiProviceService {
 					PushSocket.pushnew(map, uuid, "6000","数据获取成功");
 					hubei.put("data", datalist);
 					hubei.put("UserIphone", phoneNume);
-				map.put("longitude", longitude);
-				map.put("latitude", latitude);
+					hubei.put("longitude", longitude);
+					hubei.put("latitude", latitude);
 				hubei.put("flag", 12);
 				hubei.put("UserPassword", phonePass);
 				Resttemplate resttemplate = new Resttemplate();
@@ -210,7 +233,7 @@ public class HuBeiProviceService {
 	            	PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 	            	//---------------------数据中心推送状态----------------------
 	          }
-				webClient.close();
+			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				
@@ -223,6 +246,7 @@ public class HuBeiProviceService {
 				 PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
 			}
 	        }
+	    	webClient.close();
 		return map;
 	}
 }
