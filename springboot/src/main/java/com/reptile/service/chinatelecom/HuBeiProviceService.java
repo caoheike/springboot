@@ -214,8 +214,8 @@ public class HuBeiProviceService {
 					PushSocket.pushnew(map, uuid, "6000","数据获取成功");
 					hubei.put("data", datalist);
 					hubei.put("UserIphone", phoneNume);
-				map.put("longitude", longitude);
-				map.put("latitude", latitude);
+					hubei.put("longitude", longitude);
+					hubei.put("latitude", latitude);
 				hubei.put("flag", 12);
 				hubei.put("UserPassword", phonePass);
 				Resttemplate resttemplate = new Resttemplate();
