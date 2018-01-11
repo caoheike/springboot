@@ -48,7 +48,7 @@ public class GuangXiTelecomService {
     private static final String NO_CORRENT_STR = "不正确";
     /**
      * 第一次获取验证码
-     * @param request
+     * @param
      * @param phoneNumber
      * @return
      */
@@ -108,7 +108,7 @@ public class GuangXiTelecomService {
     
     /**
      * 输入第一次验证码，获取第二次验证码
-     * @param request
+     * @param
      * @param phoneNumber
      * @return
      * @throws IOException 
@@ -330,7 +330,7 @@ public class GuangXiTelecomService {
      * @param webClient·
      * @param phoneNumber
      * @param phoneCode
-     * @param uuid
+     * @param
      * @throws FailingHttpStatusCodeException
      * @throws IOException
      */
@@ -458,7 +458,7 @@ public class GuangXiTelecomService {
     
     /**
      * 获取cookie
-     * @param driver
+     * @param
      * @return
      */
     private  String getCookie1(WebClient webClient)		{

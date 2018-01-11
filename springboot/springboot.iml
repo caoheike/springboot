@@ -213,5 +213,8 @@
     <orderEntry type="library" name="Maven: com.hoomsun.Image:Image:0.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.hoomsun.keyBoard:keyBoard:0.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.hoomsun.PhantomJs:PhantomJs:0.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:tesseract:3.04.01-1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:leptonica:1.73-1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.3" level="project" />
   </component>
 </module>
