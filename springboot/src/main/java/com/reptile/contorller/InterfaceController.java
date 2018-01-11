@@ -724,6 +724,17 @@ public class InterfaceController {
 			logger.warn("开始获取" + idCard + "用户的淘宝信息");
 			HtmlPage pagev = webClient
 					.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
+			Thread.sleep(2000);
+			if(!pagev.getTitleText().contains("收货地址")) {
+				logger.warn("获取" + idCard + "用户的淘宝信息时,授权后获取数据失败!!!bigyoung");
+				PushSocket.pushnew(map, uuId, "7000", "获取失败,请重试");
+				PushState.state(idCard, "TaoBao", 200, "获取失败,请重试");
+				map.put("errorcode", "0001");
+				map.put("errorinfo", "获取失败,请重试");
+				
+				return map;
+				
+			}
 			HtmlTable table = pagev.querySelector(".tbl-main");
 			System.out.println(table.asXml() + "收货地址");
 
