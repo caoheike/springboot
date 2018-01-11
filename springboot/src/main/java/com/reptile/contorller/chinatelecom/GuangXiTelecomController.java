@@ -25,11 +25,18 @@ public class GuangXiTelecomController {
     @Autowired
     private GuangXiTelecomService service;
 
-    @ApiOperation(value = "发送手机验证码", notes = "参数")
-    @RequestMapping(value = "sendPhoneCode", method = RequestMethod.POST)
+    @ApiOperation(value = "发送第一次手机验证码", notes = "参数")
+    @RequestMapping(value = "sendPhoneCode1", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> sendPhoneCode(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber) {
-        return service.sendPhoneCode(request, phoneNumber);
+    public Map<String, Object> sendPhoneCode1(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber) {
+        return service.sendPhoneCode1(request, phoneNumber);
+    }
+    @ApiOperation(value = "填写第一次手机验证码，发送第二次手机验证码", notes = "参数")
+    @RequestMapping(value = "sendPhoneCode2", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> sendPhoneCode2(HttpServletRequest request, @RequestParam("phoneNumber") String phoneNumber, 
+    		@RequestParam("phoneCode") String phoneCode) {
+    	return service.sendPhoneCode2(request, phoneCode, phoneNumber);
     }
 
     @ApiOperation(value = "获取详单信息", notes = "参数")
