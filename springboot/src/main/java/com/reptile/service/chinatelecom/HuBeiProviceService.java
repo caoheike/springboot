@@ -3,10 +3,12 @@ package com.reptile.service.chinatelecom;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -14,8 +16,12 @@ import com.reptile.util.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,17 +49,32 @@ public class HuBeiProviceService {
 	        } else {
 	        	try {
 	        		WebClient webClient = (WebClient) attribute;
-		            WebRequest requests = new WebRequest(new URL("http://hb.189.cn/pages/selfservice/order/orderIndex_new.jsp?trackPath=shouyezuodao-feiyong-dingdanchaxun"));
-		            requests.setHttpMethod(HttpMethod.GET);
-		            HtmlPage page = webClient.getPage(requests);
-		            Thread.sleep(4000);
 		            WebRequest request1 = new WebRequest(new URL("http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp"));
 		            request1.setHttpMethod(HttpMethod.GET);
 		            HtmlPage page1 = webClient.getPage(request1);
-		            Thread.sleep(4000);
+		            Thread.sleep(2000);
 		            page1.getElementById("txtAccount").setAttribute("value", phoneCode);
 		            page1.getElementById("txtPassword").setAttribute("value", passPhone);
+		            Thread.sleep(2000);
+		            
+		            //---------------------------------------------------------------------
+		            String realPath = request.getServletContext().getRealPath("/imageFile");
+		            File file = new File(realPath);
+		            if (!file.exists()) {
+		                file.mkdirs();
+		            }
+		            String fileName = "loadImageCode" + System.currentTimeMillis() + ".png";
+		            HtmlImage imgCaptcha = (HtmlImage) page1.getElementById("imgCaptcha");
+		            BufferedImage read = imgCaptcha.getImageReader().read(0);
+		            ImageIO.write(read, "png", new File(file, fileName));
+		            Map<String, Object> imagev = MyCYDMDemo.Imagev(realPath + "/" + fileName);
+		            String code = imagev.get("strResult").toString();
+		            HtmlInput txtCaptcha = (HtmlInput) page1.getElementById("txtCaptcha");
+		            txtCaptcha.setValueAttribute(code);
+		            //----------------------------------------------------------------------
+		           
 		            HtmlPage page2 = page1.getElementById("loginbtn").click();
+		            System.out.println(page2.asText());
 		            HtmlInput hiiden=  (HtmlInput) page2.getElementById("CITYCODE");
 		            String citycode= hiiden.getAttribute("value");
 		            Thread.sleep(4000);
