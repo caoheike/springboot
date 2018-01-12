@@ -70,6 +70,7 @@ import com.reptile.util.Dates;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
 
 /**
@@ -1240,13 +1241,9 @@ public class InterfaceController {
 	@ResponseBody
 	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.POST)
 	public Map<String,Object> renFaSwitch(HttpServletRequest request, HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException{
-
 		Map<String,Object> map=new HashMap<String,Object>(8);
-
-		client = crawlerUtil.RfWebClient();
-		HtmlPage page= client.getPage(MessageConstamts.RF_URL);
-		 HtmlDivision division=(HtmlDivision) page.getElementById(MessageConstamts.RF_ID);
-		 if(division.asText().equals(MessageConstamts.OPEN_YES)){
+		String rest = SimpleHttpClient.get(MessageConstamts.RF_URL);
+		 if(rest.contains(MessageConstamts.OPEN_YES)){
 			 map.put("errorCode",MessageConstamts.STRING_0000);
 			 map.put("errorInfo", MessageConstamts.STRING_RENFA);
 		 }else{
