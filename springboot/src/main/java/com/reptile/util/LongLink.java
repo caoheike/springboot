@@ -43,18 +43,17 @@ public class LongLink {
 
     @OnOpen
     public void onopen(Session session) {
-
-        System.out.println("连接成功");
+        logger.warn("-------------------接收到连接请求，正在创建回话session:"+session.toString());
     }
 
     @OnClose
     public void onclose(Session session) {
         try {
+            logger.warn("-------------------接收到关闭连接请求，正在关闭该session:"+session.toString());
             session.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("本次连接已断开....");
     }
 
     @OnMessage
@@ -67,7 +66,7 @@ public class LongLink {
                 session.getBasicRemote().sendText(msg.substring(0, msg.length() - 1).toString() + ",\"resultCode\":\"1111\"}");//链接成功
                 json = JSONObject.fromObject(msg);
             } catch (Exception e) {
-                logger.warn("长连接发送数据不合法:" + msg);
+                logger.warn("------------------长连接发送数据不合法:" + msg);
                 e.printStackTrace();
             }
 
@@ -75,25 +74,25 @@ public class LongLink {
             msg = json.get("req").toString();
             //处理现已安装app的手机功能不能正常使用；
             if (flag == null) {
-                logger.warn("这是旧版本推送，不含flag标志，未清除已关闭的session");
+                logger.warn("-----------------这是旧版本推送，不含flag标志，未清除已关闭的session");
                 wsUserMap.put(msg, session);
                 wsInfoMap.put(msg, json.get("seq_id").toString());
             } else {
                 String isopen = flag.toString();
-                logger.warn("这是新版本推送，含flag标志,会清除已关闭的session，flag="+isopen);
+                logger.warn("---------------------这是新版本推送，含flag标志,会清除已关闭的session，flag="+isopen);
                 //是否对此连接执行关闭操作
                 if (isopen.equals("open")) {
-                    logger.warn("连接成功并持状态中:" + msg);
+                    logger.warn("------------------连接成功并持状态中:" + msg);
                     wsUserMap.put(msg, session);
                     wsInfoMap.put(msg, json.get("seq_id").toString());
                 } else if (isopen.equals("close")) {
-                    logger.warn("已移除此次连接:" + msg);
+                    logger.warn("---------------已移除此次连接:" + msg);
                     wsUserMap.remove(msg);
                     wsInfoMap.remove(msg);
                 }
             }
         } else {
-            logger.warn("长连接发送数据不全:" + msg);
+            logger.warn("---------------长连接发送数据不全:" + msg);
             onclose(session);
         }
     }
