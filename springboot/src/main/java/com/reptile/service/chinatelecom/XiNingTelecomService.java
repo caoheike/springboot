@@ -142,8 +142,8 @@ public class XiNingTelecomService {
 					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, uuid, "9000",map.get("errorinfo").toString());
-					PushState.state(phoneNumber, "callLog",200,map.get("errorinfo").toString());
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
+					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
                 logger.warn(phoneNumber+"：---------------------西宁电信获取详单完毕--------------------");
             } catch (Exception e) {

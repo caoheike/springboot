@@ -1,9 +1,11 @@
 package com.reptile.util;
 
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Iterator;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.lang.StringUtils;
+import org.openqa.selenium.WebDriver;
 
 public class JsonUtil {
 	
@@ -100,5 +102,12 @@ public class JsonUtil {
             return false;  
         }  
     }  
+ 
+    public static void main(String[] args) {
+    	WebDriver phantomJsDriver = PhantomJs.phantomJsDriver();
+    	phantomJsDriver.get("");
+//    	phantomJsDriver.
+    
+    }
     
 }
