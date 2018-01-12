@@ -1235,6 +1235,7 @@ public class InterfaceController {
 	 * @throws IOException 
 	 * @throws MalformedURLException 
 	 * @throws FailingHttpStatusCodeException 
+	 * 没有参数 SimpleHttpClient
 	 */
 	
 	@ApiOperation(value = "人法网开关", notes = "")
