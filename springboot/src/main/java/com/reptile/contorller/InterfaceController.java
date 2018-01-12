@@ -1238,7 +1238,7 @@ public class InterfaceController {
 	
 	@ApiOperation(value = "人法网开关", notes = "")
 	@ResponseBody
-	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.GET)
+	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.POST)
 	public Map<String,Object> renFaSwitch(HttpServletRequest request, HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException{
 
 		Map<String,Object> map=new HashMap<String,Object>(8);
