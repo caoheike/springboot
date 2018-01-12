@@ -4,10 +4,7 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
+import com.reptile.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +44,7 @@ public class ShanXiTelecomService {
         HttpSession session = request.getSession();
         PushState.state(phoneNumber, "callLog",100);
         PushSocket.pushnew(map, uuid, "1000","登录中");
+        String signle="1000";
 
         Object attribute = session.getAttribute("GBmobile-webclient");
 
@@ -61,6 +59,7 @@ public class ShanXiTelecomService {
             WebClient webClient = (WebClient) attribute;
             try {
             	PushSocket.pushnew(map, uuid, "5000","获取数据中");
+                signle="5000";
                 logger.warn(phoneNumber+"：---------------------陕西电信获取账单开始---------------------");
                 HtmlPage logi = webClient.getPage("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000202");
                 Thread.sleep(1000);
@@ -129,6 +128,7 @@ public class ShanXiTelecomService {
                     return map;
                 }
                 	PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+                    signle="4000";
                     map.put("UserIphone",phoneNumber);
                     map.put("UserPassword",serverPwd);
                     //经度
@@ -137,8 +137,8 @@ public class ShanXiTelecomService {
                     map.put("latitude", latitude);
                     map.put("data",dataList);
                     map.put("flag","0");
-                    Resttemplate resttemplate=new Resttemplate();
 
+                    Resttemplate resttemplate=new Resttemplate();
                     logger.warn(phoneNumber+"：---------------------陕西电信获取详单推送数据中--------------------");
                     map= resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                     logger.warn(phoneNumber+"：---------------------陕西电信获取详单推送数据完成--------------------本次推送返回："+map);
@@ -158,7 +158,7 @@ public class ShanXiTelecomService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
-                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }finally {
                 if(webClient!=null){
                     webClient.close();
