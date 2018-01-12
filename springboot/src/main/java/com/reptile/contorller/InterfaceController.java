@@ -737,6 +737,7 @@ public class InterfaceController {
 			}
 			HtmlTable table = pagev.querySelector(".tbl-main");
 			System.out.println(table.asXml() + "收货地址");
+			logger.warn("开始获取" + idCard + "用户的淘宝收货地址");
 
 			HtmlPage html = webClient
 					.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
@@ -756,6 +757,7 @@ public class InterfaceController {
 							+ "&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
 
 			// 现在开始爬取 支付宝信息
+			logger.warn("开始获取" + idCard + "用户的淘宝支付宝信息");
 			WebRequest requests = new WebRequest(new URL(
 					"https://authet15.alipay.com/login/certCheck.htm"));
 			List<NameValuePair> lists = new ArrayList<NameValuePair>();
@@ -811,8 +813,8 @@ public class InterfaceController {
 			data.put("info", table.asXml());
 			data.put("page", pageinfosss.asXml() + pageinfoss.asXml());
 			map.put("data", data);
-			map.put("userName", "123");
-			map.put("userPwd", "123");
+			map.put("userName", "");
+			map.put("userPwd", "");
 			map.put("userCard", idCard);
 
 			map = resttemplate.SendMessage(map, application.getSendip()
@@ -1218,7 +1220,7 @@ public class InterfaceController {
 	
 	@ApiOperation(value = "人法网开关", notes = "")
 	@ResponseBody
-	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.GET)
+	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.POST)
 	public Map<String,Object> renFaSwitch(HttpServletRequest request, HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException{
 
 		Map<String,Object> map=new HashMap<String,Object>(8);
