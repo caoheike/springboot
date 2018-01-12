@@ -29,6 +29,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
@@ -61,8 +62,11 @@ public class CcbService {
 			//创建Map进行与app的数据传输
 		  	Map<String, Object> map=new HashMap<String, Object>(70);
 			//创建driver(IE)
-			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
-			WebDriver driver = new InternetExplorerDriver();
+//			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
+//			WebDriver driver = new InternetExplorerDriver();
+			//创建谷歌浏览器
+			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
+			WebDriver driver = new ChromeDriver();
 			//输入需要登录的地址
 			driver.get(CEB_LOGIN);
 			//设置浏览器属性,隐式等待
@@ -74,9 +78,11 @@ public class CcbService {
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
+		try {
+			
+	
 			//输入建设银行储蓄卡卡号
 			driver.findElement(By.id("USERID")).sendKeys(cardNumber);
 			//按下tab
@@ -96,9 +102,8 @@ public class CcbService {
 	            map.put("errorCode","0003");
 	        	try {
 	        		//关闭浏览器
-					driver.quit();
+//					driver.quit();
 				} catch (Exception e2) {
-					// TODO: handle exception
 				}
 	        	PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的登录密码错误");
 	        	PushState.state(iDNumber, "savings",200,"建设银行储蓄卡输入的登录密码错误");
@@ -108,7 +113,7 @@ public class CcbService {
 	        if(dpage1.indexOf(state)!=-1){
 	        	logger.warn("登录信息填写有误"+iDNumber+driver.getPageSource());
 	        	try {
-					driver.quit();
+//					driver.quit();
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -165,9 +170,8 @@ public class CcbService {
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
-	    					driver.quit();
+//	    					driver.quit();
 	    				} catch (Exception e2) {
-	    					// TODO: handle exception
 	    				}
 		        	map.put("errorInfo","网络异常！数据加载过慢");
 		            map.put("errorCode","0004");
@@ -316,7 +320,7 @@ public class CcbService {
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
 				            	try {
-									driver.quit();
+//									driver.quit();
 								} catch (Exception e2) {
 								}
 				                
@@ -326,9 +330,8 @@ public class CcbService {
 				            	logger.warn("建设银行数据推送失败"+iDNumber);
 				                //PushSocket.push(map, UUID, "0001");
 				            	try {
-									driver.quit();
+//									driver.quit();
 								} catch (Exception e2) {
-									// TODO: handle exception
 								}
 				            	return map;
 				            }
@@ -347,12 +350,26 @@ public class CcbService {
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
 						try {
-							driver.quit();
+//							driver.quit();
 						} catch (Exception e2) {
 							
 						}
 					 return map;  
-			    }
+			    }	
+			    } catch (Exception e) {
+			    	 e.printStackTrace();
+			    	 PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
+			    	 map.clear();
+					 logger.warn("建设银行详单获取失败"+iDNumber);
+					 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
+					 map.put("errorInfo","获取账单失败");
+					 map.put("errorCode","0002");
+					try {
+						driver.quit();
+					} catch (Exception e2) {
+						
+					}
+				}	
 			    return map;  
 			}
 }

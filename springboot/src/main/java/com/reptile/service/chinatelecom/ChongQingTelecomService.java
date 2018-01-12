@@ -77,14 +77,7 @@ public class ChongQingTelecomService {
 	        	
 	        	driver.findElement(By.id("send_sms")).click();
 	        	Thread.sleep(500);
-	           // String tip=	driver.findElement(By.id("send_sms")).getText();
-	        	//String mih="秒后";
-	           // if(tip.contains(mih)){
-	            
-//	        		 map.put("errorCode", "0000");
-//			         map.put("errorInfo", "验证码发送成功");
-			           
-	        	//}else{
+	        
 	        		try {
 	        			Alert alert = driver.switchTo().alert();
 		        		if(alert!=null){
@@ -143,8 +136,8 @@ public class ChongQingTelecomService {
 		        	try {
 		        		
 		        	WebElement sms=driver.findElement(By.id("sms_input"));
+		        	Thread.sleep(500);
 		        	if(sms!=null){
-		        		sms.clear();
 		        		//验证码
 			        	sms.sendKeys(code);
 						Thread.sleep(500);
@@ -161,10 +154,11 @@ public class ChongQingTelecomService {
 						click.click();
 						Thread.sleep(500);
 						selsct=	driver.findElement(By.xpath("//*[@id='time_div']/p/a["+i+"]"));
-						Thread.sleep(500);
+						Thread.sleep(1000);
 						selsct.click();
-						Thread.sleep(500);
+						Thread.sleep(1000);
 						WebElement check=driver.findElement(By.id("qd_xdcx"));
+						Thread.sleep(500);
 						try{
 							 check.click();
 							 Thread.sleep(1000);
@@ -202,7 +196,7 @@ public class ChongQingTelecomService {
 	        				 post.setParameter("rows","2000");
 	        				 httpClient.executeMethod(post);
 	        				 String html = post.getResponseBodyAsString();
-	        				 System.out.println(html);
+	        				 //System.out.println(html);
 	        				 dataMap.put("item", html);
 	 				      	 arrayList.add(dataMap);		 
 	 				      	PushSocket.pushnew(map, uuid, "6000","数据获取成功");
@@ -312,7 +306,7 @@ public class ChongQingTelecomService {
 		      
 		      //图片验证，打码平台
 		      Map<String,Object> map1=MyCYDMDemo.Imagev("C:\\images\\"+filename);
-		      System.out.println(map1);
+		    //  System.out.println(map1);
 		      String catph= (String) map1.get("strResult");
 		      Thread.sleep(2000);
 		      //================================
