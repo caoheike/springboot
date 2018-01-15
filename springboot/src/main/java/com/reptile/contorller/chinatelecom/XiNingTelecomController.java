@@ -28,8 +28,20 @@ public class XiNingTelecomController {
 
     @Autowired
     private XiNingTelecomService service;
+    
+    
+    
 
-    @ApiOperation(value = "1.获得通话详情", notes = "参数：手机号")
+    @ApiOperation(value = "1.西宁登录", notes = "参数：手机号")
+    @ResponseBody
+    @CustomAnnotation
+    @RequestMapping(value = "doLogin", method = RequestMethod.POST)
+    public Map<String, Object> doLogin(HttpServletRequest request, @RequestParam("userName") String userName,
+    		@RequestParam("servePwd") String servePwd){
+    	return service.doLogin(request, userName, servePwd);
+    }
+    
+    @ApiOperation(value = "2.获得通话详情", notes = "参数：手机号")
     @ResponseBody
     @CustomAnnotation
     @RequestMapping(value = "getDetailMes", method = RequestMethod.POST)
