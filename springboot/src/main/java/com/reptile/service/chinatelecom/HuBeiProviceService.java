@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.Dates;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -118,6 +119,7 @@ public class HuBeiProviceService {
 		 WebClient webClient = null;
 		 PushState.state(phoneCode, "callLog",100);
 		 PushSocket.pushnew(map, uuid, "1000","登录中");
+		 String signle="1000";
 		 try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -162,6 +164,7 @@ public class HuBeiProviceService {
 					PushSocket.pushnew(map, uuid, "2000","登录成功");
 					Thread.sleep(2000);
 					PushSocket.pushnew(map, uuid, "5000","获取数据中");
+					signle="5000";
 					int num=3;
 					for (int i = 0; i < num; i++) {
 					Map<String,Object> detailed=new HashMap<String,Object>(200);
@@ -212,6 +215,7 @@ public class HuBeiProviceService {
 					datalist.add(detailed);
 				}
 					PushSocket.pushnew(map, uuid, "6000","数据获取成功");
+					signle="4000";
 					hubei.put("data", datalist);
 					hubei.put("UserIphone", phoneNume);
 					hubei.put("longitude", longitude);
@@ -243,7 +247,8 @@ public class HuBeiProviceService {
 				 map.clear();
 				 map.put("errorInfo","服务繁忙，请稍后再试");
 				 map.put("errorCode","0002");
-				 PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
+//				 PushSocket.pushnew(map, uuid, "9000","服务繁忙，请稍后再试");
+				 DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
 			}
 	        }
 	    	webClient.close();

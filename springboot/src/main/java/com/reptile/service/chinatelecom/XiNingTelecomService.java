@@ -31,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -158,6 +159,7 @@ public class XiNingTelecomService {
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
+        String signle="1000";
         
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
@@ -179,6 +181,7 @@ public class XiNingTelecomService {
                 requests.setHttpMethod(HttpMethod.GET);
                 webClient.getPage(requests);
                 PushSocket.pushnew(map, uuid, "5000","数据 获取中");
+                signle="5000";
 
                 SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd");
                 Calendar calendar = Calendar.getInstance();
@@ -237,6 +240,7 @@ public class XiNingTelecomService {
                 }
                 logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+               signle="4000";
                 map.put("data", dataList);
                 map.put("flag", "2");
                 map.put("UserPassword", serverPwd);
@@ -265,8 +269,9 @@ public class XiNingTelecomService {
                 logger.error(phoneNumber+"：---------------------西宁电信获取详单异常--------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
+//                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }finally {
                 if(webClient!=null){
                     webClient.close();
