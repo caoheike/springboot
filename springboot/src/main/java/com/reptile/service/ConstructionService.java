@@ -126,12 +126,13 @@ public class ConstructionService {
 			  	data.put("idcard",userCard);
 				data.put("userAccount",userCode);
 			  	con.put("data", data);
-			  	
+				PushSocket.pushnew(map, uuid, "6000","建设银行账单获取成功");
+				logger.warn(map+"========2======="+userCard);
+				flag="6000";
 				Resttemplate resttemplate = new Resttemplate();
 				map=resttemplate.SendMessage(con,applications.getSendip()+"/HSDC/BillFlow/BillFlowByreditCard");
+				logger.warn(map+"=======1========"+userCard);
 				driver.close();
-				PushSocket.pushnew(map, uuid, "6000","建设银行账单获取成功");
-				flag="6000";
 				String errorCode = "errorCode";
 				String state0 = "0000";
 				

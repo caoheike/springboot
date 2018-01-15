@@ -102,7 +102,7 @@ public class CcbService {
 	            map.put("errorCode","0003");
 	        	try {
 	        		//关闭浏览器
-//					driver.quit();
+					driver.quit();
 				} catch (Exception e2) {
 				}
 	        	PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的登录密码错误");
@@ -113,7 +113,7 @@ public class CcbService {
 	        if(dpage1.indexOf(state)!=-1){
 	        	logger.warn("登录信息填写有误"+iDNumber+driver.getPageSource());
 	        	try {
-//					driver.quit();
+					driver.quit();
 				} catch (Exception e2) {
 					// TODO: handle exception
 				}
@@ -170,7 +170,7 @@ public class CcbService {
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
-//	    					driver.quit();
+	    					driver.quit();
 	    				} catch (Exception e2) {
 	    				}
 		        	map.put("errorInfo","网络异常！数据加载过慢");
@@ -320,7 +320,7 @@ public class CcbService {
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
 				            	try {
-//									driver.quit();
+									driver.quit();
 								} catch (Exception e2) {
 								}
 				                
@@ -330,7 +330,7 @@ public class CcbService {
 				            	logger.warn("建设银行数据推送失败"+iDNumber);
 				                //PushSocket.push(map, UUID, "0001");
 				            	try {
-//									driver.quit();
+									driver.quit();
 								} catch (Exception e2) {
 								}
 				            	return map;
@@ -350,7 +350,7 @@ public class CcbService {
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
 						try {
-//							driver.quit();
+							driver.quit();
 						} catch (Exception e2) {
 							
 						}
