@@ -19,6 +19,7 @@ public class PushSocket {
 	 * @param errorInfo
 	 */
 	public static Map<String, Object> push1(Map<String, Object> map,String UUID,String errorInfo){
+		logger.warn(UUID+"：本次认证流程，现处于阶段为："+errorInfo);
 		Map<String, Object> mapData=new HashMap<String, Object>();
 		Session se=	LongLink.getWsUserMap().get(UUID);
 		String seq_id=LongLink.getWsInfoMap().get(UUID);
@@ -48,6 +49,8 @@ public class PushSocket {
 	 * 
 	 */
 	public static Map<String, Object> pushnew(Map<String, Object> map,String UUID,String resultCode,String errorInfor){
+
+		logger.warn(UUID+"：本次认证流程，现处于阶段为："+errorInfor);
 		Map<String, Object> mapData=new HashMap<String, Object>();
 		Session se=	LongLink.getWsUserMap().get(UUID);
 		String seq_id=LongLink.getWsInfoMap().get(UUID);

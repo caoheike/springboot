@@ -28,6 +28,7 @@ import net.sf.json.JSONObject;
 
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ import com.reptile.util.Dates;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
 
 /**
@@ -700,176 +702,195 @@ public class InterfaceController {
 
 		System.out.println("---------------" + "");
 		Map<String, Object> map = new HashMap<String, Object>(8);
-		Map<String, Object> data = new HashMap<String, Object>(8);
-
-		HttpSession session = request.getSession();
-		WebClient webClient = (WebClient) session.getAttribute(sessid);
-		TextPage pages = webClient
-				.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="
-						+ toKen + "&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 		PushState.state(idCard, "TaoBao", 100);
 		PushSocket.pushnew(map, uuId, "1000", "登录中");
-		Thread.sleep(2000);
-		System.out.println(pages.getContent());
-		JSONObject jsonObject2 = JSONObject.fromObject(pages.getContent());
-		if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
-				MessageConstamts.STRING_10006)) {
-			HtmlPage pageinfo = webClient.getPage(jsonObject2.getString("url"));
-			System.out.println(pageinfo.asXml());
-			PushSocket.pushnew(map, uuId, "2000", "登录成功");
-			PushState.state(idCard, "TaoBao", 100);
-			PushSocket.pushnew(map, uuId, "5000", "获取数据中");
-			map.put("errorCode", "0000");
-			map.put("errorInfo", "成功");
-			logger.warn("开始获取" + idCard + "用户的淘宝信息");
-			HtmlPage pagev = webClient
-					.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
+		int flag = 1;
+		try {
+			Map<String, Object> data = new HashMap<String, Object>(8);
+
+			HttpSession session = request.getSession();
+			WebClient webClient = (WebClient) session.getAttribute(sessid);
+			TextPage pages = webClient
+					.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="
+							+ toKen + "&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 			Thread.sleep(2000);
-			if(!pagev.getTitleText().contains("收货地址")) {
-				logger.warn("获取" + idCard + "用户的淘宝信息时,授权后获取数据失败!!!bigyoung");
-				PushSocket.pushnew(map, uuId, "7000", "获取失败,请重试");
-				PushState.state(idCard, "TaoBao", 200, "获取失败,请重试");
-				map.put("errorcode", "0001");
-				map.put("errorinfo", "获取失败,请重试");
+			System.out.println(pages.getContent());
+			JSONObject jsonObject2 = JSONObject.fromObject(pages.getContent());
+			if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
+					MessageConstamts.STRING_10006)) {
+				HtmlPage pageinfo = webClient.getPage(jsonObject2.getString("url"));
+				System.out.println(pageinfo.asXml());
+				PushSocket.pushnew(map, uuId, "2000", "登录成功");
+				PushState.state(idCard, "TaoBao", 100);
+				PushSocket.pushnew(map, uuId, "5000", "获取数据中");
 				
-				return map;
+				flag = 2;
 				
-			}
-			HtmlTable table = pagev.querySelector(".tbl-main");
-			System.out.println(table.asXml() + "收货地址");
-
-			HtmlPage html = webClient
-					.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
-			String href = ((HtmlAnchor) html.getByXPath(
-					"//*[@id='main-content']/div/div[2]/div/div[2]/p/a[1]")
-					.get(0)).getAttribute("href");
-			String signAccountno = this.getSignNo(href);
-			webClient
-					.getPage("https://login.taobao.com/member/login.jhtml?tpl_redirect_url=https%3A%2F%2Fauthgtj.alipay.com%3A443%2Flogin%2FtrustLoginResultDispatch.htm%3FredirectType%3D%26sign_from%3D3000%26goto%3Dhttps%253A%252F%252Fmy.alipay.com%252Fportal%252Fi.htm%253Fsrc%253Dyy_taobao_gl_01%2526sign_from%253D3000%2526sign_account_no%253D"
-							+ signAccountno
-							+ "%2526guide_q_control%253Dtop%2526guide_q_control%253Dtop%2526src%253Dyy_taobao_gl_01&from_alipay=1");
-			webClient
-					.getPage("https://authgtj.alipay.com/login/trustLoginResultDispatch.htm?redirectType=&sign_from=3000&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsrc%3Dyy_taobao_gl_01%26sign_from%3D3000%26sign_account_no%3D"
-							+ signAccountno
-							+ "%26guide_q_control%3Dtop%26guide_q_control%3Dtop%26src%3Dyy_taobao_gl_01&sign_from=3000&sign_account_no="
-							+ signAccountno
-							+ "&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
-
-			// 现在开始爬取 支付宝信息
-			WebRequest requests = new WebRequest(new URL(
-					"https://authet15.alipay.com/login/certCheck.htm"));
-			List<NameValuePair> lists = new ArrayList<NameValuePair>();
-
-			lists.add(new NameValuePair(
-					"goto",
-					"https://my.alipay.com/portal/i.htm?src=yy_taobao_gl_01&sign_from=3000&sign_account_no=20888028082824820156&guide_q_control=top&guide_q_control=top&src=yy_taobao_gl_01"));
-			lists.add(new NameValuePair("redirectType", ""));
-			lists.add(new NameValuePair("loginScene", ""));
-			lists.add(new NameValuePair("tti", "1302"));
-			lists.add(new NameValuePair("isIframe", "false"));
-			lists.add(new NameValuePair("_seaside_gogo_", ""));
-			lists.add(new NameValuePair("_seaside_gogo_p", "false"));
-			lists.add(new NameValuePair("_seaside_gogo_pcid", ""));
-			lists.add(new NameValuePair("is_sign", "Y"));
-			lists.add(new NameValuePair("real_sn", ""));
-			lists.add(new NameValuePair("signedData", ""));
-			lists.add(new NameValuePair("certCmdOutput", ""));
-			lists.add(new NameValuePair("certCmdInput", ""));
-			lists.add(new NameValuePair("certfg", ""));
-			lists.add(new NameValuePair("goto", ""));
-			lists.add(new NameValuePair(
-					"security_chrome_extension_aliedit_installed", ""));
-			lists.add(new NameValuePair(
-					"security_chrome_extension_alicert_installed", ""));
-			lists.add(new NameValuePair("security_activeX_enabled", "false"));
-			lists.add(new NameValuePair("REMOTE_PCID_NAME",
-					"_seaside_gogo_pcid"));
-			lists.add(new NameValuePair("security_activeX_enabled", "false"));
-			lists.add(new NameValuePair("securityId",
-					"web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
-			requests.setHttpMethod(HttpMethod.POST);
-			requests.setRequestParameters(lists);
-			HtmlPage pageinfos = webClient.getPage(requests);
-
-			WebRequest detailInfo = new WebRequest(
-					new URL(
-							"https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
-			Map<String, String> headers = new HashMap<String, String>(8);
-			headers.put("cookie", this.getCookie(webClient));
-
-			detailInfo.setHttpMethod(HttpMethod.GET);
-			detailInfo.setAdditionalHeaders(headers);
-			HtmlPage pageinfosss = webClient.getPage(detailInfo);
-			Thread.sleep(2000);
-
-			HtmlPage pageinfoss = webClient
-					.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
-			PushSocket.pushnew(map, uuId, "6000", "获取数据成功");
-
-			// 获取收货地址
-			data.put("addresses", this.getAddress(webClient));
-			data.put("info", table.asXml());
-			data.put("page", pageinfosss.asXml() + pageinfoss.asXml());
-			map.put("data", data);
-			map.put("userName", "123");
-			map.put("userPwd", "123");
-			map.put("userCard", idCard);
-
-			map = resttemplate.SendMessage(map, application.getSendip()
-					+ "/HSDC/authcode/taobaoPush");
-			logger.warn("淘宝推送数据为:" + map);
-			if (map != null
-					&& MessageConstamts.STRING_0000.equals(map.get(
-							MessageConstamts.ERRORCODE).toString())) {
-				PushState.state(idCard, "TaoBao", 300);
-				map.put("errorInfo", "查询成功");
-				map.put("errorCode", "0000");
-				PushSocket.pushnew(map, uuId, "8000", "淘宝查询成功");
-				logger.warn("获取成功" + idCard + "的信息，并已入库");
-			} else {
-				logger.warn("淘宝推送数据失败:" + map);
-				// --------------------数据中心推送状态----------------------
-				PushState.state(idCard, "TaoBao", 200, map.get("errorInfo")
-						.toString());
-				// ---------------------数据中心推送状态----------------------
-				logger.warn("淘宝推送认证状态200成功:" + map);
-				map.put("errorInfo", "查询失败");
-				map.put("errorCode", "0001");
-				PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo")
-						.toString());
-			}
-		} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
-				MessageConstamts.STRING_1004)) {
-			PushState.state(idCard, "TaoBao", 200, "二维码过期");
-			System.out.println("二维码过期");
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "二维码过期");
-			PushSocket.pushnew(map, uuId, "3000", "二维码过期");
-		} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
-				MessageConstamts.STRING_1001)) {
-			if (map.size() == 0) {
-				map.put("errorCode", "0001");
-				map.put("errorInfo", "请勿乱操作");
-				PushState.state(idCard, "TaoBao", 200, "登录失败，操作异常");
-				PushSocket.pushnew(map, uuId, "3000", "登录失败，操作异常");
-			} else {
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "成功");
+				logger.warn("开始获取" + idCard + "用户的淘宝信息");
+				HtmlPage pagev = webClient
+						.getPage("https://member1.taobao.com/member/fresh/deliver_address.htm");
+				Thread.sleep(2000);
+				if(!pagev.getTitleText().contains("收货地址")) {
+					logger.warn("获取" + idCard + "用户的淘宝信息时,授权后获取数据失败!!!bigyoung");
+					PushSocket.pushnew(map, uuId, "7000", "获取失败,请重试");
+					PushState.state(idCard, "TaoBao", 200, "获取失败,请重试");
+					map.put("errorcode", "0001");
+					map.put("errorinfo", "获取失败,请重试");
+					
+					return map;
+					
+				}
+				HtmlTable table = pagev.querySelector(".tbl-main");
+				System.out.println(table.asXml() + "收货地址");
+
+				HtmlPage html = webClient
+						.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
+				String href = ((HtmlAnchor) html.getByXPath(
+						"//*[@id='main-content']/div/div[2]/div/div[2]/p/a[1]")
+						.get(0)).getAttribute("href");
+				String signAccountno = this.getSignNo(href);
+				webClient
+						.getPage("https://login.taobao.com/member/login.jhtml?tpl_redirect_url=https%3A%2F%2Fauthgtj.alipay.com%3A443%2Flogin%2FtrustLoginResultDispatch.htm%3FredirectType%3D%26sign_from%3D3000%26goto%3Dhttps%253A%252F%252Fmy.alipay.com%252Fportal%252Fi.htm%253Fsrc%253Dyy_taobao_gl_01%2526sign_from%253D3000%2526sign_account_no%253D"
+								+ signAccountno
+								+ "%2526guide_q_control%253Dtop%2526guide_q_control%253Dtop%2526src%253Dyy_taobao_gl_01&from_alipay=1");
+				webClient
+						.getPage("https://authgtj.alipay.com/login/trustLoginResultDispatch.htm?redirectType=&sign_from=3000&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsrc%3Dyy_taobao_gl_01%26sign_from%3D3000%26sign_account_no%3D"
+								+ signAccountno
+								+ "%26guide_q_control%3Dtop%26guide_q_control%3Dtop%26src%3Dyy_taobao_gl_01&sign_from=3000&sign_account_no="
+								+ signAccountno
+								+ "&sign_date=1513665702&sign_signature=e0jc_hahtfu_cpipr9_xpj_ht_ig_zbt_v5%2Bz2_x_r9lp%2Bo_k_x%2By_jpkc_i_i_e2xylg%3D%3D&nick=xuesongcui");
+
+				// 现在开始爬取 支付宝信息
+				WebRequest requests = new WebRequest(new URL(
+						"https://authet15.alipay.com/login/certCheck.htm"));
+				List<NameValuePair> lists = new ArrayList<NameValuePair>();
+
+				lists.add(new NameValuePair(
+						"goto",
+						"https://my.alipay.com/portal/i.htm?src=yy_taobao_gl_01&sign_from=3000&sign_account_no=20888028082824820156&guide_q_control=top&guide_q_control=top&src=yy_taobao_gl_01"));
+				lists.add(new NameValuePair("redirectType", ""));
+				lists.add(new NameValuePair("loginScene", ""));
+				lists.add(new NameValuePair("tti", "1302"));
+				lists.add(new NameValuePair("isIframe", "false"));
+				lists.add(new NameValuePair("_seaside_gogo_", ""));
+				lists.add(new NameValuePair("_seaside_gogo_p", "false"));
+				lists.add(new NameValuePair("_seaside_gogo_pcid", ""));
+				lists.add(new NameValuePair("is_sign", "Y"));
+				lists.add(new NameValuePair("real_sn", ""));
+				lists.add(new NameValuePair("signedData", ""));
+				lists.add(new NameValuePair("certCmdOutput", ""));
+				lists.add(new NameValuePair("certCmdInput", ""));
+				lists.add(new NameValuePair("certfg", ""));
+				lists.add(new NameValuePair("goto", ""));
+				lists.add(new NameValuePair(
+						"security_chrome_extension_aliedit_installed", ""));
+				lists.add(new NameValuePair(
+						"security_chrome_extension_alicert_installed", ""));
+				lists.add(new NameValuePair("security_activeX_enabled", "false"));
+				lists.add(new NameValuePair("REMOTE_PCID_NAME",
+						"_seaside_gogo_pcid"));
+				lists.add(new NameValuePair("security_activeX_enabled", "false"));
+				lists.add(new NameValuePair("securityId",
+						"web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
+				requests.setHttpMethod(HttpMethod.POST);
+				requests.setRequestParameters(lists);
+				HtmlPage pageinfos = webClient.getPage(requests);
+
+				WebRequest detailInfo = new WebRequest(
+						new URL(
+								"https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
+				Map<String, String> headers = new HashMap<String, String>(8);
+				headers.put("cookie", this.getCookie(webClient));
+
+				detailInfo.setHttpMethod(HttpMethod.GET);
+				detailInfo.setAdditionalHeaders(headers);
+				HtmlPage pageinfosss = webClient.getPage(detailInfo);
+				Thread.sleep(2000);
+
+				HtmlPage pageinfoss = webClient
+						.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
+				PushSocket.pushnew(map, uuId, "6000", "获取数据成功");
+
+				// 获取收货地址
+				data.put("addresses", this.getAddress(webClient));
+				data.put("info", table.asXml());
+				data.put("page", pageinfosss.asXml() + pageinfoss.asXml());
+				map.put("data", data);
+				map.put("userName", "123");
+				map.put("userPwd", "123");
+				map.put("userCard", idCard);
+
+				map = resttemplate.SendMessage(map, application.getSendip()
+						+ "/HSDC/authcode/taobaoPush");
+				logger.warn("淘宝推送数据为:" + map);
+				if (map != null
+						&& MessageConstamts.STRING_0000.equals(map.get(
+								MessageConstamts.ERRORCODE).toString())) {
+					PushState.state(idCard, "TaoBao", 300);
+					map.put("errorInfo", "查询成功");
+					map.put("errorCode", "0000");
+					PushSocket.pushnew(map, uuId, "8000", "淘宝查询成功");
+					logger.warn("获取成功" + idCard + "的信息，并已入库");
+				} else {
+					logger.warn("淘宝推送数据失败:" + map);
+					// --------------------数据中心推送状态----------------------
+					PushState.state(idCard, "TaoBao", 200, map.get("errorInfo")
+							.toString());
+					// ---------------------数据中心推送状态----------------------
+					logger.warn("淘宝推送认证状态200成功:" + map);
+					map.put("errorInfo", "查询失败");
+					map.put("errorCode", "0001");
+					PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo")
+							.toString());
+				}
+			} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
+					MessageConstamts.STRING_1004)) {
+				PushState.state(idCard, "TaoBao", 200, "二维码过期");
+				System.out.println("二维码过期");
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "二维码过期");
+				PushSocket.pushnew(map, uuId, "3000", "二维码过期");
+			} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
+					MessageConstamts.STRING_1001)) {
+				if (map.size() == 0) {
+					map.put("errorCode", "0001");
+					map.put("errorInfo", "请勿乱操作");
+					PushState.state(idCard, "TaoBao", 200, "登录失败，操作异常");
+					PushSocket.pushnew(map, uuId, "3000", "登录失败，操作异常");
+				} else {
+					map.put("errorCode", "0000");
+					map.put("errorInfo", "成功");
+				}
+			} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
+					MessageConstamts.STRING_10000)) {
+
+				System.out.println("等待授权");
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "等待授权");
+				PushState.state(idCard, "TaoBao", 200, "登录失败，等待授权");
+				PushSocket.pushnew(map, uuId, "3000", "登录失败，等待授权");
+
+			} else {
+				PushState.state(idCard, "TaoBao", 200, "非法操作！请重试");
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "非法操作！请重试");
+				PushSocket.pushnew(map, uuId, "3000", "非法操作！请重试");
 			}
-		} else if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
-				MessageConstamts.STRING_10000)) {
-
-			System.out.println("等待授权");
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "等待授权");
-			PushState.state(idCard, "TaoBao", 200, "登录失败，等待授权");
-			PushSocket.pushnew(map, uuId, "3000", "登录失败，等待授权");
-
-		} else {
-			PushState.state(idCard, "TaoBao", 200, "非法操作！请重试");
-			map.put("errorCode", "0001");
-			map.put("errorInfo", "非法操作！请重试");
-			PushSocket.pushnew(map, uuId, "3000", "非法操作！请重试");
+		} catch (Exception e) {
+			logger.error("淘宝网络异常",e);
+			if(flag == 1){
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "网络异常");
+				PushState.state(idCard, "TaoBao", 200,"网络异常");
+				PushSocket.pushnew(map, uuId, "3000", "网络异常");
+			}else if(flag == 2){
+				map.put("errorCode", "0001");
+				map.put("errorInfo", "网络异常");
+				PushState.state(idCard, "TaoBao", 200,"网络异常，数据获取失败");
+				PushSocket.pushnew(map, uuId, "7000", "网络异常，数据获取失败");
+			}
 		}
 
 		return map;
@@ -1214,19 +1235,16 @@ public class InterfaceController {
 	 * @throws IOException 
 	 * @throws MalformedURLException 
 	 * @throws FailingHttpStatusCodeException 
+	 * 没有参数 SimpleHttpClient 发包
 	 */
 	
 	@ApiOperation(value = "人法网开关", notes = "")
 	@ResponseBody
-	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.GET)
+	@RequestMapping(value = "RenFaSwitch", method = RequestMethod.POST)
 	public Map<String,Object> renFaSwitch(HttpServletRequest request, HttpServletResponse response) throws FailingHttpStatusCodeException, MalformedURLException, IOException{
-
 		Map<String,Object> map=new HashMap<String,Object>(8);
-
-		client = crawlerUtil.RfWebClient();
-		HtmlPage page= client.getPage(MessageConstamts.RF_URL);
-		 HtmlDivision division=(HtmlDivision) page.getElementById(MessageConstamts.RF_ID);
-		 if(division.asText().equals(MessageConstamts.OPEN_YES)){
+		String rest = SimpleHttpClient.get(MessageConstamts.RF_URL);
+		 if(rest.contains(MessageConstamts.OPEN_YES)){
 			 map.put("errorCode",MessageConstamts.STRING_0000);
 			 map.put("errorInfo", MessageConstamts.STRING_RENFA);
 		 }else{

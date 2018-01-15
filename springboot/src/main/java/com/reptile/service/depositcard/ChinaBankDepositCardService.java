@@ -1,10 +1,6 @@
 package com.reptile.service.depositcard;
 
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.RobotUntil;
+import com.reptile.util.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -48,6 +44,7 @@ public class ChinaBankDepositCardService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String idNumber, String cardNumber, String passWord, String userName, String uuid) {
         Map<String, Object> map = new HashMap<>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
+        String flag="1000";
         PushState.state(idNumber, "savings",100);
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
@@ -145,6 +142,7 @@ public class ChinaBankDepositCardService {
             PushSocket.pushnew(map, uuid, "2000","登录成功");
             Thread.sleep(2000);
             PushSocket.pushnew(map, uuid, "5000","数据获取中");
+            flag="5000";
             logger.warn("中国银行储蓄卡登录成功");
 
             WebElement cardMain = driver.findElementById("cardMain");
@@ -164,6 +162,7 @@ public class ChinaBankDepositCardService {
             map.put("bankName", "中国银行");
             //推送数据
             PushSocket.pushnew(map, uuid, "6000","数据获取成功");
+            flag="4000";
             map = new Resttemplate().SendMessage(map, ConstantInterface.port+"/HSDC/savings/authentication");
             String resultValidate="0000";
             String resultCode="errorCode";
@@ -183,6 +182,7 @@ public class ChinaBankDepositCardService {
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
             PushState.state(idNumber, "savings",200, "系统异常");
+            DealExceptionSocketStatus.pushExceptionSocket(flag,map,uuid);
         }
         return map;
     }
