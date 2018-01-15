@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -35,6 +36,7 @@ public class JiangSuTelecomService {
         logger.warn(phoneNumber+"：---------------------江苏电信获取详单---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
+        String signle="1000";
         PushState.state(phoneNumber, "callLog",100);
         try {
 			Thread.sleep(2000);
@@ -60,6 +62,7 @@ public class JiangSuTelecomService {
             	Thread.sleep(2000);
                 logger.warn(phoneNumber+"：---------------------江苏电信获取详单开始---------------------");
             	PushSocket.pushnew(map, uuid, "5000","获取数据中"); 
+            	signle="5000";
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/frontLinkSkip.do?method=skip&shopId=10011&toStUrl=http://js.189.cn/service/bill?tabFlag=billing4"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
@@ -112,6 +115,7 @@ public class JiangSuTelecomService {
                 }
                 logger.warn(phoneNumber+"：---------------------江苏电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功"); 
+                signle="4000";
                 map.put("data",dataList);
                 map.put("errorCode","0000");
                 map.put("errorInfo","成功");
@@ -143,7 +147,7 @@ public class JiangSuTelecomService {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
-                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }finally {
                 if(webClient!=null){
                     webClient.close();
