@@ -51,7 +51,7 @@ public class XiNingTelecomService {
     /**
      * 西宁电信登录开始
      * @param req
-     * @param userName
+     * @param phone
      * @param servePwd
      * @return
      */
@@ -104,7 +104,7 @@ public class XiNingTelecomService {
         		String signleStr1="详细查询";
         		String signleStr2="详单查询";
         		String signleStr3="账单查询";
-        		
+
         		if (!login.asText().contains(signleStr1) && !login.asText().contains(signleStr2) && !login.asText().contains(signleStr3)) {
         			String divErr = login.getElementById("divErr").getTextContent();
         			String  validateCode="验证码";
@@ -162,7 +162,7 @@ public class XiNingTelecomService {
         List<String> dataList = new ArrayList<String>();
         HttpSession session = request.getSession();
 
-        Object attribute = session.getAttribute("xiNingWebclient");
+        Object attribute = session.getAttribute("GBmobile-webclient");
         if (attribute == null) {
             logger.warn(phoneNumber+"：---------------------西宁电信获取详单未调用公共接口---------------------");
             map.put("errorCode", "0001");
