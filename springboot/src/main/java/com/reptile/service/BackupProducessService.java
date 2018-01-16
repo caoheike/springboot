@@ -1,5 +1,7 @@
 package com.reptile.service;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ public class BackupProducessService {
 	public void identifyProduce(HttpServletRequest request,String phoneNumber,String servePwd,String type,String uuid){
 		Map<String, Object> map = new HashMap<String, Object>(16);
 		Map<String, Object> data = new HashMap<String, Object>(16);
+		List<Map<String,String>> list=new ArrayList<Map<String,String>>();
 		try {
 			logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"登录中----------------------");
 			PushSocket.pushnew(map, uuid, "1000", "登录中");
@@ -43,7 +46,7 @@ public class BackupProducessService {
 			//推送数据
 		   data.put("phone", phoneNumber);
 		   data.put("pwd", servePwd);
-		   data.put("data", null);
+		   data.put("data", list);
 		   Resttemplate resttemplate = new Resttemplate();
 		   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/"+this.getAdress(type));
 		    //根据data判断认证状态
