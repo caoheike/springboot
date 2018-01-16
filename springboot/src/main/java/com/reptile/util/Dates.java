@@ -7,8 +7,8 @@ import java.util.Date;
 public class Dates {
 	/**
 	 * 获得上个月
-	 * @param year
-	 * @param month
+	 * @param
+	 * @param
 	 * @return
 	 */
 
@@ -74,6 +74,24 @@ public class Dates {
 		Calendar calendar = Calendar.getInstance();
 		String lastTime = sim.format(calendar.getTime());
 		return lastTime;
+	}
+
+	/**
+	 * 判断当前时间是否为运营商账单日
+	 * @return
+	 */
+	public static boolean isBillDate() {
+		boolean flag=false;
+		long time = System.currentTimeMillis();
+		String currentTime = new SimpleDateFormat("yyyyMMdd").format(new Date(time));
+		String substring = currentTime.substring(6);
+		int day = Integer.parseInt(substring);
+		if(day>3){
+			flag=false;
+		}else{
+			flag=true;
+		}
+		return flag;
 	}
 	
 }
