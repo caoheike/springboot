@@ -1,5 +1,6 @@
 package com.reptile.service.chinatelecom;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -8,6 +9,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.*;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -26,7 +30,17 @@ import java.util.*;
  */
 @Service
 public class GansuProvinceService {
-	 private Logger logger= LoggerFactory.getLogger(ChengduTelecomService.class);
+	 private Logger logger= LoggerFactory.getLogger(GansuProvinceService.class);
+	 private static String detailUrl="http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000600";
+	 private static String iframeUrl= "http://gs.189.cn/service/v7/fycx/xd/index.shtml?fastcode=10000600&cityCode=gs";// /dqmh/ssoLink.do?method=linkTo&amp;platNo=10028&amp;toStUrl=http://gs.189.cn/service/v7/fycx/xd/index.shtml?fastcode=10000600&amp;cityCode=gs
+	 private static String peronInfoUrl="http://gs.189.cn/web/json/getAncillaryInfo.action";
+	 /**
+	  * liubin
+	  * 发送短信验证码
+	  * @param request
+	  * @param userNum
+	  * @return
+	  */
 	 public  Map<String,Object> gansuPhone(HttpServletRequest request,String userNum){
 		   Map<String,Object> map = new HashMap<String,Object>(200);
 	        HttpSession session = request.getSession();
@@ -65,7 +79,7 @@ public class GansuProvinceService {
 	     				map.put("errorInfo", "验证码发送成功!");
 	     			}else{
 	     				  map.put("errorCode", "0001");
-	 	                 map.put("errorInfo", "电信返回值错误");
+	 	                  map.put("errorInfo", "电信返回值错误");
 	     			}
 	             } catch (Exception e) {
 	                 e.printStackTrace();
@@ -76,8 +90,16 @@ public class GansuProvinceService {
 	        }
 		return map;
 	 }
+
+	 
+	 
+	 /**
+	  * cui
+	  * 获取详单
+	  */
 	 public  Map<String,Object> gansuPhone1(HttpServletRequest request,String userCard,String userNum,String userPass,String catpy,String longitude,String latitude,String uuid){
 		   Map<String,Object> map = new HashMap<String,Object>(200);
+		   WebClient webClientTwo = null;
 		   PushState.state(userNum, "callLog",100);
 		   PushSocket.pushnew(map, uuid, "1000","登录中");
 		   HttpSession session = request.getSession();
@@ -110,12 +132,36 @@ public class GansuProvinceService {
 						int ye=Integer.parseInt(year);;
 						int month=ye-i;
 						String months=Dates.beforMonth(i);
-						UnexpectedPage page= webClient.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT="+ catpy+"&productGroup="+num+"&orderDetailType=6&queryMonth="+months);
-						Thread.sleep(3000);
+					 	UnexpectedPage page=null;
+					 	if(i==0){
+					 		try {
+					 			webClientTwo=webClient;
+							 	 page=webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT="+ catpy+"&productGroup="+num+"&orderDetailType=6&queryMonth="+months);
+							   } catch (java.lang.ClassCastException e) {
+								 map.put("errorCode", "0001");
+						         map.put("errorInfo", "验证码错误!");
+						            return map;
+							   }
+					 		
+					 	}else {
+					 		
+					 			page=webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT="+ catpy+"&productGroup="+num+"&orderDetailType=6&queryMonth="+months);
+					 		 if(page.getWebResponse().getContentAsString().contains("9998")){
+					 			List<NameValuePair> list = new ArrayList<NameValuePair>();
+						    	list.add(new NameValuePair("timestamp", System.currentTimeMillis()+""));
+						    	list.add(new NameValuePair("productGroup","4:"+userNum ));
+						    	list.add(new NameValuePair("orderDetailType",6+""));
+						    	list.add(new NameValuePair("queryMonth", months));
+						    	page=this.getDetailPages(webClientTwo, "http://gs.189.cn/web/json/searchDetailedFee.action?timestamp="+System.currentTimeMillis()+"&productGroup=4:"+userNum+"&orderDetailType=6&queryMonth="+months, list, HttpMethod.POST);
+					 		 }
+					 			
+					 		
+					 	}
+					  
+					 	Thread.sleep(3000);
 						System.out.println(page+"-------"+i+"-------"+months);
 						String a=page.getWebResponse().getContentAsString();
-						//JSONObject aa = new JSONObject(a); 
-					
+						//result：9998 操作频繁
 						data.put("items",a.replaceAll("\\\"", "\""));
 						datalist.add(data);
 						Thread.sleep(5000);
@@ -155,4 +201,137 @@ public class GansuProvinceService {
 	        }
 		 return map;
 	 }
+
+	 /**
+	  * 身份校验(暂时跳过)
+	  * @param webClient
+	  * @param url
+	  * @param validatecode 短信验证码
+	  * @param busitype 固定3
+	  * @param mobilenum 电话号码
+	  * @param newNameO 姓名
+	  * @param personNoO 身份证
+	  * @param rand 短信验证码
+	  * @param method
+	  * @return
+	  * @throws FailingHttpStatusCodeException
+	  * @throws IOException
+	  */
+    public Map<String, Object> checkCurrentInfo(WebClient webClient,String url,String validatecode,String busitype,String mobilenum,String newNameO,String personNoO,String rand,HttpMethod method) throws FailingHttpStatusCodeException, IOException{    	
+    	List<NameValuePair> list = new ArrayList<NameValuePair>();
+    	Map<String, Object> map=new HashMap<String, Object>();
+		    
+     			list.add(new NameValuePair("validatecode",validatecode));
+     			list.add(new NameValuePair("busitype",busitype));
+     			list.add(new NameValuePair("mobilenum",mobilenum));
+     			list.add(new NameValuePair("newNameO",newNameO));
+     			list.add(new NameValuePair("personNoO",personNoO));
+     			list.add(new NameValuePair("rand",rand));
+		 
+		    HtmlPage resultPage= this.getPages(webClient, url, list, method);
+		   System.out.println(resultPage.asText());
+		  JSONObject json=new JSONObject().fromObject(resultPage.asText());
+		  if(json.get("returnCode").equals("0")){
+			  map.put("errorCode", "0001");
+			  map.put("errorInfo", "验证码输入错误，请重新输入");
+		  }else if (json.get("returnCode").equals("1")) {
+			  map.put("errorCode", "0000");
+			  map.put("errorInfo", "校验成功");
+		  }else if (json.get("returnCode").equals("2")){
+			  map.put("errorCode", "0001");
+			  map.put("errorInfo", "请登陆后操作");
+		  }else if (json.get("returnCode").equals("3")){
+			  map.put("errorCode", "0001");
+			  map.put("errorInfo", "输入姓名信息有误");
+		  }else if (json.get("returnCode").equals("4")){
+			  map.put("errorCode", "0001");
+			  map.put("errorInfo", "证件号有误");
+		  }else {
+			  map.put("errorCode", "0001");
+			  map.put("errorInfo", "系统繁忙，请稍后再试");
+		  }
+    	return map;
+    }
+    
+    /***
+	 * 获得HtmlPage  
+	 * @param webClient
+	 * @param url要访问的url
+	 * @param list参数
+	 * @param method post或者get
+	 * @return HtmlPage
+	 * @throws FailingHttpStatusCodeException
+	 * @throws IOException
+	 */
+	 public HtmlPage getPages(WebClient webClient,String url,List<NameValuePair> list,HttpMethod method) throws FailingHttpStatusCodeException, IOException{
+		
+		    WebRequest requests = new WebRequest(new URL(url)); 
+		    requests.setRequestParameters(list);
+			requests.setHttpMethod(method);		
+		  return webClient.getPage(requests);
+	 }
+	 
+	 
+	 
+	 /***
+		 * 获得  UnexpectedPage
+		 * @param webClient
+		 * @param url要访问的url
+		 * @param list参数
+		 * @param method post或者get
+		 * @return HtmlPage
+		 * @throws FailingHttpStatusCodeException
+		 * @throws IOException
+		 */
+		 public UnexpectedPage getDetailPages(WebClient webClient,String url,List<NameValuePair> list,HttpMethod method) throws FailingHttpStatusCodeException, IOException{
+			
+			    WebRequest requests = new WebRequest(new URL(url)); 
+			    requests.setRequestParameters(list);
+				requests.setHttpMethod(method);		
+			  return webClient.getPage(requests);
+		 }
+	 /***
+		 * 获得HtmlPage  
+		 * @param webClient
+		 * @param url要访问的url
+		 * @param method get
+		 * @return HtmlPage
+		 * @throws FailingHttpStatusCodeException
+		 * @throws IOException
+		 */
+		 public HtmlPage getPages(WebClient webClient,String url,HttpMethod method) throws FailingHttpStatusCodeException, IOException{
+			
+			    WebRequest requests = new WebRequest(new URL(url)); 
+				requests.setHttpMethod(method);		
+			  return webClient.getPage(requests);
+		 }
+		 
+		 /***
+			 * 获得periodList
+			 * @param webClient
+			 * @param url要访问的url
+			 * @param userNum 手机号码
+			 * @param method post或者get
+			 * @return HtmlPage
+			 * @throws FailingHttpStatusCodeException
+			 * @throws IOException
+			 */
+			 public List<Object> getJsonPages(WebClient webClient,String url,String userNum,HttpMethod method) throws FailingHttpStatusCodeException, IOException{
+				
+				    WebRequest requests = new WebRequest(new URL(url)); 
+				    
+					 List<NameValuePair> list = new ArrayList<NameValuePair>();
+		     			String num="4:"+userNum;
+		     			System.out.println(num);
+		     			list.add(new NameValuePair("productGroup",num));
+		     			requests.setRequestParameters(list);
+						requests.setHttpMethod(method);	
+					    UnexpectedPage page=webClient.getPage(requests);
+				        String result= 	page.getWebResponse().getContentAsString();
+				        JSONObject json= JSONObject.fromObject(result);
+				        if (json!=null) {
+				        	return (List<Object>) json.get("periodList");
+						}
+						return null;
+			 }
 }
