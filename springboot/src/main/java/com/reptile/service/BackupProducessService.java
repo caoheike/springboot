@@ -3,7 +3,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,15 @@ import com.reptile.util.Resttemplate;
 /**
  * 伪流程
  * @author cui
- *
+ * @data  2018/01/17
  */
 @Service
 public class BackupProducessService {
 	private Logger logger= LoggerFactory.getLogger(BackupProducessService.class);
+	private static String unicom = "unicom";
+	private static String telecom = "telecom";
+	private static String success = "0000";
+	private static String errorCode = "errorCode";
 	/**
 	 * 认证流程
 	 * @param request
@@ -47,7 +53,7 @@ public class BackupProducessService {
 			//推送数据
 			data =this.pushDate(phoneNumber, servePwd, type, longitude, latitude, data, list);
 		    //根据data判断认证状态
-		   if(data.get("errorCode").equals("0000")){
+		   if(data.get(errorCode).equals(success)){
 				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证成功----------------------");
 				PushSocket.pushnew(map, uuid, "8000", "认证成功");
 				PushState.state(phoneNumber, "callLog", 300);
@@ -68,7 +74,7 @@ public class BackupProducessService {
 	 * @return
 	 */
    public String getType(String type){
-	return type.equals("telecom")?"电信":(type.equals("unicom")?"联通":"移动");   
+	return type.equals(telecom)?"电信":(type.equals(unicom)?"联通":"移动");   
    }
    
    /**
@@ -85,16 +91,19 @@ public class BackupProducessService {
 	    data.put("longitude", longitude);
 		data.put("latitude", latitude);
 		data.put("data", list);
-	   if(type.equals("telecom")||type.equals("unicom")){
+	   if(type.equals(telecom)||type.equals(unicom)){
 		   data.put("UserIphone", phoneNumber);
 		   data.put("UserPassword", servePwd);
-		   if(type.equals("telecom")){//电信
+		   if(type.equals(telecom)){
+			   //电信
 			   data.put("flag", "100");
 			   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/telecomCallRecord"); 
-		   }else{//联通
+		   }else{
+			   //联通
 			   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/linkCallRecord");
 		   }   
-	   }else{//移动phonBill
+	   }else{
+		   //移动phonBill
 		   data.put("userPhone", phoneNumber);
 		   data.put("serverCard", servePwd);
            data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/mobileCallRecord");
