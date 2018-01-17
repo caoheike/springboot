@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -611,6 +612,7 @@ public class MobileService {
 			// data.put("MobileBelong",
 			// page.querySelectorAll(".tdc2").get(2).asText());
 			map.put("data", data);
+			map.put("isBillDate",Dates.isBillDate());
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 		} catch (Exception e) {
@@ -621,6 +623,7 @@ public class MobileService {
 		return map;
 
 	}
+
 
 	/**
 	 * 接口 更新验证码 联通
