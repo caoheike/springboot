@@ -33,6 +33,7 @@ public class BackupProducessService {
 		Map<String, Object> data = new HashMap<String, Object>(16);
 		List<Map<String,String>> list=new ArrayList<Map<String,String>>();
 		try {
+			Thread.sleep(2000);
 			logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"登录中----------------------");
 			PushSocket.pushnew(map, uuid, "1000", "登录中");
 	        PushState.state(phoneNumber, "callLog", 100);
@@ -42,7 +43,7 @@ public class BackupProducessService {
 			Thread.sleep(2000);		
 			logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"数据获取成功----------------------");
 			PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
-			Thread.sleep(500);
+			Thread.sleep(2000);
 			//推送数据
 		   data.put("phone", phoneNumber);
 		   data.put("pwd", servePwd);
