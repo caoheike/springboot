@@ -20,8 +20,8 @@ public class BackupProducessController {
 	 @ApiOperation(value = "", notes = "参数：手机号码,服务密码，运营商类型")
 	 @ResponseBody
 	 @RequestMapping(value = "identifyProduce",method = RequestMethod.POST)
-	 public void identify(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("type")String type,@RequestParam("UUID")String uuid){
-		 service.identifyProduce(request, phoneNumber, servePwd, type, uuid);
+	 public void identify(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("type")String type,@RequestParam("longitude")String longitude,@RequestParam("latitude")String  latitude,@RequestParam("UUID")String uuid){
+		 service.identifyProduce(request, phoneNumber, servePwd, type,longitude,latitude, uuid);
 	 }
 
 }

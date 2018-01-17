@@ -28,7 +28,7 @@ public class BackupProducessService {
 	 * @param type  运营商类型
 	 * @param uuid  
 	 */
-	public void identifyProduce(HttpServletRequest request,String phoneNumber,String servePwd,String type,String uuid){
+	public void identifyProduce(HttpServletRequest request,String phoneNumber,String servePwd,String type,String longitude,String latitude,String uuid){
 		Map<String, Object> map = new HashMap<String, Object>(16);
 		Map<String, Object> data = new HashMap<String, Object>(16);
 		List<Map<String,String>> list=new ArrayList<Map<String,String>>();
@@ -45,11 +45,7 @@ public class BackupProducessService {
 			PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
 			Thread.sleep(2000);
 			//推送数据
-		   data.put("phone", phoneNumber);
-		   data.put("pwd", servePwd);
-		   data.put("data", list);
-		   Resttemplate resttemplate = new Resttemplate();
-		   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/"+this.getAdress(type));
+			data =this.pushDate(phoneNumber, servePwd, type, longitude, latitude, data, list);
 		    //根据data判断认证状态
 //		   if(data.get("errorCode").equals("0000")){
 				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证成功----------------------");
@@ -74,12 +70,35 @@ public class BackupProducessService {
    public String getType(String type){
 	return type.equals("telecom")?"电信":(type.equals("unicom")?"联通":"移动");   
    }
+   
    /**
-    * 获取推送地址
-    * @param type 运营商类型
+    * 给不同运营商推送数据
+    * @param phoneNumber 手机号
+    * @param servePwd  服务密码
+    * @param type   运营商类型
+    * @param longitude  经度
+    * @param latitude  纬度
     * @return
     */
-   public String getAdress(String type){
-		return type.equals("telecom")?"telecomCallRecord":(type.equals("unicom")?"linkCallRecord":"mobileCallRecord");   
+   public Map<String, Object> pushDate(String phoneNumber,String servePwd,String type,String longitude,String latitude,Map<String, Object> data,List<Map<String,String>> list){
+	    Resttemplate resttemplate = new Resttemplate();
+	    data.put("longitude", longitude);
+		data.put("latitude", latitude);
+		data.put("data", list);
+	   if(type.equals("telecom")||type.equals("unicom")){
+		   data.put("UserIphone", phoneNumber);
+		   data.put("UserPassword", servePwd);
+		   if(type.equals("telecom")){//电信
+			   data.put("flag", "100");
+			   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/telecomCallRecord"); 
+		   }else{//联通
+			   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/linkCallRecord");
+		   }   
+	   }else{//移动phonBill
+		   data.put("userPhone", phoneNumber);
+		   data.put("serverCard", servePwd);
+           data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/mobileCallRecord");
 	   }
+	return data;  
+   }
 }
