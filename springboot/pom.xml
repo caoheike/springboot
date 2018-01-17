@@ -24,7 +24,7 @@
 		<java.version>1.8</java.version>
 	</properties>
 
-	
+
 	<!-- phantomjsdriver -->
 	<dependencies>
 		<dependency>
@@ -346,9 +346,14 @@
 			<version>0.0.2</version>
 		</dependency>
 		<dependency>
-  <groupId>org.bytedeco.javacpp-presets</groupId>
-  <artifactId>tesseract</artifactId>
-  <version>3.04.01-1.3</version>
+			<groupId>org.bytedeco.javacpp-presets</groupId>
+			<artifactId>tesseract</artifactId>
+			<version>3.04.01-1.3</version>
+		</dependency>
+		<!-- 配置redis -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 	</dependencies>
 
