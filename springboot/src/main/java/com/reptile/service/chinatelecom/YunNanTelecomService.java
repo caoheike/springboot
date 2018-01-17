@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -30,7 +31,6 @@ import java.util.*;
 @Service
 public class YunNanTelecomService {
     private Logger logger = LoggerFactory.getLogger(YunNanTelecomService.class);
-
     public Map<String, Object> sendPhoneCode(HttpServletRequest request, String phoneNumber) {
         Map<String, Object> map = new HashMap<String, Object>(16);
         List<String> dataList = new ArrayList<String>();
@@ -107,6 +107,7 @@ public class YunNanTelecomService {
         logger.warn(phoneNumber + "：---------------------云南电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushSocket.pushnew(map, uuid, "1000", "登录中");
+        String signle="1000";
         PushState.state(phoneNumber, "callLog", 100);
         try {
             Thread.sleep(2000);
@@ -161,6 +162,7 @@ public class YunNanTelecomService {
                 PushSocket.pushnew(map, uuid, "2000", "登录成功");
                 Thread.sleep(2000);
                 PushSocket.pushnew(map, uuid, "5000", "获取数据中");
+                signle="5000";
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 logger.warn(phoneNumber + "：---------------------云南电信获取详单开始---------------------");
@@ -199,6 +201,7 @@ public class YunNanTelecomService {
                 }
                 logger.warn(phoneNumber + "：---------------------云南电信获取详单完成--------------------本次获取账单数目：" + dataList.size());
                 PushSocket.pushnew(map, uuid, "6000", "获取数据成功");
+                signle="4000";
                 map.put("data", dataList);
                 map.put("flag", "8");
                 map.put("UserPassword", serverPwd);
@@ -228,7 +231,7 @@ public class YunNanTelecomService {
                 logger.warn(phoneNumber +":---------------------云南详单获取异常---------------------", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常");
-                PushSocket.pushnew(map, uuid, "9000", "网络连接异常");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
                 PushState.state(phoneNumber, "callLog", 200, "网络连接异常");
             }
         }

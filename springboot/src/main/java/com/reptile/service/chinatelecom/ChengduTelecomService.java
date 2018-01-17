@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -93,6 +94,7 @@ public class ChengduTelecomService {
         Map<String, Object> dataMap = new HashMap<String, Object>(16);
         PushState.state(phoneNumber, "callLog",100);
         PushSocket.pushnew(map, uuid, "1000","登录中");
+        String signle="1000";
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
@@ -119,6 +121,7 @@ public class ChengduTelecomService {
                 PushSocket.pushnew(map, uuid, "2000","登录成功");
                 Thread.sleep(2000);
                 PushSocket.pushnew(map, uuid, "5000","获取数据中");
+                signle="5000";
                 String record = null;
                 String retCode="retCode";
                 String flag0="0";
@@ -165,6 +168,7 @@ public class ChengduTelecomService {
                 }
                 logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+                signle="4000";
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
                 //经度
@@ -195,7 +199,7 @@ public class ChengduTelecomService {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
-                PushSocket.pushnew(map, uuid, "9000","网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }
         }
         return map;

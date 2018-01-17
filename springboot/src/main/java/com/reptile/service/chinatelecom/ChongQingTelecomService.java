@@ -1,6 +1,7 @@
 package com.reptile.service.chinatelecom;
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.MyCYDMDemo;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -119,7 +120,8 @@ public class ChongQingTelecomService {
 	 public Map<String, Object> getDetail(HttpServletRequest request, String phoneNumber,String passWord,String code,String longitude,String latitude,String uuid){
 		 Map<String, Object> map = new HashMap<String, Object>(16);
 		 PushState.state(phoneNumber, "callLog",100);
-		 PushSocket.pushnew(map, uuid, "1000","登录中");  
+		 PushSocket.pushnew(map, uuid, "1000","登录中"); 
+		 String signle="1000";
 	        List<Map<String, Object>> arrayList=new ArrayList<Map<String,Object>>();
 	        HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("driverGT");
@@ -177,7 +179,7 @@ public class ChongQingTelecomService {
 						PushSocket.pushnew(map, uuid, "2000","登录成功");
 						Thread.sleep(2000);
 						PushSocket.pushnew(map, uuid, "5000","数据获取中");
-						
+						signle="5000";
 						HttpClient httpClient = new HttpClient(); 
 	        				 Set<Cookie> cookie=driver.manage().getCookies();
 	        				 StringBuffer cookies=new StringBuffer();
@@ -200,6 +202,7 @@ public class ChongQingTelecomService {
 	        				 dataMap.put("item", html);
 	 				      	 arrayList.add(dataMap);		 
 	 				      	PushSocket.pushnew(map, uuid, "6000","数据获取成功");
+	 				      	signle="4000";
 	        			}else{
 	        				logger.warn("----------------重庆电信,数据获取失败---------------------");
 	        				 map.put("errorCode", "0001");
@@ -237,7 +240,8 @@ public class ChongQingTelecomService {
 						 map.put("errorCode", "0001");
 				         map.put("errorInfo", "网络异常!");
 				         PushState.state(phoneNumber, "callLog",200,"网络异常!");
-				         PushSocket.pushnew(map, uuid, "9000","网络异常!");
+//				         PushSocket.pushnew(map, uuid, "9000","网络异常!");
+				         DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
 				         logger.error("-------------重庆电信-------------",e);
 					}finally{
 						 driver.close();

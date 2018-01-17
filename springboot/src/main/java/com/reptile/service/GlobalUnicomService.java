@@ -115,7 +115,6 @@ public class GlobalUnicomService {
      *
      * @param
      */
-
     public Map<String, Object> unicomLogin(HttpServletRequest request,
                                            String userIphone, String password, String code) {
         Map<String, Object> map = new HashMap<String, Object>(8);
