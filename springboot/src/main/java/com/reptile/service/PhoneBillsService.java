@@ -293,19 +293,13 @@ public class PhoneBillsService {
 
 
     public Map<String, Object> getDetailAccount(HttpServletRequest request, String userNumber, String phoneCode,
-                                                String fuwuSec, String imageCode, String longitude, String latitude, String uuid) {
+                                                String fuwuSec, String imageCode, String longitude, String latitude, String uuid) throws InterruptedException {
         Map<String, Object> map = new HashMap<String, Object>(16);
         System.out.println("---移动---" + userNumber);
 
         PushSocket.pushnew(map, uuid, "1000", "登录中");
         PushState.state(userNumber, "callLog", 100);
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+        String signle="1000";
 
         Map<String, Object> dataMap = new HashMap<String, Object>(16);
         List dataList = new ArrayList();
@@ -315,15 +309,12 @@ public class PhoneBillsService {
         if (client == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "登录超时");
-
             PushSocket.pushnew(map, uuid, "3000", "登录超时");
             PushState.state(userNumber, "callLog", 200, "登录超时。");
-
             return map;
         } else {
             try {
                 WebClient webClient = (WebClient) client;
-
                 HtmlPage page3 = webClient.getPage(path);
                 //对服务密码和手机验证码进行加密
                 List<String> alert = new ArrayList<String>();
@@ -375,6 +366,7 @@ public class PhoneBillsService {
                 String sDate = simpleDateFormat.format(cal.getTime());
 
                 PushSocket.pushnew(map, uuid, "5000", "数据获取中");
+                signle="5000";
                 int boundCount = 7;
                 loop:
                 for (int i = 1; i < boundCount; i++) {
@@ -421,13 +413,14 @@ public class PhoneBillsService {
                 }
                 int boundCount3 = 4;
                 if (dataList.size() < boundCount3) {
-                    PushSocket.pushnew(map, uuid, "9000", "数据获取不完全，请重新认证！");
+                    PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！");
                     PushState.state(userNumber, "callLog", 200, "数据获取不完全，请重新认证！");
                     map.put("errorCode", "0009");
                     map.put("errorInfo", "数据获取不完全，请重新再次认证！");
                     return map;
                 }
                 PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
+                signle="4000";
                 //通话详单数据
                 dataMap.put("data", dataList);
                 //手机
@@ -453,14 +446,13 @@ public class PhoneBillsService {
                     PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo").toString());
                     PushState.state(userNumber, "callLog", 200, map.get("errorInfo").toString());
                 }
-
                 webClient.close();
             } catch (Exception e) {
-                logger.warn(e.getMessage() + "  获取移动详单  mrlu", e);
+                logger.warn( " -------------------- 获取移动详单异常  mrlu", e);
                 map.put("errorCode", "0004");
                 map.put("errorInfo", "系统繁忙");
                 PushState.state(userNumber, "callLog", 200, "认证失败,系统繁忙！");
-                PushSocket.pushnew(map, uuid, "9000", "认证失败,系统繁忙");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }
         }
         return map;
