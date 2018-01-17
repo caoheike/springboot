@@ -7,13 +7,28 @@ package com.reptile.util;
  * @date 2016/10/31
  */
 public interface ConstantInterface {
-
     /**
      * 公用配置
      */
     String ieDriverKey = "webdriver.ie.driver";
     String chromeDriverKey = "webdriver.chrome.driver";
-
+    //人法网开关
+    String lawStatus= "lawStatus";
+    //民生信用卡密码框坐标X
+    String cmbcCreditPassWordX= "cmbcCreditX";
+    //民生信用卡密码框坐标Y
+    String cmbcCreditPassWordY= "cmbcCreditX";
+    //民生储蓄卡密码框坐标X
+    String cmbcDepositPassWordX= "cmbcCreditX";
+    //民生储蓄卡密码框坐标Y
+    String cmbcDepositPassWordY= "cmbcCreditX";
+    //招商储蓄卡用户框坐标X
+    String cmbDepositUsernameX= "cmbcCreditX";
+    //招商储蓄卡用户框坐标Y
+    String cmbDepositUsernameY= "cmbcCreditX";
+    //招商储蓄卡密码框坐标X
+    String cmbDepositPassWordX= "cmbcCreditX";
+   
     /**
      * 测试环境
      */
