@@ -50,16 +50,15 @@ public class BackupProducessService {
 		   Resttemplate resttemplate = new Resttemplate();
 		   data = resttemplate.SendMessage(data, ConstantInterface.port + "/HSDC/message/"+this.getAdress(type));
 		    //根据data判断认证状态
-		   if(data.get("errorCode").equals("0000")){
+//		   if(data.get("errorCode").equals("0000")){
 				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证成功----------------------");
 				PushSocket.pushnew(map, uuid, "8000", "认证成功");
 				PushState.state(phoneNumber, "callLog", 300);
-		   }else {
-				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证失败----------------------");
-				PushSocket.pushnew(map, uuid, "7000", "认证失败");
-				PushState.state(phoneNumber, "callLog", 200); 
-		   }
-	
+//		   }else {
+//				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证失败----------------------");
+//				PushSocket.pushnew(map, uuid, "7000", "认证失败");
+//				PushState.state(phoneNumber, "callLog", 200); 
+//		   }
 		} catch (Exception e) {
 			logger.error("-----------------"+this.getType(type)+":"+phoneNumber+"认证失败----------------------",e);
 			PushSocket.pushnew(map, uuid, "7000", "认证失败");
