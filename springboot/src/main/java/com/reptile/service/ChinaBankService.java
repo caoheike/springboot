@@ -1,11 +1,6 @@
 package com.reptile.service;
 
-import com.reptile.util.ConstantInterface;
-import com.reptile.util.CountTime;
-import com.reptile.util.PushSocket;
-import com.reptile.util.PushState;
-import com.reptile.util.Resttemplate;
-import com.reptile.util.RobotUntil;
+import com.reptile.util.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -57,7 +52,7 @@ public class ChinaBankService {
         	PushState.state(userCard, "bankBillFlow",100);				 
         }
         PushSocket.pushnew(map, uuid, "1000","中国银行登录中");
-        String states="1";
+        String states="1000";
         try {
         	Thread.sleep(3000);
             List<WebElement> input = driver.findElements(By.className("input"));
@@ -80,7 +75,6 @@ public class ChinaBankService {
                 }else{
                 	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败");
                 }
-                states="3";
                 driver.quit();              
                 return map;
             }
@@ -98,7 +92,6 @@ public class ChinaBankService {
                         }else{
                         	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请使用信用卡号登录");
                         }
-                        states="3";
                         driver.quit();                       
                         return map;
                     }
@@ -117,7 +110,6 @@ public class ChinaBankService {
                 }else{
                 	PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败请输入正确的信用卡号");
                 }
-                states="3";
                 driver.quit();              
                 return map;
             }
@@ -153,7 +145,6 @@ public class ChinaBankService {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", msgContent);
                 }
-                states="3";
                 PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
                 if(isok==true) {
                     PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
@@ -179,7 +170,9 @@ public class ChinaBankService {
             }
             
             PushSocket.pushnew(map, uuid, "2000","中国银行信用卡登录成功");
-            states="2";
+            Thread.sleep(2000);
+            PushSocket.pushnew(map, uuid, "5000","中国银行信用卡获取中");
+            states="5000";
             Thread.sleep(5000);
             List<WebElement> element = driver.findElements(By.className("tabs"));
             for (int i = 0; i < element.size(); i++) {
@@ -188,8 +181,6 @@ public class ChinaBankService {
                 }
             }
             Thread.sleep(2000);
-            PushSocket.pushnew(map, uuid, "5000","中国银行信用卡获取中");
-            states="5";
             List<WebElement> listDom = driver.findElements(By.className("sel"));
             String id = "";
             for (int i = 0; i < listDom.size(); i++) {
@@ -220,7 +211,7 @@ public class ChinaBankService {
                 listData.add(pageSource);
             }
             PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
-            states="6";
+            states="4000";
             Map<String, Object> sendMap = new HashMap<String, Object>(16);
             sendMap.put("idcard", userCard);
             sendMap.put("backtype", "BOC");
@@ -240,7 +231,6 @@ public class ChinaBankService {
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
                 PushSocket.pushnew(map, uuid, "8000","中国银行信用卡认证成功");
-                states="8";
                 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }else{
             	//--------------------数据中心推送状态----------------------
@@ -251,38 +241,32 @@ public class ChinaBankService {
 				}	            	//---------------------数据中心推送状态----------------------
             	logger.warn("中国银行账单推送失败"+userCard);
             	 PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
-            	 states="9";
             	 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }
         } catch (Exception e) {
             logger.warn("中国银行信用卡认证失败",e);
-            int signle1=3;
-            int signle2=7;
-            int signle3=9;
+            String signle1="1000";
+            String signle2="5000";
+            String signle3="4000";
+            DealExceptionSocketStatus.pushExceptionSocket(states,map,uuid);
             if(isok==true) {
 				if(states.equals(signle1)){
-					PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
 					PushState.state(userCard, "bankBillFlow",200,"登录失败,网络繁忙");
 				}
 				if(states.equals(signle3)){
-					PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
 					PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
 				}
 				if(states.equals(signle2)){
-					PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
 					PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡信息获取失败");
 				}
 			}else{
 				if(states.equals(signle1)){
-					PushSocket.pushnew(map, uuid, "3000","登录失败,网络繁忙");
 					PushState.statenew(userCard, "bankBillFlow",200,"登录失败,网络繁忙");
 				}
 				if(states.equals(signle3)){
-					PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
 					PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡认证失败");
 				}
 				if(states.equals(signle2)){
-					PushSocket.pushnew(map, uuid, "7000","中国银行信用卡信息获取失败");
 					PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡信息获取失败");
 				}
 
