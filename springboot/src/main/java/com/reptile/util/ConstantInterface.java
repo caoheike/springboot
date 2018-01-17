@@ -15,19 +15,29 @@ public interface ConstantInterface {
     //人法网开关
     String lawStatus= "lawStatus";
     //民生信用卡密码框坐标X
-    String cmbcCreditPassWordX= "cmbcCreditX";
+    String cmbcCreditPassWordX= "cmbcCreditPassWordX";
     //民生信用卡密码框坐标Y
-    String cmbcCreditPassWordY= "cmbcCreditX";
+    String cmbcCreditPassWordY= "cmbcCreditPassWordX";
     //民生储蓄卡密码框坐标X
-    String cmbcDepositPassWordX= "cmbcCreditX";
+    String cmbcDepositPassWordX= "cmbcDepositPassWordX";
     //民生储蓄卡密码框坐标Y
-    String cmbcDepositPassWordY= "cmbcCreditX";
+    String cmbcDepositPassWordY= "cmbcDepositPassWordY";
     //招商储蓄卡用户框坐标X
-    String cmbDepositUsernameX= "cmbcCreditX";
+    String cmbDepositUsernameX= "cmbDepositUsernameX";
     //招商储蓄卡用户框坐标Y
-    String cmbDepositUsernameY= "cmbcCreditX";
+    String cmbDepositUsernameY= "cmbDepositUsernameY";
     //招商储蓄卡密码框坐标X
-    String cmbDepositPassWordX= "cmbcCreditX";
+    String cmbDepositPassWordX= "cmbDepositPassWordX";
+    //招商储蓄卡密码框坐标Y
+    String cmbDepositPassWordY= "cmbDepositPassWordY";
+    //招商信用卡用户框坐标X
+    String cmbCreditUsernameX= "cmbCreditUsernameX";
+    //招商信用卡用户框坐标Y
+    String cmbCreditUsernameY= "cmbCreditUsernameY";
+    //招商信用卡密码框坐标X
+    String cmbCreditPassWordX= "cmbCreditPassWordX";
+    //招商信用卡密码框坐标Y
+    String cmbCreditPassWordY= "cmbCreditPassWordY";
    
     /**
      * 测试环境
