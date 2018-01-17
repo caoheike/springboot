@@ -53,7 +53,7 @@ public class CreditAnalysis {
         Document parse = null;
         String userId = "**************271X";
         try {
-            parse = Jsoup.parse(new File("f://90overdue.html"), "utf-8");
+            parse = Jsoup.parse(new File("f://danbao.html"), "utf-8");
 //            parse = Jsoup.parse(reportHtml);
             table = parse.getElementsByTag("table");
             logger.warn(userId.toString() + "此次解析征信页面含有的table数量为:" + table.size());
@@ -79,6 +79,18 @@ public class CreditAnalysis {
         JSONArray orgQueryData = new JSONArray();
         //机构查询信息
         JSONArray personQueryData = new JSONArray();
+        //页面中信息概要是第N个table
+        int mesGaiYao=7;
+        //页面机构查询是第N个table
+        int goverSelect=10;
+        //页面个人查询是第N个table
+        int proSelect=11;
+        //判断页面是否含有特殊表格   正常页面为13个table，特殊页面多一个保证人代偿信息table，需做特殊处理
+        if(parse.text().contains("保证人代偿信息")&&parse.text().contains("资产处置信息")){
+            mesGaiYao=8;
+            goverSelect=11;
+            proSelect=12;
+        }
         try {
             //读取页面中第二个表格中关于征信报告的基本信息
             Element tbBasic1 = table.get(1);
@@ -122,8 +134,8 @@ public class CreditAnalysis {
         }
 
         try {
+            Element summaryTable = table.get(mesGaiYao);
             //获取征信报告概要
-            Element summaryTable = table.get(7);
             Elements trSummary = summaryTable.getElementsByTag("tr");
             String tdTitle = trSummary.get(0).text();
             String keyWord1 = "信用卡";
@@ -240,10 +252,10 @@ public class CreditAnalysis {
 
         try {
             //机构查询明细
-            Element orgElement = table.get(10);
+            Element orgElement = table.get(goverSelect);
             orgQueryData = analysisOrgQuery(orgElement, "org");
             //个人查询明细
-            Element personElement = table.get(11);
+            Element personElement = table.get(proSelect);
             personQueryData = analysisOrgQuery(personElement, "per");
         } catch (CustomException e) {
             logger.warn(e.getExceptionInfo(), e.getException());

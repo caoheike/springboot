@@ -134,7 +134,7 @@ public class ChinaBankService {
                     break;
                 }
             }
-            Thread.sleep(5000);
+            Thread.sleep(4000);
             msgContent = driver.findElement(By.id("msgContent")).getText();
             if (msgContent.length() != 0) {
                 String yanZhengMa="验证码输入错误";
@@ -173,7 +173,7 @@ public class ChinaBankService {
             Thread.sleep(2000);
             PushSocket.pushnew(map, uuid, "5000","中国银行信用卡获取中");
             states="5000";
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             List<WebElement> element = driver.findElements(By.className("tabs"));
             for (int i = 0; i < element.size(); i++) {
                 if (element.get(i).getText().contains("已出账单")) {
@@ -188,16 +188,13 @@ public class ChinaBankService {
                     id = listDom.get(i).getAttribute("id");
                 }
             }
-            System.out.println("id===="+id);
             String count = String.valueOf(driver.executeScript("return $(\"#" + id + " ul li\").length;"));
-            System.out.println("mrludw    " + count);
             List<String> listData = new ArrayList<String>();
             for (int i = 1; i < Integer.valueOf(count) + 1; i++) {
-            	Thread.sleep(2000);
                 driver.findElement(By.xpath("//*[@id='" + id + "']/span")).click();
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 driver.findElement(By.xpath("//*[@id='" + id + "']/ul/li[" + i + "]/a")).click();
-                Thread.sleep(2000);
+                Thread.sleep(1000);
 
                 List<WebElement> btn = driver.findElements(By.className("btn"));
                 for (int j = 0; j < btn.size(); j++) {
@@ -206,7 +203,7 @@ public class ChinaBankService {
                     }
                 }
 
-                Thread.sleep(5000);
+                Thread.sleep(2000);
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
             }
@@ -220,7 +217,6 @@ public class ChinaBankService {
             
             map.put("data", sendMap);
             map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
-            System.out.println("tuisonghou----"+map);
             driver.quit();
             String ling="0000";
             String codeResult="errorCode";
@@ -231,7 +227,6 @@ public class ChinaBankService {
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
                 PushSocket.pushnew(map, uuid, "8000","中国银行信用卡认证成功");
-                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }else{
             	//--------------------数据中心推送状态----------------------
             	if(isok==true) {
@@ -241,7 +236,6 @@ public class ChinaBankService {
 				}	            	//---------------------数据中心推送状态----------------------
             	logger.warn("中国银行账单推送失败"+userCard);
             	 PushSocket.pushnew(map, uuid, "9000","中国银行信用卡认证失败");
-            	 Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
             }
         } catch (Exception e) {
             logger.warn("中国银行信用卡认证失败",e);
