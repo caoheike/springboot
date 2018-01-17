@@ -57,8 +57,8 @@ public class MobileService {
 	 * 获取验证码 初始化
 	 *
 	 * @param mobileBean
-	 * @param request
-	 * @param response
+	 * @param
+	 * @param
 	 * @throws FailingHttpStatusCodeException
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -611,8 +611,10 @@ public class MobileService {
 			// System.out.println(page.querySelectorAll(".tdc2").get(2).asText());
 			// data.put("MobileBelong",
 			// page.querySelectorAll(".tdc2").get(2).asText());
+
+			//是否是账单日判断
+			data.put("isBillDate",Dates.isBillDate());
 			map.put("data", data);
-			map.put("isBillDate",Dates.isBillDate());
 			map.put("errorCode", "0000");
 			map.put("errorInfo", "查询成功");
 		} catch (Exception e) {
