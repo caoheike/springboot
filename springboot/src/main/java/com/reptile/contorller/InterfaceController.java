@@ -824,7 +824,6 @@ public class InterfaceController {
 
 				map = resttemplate.SendMessage(map, application.getSendip()
 						+ "/HSDC/authcode/taobaoPush");
-				logger.warn("淘宝推送数据为:" + map);
 				if (map != null
 						&& MessageConstamts.STRING_0000.equals(map.get(
 								MessageConstamts.ERRORCODE).toString())) {
@@ -834,12 +833,10 @@ public class InterfaceController {
 					PushSocket.pushnew(map, uuId, "8000", "淘宝查询成功");
 					logger.warn("获取成功" + idCard + "的信息，并已入库");
 				} else {
-					logger.warn("淘宝推送数据失败:" + map);
 					// --------------------数据中心推送状态----------------------
 					PushState.state(idCard, "TaoBao", 200, map.get("errorInfo")
 							.toString());
 					// ---------------------数据中心推送状态----------------------
-					logger.warn("淘宝推送认证状态200成功:" + map);
 					map.put("errorInfo", "查询失败");
 					map.put("errorCode", "0001");
 					PushSocket.pushnew(map, uuId, "9000", map.get("errorInfo")
@@ -1000,14 +997,13 @@ public class InterfaceController {
 		List<String> addresses = new ArrayList<String>();
 		for (String url : urls) {
 			HtmlPage html = webClient.getPage("http:" + url);
-			logger.warn("----------------url---------" + html.asXml());
+
 			String address = this.getAddress(html);
 			if (!address.isEmpty()) {
 				addresses.add(address);
 			}
 		}
-		logger.warn("----------------addresses---------"
-				+ JSONArray.fromObject(addresses));
+
 		return addresses;
 	}
 
@@ -1079,7 +1075,6 @@ public class InterfaceController {
 				if (s.contains("detailData")) {
 					detailData = s.substring(s.indexOf("var detailData = ")
 							+ "var detailData = ".length(), s.indexOf("//]]>"));
-					logger.warn(((HtmlScript) list.get(i)).asXml());
 				}
 			}
 			JSONArray array = JSONObject.fromObject(detailData)

@@ -62,7 +62,6 @@ public class LongLink {
         JSONObject json = new JSONObject();
         if (msg != null && !msg.equals("")) {
             try {
-                System.out.println("msg====" + msg);
                 session.getBasicRemote().sendText(msg.substring(0, msg.length() - 1).toString() + ",\"resultCode\":\"1111\"}");//链接成功
                 json = JSONObject.fromObject(msg);
             } catch (Exception e) {

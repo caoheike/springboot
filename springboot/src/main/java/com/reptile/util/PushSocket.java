@@ -11,76 +11,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PushSocket {
-	private static Logger logger= LoggerFactory.getLogger(PushSocket.class);
-	/**
-	 * 0001 失败 0000 成功
-	 * @param map
-	 * @param UUID
-	 * @param errorInfo
-	 */
-	public static Map<String, Object> push1(Map<String, Object> map,String UUID,String errorInfo){
-		logger.warn(UUID+"：本次认证流程，现处于阶段为："+errorInfo);
-		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	LongLink.getWsUserMap().get(UUID);
-		String seq_id=LongLink.getWsInfoMap().get(UUID);
-		System.out.println(se);
-		System.out.println(seq_id);
-		try {
-			if(se!=null&&seq_id!=null){
-				if(seq_id.equals("hello")){
-					se.getBasicRemote().sendText("{\"resultCode\":\""+errorInfo+"\",\"seq_id\":\""+seq_id+"\"}");
-				}else{
-					se.getBasicRemote().sendText("{\"resultCode\":"+errorInfo+",\"seq_id\":"+seq_id+"}");	
-				}
-			}
-		} catch (Exception e) {
-			logger.warn("-----------------推送状态时，长链接出现问题-------------------",e);
-			map.put("errorCode", "1100");
-			map.put("errorInfo", "推送状态时，连接已关闭");
-		}
-		return map;
-	}
-	/**
-	 * 0001 失败 0000 成功 1000登陆中
-	 * @param map
-	 * @param UUID
-	 * @param resultCode 
-	 * @param errorInfor 失败原因
-	 * 
-	 */
-	public static Map<String, Object> pushnew(Map<String, Object> map,String UUID,String resultCode,String errorInfor){
+    private static Logger logger = LoggerFactory.getLogger(PushSocket.class);
 
-		logger.warn(UUID+"：本次认证流程，现处于阶段为："+errorInfor);
-		Map<String, Object> mapData=new HashMap<String, Object>();
-		Session se=	LongLink.getWsUserMap().get(UUID);
-		String seq_id=LongLink.getWsInfoMap().get(UUID);
-		System.out.println("se==="+se);
-		System.out.println("seq==="+seq_id);
-		System.out.println(errorInfor+resultCode);
-		String date=currentTime();
-		try {
-			if(se!=null&&seq_id!=null){
-				if(seq_id.equals("hello")){
-					se.getBasicRemote().sendText("{\"resultCode\":\""+resultCode+"\",\"seq_id\":\""+seq_id+"\",\"errorInfor\":\""+errorInfor+"\",\"date\":\""+date+"\"}");
-				}else{
-					//se.getBasicRemote().sendText("{\"resultCode\":"+resultCode+",\"seq_id\":"+seq_id+"}");	
-					se.getBasicRemote().sendText("{\"resultCode\":"+resultCode+",\"seq_id\":"+seq_id+",\"errorInfor\":\""+errorInfor+"\",\"date\":\""+date+"\"}");
-				}
-			}
-		} catch (Exception e) {
-			logger.warn("------------------------推送状态时，长链接出现问题----------------------",e);
-			map.put("errorCode", "1100");
-			map.put("errorInfo", "推送状态时，连接已关闭");
-		}
-		return map;
-	}
-	/**
-	 * 获取当前时间（年月日时分秒）
-	 * @return
-	 */
-	public static String currentTime(){
-		SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss");
-	    String mon = format.format(new Date());
-		return mon;
-	}
+
+    /**
+     * 0001 失败 0000 成功 1000登陆中
+     *
+     * @param map
+     * @param UUID
+     * @param resultCode
+     * @param errorInfor 失败原因
+     */
+    public static Map<String, Object> pushnew(Map<String, Object> map, String UUID, String resultCode, String errorInfor) {
+
+        logger.warn(UUID + "：本次认证流程，现处于阶段为：" + errorInfor);
+        Map<String, Object> mapData = new HashMap<String, Object>();
+        Session se = LongLink.getWsUserMap().get(UUID);
+        String seq_id = LongLink.getWsInfoMap().get(UUID);
+        System.out.println("se===" + se);
+        System.out.println("seq===" + seq_id);
+        System.out.println(errorInfor + resultCode);
+        String date = currentTime();
+
+        String actionType = "oldLink";
+        if (UUID.contains("+")) {
+            logger.warn("--------------------新版本长连接。本次连接目标为："+UUID+"--------actionType:"+actionType);
+            actionType = (UUID.split("\\+"))[1];
+        }
+
+        try {
+            if (se != null && seq_id != null) {
+                se.getBasicRemote().sendText("{\"resultCode\":\"" + resultCode + "\",\"seq_id\":\"" + seq_id + "\",\"errorInfor\":\"" + errorInfor + "\",\"date\":\"" + date + "\",\"actionType\":\"" + actionType + "\"}");
+            }
+        } catch (Exception e) {
+            logger.warn("------------------------推送状态时，长链接出现问题----------------------", e);
+            map.put("errorCode", "1100");
+            map.put("errorInfo", "推送状态时，连接已关闭");
+        }
+        return map;
+    }
+
+    /**
+     * 获取当前时间（年月日时分秒）
+     *
+     * @return
+     */
+    public static String currentTime() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss");
+        String mon = format.format(new Date());
+        return mon;
+    }
 }
