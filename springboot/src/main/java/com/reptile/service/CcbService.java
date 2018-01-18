@@ -11,17 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import javax.servlet.http.HttpServletRequest;
-
-
-
-
-
-
-
-
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,7 +20,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +53,7 @@ public class CcbService {
 			//创建driver(IE)
 //			System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 //			WebDriver driver = new InternetExplorerDriver();
+		  	String flag = "";
 			//创建谷歌浏览器
 			System.setProperty(ConstantInterface.chromeDriverKey, ConstantInterface.chromeDriverValue);
 			WebDriver driver = new ChromeDriver();
@@ -144,6 +134,7 @@ public class CcbService {
 		  //开户时间
 		  String openTime = null;
 		  PushSocket.pushnew(map, uuid, "2000","建设银行储蓄卡登录成功");
+		  flag = "2000";
 		  try {
 			  	//第一级的frame
 			  	 driver.switchTo().frame("txmainfrm");
@@ -156,6 +147,7 @@ public class CcbService {
 				//开户状态
 				 accountType	=page.getElementsByClass("mt_10").text();
 				 PushSocket.pushnew(map, uuid, "5000","建设银行储蓄卡获取中");
+				 flag = "5000";
 				 page.getElementsByClass("pl_10 pt_10").text();
 				 String open= page.getElementsByClass("mb_20").text();
 				//开户网点
@@ -300,6 +292,7 @@ public class CcbService {
 								}
 		                    //数据获取完成，进行推送
 		                    PushSocket.pushnew(map, uuid, "6000","建设银行储蓄卡获取成功");
+		                    flag = "6000";
 		                    Collections.reverse(trs);
 		                    Map<String,Object> baseMes=new HashMap<String, Object>(200);
 		                    Map<String,Object> ccb=new HashMap<String, Object>(200);
@@ -357,11 +350,26 @@ public class CcbService {
 					 return map;  
 			    }	
 			    } catch (Exception e) {
+			    	String state = "2000";
+					String state1 = "5000";
+					String state2 = "6000";
+					if (state.equals(flag)) {
+						PushSocket.pushnew(map, uuid, "7000", "建设银行账单获取失败");
+						PushState.state(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败");
+					} else if (state1.equals(flag)) {
+						PushSocket.pushnew(map, uuid, "7000", "建设银行账单获取失败");
+						PushState.state(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败");
+					} else if (state2.equals(flag)) {
+						PushSocket.pushnew(map, uuid, "9000", "认证失败");
+						PushState.state(iDNumber, "bankBillFlow", 200,"认证失败");
+					} else {
+						PushSocket.pushnew(map, uuid, "3000", "登录失败，密码错误");
+						PushState.state(iDNumber, "bankBillFlow", 200, "登录失败，密码错误");
+					}
 			    	 e.printStackTrace();
 			    	 PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
 			    	 map.clear();
 					 logger.warn("建设银行详单获取失败"+iDNumber);
-					 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 					 map.put("errorInfo","获取账单失败");
 					 map.put("errorCode","0002");
 					try {
