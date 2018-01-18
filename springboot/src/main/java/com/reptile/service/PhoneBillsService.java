@@ -351,11 +351,17 @@ public class PhoneBillsService {
                         result = json.substring(0, json.length() - 1);
                     }
                     JSONObject jsonObject = JSONObject.fromObject(result);
-                    map.put("errorCode", "0002");
-                    map.put("errorInfo", jsonObject.get("retMsg").toString());
 
-                    PushSocket.pushnew(map, uuid, "3000", jsonObject.get("retMsg").toString());
-                    PushState.state(userNumber, "callLog", 200, jsonObject.get("retMsg").toString());
+                    String retMsg = jsonObject.get("retMsg").toString();
+                    if(retMsg.contains("请先登录")){
+                        logger.warn(System.currentTimeMillis()+": "+userNumber+":移动二次身份认证时出现session信息为空，已隐藏！原信息为:"+retMsg);
+                        retMsg="系统繁忙，请稍后重试";
+                    }
+                    map.put("errorCode", "0002");
+                    map.put("errorInfo", retMsg);
+
+                    PushSocket.pushnew(map, uuid, "3000", retMsg);
+                    PushState.state(userNumber, "callLog", 200, retMsg);
 
                     return map;
                 }
