@@ -24,6 +24,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.GetMonth;
+import com.reptile.util.PushSocket;
+import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 @Service
 public class GZtelecomService {
@@ -90,6 +92,8 @@ public class GZtelecomService {
 	public Map<String,Object> getDetail(HttpServletRequest request,String phoneNumber,String servePwd,String code,String longitude,String latitude,String uuid) {
 		    Map<String, Object> map = new HashMap<String, Object>(16);
 		    Map<String, Object>  data=new HashMap<String, Object>();
+		    PushState.state(phoneNumber, "callLog",100);
+		    PushSocket.pushnew(map, uuid, "1000","登录中");
 		    List<String> allDatas=new ArrayList<>();
 		    //从session中获得webClient;
 		    WebClient webClient=(WebClient)request.getSession().getAttribute("GTelecomCode");
@@ -97,6 +101,8 @@ public class GZtelecomService {
 	        	 logger.warn("---------------------------贵州电信:"+phoneNumber+",请先获取验证码-------------------------");
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
+			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
+			     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
 				 return map;
 		    }
 		    try {
@@ -108,16 +114,21 @@ public class GZtelecomService {
 			    	logger.warn("---------------------------贵州电信:"+phoneNumber+",验证码错误-------------------------");
 			    	 map.put("errorCode", "0001");
 				     map.put("errorInfo", "验证码错误");	
+	 				 PushState.state(phoneNumber, "callLog",200,"验证码错误");
+	 				 PushSocket.pushnew(map, uuid, "3000","验证码错误");
 				     return map;
 				}else if (codeIsTrue.asText().equals("-1")) {
-					//请先获取验证码(官网js返回)
+					//请先获取验证码(官网js返回--)
 					logger.warn("---------------------------贵州电信:"+phoneNumber+",请先获取验证码-------------------------");
 			    	 map.put("errorCode", "0001");
-				     map.put("errorInfo", "请先获取验证码");	
+				     map.put("errorInfo", "请先获取验证码");
+				     PushState.state(phoneNumber, "callLog",200,"验证码错误");
+	 				 PushSocket.pushnew(map, uuid, "3000","验证码错误");
 				     return map;
 				}else {
 					//验证码正确
 					if (codeIsTrue.asText().contains("CDMA_CALL_CDR")) {
+						 PushSocket.pushnew(map, uuid, "5000","获取数据中");
 						//所有详单
 						allDatas=this.getAllDetail(webClient, checkCodeUrl, code, 6,phoneNumber, logger);
 						System.out.println(allDatas.toString());
@@ -146,7 +157,9 @@ public class GZtelecomService {
 						//未存在记录
 						 logger.warn("---------------------------贵州电信:"+phoneNumber+",详单为空-------------------------");
 				    	 map.put("errorCode", "0001");
-					     map.put("errorInfo", "未存在通话记录");	
+					     map.put("errorInfo", "未存在通话记录");
+					     PushState.state(phoneNumber, "callLog",200,"未存在通话记录");
+			        	 PushSocket.pushnew(map, uuid, "9000","未存在通话记录");
 					     return map;
 					}
 					
@@ -154,7 +167,9 @@ public class GZtelecomService {
 		    }  catch (IOException e) {
 		    	 logger.error("---------------------------贵州电信:"+phoneNumber+",请先获取验证码-------------------------",e);
 		    	 map.put("errorCode", "0001");
-			     map.put("errorInfo", "网络异常");	
+			     map.put("errorInfo", "网络异常");
+			     PushState.state(phoneNumber, "callLog",200,"网络连接异常");
+    	         PushSocket.pushnew(map, uuid, "3000","网络连接异常");
 				 return map;
 			}
 	       
