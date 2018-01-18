@@ -26,6 +26,7 @@ public class BackupProducessService {
 	private static String telecom = "telecom";
 	private static String success = "0000";
 	private static String errorCode = "errorCode";
+	private static String errorInfo ="errorInfo";
 	/**
 	 * 认证流程
 	 * @param request
@@ -52,6 +53,7 @@ public class BackupProducessService {
 			Thread.sleep(2000);
 			//推送数据
 			data =this.pushDate(phoneNumber, servePwd, type, longitude, latitude, data, list);
+			logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"---------数据中心返回：--------"+data.get(errorInfo)+"----------------------");
 		    //根据data判断认证状态
 		   if(data.get(errorCode).equals(success)){
 				logger.warn("-----------------"+this.getType(type)+":"+phoneNumber+"认证成功----------------------");
