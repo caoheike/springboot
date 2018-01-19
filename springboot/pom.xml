@@ -292,23 +292,23 @@
 		</dependency>
 
 		<!--数据库连接池配置 -->
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<!-- 请不要使用1.0.0版本，因为还不支持拦截器插件，1.0.1-SNAPSHOT 是博主写帖子时候的版本，大家使用最新版本即可 -->
-			<version>1.1.1</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.mybatis.spring.boot</groupId>-->
+			<!--<artifactId>mybatis-spring-boot-starter</artifactId>-->
+			<!--&lt;!&ndash; 请不要使用1.0.0版本，因为还不支持拦截器插件，1.0.1-SNAPSHOT 是博主写帖子时候的版本，大家使用最新版本即可 &ndash;&gt;-->
+			<!--<version>1.1.1</version>-->
+		<!--</dependency>-->
 
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<!-- 版本号可以不用指定，Spring Boot会选用合适的版本 -->
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.zaxxer</groupId>-->
+			<!--<artifactId>HikariCP</artifactId>-->
+			<!--&lt;!&ndash; 版本号可以不用指定，Spring Boot会选用合适的版本 &ndash;&gt;-->
+		<!--</dependency>-->
 
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>mysql</groupId>-->
+			<!--<artifactId>mysql-connector-java</artifactId>-->
+		<!--</dependency>-->
 		<!--百度云识别图片 -->
 		<dependency>
 			<groupId>com.baidu.aip</groupId>
@@ -351,10 +351,10 @@
 			<version>3.04.01-1.3</version>
 		</dependency>
 		<!-- 配置redis -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
+<!--<dependency>-->
+    <!--<groupId>org.springframework.boot</groupId>-->
+    <!--<artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--</dependency>-->
 	</dependencies>
 
 

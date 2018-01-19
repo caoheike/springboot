@@ -118,10 +118,6 @@ public class ChengduTelecomService {
                 HtmlPage page = webClient.getPage(getMes);
                 String result = page.asText();
                 JSONObject jsonObject = JSONObject.fromObject(result);
-                PushSocket.pushnew(map, uuid, "2000","登录成功");
-                Thread.sleep(2000);
-                PushSocket.pushnew(map, uuid, "5000","获取数据中");
-                signle="5000";
                 String record = null;
                 String retCode="retCode";
                 String flag0="0";
@@ -139,8 +135,10 @@ public class ChengduTelecomService {
                     record = jsonObject.get("json").toString();
                     list.add(record);
                 }
-
-
+                PushSocket.pushnew(map, uuid, "2000","登录成功");
+                Thread.sleep(2000);
+                PushSocket.pushnew(map, uuid, "5000","获取数据中");
+                signle="5000";
                 Calendar calendar = Calendar.getInstance();
                 Calendar calendar1 = Calendar.getInstance();
                 int boundCount=5;

@@ -1,6 +1,10 @@
 package com.reptile.util;
 
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -93,6 +97,45 @@ public class SimpleHttpClient {
         }
         HttpResponse httpResponse = httpClient.execute(httpPost);
         return EntityUtils.toString(httpResponse.getEntity());
+    }
+
+    /**
+     * POST 请求
+     * @param url
+     * @param
+     * @param
+     * @return
+     * @throws ParseException
+     * @throws IOException
+     */
+    public static String post1(String url, String str, String cookie) throws ParseException, IOException{
+//    	 PostMethod post = new PostMethod(url);
+//         post.setRequestHeader("Cookie", cok);
+//         String str = "{loginType:'01',memCode:'" + passWordSec + "',isBord:'false',phone:'" + userNumber + "',page:'new',source:'PC',valiCode:'" + imageCode + "'}";
+//         RequestEntity entity = new StringRequestEntity(str, "text/html", "utf-8");
+//         post.setRequestEntity(entity);
+//         httpClient.executeMethod(post);
+//         String result = post.getResponseBodyAsString();
+
+        HttpClient httpClient = new HttpClient();
+
+        PostMethod post = new PostMethod(url);
+        post.setRequestHeader("Cookie", cookie);
+        post.setRequestHeader("bfw-ctrl", "json");
+        post.setRequestHeader("Connection", "keep-alive");
+        post.setRequestHeader("Content-Type", "text/json");
+        post.setRequestHeader("Host", "ebsnew.boc.cn");
+        post.setRequestHeader("Origin", "https://ebsnew.boc.cn");
+        post.setRequestHeader("Referer", "https://ebsnew.boc.cn/boc15/welcome_ele.html?v=20171227064943706&locale=zh&login=card&segment=1");
+        post.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        RequestEntity entity = new StringRequestEntity(str, "text/html", "utf-8");
+        // List list=new ArrayList<>();
+        //list.add(new org.apache.commons.httpclient.NameValuePair("",""),new org.apache.commons.httpclient.NameValuePair("",""));
+        post.addParameter("_locale", "zh_CN" );
+        post.setRequestEntity(entity);
+        httpClient.executeMethod(post);
+        String result = post.getResponseBodyAsString();
+        return result;
     }
 
     /**

@@ -3,26 +3,26 @@ server:
 
 manInfo:
     ip: 113.200.105.36
-    sendip: http://117.34.70.217:8080
+    sendip: http://10.1.1.12:8080
     port: 8080
-spring:
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.jdbc.Driver
-    username: root
-    password: 123
-    hikari:
-      max-lifetime: 1765000
-      maximum-pool-size: 15
-    url: jdbc:mysql://192.168.2.151:3306/
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-email:
-  mailSmtpHost: smtp.163.com
-  mailSmtpPort: 25
-  fromUserName: m17301071346@163.com
-  fromUserPassword: xsc1007
-  toEmail: songcui.xue@hoomsun.com,dangwei.lu@hoomsun.com,hongzheng.zhu@hoomsun.com,bin.liu01@hoomsun.com,shuang.fang@hoomsun.com,siqin.lu@hoomsun.com,weiwei.du@hoomsun.com,kesen.liu@hoomsun.com
+#spring:
+#  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.jdbc.Driver
+#    username: root
+#    password: 123
+#    hikari:
+#      max-lifetime: 1765000
+#      maximum-pool-size: 15
+#    url: jdbc:mysql://192.168.2.151:3306/
+#mybatis:
+#  mapper-locations: classpath:mapper/*.xml
+#email:
+#  mailSmtpHost: smtp.163.com
+#  mailSmtpPort: 25
+#  fromUserName: m17301071346@163.com
+#  fromUserPassword: xsc1007
+#  toEmail: songcui.xue@hoomsun.com,dangwei.lu@hoomsun.com,hongzheng.zhu@hoomsun.com,bin.liu01@hoomsun.com,shuang.fang@hoomsun.com,siqin.lu@hoomsun.com,weiwei.du@hoomsun.com,kesen.liu@hoomsun.com
 
     
   
