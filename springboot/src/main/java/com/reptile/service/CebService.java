@@ -38,11 +38,12 @@ public class CebService {
 		System.setProperty(ConstantInterface.ieDriverKey, ConstantInterface.ieDriverValue);
 		WebDriver driver = new InternetExplorerDriver();
 		try {
+			// 隐式等待
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			// 光大银行信用卡登录页面地址
 			driver.get("https://xyk.cebbank.com/mycard/bill/havingprintbill-query.htm");
 			driver.navigate().refresh();
-			// 隐式等待
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			
 			// login
 			WebElement loginform = driver.findElement(By.id("login"));
 			// 输入用户名及密码
@@ -81,17 +82,42 @@ public class CebService {
 			// 判断页面是否有这个标签从而验证信息
 			if (driver.getPageSource().contains(error)) {
 				driver.findElement(ByClassName.className(error));
-				logger.info("光大银行登录时输入有误" + usercard);
+				
 				map.put("errorInfo", "光大银行登录时输入有误");
 				map.put("errorCode", "0002");
+				logger.warn("光大银行登录时输入有误开始" + usercard+map);
 				try {
 					driver.quit();
 					// 关闭浏览器
-					InvokeBat4.runbat();
+//					InvokeBat4.runbat();
 				} catch (Exception e3) {
-					e3.printStackTrace();
 				}
+				logger.warn("光大银行登录时输入有误" + usercard+map);
 				return map;
+//			if (driver.getPageSource().contains(error)) {
+//				WebElement errordiv=  driver.findElement(ByClassName.className(error));
+//				System.out.println(errordiv.getText()+"========");
+//				System.out.println(errordiv.getText().contains("失败了")+"==========");
+//					if(errordiv.getText().contains("失败了") ){
+//						try {
+//							driver.quit();
+//							// 关闭浏览器
+////							InvokeBat4.runbat();
+//							Thread.sleep(3000);
+//						} catch (Exception e3) {
+//						}
+//						ceblogin1(request, usercard, userName);
+//					}
+//					logger.info("光大银行登录时输入有误" + usercard);
+//					map.put("errorInfo", "光大银行登录,"+errordiv.getText());
+//					map.put("errorCode", "0002");
+//					try {
+//						driver.quit();
+//						// 关闭浏览器
+//						InvokeBat4.runbat();
+//					} catch (Exception e3) {
+//					}
+//					return map;
 			} else {
 				// 没有popup-dialog-message，则输入的信息为正确
 				// 获得session
@@ -108,17 +134,18 @@ public class CebService {
 		} catch (Exception e) {
 			// 在登陆过程中出现错误会到catch中
 			e.printStackTrace();
-			logger.info("光大银行登录时发送验证码失败" + usercard);
+			logger.warn("光大银行登录时发送验证码失败" + usercard);
 			map.put("errorInfo", "服务繁忙！请稍后再试，验证码发送失败");
 			map.put("errorCode", "0001");
 			try {
 				driver.quit();
-				InvokeBat4.runbat();
+//				InvokeBat4.runbat();
 			} catch (Exception e2) {
-				e2.printStackTrace();
+				
 			}
 
 		}
+		logger.warn("光大银行登录时" + usercard+map);
 		return map;
 
 	}
@@ -130,6 +157,7 @@ public class CebService {
 		Map<String, Object> map = new HashMap<String, Object>(200);
 		// 向app推送登录中的状态
 		PushSocket.pushnew(map, uuid, "1000", "光大银行登录中");
+		logger.warn("光大信用卡第二步进入==========="+userCard+passWord+userAccount);
 		String flag = "";
 		if (isok == true) {
 			PushState.state(userCard, "bankBillFlow", 100);
@@ -145,23 +173,26 @@ public class CebService {
 		if (sessiondriver == null) {
 			if (isok == true) {
 				PushState.state(userCard, "bankBillFlow", 200);
+				logger.warn("光大信用卡第二步进入========200==="+userCard+passWord+userAccount);
 			}else{
 				PushState.statenew(userCard, "bankBillFlow", 200, "连接超时！请重新获取验证码");
+				logger.warn("光大信用卡第二步进入======连接超时！请重新获取验证码==200==="+userCard+passWord+userAccount);
 			}
 			// 当session为空时，返回map状态
 			logger.warn("连接超时！请重新获取验证码" + userCard);
 			map.put("errorInfo", "连接超时！请重新获取验证码");
 			map.put("errorCode", "0002");
 			// 并推送3000状态
+			logger.warn("光大信用卡第二步进入======连接超时！请重新获取验证码==3000==="+userCard+passWord+userAccount);
 			PushSocket.pushnew(map, uuid, "3000", "连接超时！请重新获取验证码");
 			try {
 				// 并关闭浏览器
 				driver.quit();
 				// 关闭进程
-				InvokeBat4.runbat();
+//				InvokeBat4.runbat();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
+			logger.warn("光大信用卡第二步进入========200==="+userCard+passWord+userAccount+map);
 			return map;
 		}
 		try {
@@ -173,6 +204,7 @@ public class CebService {
 			}
 			//如果光大的验证码输入时间较晚，页面上的图片验证码会刷新，需要进行判断是否刷新，然后重新打码进行输入。
 		    String 	yzmcode= loginform.findElement(By.id("yzmcode")).getText();
+			logger.warn("光大信用卡第二步进入========	yzmcode==="+userCard+passWord+userAccount+map+"========="+yzmcode);
 		    if (yzmcode.length()==0) {
 		    	System.out.println(loginform.findElement(By.id("yzmcode")).getText()+"-*-*-*-*-*-*-");
 		    	List<WebElement> image = loginform.findElements(By.tagName("img"));
@@ -204,6 +236,7 @@ public class CebService {
 			loginform.findElement(ByClassName.className("login-style-bt")).click();
 			// 判断验证码是否正确
 			String error = "popup-dialog-message";
+			logger.warn("光大信用卡第二步进入========	判断短信验证是否正确==="+userCard+passWord+userAccount+"========="+error);
 			if (driver.getPageSource().contains(error)) {
 				driver.findElement(ByClassName.className(error));
 				Thread.sleep(2000);
@@ -215,13 +248,14 @@ public class CebService {
 				logger.warn("光大银行登录时发送验证码输入有误" + userCard);
 				map.put("errorInfo", "短信验证码输入有误");
 				map.put("errorCode", "0002");
+				logger.warn("光大信用卡第二步进入========	判断短信验证是否正确==="+userCard+passWord+userAccount+"========="+error);
 				try {
 					driver.quit();
-					InvokeBat4.runbat();
+//					InvokeBat4.runbat();
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 				PushSocket.pushnew(map, uuid, "3000", "短信验证码输入有误");
+				logger.warn("光大信用卡第二步进入========	短信验证码输入有误==="+userCard+passWord+userAccount+"========="+error);
 				return map;
 			} else {
 				Thread.sleep(3000);
@@ -237,9 +271,11 @@ public class CebService {
 				List<String> times = new ArrayList<String>();
 				// 向app前端进行推送
 				PushSocket.pushnew(map, uuid, "2000", "光大银行信用卡登录成功");
+				logger.warn("光大信用卡第二步进入========	光大银行信用卡登录成功=2000=="+userCard+passWord+userAccount);
 				flag = "2000";
 				// 向app前端进行推送
 				PushSocket.pushnew(map, uuid, "5000", "光大银行信用卡信息获取中");
+				logger.warn("光大信用卡第二步进入========	光大银行信用卡信息获取中=5000=="+userCard+passWord+userAccount);
 				flag = "5000";
 				// 将月份进行加工
 				for (int i = 1; i < tr.size(); i++) {
@@ -258,6 +294,7 @@ public class CebService {
 				}
 				// 详单获取成功，向数据中心推送数据
 				PushSocket.pushnew(map, uuid, "6000", "光大银行信用卡信息获取成功");
+				logger.warn("光大信用卡第二步进入========	光大银行信用卡信息获取成功=6000=="+userCard+passWord+userAccount);
 				flag = "6000";
 				Map<String, Object> seo = new HashMap<String, Object>(200);
 				System.out.println("页面已经放置到html中");
@@ -271,9 +308,8 @@ public class CebService {
 				map = resttemplate.SendMessage(seo, applications.getSendip() + "/HSDC/BillFlow/BillFlowByreditCard");
 				try {
 					driver.quit();
-					InvokeBat4.runbat();
+//					InvokeBat4.runbat();
 				} catch (Exception e1) {
-					e1.printStackTrace();
 				}
 				// 判断数据传输后的结果，进行判断
 				String errorCode = "errorCode";
@@ -285,6 +321,7 @@ public class CebService {
 					map.put("errorInfo", "查询成功");
 					map.put("errorCode", "0000");
 					PushSocket.pushnew(map, uuid, "8000", "光大银行信用卡认证成功");
+					logger.warn("光大信用卡第二步进入========	光大银行信用卡认证成功=8000=="+userCard+passWord+userAccount+map);
 				} else {
 					// --------------------数据中心推送状态----------------------
 					if (isok == true) {
@@ -295,6 +332,7 @@ public class CebService {
 					// ---------------------数据中心推送状态----------------------
 					logger.warn("光大银行账单推送失败" + userCard);
 					PushSocket.pushnew(map, uuid, "9000", "光大银行信用卡认证失败");
+					logger.warn("光大信用卡第二步进入========	光大银行信用卡认证失败=9000=="+userCard+passWord+userAccount+map);
 				}
 			}
 
@@ -302,9 +340,8 @@ public class CebService {
 			// 当页面获取的过程中
 			try {
 				driver.quit();
-				InvokeBat4.runbat();
+//				InvokeBat4.runbat();
 			} catch (Exception e3) {
-				e3.printStackTrace();
 			}
 			// ---------------------------数据中心推送状态----------------------------------
 			String state = "2000";
@@ -343,11 +380,11 @@ public class CebService {
 			// ---------------------------数据中心推送状态----------------------------------
 			e.printStackTrace();
 			map.clear();
-			logger.warn("光大银行账单推送失败" + userCard);
+			logger.warn("光大银行账单推送失败" + userCard+map);
 			map.put("errorInfo", "获取账单失败");
 			map.put("errorCode", "0002");
 		}
-
+		logger.warn("光大信用卡第二步进入========	"+userCard+passWord+userAccount+map);
 		return map;
 
 	}
