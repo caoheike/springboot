@@ -1,8 +1,12 @@
 package com.reptile.util;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import java.io.File;
 import java.io.FileReader;
 
 /**
@@ -13,7 +17,9 @@ import java.io.FileReader;
  */
 public class JavaExcuteJs {
     public static void main(String[] args) throws Exception {
-        excuteJs("f://shanxi.js","strEnc","18682940971","3","2","1");
+//        excuteJs("f://shanxi.js","strEnc","18682940971","3","2","1");
+        String valAesEncryptSet = JavaExcuteJs.excuteJs("static/js/telecomlogin.js", "valAesEncryptSet", "131420");
+        System.out.println(valAesEncryptSet);
     }
 
     /**
@@ -25,10 +31,12 @@ public class JavaExcuteJs {
      * @throws Exception
      */
     public static String excuteJs(String jsPath,String methodName,String ...parameter) throws Exception {
+        Resource classPathResource = new ClassPathResource(jsPath);
+        File file = classPathResource.getFile();
         String result=null;
         ScriptEngineManager manager=new ScriptEngineManager();
         ScriptEngine javascript = manager.getEngineByName("javascript");
-        FileReader fileReader=new FileReader(jsPath);
+        FileReader fileReader=new FileReader(file.getAbsoluteFile());
         javascript.eval(fileReader);
         if(javascript instanceof Invocable) {
             Invocable invoke = (Invocable)javascript;

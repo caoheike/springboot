@@ -1,13 +1,12 @@
 package com.reptile.contorller.chinatelecom;
 
+import com.reptile.model.TelecomBeanByLu;
+import com.reptile.service.TelecomTestService;
 import com.reptile.service.chinatelecom.TelecomLoadVerificationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -26,6 +25,8 @@ public class TelecomLoadVerificationController {
 
     @Autowired
     private TelecomLoadVerificationService service;
+    @Autowired
+    private TelecomTestService testService;
 
     @ApiOperation(value = "0.1获取手机号码信息", notes = "参数：手机号")
     @ResponseBody
@@ -48,4 +49,15 @@ public class TelecomLoadVerificationController {
                                            @RequestParam("servePwd") String servePwd) {
         return service.loadGlobalDX(request, userName, servePwd);
     }
+
+    @ApiOperation(value = "1.1.登录全国电信网上营业厅(发包模式)", notes = "参数：手机号，服务密码,省份id")
+    @ResponseBody
+    @RequestMapping(value = "loadGlobalDXPostPackage", method = RequestMethod.POST)
+    public Map<String, String> loadGlobalDXPostPackage(HttpServletRequest request,@RequestBody TelecomBeanByLu telecomBeanByLu) {
+        String userName=telecomBeanByLu.getUserName();
+        String servePwd=telecomBeanByLu.getServePwd();
+        String provinceId=telecomBeanByLu.getProvinceId();
+        return testService.loginTelecom(request,userName,servePwd,provinceId);
+    }
+
 }
