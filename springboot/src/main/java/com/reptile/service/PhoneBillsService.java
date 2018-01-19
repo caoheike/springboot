@@ -392,9 +392,10 @@ public class PhoneBillsService {
                                 results = pages.getWebResponse().getContentAsString();
                                 break;
                             } else if (j == 2) {
+                                logger.warn(sDate+"：：三次未请求到数据，跳过进行下一月账单读取");
                                 cal.add(Calendar.MONTH,-1);
                                 sDate = simpleDateFormat.format(cal.getTime());
-                                break loop;
+                                continue loop;
                             }
                             Thread.sleep(2000);
                         }
