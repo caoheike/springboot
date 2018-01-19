@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import com.reptile.util.GetMonth;
 import com.reptile.util.MyCYDMDemo;
+import com.reptile.util.PhantomJs;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -73,9 +74,7 @@ public class NingXiaTelecomService {
 			String phoneNumber, String servePwd) {
 
 		Map<String, Object> map = new HashMap<String, Object>(16);
-		System.setProperty("phantomjs.binary.path",
-				"C:/phantomjs-2.1.1-windows/bin/phantomjs.exe");
-		WebDriver driver = new PhantomJSDriver();
+		WebDriver driver = PhantomJs.phantomJsDriver();
 		driver.manage().window().maximize();
 		try {
 			driver.get("http://login.189.cn/web/login");
