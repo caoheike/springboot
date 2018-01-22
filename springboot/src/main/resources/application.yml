@@ -1,15 +1,15 @@
 spring:
   profiles:
     active: dev
-   # Redis配置
-  redis:
-   host: 127.0.0.1
-   port: 6379
-   password:
-  # 连接超时时间（毫秒）
-   timeout: 10000
-  pool:
-   max-idle: 20
-   min-idle: 5
-   max-active: 20
-   max-wait: 2
+#   # Redis配置
+#  redis:
+#   host: 127.0.0.1
+#   port: 6379
+#   password:
+#  # 连接超时时间（毫秒）
+#   timeout: 10000
+#  pool:
+#   max-idle: 20
+#   min-idle: 5
+#   max-active: 20
+#   max-wait: 2

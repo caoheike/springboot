@@ -1,11 +1,18 @@
 package com.reptile.service.depositcard;
 
 import com.reptile.util.*;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import netscape.javascript.JSObject;
+
+import org.apache.commons.collections.map.HashedMap;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,8 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -97,7 +107,7 @@ public class ChinaBankDepositCardService {
             //识别验证码
             String code = RobotUntil.getImgFileByScreenshot(imageCode, driver, file);
             if(code.length()==0){
-            	code="5210";
+                code="5210";
             }
             //输入验证码
             input.get(5).sendKeys(code.toLowerCase());
@@ -128,17 +138,17 @@ public class ChinaBankDepositCardService {
                 driver.quit();
                 return map;
             }
-            
+
             boolean contains = driver.getPageSource().contains("用户名/银行卡号");
             if(contains){
-            	map.put("errorCode", "0001");
+                map.put("errorCode", "0001");
                 map.put("errorInfo", "登录失败，系统繁忙");
                 PushSocket.pushnew(map, uuid, "3000","登录失败，系统繁忙");
                 driver.quit();
                 PushState.state(idNumber, "savings",200,"登录失败，系统繁忙");
                 return map;
             }
-            
+
             PushSocket.pushnew(map, uuid, "2000","登录成功");
             Thread.sleep(2000);
             PushSocket.pushnew(map, uuid, "5000","数据获取中");
@@ -149,12 +159,22 @@ public class ChinaBankDepositCardService {
             map.put("baseMes", cardMain.getAttribute("innerHTML"));
             logger.warn("中国银行储蓄卡基本信息获取成功");
             //获取详单信息
-            dataList = getItemMes(dataList, driver);
-            logger.warn("中国银行储蓄卡信息解析成功");
-            map.put("itemMes", dataList);
+            /*dataList = getItemMes(dataList, driver);
+             map.put("itemMes", dataList);
             //解析获得的数据
-            map = analyData(map);
+            map = analyData(map);*/
 
+
+            //--------获取详单信息  发包的--------------------------------------------
+            //6217853600031823866    521888
+            JSONArray  dateArray= getItemMesfb(driver);
+            map.put("itemMes", dateArray);
+            //解析获得的数据
+            map = analyDatafb(map);
+            //--------获取详单信息  发包的结束-----------------------------------------
+
+            logger.warn("中国银行储蓄卡信息解析成功");
+            System.out.println("最后的数据--------"+map);
             map.put("IDNumber", idNumber);
             map.put("cardNumber", cardNumber);
             map.put("userName", userName);
@@ -167,11 +187,11 @@ public class ChinaBankDepositCardService {
             String resultValidate="0000";
             String resultCode="errorCode";
             if(map!=null&&resultValidate.equals(map.get(resultCode).toString())){
-            	  PushState.state(idNumber, "savings",300);
-            	PushSocket.pushnew(map, uuid, "8000","认证成功");
+                PushState.state(idNumber, "savings",300);
+                PushSocket.pushnew(map, uuid, "8000","认证成功");
             }else {
-            	  PushState.state(idNumber, "savings",200,"认证失败");
-            	PushSocket.pushnew(map, uuid, "9000","认证失败");
+                PushState.state(idNumber, "savings",200,"认证失败");
+                PushSocket.pushnew(map, uuid, "9000","认证失败");
             }
             logger.warn("中国银行储蓄卡账单信息推送完成");
             driver.quit();
@@ -186,6 +206,7 @@ public class ChinaBankDepositCardService {
         }
         return map;
     }
+
 
     /**
      *
@@ -246,7 +267,6 @@ public class ChinaBankDepositCardService {
         }
         return dataList;
     }
-
 
     /**
      * 解析从页面获取到的数据并封装
@@ -316,6 +336,7 @@ public class ChinaBankDepositCardService {
                 dataList.add(detailMap);
             }
         }
+        System.out.println("---dataList---"+dataList);
         return dataList;
     }
 
@@ -336,4 +357,220 @@ public class ChinaBankDepositCardService {
         return map;
     }
 
+    /**
+     * 发包的  交易明细数据
+     * @param
+     * @param driver
+     * @return
+     */
+    @SuppressWarnings("AlibabaUndefineMagicConstant")
+    private JSONArray getItemMesfb(ChromeDriver driver) {
+        //切换至交易明细
+        List<WebElement> element = driver.findElements(By.className("tabs"));
+        for (int i = 0; i < element.size(); i++) {
+            if (element.get(i).getText().contains("交易明细")) {
+                element.get(i).click();
+            }
+        }
+        JSONArray Listcontent =new JSONArray();
+        try {
+            Thread.sleep(2000);
+            //第一个发包的参数
+            String str=paramsstr(1,"");
+            String url="https://ebsnew.boc.cn/BII/PsnGetUserProfile.do";
+            //cookie
+            Set<Cookie> ingoCookie = driver.manage().getCookies();
+            StringBuffer cookies=new StringBuffer();
+            for (Cookie co:ingoCookie) {
+                cookies.append(co.getName()+"="+co.getValue()+";");
+            }
+            String cookie = cookies.toString();
+
+            //第一次发包
+            String response1=SimpleHttpClient.post1(url,str, cookie);
+            //获取返回结果中的第二次发包参数需要的值 conversationId
+            JSONObject fromObject = JSONObject.fromObject(response1);
+            JSONArray fromObject1 = JSONArray.fromObject(fromObject.get("response"));
+
+            //第二个发包的参数
+            str=paramsstr(2,JSONObject.fromObject(fromObject1.get(0)).get("result").toString());
+            //第二次发包
+            response1=SimpleHttpClient.post1(url,str, cookie);
+            JSONObject fromObjects = JSONObject.fromObject(response1);
+            JSONArray fromObject3 = JSONArray.fromObject(fromObjects.get("response"));
+            String strr= JSONObject.fromObject(fromObject3.get(0)).get("result").toString();
+            JSONObject List = JSONObject.fromObject(strr);
+            Listcontent = JSONArray.fromObject(List.get("List"));
+
+            System.out.println("--交易明细数据获取--"+Listcontent.toString());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return Listcontent;
+    }
+
+
+    /**
+     * 获取交易明细的发包参数
+     * @param i  第几次发包
+     * @param conversationId 第二次发包的参数值 由第一次发包获取
+     * @return
+     */
+    private String paramsstr(int i,String conversationId) {
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy/MM/dd");
+        Calendar cal = Calendar.getInstance();
+        String endTime = sim.format(cal.getTime());
+        String year=endTime.substring(0, 4);
+        int year1=Integer.parseInt(year);
+        String nowMonth=endTime.substring(5, 7);
+        int nowMonth1=Integer.parseInt(nowMonth);
+        String beginTime=GetMonth.beforMonth1(year1, nowMonth1, 6);
+        System.out.println(endTime+","+beginTime);
+        String str="";
+        JSONObject request=new JSONObject();
+        request.put("local", "zh_CN");
+        request.put("agent", "WEB15");
+        request.put("bfw-ctrl", "json");
+        request.put("version", "");
+        request.put("device", "");
+        request.put("platform", "");
+        request.put("plugins", "");
+        request.put("page", "");
+        request.put("ext", "");
+
+        JSONObject request1=new JSONObject();
+        request1.put("key", "val");
+        request1.put("local", "zh_CN");
+        request1.put("agent", "WEB15");
+        request1.put("bfw-ctrl", "json");
+        request1.put("version", "");
+        request1.put("device", "");
+        request1.put("platform", "");
+        request1.put("plugins", "");
+        request1.put("page", "");
+        request1.put("ext", "");
+
+        JSONObject request3=new JSONObject();
+        request3.put("id", "19");
+        request3.put("method", "PsnAccBocnetCreateConversation");
+        request3.put("conversationId",null);
+        request3.put("params",null);
+
+        JSONArray array=new JSONArray();
+        array.add(request3);
+
+        JSONObject request2=new JSONObject();
+        request2.put("header", request);
+        request2.put("request", array);
+
+        //第二个发包的参数
+        JSONObject params=new JSONObject();
+        params.put("accountSeq", "14317136");
+        params.put("cashRemit", "");
+        params.put("currency","001");
+        params.put("currentIndex","0");
+        params.put("endDate",endTime);
+        params.put("pageSize","500");
+        params.put("startDate",beginTime);
+        params.put("_refresh","true");
+
+
+        JSONObject request22=new JSONObject();
+        request22.put("id", "21");
+        request22.put("method", "PsnAccBocnetQryDebitTransDetail");
+        request22.put("conversationId",conversationId);
+        request22.put("params",params);
+
+        JSONArray array22=new JSONArray();
+        array22.add(request22);
+
+        JSONObject request222=new JSONObject();
+        request222.put("header", request);
+        request222.put("request", array22);
+
+        if(i==1){
+            str=request2.toString();
+        }else{
+            str=request222.toString();
+        }
+        return str;
+    }
+
+    /**
+     * 解析从页面获取到的数据并封装  发包的
+     *
+     * @param
+     * @return
+     */
+    private Map<String, Object> analyDatafb(Map<String, Object> paramMap) throws Exception {
+        Map<String, Object> map = new HashMap<>(16);
+        //账单信息
+        JSONArray itemMes = (JSONArray) paramMap.get("itemMes");
+        //基本信息
+        String baseMes = paramMap.get("baseMes").toString();
+
+        if (itemMes.size() == 0) {
+            map.put("errorCode", "1001");
+            map.put("errorInfo", "账单信息为空");
+            return map;
+        }
+        List billList;
+        Map<String, Object> baseMap;
+        try {
+            //解析账单信息
+            billList = analyBillMethodfb(itemMes);
+            //解析基本信息
+            baseMap = analyBaseMes(baseMes);
+        } catch (Exception e) {
+            logger.warn("数据解析失败", e);
+            throw new Exception("数据解析失败");
+        }
+        map.put("baseMes", baseMap);
+        map.put("billMes", billList);
+        return map;
+    }
+
+    /**
+     * 解析账单信息   发包的
+     *
+     * @param itemMes
+     * @return
+     */
+    private List analyBillMethodfb(JSONArray itemMes) throws Exception {
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        Map<String, Object> detailMap;
+
+        JSONArray json = itemMes;
+        if(json.size()>0){
+            for(int i=0;i<json.size();i++){
+                JSONObject job = json.getJSONObject(i);  // 遍历 jsonarray 数组，把每一个对象转成 json 对象
+                double amount1=Double.parseDouble(job.get("amount").toString());
+                double balance1=Double.parseDouble(job.get("balance").toString());
+                DecimalFormat    df   = new DecimalFormat("######0.00");
+                String amount=df.format(amount1).replace("-", "") ;
+                String balance=df.format(balance1);
+
+                detailMap = new HashMap<>(16);
+
+                detailMap.put("incomeMoney", "");//收入金额
+                detailMap.put("expendMoney", amount);//支出金额   数值
+                detailMap.put("dealDitch", job.get("transChnl"));//交易渠道
+                detailMap.put("dealTime", job.get("paymentDate"));//交易日期
+                detailMap.put("dealReferral", job.get("businessDigest"));//业务摘要  ok
+                detailMap.put("oppositeSideName", job.get("payeeAccountName"));//对方账户名
+                detailMap.put("oppositeSideNumber", job.get("payeeAccountNumber"));//对方账户
+                detailMap.put("currency", job.get("currency"));//币种
+                detailMap.put("balanceAmount", balance);//余额  数值
+                dataList.add(detailMap);
+                System.out.println();
+            }
+        }
+        System.out.println("------dataList--fb--"+dataList) ;  // 得到 每个对象中的属性值
+        return dataList;
+    }
+
 }
+
+
+

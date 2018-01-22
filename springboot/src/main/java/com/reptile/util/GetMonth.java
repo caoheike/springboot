@@ -8,7 +8,7 @@ public class GetMonth {
 	/**
 	 * 获得yyyy/MM格式的上个num个月
 	 * @param year
-	 * @param month
+	 * @param
 	 * @return
 	 */
 
@@ -23,9 +23,26 @@ public class GetMonth {
 	}
 
 	/**
-	 * 获得当前月
+	 * 获得yyyy/MM格式的上个num个月
 	 * @param year
-	 * @param month
+	 * @param
+	 * @return
+	 */
+
+	public static  String beforMonth1(int year,int nowMonth,int num ){
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy/MM/dd" );
+		cal.set(Calendar.YEAR,year);
+		cal.set(Calendar.MONTH, nowMonth-1);
+		cal.add(Calendar.MONTH, -num);//从现在算，之前一个月,如果是2个月，那么-1-----》改为-2
+		return sdf.format(cal.getTime());
+
+	}
+
+	/**
+	 * 获得当前月
+	 * @param
+	 * @param
 	 * @return
 	 */
 
@@ -38,8 +55,8 @@ public class GetMonth {
 	
 	/**
 	 * 获得今天
-	 * @param year
-	 * @param month
+	 * @param
+	 * @param
 	 * @return
 	 */
 
@@ -50,8 +67,8 @@ public class GetMonth {
 	}
 	/**
 	 * 获得今天
-	 * @param year
-	 * @param month
+	 * @param
+	 * @param
 	 * @return
 	 */
 
@@ -63,7 +80,7 @@ public class GetMonth {
 	/**
 	 * 获得上个月
 	 * @param year
-	 * @param month
+	 * @param
 	 * @return
 	 */
 
@@ -79,7 +96,7 @@ public class GetMonth {
 	/**
 	 * 获得上个月
 	 * @param year
-	 * @param month
+	 * @param
 	 * @return
 	 */
 

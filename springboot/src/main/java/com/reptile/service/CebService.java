@@ -89,7 +89,7 @@ public class CebService {
 				try {
 					driver.quit();
 					// 关闭浏览器
-//					InvokeBat4.runbat();
+					InvokeBat4.runbat();
 				} catch (Exception e3) {
 				}
 				logger.warn("光大银行登录时输入有误" + usercard+map);
@@ -139,7 +139,7 @@ public class CebService {
 			map.put("errorCode", "0001");
 			try {
 				driver.quit();
-//				InvokeBat4.runbat();
+				InvokeBat4.runbat();
 			} catch (Exception e2) {
 				
 			}
@@ -189,7 +189,7 @@ public class CebService {
 				// 并关闭浏览器
 				driver.quit();
 				// 关闭进程
-//				InvokeBat4.runbat();
+				InvokeBat4.runbat();
 			} catch (Exception e) {
 			}
 			logger.warn("光大信用卡第二步进入========200==="+userCard+passWord+userAccount+map);
@@ -251,7 +251,7 @@ public class CebService {
 				logger.warn("光大信用卡第二步进入========	判断短信验证是否正确==="+userCard+passWord+userAccount+"========="+error);
 				try {
 					driver.quit();
-//					InvokeBat4.runbat();
+					InvokeBat4.runbat();
 				} catch (Exception e) {
 				}
 				PushSocket.pushnew(map, uuid, "3000", "短信验证码输入有误");
@@ -308,7 +308,7 @@ public class CebService {
 				map = resttemplate.SendMessage(seo, applications.getSendip() + "/HSDC/BillFlow/BillFlowByreditCard");
 				try {
 					driver.quit();
-//					InvokeBat4.runbat();
+					InvokeBat4.runbat();
 				} catch (Exception e1) {
 				}
 				// 判断数据传输后的结果，进行判断
@@ -340,7 +340,7 @@ public class CebService {
 			// 当页面获取的过程中
 			try {
 				driver.quit();
-//				InvokeBat4.runbat();
+				InvokeBat4.runbat();
 			} catch (Exception e3) {
 			}
 			// ---------------------------数据中心推送状态----------------------------------
