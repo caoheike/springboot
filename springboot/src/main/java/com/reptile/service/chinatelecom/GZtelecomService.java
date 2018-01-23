@@ -3,6 +3,7 @@ package com.reptile.service.chinatelecom;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,13 @@ import net.sf.json.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
@@ -27,6 +34,7 @@ import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.WebClientFactory;
 @Service
 public class GZtelecomService {
 
@@ -275,7 +283,13 @@ public class GZtelecomService {
 			   Map<String,String>  rowData=new HashMap<String, String>();
 			   rowData.put("CallMoney", row.get("FEE2").toString());//呼叫费用    
 			   if (row.get("CALLED_AREA").getClass().isInstance(String.class)) {
-				   rowData.put("CallAddress", row.get("CALLED_AREA").toString());//通话号码归属地
+				  String address=row.get("CALLED_AREA").toString();
+				   try {
+					   rowData.put("CallAddress", getAddress(address));//通话号码归属地
+				   } catch (IOException e) {
+					
+					   rowData.put("CallAddress", "");//通话号码归属地
+				  }
 			    }else {
 			    	 rowData.put("CallAddress", "");//通话号码归属地
 				}
@@ -290,5 +304,19 @@ public class GZtelecomService {
 	   data.put("data", list);
 	   return data;
 }
-  
+   /**
+    * 根据区号获取地区
+    * @param code
+    * @return
+    * @throws FailingHttpStatusCodeException
+    * @throws MalformedURLException
+    * @throws IOException
+    */
+   public  String getAddress(String code) throws FailingHttpStatusCodeException, MalformedURLException, IOException{
+	 WebClient client=new WebClientFactory().getWebClient();
+	HtmlPage page= client.getPage("http://113.200.105.34:8065/code?code="+code);
+	code= page.asText();
+	client.close();
+	return code;
+ }
 }
