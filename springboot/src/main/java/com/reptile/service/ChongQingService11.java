@@ -205,7 +205,10 @@ public class ChongQingService11 {
 
             String attribute2 = codePage.getElementById("accnbr_div").getAttribute("val");
             String productId = (attribute2.split("#"))[1];
-
+            PushSocket.pushnew(map, uuid, "2000", "登录成功");
+            Thread.sleep(2000);
+            PushSocket.pushnew(map, uuid, "5000", "数据获取中");
+            signle = "5000";
             for (int i = 0; i < 7; i++) {
                 WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_XDCXNR"));
                 List<NameValuePair> dataList = new ArrayList<>();
@@ -224,78 +227,85 @@ public class ChongQingService11 {
                 post.setCharset("utf-8");
                 post.setHttpMethod(HttpMethod.POST);
                 Page pages = webClient.getPage(post);
-                if (pages.getWebResponse()== null) {
+
+                String result = pages.getWebResponse().getContentAsString();
+                System.out.println(result);
+                if (result.contains("xm") && result.contains("sfz")) {
                     map.put("errorCode", "0001");
-                    map.put("errorInfo", "对不起，系统忙，请稍候再试！");
+                    map.put("errorInfo", "身份校验不通过！");
+                    PushSocket.pushnew(map, uuid, "7000", "二次身份认证失败（身份校验不通过）");
+                    PushState.state(phoneNumber, "callLog", 200, "二次身份认证失败（身份校验不通过）");
                     return map;
-
-                } else {
-                    String result = pages.getWebResponse().getContentAsString();
-                    System.out.println(result);
-                    if (result.contains("xm") && result.contains("sfz")) {
-                        map.put("errorCode", "0001");
-                        map.put("errorInfo", "身份校验不通过！");
-                        return map;
-                    } else if (result.contains("xm")) {
-                        map.put("errorCode", "0002");
-                        map.put("errorInfo", "姓名错误");
-                        return map;
-                    } else if (result.contains("sfz")) {
-                        map.put("errorCode", "0003");
-                        map.put("errorInfo", "身份证后六位错误");
-                        return map;
-                    } else if (result.contains("message")) {
-                        JSONObject json = JSONObject.fromObject(result);
-                        String tip = (String) json.get("message");
-                        if (tip.equals("2333")) {
-                            map.put("errorCode", "0004");
-                            map.put("errorInfo", "短信验证码错误");
-                            PushSocket.pushnew(map, uuid, "3000", "验证码错误");
-                            PushState.state(phoneNumber, "callLog", 200, "验证码错误");
-                            return map;
-                        } else if (tip.equals("0")) {
-                            logger.warn("----------------重庆电信，正在获取数据...---------------------");
-                            // 校验成功
-                            // 获取数据
-                            PushSocket.pushnew(map, uuid, "2000", "登录成功");
-                            Thread.sleep(2000);
-                            PushSocket.pushnew(map, uuid, "5000", "数据获取中");
-                            signle = "5000";
-                            Map<String, Object> dataMap = new HashMap<String, Object>(16);
-                            HttpClient httpClient = new HttpClient();
-                            Set<com.gargoylesoftware.htmlunit.util.Cookie> cookie = webClient.getCookieManager()
-                                    .getCookies();
-                            StringBuffer cookies = new StringBuffer();
-                            for (com.gargoylesoftware.htmlunit.util.Cookie c : cookie) {
-                                cookies.append(c.toString() + ";");
-                            }
-
-                            PostMethod post1 = new PostMethod("http://cq.189.cn/new-bill/bill_XDCX_Page");
-                            post1.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-                            post1.setRequestHeader("Connection", "keep-alive");
-                            post1.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                            post1.setRequestHeader("Origin", "http://nx.189.cn");
-                            post1.setRequestHeader("Referer",
-                                    "http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq");
-                            post1.setRequestHeader("Cookie", cookies.toString());
-                            post1.setParameter("page", "1");
-                            post1.setParameter("rows", "2000");
-                            httpClient.executeMethod(post1);
-                            String html = post1.getResponseBodyAsString();
-                            dataMap.put("item", html);
-                            arrayList.add(dataMap);
-                        } else {
-                            logger.warn("----------------重庆电信,数据获取失败---------------------");
-                            map.put("errorCode", "0001");
-                            map.put("errorInfo", "系统繁忙!");
-                            PushSocket.pushnew(map, uuid, "3000", "登录失败,系统繁忙!");
-                            PushState.state(phoneNumber, "callLog", 200, "登录失败,系统繁忙!");
-                            return map;
-                        }
-                    }
+                } else if (result.contains("xm")) {
+                    map.put("errorCode", "0002");
+                    map.put("errorInfo", "姓名错误");
+                    PushSocket.pushnew(map, uuid, "7000", "二次身份认证失败（姓名信息不正确）");
+                    PushState.state(phoneNumber, "callLog", 200, "二次身份认证失败（姓名信息不正确）");
+                    return map;
+                } else if (result.contains("sfz")) {
+                    map.put("errorCode", "0003");
+                    map.put("errorInfo", "身份证后六位错误");
+                    PushSocket.pushnew(map, uuid, "7000", "二次身份认证失败（身份证后六位不正确）");
+                    PushState.state(phoneNumber, "callLog", 200, "二次身份认证失败（身份证后六位不正确）");
+                    return map;
                 }
-            }
 
+                JSONObject json = JSONObject.fromObject(result);
+                String tip = (String) json.get("message");
+                Object result1 = json.get("result");
+                if (tip.equals("2333")) {
+                    map.put("errorCode", "0004");
+                    map.put("errorInfo", "手机验证码不正确");
+                    PushSocket.pushnew(map, uuid, "7000", "二次身份认证失败（手机验证码不正确）");
+                    PushState.state(phoneNumber, "callLog", 200, "二次身份认证失败（手机验证码不正确）");
+                    return map;
+                }
+                if (result1 == null) {
+                    logger.warn("-----------------重庆电信:" + userName + ":该用户在" + beforMonth(i) + "月，没有清单数据");
+                    continue;
+                }
+                if (result1.toString().equals("2")) {
+                    logger.warn("-----------------重庆电信:" + userName + ":该用户在" + beforMonth(i) + "月，账单出现故障，故障原因：" + json.getString("message"));
+                    continue;
+                }
+                Thread.sleep(2000);
+                logger.warn("----------------重庆电信：" + userName + "，正在获取数据...---------------------");
+                // 校验成功
+                // 获取数据
+                Map<String, Object> dataMap = new HashMap<String, Object>(16);
+                HttpClient httpClient = new HttpClient();
+                Set<com.gargoylesoftware.htmlunit.util.Cookie> cookie = webClient.getCookieManager()
+                        .getCookies();
+                StringBuffer cookies = new StringBuffer();
+                for (com.gargoylesoftware.htmlunit.util.Cookie c : cookie) {
+                    cookies.append(c.toString() + ";");
+                }
+
+                PostMethod post1 = new PostMethod("http://cq.189.cn/new-bill/bill_XDCX_Page");
+                post1.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+                post1.setRequestHeader("Connection", "keep-alive");
+                post1.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                post1.setRequestHeader("Origin", "http://nx.189.cn");
+                post1.setRequestHeader("Referer",
+                        "http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq");
+                post1.setRequestHeader("Cookie", cookies.toString());
+                post1.setParameter("page", "1");
+                post1.setParameter("rows", "2000");
+                httpClient.executeMethod(post1);
+                String html = post1.getResponseBodyAsString();
+                if (html.contains("对方号码") && html.contains("呼叫类型")) {
+                    dataMap.put("item", html);
+                    arrayList.add(dataMap);
+                }
+                Thread.sleep(2000);
+            }
+            if(arrayList.size()<4){
+                map.put("errorCode", "0005");
+                map.put("errorInfo", "数据获取不完全（详单数目不符合要求）");
+                PushSocket.pushnew(map, uuid, "7000", "数据获取不完全（详单数目不符合要求）");
+                PushState.state(phoneNumber, "callLog", 200, "数据获取不完全（详单数目不符合要求）");
+                return map;
+            }
             PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
             signle = "4000";
 
@@ -326,7 +336,7 @@ public class ChongQingService11 {
             map.put("errorInfo", "网络异常!");
             PushState.state(phoneNumber, "callLog", 200, "网络异常!");
             DealExceptionSocketStatus.pushExceptionSocket(signle, map, uuid);
-            logger.error("-------------重庆电信-------------", e);
+            logger.error("-----------------重庆电信:" + userName + ":认证失败", e);
         }
 
         return map;
