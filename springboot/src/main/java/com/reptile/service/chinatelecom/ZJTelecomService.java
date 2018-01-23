@@ -132,6 +132,7 @@ public class ZJTelecomService {
 		try {
 			//进到查询详单ifram
 			page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
+			Thread.sleep(1000);
 			//查询详情
 			logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取中!-----------------");
 			//List<Map<String, Object>> data=this.getDetails(webClient, page, phoneNumber);
@@ -227,6 +228,7 @@ public class ZJTelecomService {
 			
 			//进到查询详单ifram
 			HtmlPage page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
+			Thread.sleep(1000);
 			//校验验证码
 		    boolean flag=	this.checkCode(webClient, page, phoneNumber, name, idCard, code);
 		    if (flag) {
@@ -286,6 +288,7 @@ public class ZJTelecomService {
 			PushSocket.pushnew(map, uuid, "8000", "认证成功");
 			PushState.state(phoneNumber, "callLog", 300);
 		} else {
+			logger.warn("------------------------浙江电信"+phoneNumber+"，认证失败----------------------");
 			PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo").toString());
 			PushState.state(phoneNumber, "callLog", 200, map.get("errorInfo").toString());
 		}
@@ -320,7 +323,7 @@ public class ZJTelecomService {
        WebRequest requests = new WebRequest(new URL(url));
        requests.setHttpMethod(method);
        HtmlPage page = webClient.getPage(requests);
-       Thread.sleep(2000);
+       //Thread.sleep(2000);
        return page;
    }
     /**
@@ -410,7 +413,6 @@ public class ZJTelecomService {
         requests.setRequestParameters(list);
         requests.setHttpMethod(method);
         HtmlPage page = webClient.getPage(requests);
-        Thread.sleep(2000);
         return page;
     }
     /**
