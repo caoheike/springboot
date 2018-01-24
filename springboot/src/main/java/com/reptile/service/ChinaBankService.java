@@ -141,9 +141,22 @@ public class ChinaBankService {
                 if (msgContent.contains(yanZhengMa)) {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
+                    PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                    if(isok==true) {
+                        PushState.state(userCard, "bankBillFlow",200,"中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                    }else{
+                        PushState.statenew(userCard, "bankBillFlow",200,"中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
+                    }
+
                 } else {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", msgContent);
+                    PushSocket.pushnew(map, uuid, "3000",msgContent);
+                    if(isok==true) {
+                        PushState.state(userCard, "bankBillFlow",200,msgContent);
+                    }else{
+                        PushState.statenew(userCard, "bankBillFlow",200,msgContent);
+                    }
                 }
                 PushSocket.pushnew(map, uuid, "3000","中国银行信用卡登录失败当前系统繁忙，请刷新页面重新认证！");
                 if(isok==true) {
