@@ -73,6 +73,7 @@ import com.reptile.util.Resttemplate;
 import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
 
+
 /**
  * 
  * @Title: InterfaceController.java
@@ -700,26 +701,22 @@ public class InterfaceController {
 			@RequestParam("idCard") String idCard,
 			@RequestParam("UUID") String uuId) throws Exception {
 
-		System.out.println("---------------" + "");
 		Map<String, Object> map = new HashMap<String, Object>(8);
 		PushState.state(idCard, "TaoBao", 100);
 		PushSocket.pushnew(map, uuId, "1000", "登录中");
 		int flag = 1;
 		try {
 			Map<String, Object> data = new HashMap<String, Object>(8);
-
 			HttpSession session = request.getSession();
 			WebClient webClient = (WebClient) session.getAttribute(sessid);
 			TextPage pages = webClient
 					.getPage("https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken="
 							+ toKen + "&defaulturl=https%3A%2F%2Fwww.taobao.com%2F");
 			Thread.sleep(2000);
-			System.out.println(pages.getContent());
 			JSONObject jsonObject2 = JSONObject.fromObject(pages.getContent());
 			if (jsonObject2.get(MessageConstamts.STRING_CODE).equals(
 					MessageConstamts.STRING_10006)) {
 				HtmlPage pageinfo = webClient.getPage(jsonObject2.getString("url"));
-				System.out.println(pageinfo.asXml());
 				PushSocket.pushnew(map, uuId, "2000", "登录成功");
 				PushState.state(idCard, "TaoBao", 100);
 				PushSocket.pushnew(map, uuId, "5000", "获取数据中");
@@ -738,13 +735,10 @@ public class InterfaceController {
 					PushState.state(idCard, "TaoBao", 200, "获取失败,请重试");
 					map.put("errorcode", "0001");
 					map.put("errorinfo", "获取失败,请重试");
-					
 					return map;
-					
 				}
 				HtmlTable table = pagev.querySelector(".tbl-main");
-				System.out.println(table.asXml() + "收货地址");
-
+				
 				HtmlPage html = webClient
 						.getPage("https://member1.taobao.com/member/fresh/account_management.htm?spm=a1z08.1.a210b.11.6a3294bcvaQod7");
 				String href = ((HtmlAnchor) html.getByXPath(
@@ -796,14 +790,11 @@ public class InterfaceController {
 						"web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
 				requests.setHttpMethod(HttpMethod.POST);
 				requests.setRequestParameters(lists);
-				HtmlPage pageinfos = webClient.getPage(requests);
-
 				WebRequest detailInfo = new WebRequest(
 						new URL(
 								"https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
 				Map<String, String> headers = new HashMap<String, String>(8);
 				headers.put("cookie", this.getCookie(webClient));
-
 				detailInfo.setHttpMethod(HttpMethod.GET);
 				detailInfo.setAdditionalHeaders(headers);
 				HtmlPage pageinfosss = webClient.getPage(detailInfo);
@@ -812,9 +803,26 @@ public class InterfaceController {
 				HtmlPage pageinfoss = webClient
 						.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
 				PushSocket.pushnew(map, uuId, "6000", "获取数据成功");
-
+				
+				
+				
+				System.out.println("最后的 getAddress(webClient)=="+this.getAddress(webClient));
+				logger.warn("最后的getAddress(webClient)=="+this.getAddress(webClient));
+				
+				
 				// 获取收货地址
-				data.put("addresses", this.getAddress(webClient));
+				//--------------数据解析方法开始------------
+				//客户的收获地址数据解析 pageinfosss.asXml() + pageinfoss.asXml()
+				//JSONArray deal=taobao.deal(pageinfosss.asXml());
+				
+				//客户的收获地址数据解析 info  table.asXml()
+				//JSONArray address=taobao.address(table.asXml());
+				//--------------数据解析方法结束------------
+				
+				
+				
+				
+				/*data.put("addresses", this.getAddress(webClient));
 				data.put("info", table.asXml());
 				data.put("page", pageinfosss.asXml() + pageinfoss.asXml());
 				map.put("data", data);
@@ -823,7 +831,7 @@ public class InterfaceController {
 				map.put("userCard", idCard);
 
 				map = resttemplate.SendMessage(map, application.getSendip()
-						+ "/HSDC/authcode/taobaoPush");
+						+ "/HSDC/authcode/taobaoPush");*/
 				if (map != null
 						&& MessageConstamts.STRING_0000.equals(map.get(
 								MessageConstamts.ERRORCODE).toString())) {
