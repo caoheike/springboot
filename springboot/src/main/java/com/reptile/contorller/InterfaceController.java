@@ -73,7 +73,6 @@ import com.reptile.util.Resttemplate;
 import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
 
-import analysis.taobao;
 
 /**
  * 
