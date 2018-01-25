@@ -10,7 +10,7 @@ public interface ChinaTelecomAnalysisInterface {
      * @param agrs
      * @return
      */
-    public Map<String, Object> analysisXml(List<String> data,String...agrs);
+    public Map<String, Object> analysisXml(List<String> data,String phoneNumber,String...agrs);
 
     /**
      * 解析json形式的数据
@@ -18,7 +18,7 @@ public interface ChinaTelecomAnalysisInterface {
      * @param agrs
      * @return
      */
-    public Map<String, Object> analysisJson(List<String> data,String...agrs);
+    public Map<String, Object> analysisJson(List<String> data,String phoneNumber,String...agrs);
 
     /**
      * 解析Html形式的数据
@@ -26,5 +26,5 @@ public interface ChinaTelecomAnalysisInterface {
      * @param agrs
      * @return
      */
-    public Map<String, Object> analysisHtml(List<String> data,String...agrs);
+    public Map<String, Object> analysisHtml(List<String> data,String phoneNumber,String...agrs);
 }
