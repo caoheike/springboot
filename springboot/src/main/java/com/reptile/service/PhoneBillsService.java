@@ -343,6 +343,7 @@ public class PhoneBillsService {
                 Thread.sleep(1000);
                 String result = page8.getWebResponse().getContentAsString();
                 String successStatus = "认证成功";
+                logger.warn(userNumber+":本次二次身份认证结果为:"+result);
                 if (!page8.getWebResponse().getContentAsString().contains(successStatus)) {
                     String jquerys = "jQuery";
                     if (result.contains(jquerys)) {
@@ -353,6 +354,7 @@ public class PhoneBillsService {
                     JSONObject jsonObject = JSONObject.fromObject(result);
 
                     String retMsg = jsonObject.get("retMsg").toString();
+
                     if(retMsg.contains("请先登录")){
                         logger.warn(System.currentTimeMillis()+": "+userNumber+":移动二次身份认证时出现session信息为空，已隐藏！原信息为:"+retMsg);
                         retMsg="系统繁忙，请稍后重试";
@@ -405,7 +407,7 @@ public class PhoneBillsService {
                         results = pages.getWebResponse().getContentAsString();
                     }
 
-
+                    logger.warn(userNumber+"：本次获取数据"+sDate+"为:----------------"+results+"---------------");
                     System.out.println("本次获取的数据为" + results);
 
                     int s = ("jQuery183045411546722870333_" + timeStamp + "(").length();
