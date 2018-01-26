@@ -5,8 +5,12 @@ import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.reptile.analysis.ChengduTelecomAnalysisImp;
+import com.reptile.analysis.ChinaTelecomAnalysisInterface;
+import com.reptile.analysis.ZJTelecomAnalysisImp;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.DealExceptionSocketStatus;
+import com.reptile.util.HttpURLConection;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -167,30 +171,33 @@ public class ChengduTelecomService {
                 logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
-                dataMap.put("UserIphone", phoneNumber);
-                dataMap.put("UserPassword", servePwd);
+                dataMap.put("phone", phoneNumber);
+                dataMap.put("pwd", servePwd);
                 //经度
                 dataMap.put("longitude", longitude);
                 //纬度
                 dataMap.put("latitude", latitude);
-                dataMap.put("flag", "1");
+                ChinaTelecomAnalysisInterface chengdu=new ChengduTelecomAnalysisImp();
+    			list=(List) chengdu.analysisHtml(list, phoneNumber);
                 dataMap.put("data", list);
                 webClient.close();
-                Resttemplate resttemplate = new Resttemplate();
-
+                JSONObject json=JSONObject.fromObject(dataMap);
+                Map<String, String> maps=new HashMap<String, String>();
+                maps.put("data", json.toString());
                 logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据中--------------------");
-                map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
+                String message=HttpURLConection.sendPost(maps, "http://192.168.3.4:8088/HSDC/message/operator");
+                logger.warn("返回====="+message);
                 logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据完成--------------------本次推送返回："+map);
-
-                String flagResult="0000";
-                String errorCode="errorCode";
-               if(flagResult.equals(map.get(errorCode))) {
-            	   PushSocket.pushnew(map, uuid, "8000","认证成功");
-            	   PushState.state(phoneNumber, "callLog",300);
-               }else{
-            	   PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
-            	   PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
-               }
+            	Map<String,Object> results=net.sf.json.JSONObject.fromObject(message);
+       		 if(message.contains("0000")){
+       			 logger.warn("------------------------成都电信"+phoneNumber+"，认证成功----------------------");
+       				PushSocket.pushnew(results, uuid, "8000", "认证成功");
+       				PushState.state(phoneNumber, "callLog", 300);
+       		 }else{
+       			  logger.warn("------------------------成都电信"+phoneNumber+"，认证失败----------------------");
+       				PushSocket.pushnew(results, uuid, "9000", results.get("errorInfo").toString());
+       				PushState.state(phoneNumber, "callLog", 200, results.get("errorInfo").toString());
+       		 }
                 logger.warn(phoneNumber+"：---------------------成都电信获取详单完毕--------------------");
             } catch (Exception e) {
                 logger.warn(phoneNumber+":---------------------成都获取详情异常--------------------", e);
