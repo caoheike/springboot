@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.ParseException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,13 +36,18 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.analysis.ChinaTelecomAnalysisInterface;
+import com.reptile.analysis.ZJTelecomAnalysisImp;
+import com.reptile.constants.MessageConstamts;
 import com.reptile.util.GetMonth;
+import com.reptile.util.HttpURLConection;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
+import com.reptile.util.SimpleHttpClient;
 import com.reptile.util.application;
 /**
- * 浙江电信，不用解析，按照之前的数据传送格式
+ * 浙江电信发包方式
  * @author cui
  *
  */
@@ -132,20 +138,26 @@ public class ZJTelecomService {
 		try {
 			//进到查询详单ifram
 			page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 			//查询详情
 			logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取中!-----------------");
 			//List<Map<String, Object>> data=this.getDetails(webClient, page, phoneNumber);
-			List<Map<String, Object>> data=this.getDetails(webClient, page, phoneNumber, "1", "", "", "");
+			List<String> data=this.getDetails(webClient, page, phoneNumber, "1", "", "", "");
 			if (data==null) {
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，暂无数据!-----------------");	
 			}else {
-				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取完成!-----------------");
+				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取完成!数据："+data.toString()+"-----------------");
 			}
-			//推送数据
-			map=this.pushData(webClient, map, data, servePwd, phoneNumber, longitude, latitude, uuid,logger);
+			//解析
+			logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
+			ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
+			map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
+			
+  		    //推送数据
+			map=this.pushData(webClient, map, phoneNumber, uuid,logger);
 		} catch (Exception e) {
 			logger.error("-----------------------浙江电信，网络异常!-----------------",e);
+			map.clear();
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常!");
 			return map;
@@ -234,14 +246,19 @@ public class ZJTelecomService {
 		    if (flag) {
 		    	//查询详情
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取中!-----------------");
-				List<Map<String, Object>> data=this.getDetails(webClient, page, phoneNumber, "2", name, idCard, code);
+				List<String> data=this.getDetails(webClient, page, phoneNumber, "2", name, idCard, code);
 				if (data==null) {
 					logger.warn("-----------------------浙江电信"+phoneNumber+"，暂无数据!-----------------");	
 				}else {
 					logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取完成!-----------------");
 				}
-				//推送数据
-				map=this.pushData(webClient, map, data, servePwd, phoneNumber, longitude, latitude, uuid,logger);
+				//解析
+				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
+				ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
+				map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
+				
+	  		    //推送数据
+				map=this.pushData(webClient, map, phoneNumber, uuid,logger);
 		    	
 			}else {
 				logger.warn("-----------------------浙江电信，"+phoneNumber+"验证码错误!-----------------");
@@ -250,6 +267,7 @@ public class ZJTelecomService {
 			}
 			}catch (Exception e) {
 				logger.error("-----------------------浙江电信，"+phoneNumber+"网络异常!-----------------");
+				map.clear();
 				map.put("errorCode", "0001");
     			map.put("errorInfo", "网络异常!");
 			}
@@ -268,31 +286,26 @@ public class ZJTelecomService {
  * @param uuid
  * @param logger
  * @return
+ * @throws IOException 
+ * @throws ParseException 
  */
-	public Map<String, Object> pushData(WebClient webClient,Map<String, Object> map,List<Map<String, Object>> data,String servePwd,String phoneNumber,String longitude,String latitude,String uuid,Logger logger){
-		map.put("data", data);
-		map.put("UserPassword", servePwd);
-		map.put("UserIphone", phoneNumber);
-		map.put("longitude", longitude);
-		map.put("latitude", latitude);
-		map.put("flag", "9");
-		map.put("errorCode", "0000");
-		map.put("errorInfo", "查询成功");
+	public Map<String, Object> pushData(WebClient webClient,Map<String, Object> map,String phoneNumber,String uuid,Logger logger) throws ParseException, IOException{
 		webClient.close();
-		Resttemplate resttemplate = new Resttemplate();
-		map = resttemplate.SendMessage(map, application.getSendip() + "/HSDC/message/telecomCallRecord");
-		String str1 = "0000";
-		String erro = "errorCode";
-		if (map.get(erro).equals(str1)) {
-			logger.warn("------------------------浙江电信"+phoneNumber+"，认证成功----------------------");
-			PushSocket.pushnew(map, uuid, "8000", "认证成功");
-			PushState.state(phoneNumber, "callLog", 300);
-		} else {
-			logger.warn("------------------------浙江电信"+phoneNumber+"，认证失败----------------------");
-			PushSocket.pushnew(map, uuid, "9000", map.get("errorInfo").toString());
-			PushState.state(phoneNumber, "callLog", 200, map.get("errorInfo").toString());
-		}
-		return map;
+		Map<String, String> pushMap=new HashMap<>();
+		pushMap.put("data", net.sf.json.JSONObject.fromObject(map).toString());
+		String tip=HttpURLConection.sendPost(pushMap, "http://192.168.3.4:8088/HSDC-Oracle/message/operator");
+		Map<String,Object> result=net.sf.json.JSONObject.fromObject(tip);
+		 if(tip.contains("0000")){
+			 logger.warn("------------------------浙江电信"+phoneNumber+"，认证成功----------------------");
+				PushSocket.pushnew(result, uuid, "8000", "认证成功");
+				PushState.state(phoneNumber, "callLog", 300);
+		 }else{
+			  logger.warn("------------------------浙江电信"+phoneNumber+"，认证失败----------------------");
+				PushSocket.pushnew(result, uuid, "9000", result.get("errorInfo").toString());
+				PushState.state(phoneNumber, "callLog", 200, result.get("errorInfo").toString());
+		 }
+		
+		return result;
 	}
     /**
      * 获取cookies
@@ -380,9 +393,11 @@ public class ZJTelecomService {
      * 从页面获取发包需要的部分信息
      * @param page
      * @return
+     * @throws InterruptedException 
      */
-    public Map<String , String> getInfo(HtmlPage page,Map<String , String> param){
-   	    System.out.println(page.asXml());
+    public Map<String , String> getInfo(HtmlPage page,Map<String , String> param) throws InterruptedException{
+    	Thread.sleep(2000);
+   	   //  System.out.println(page.asXml());
    	    param.put("pagenum", page.getElementByName("cdrCondition.pagenum").getAttribute("value").toString());
    	    param.put("areaid", page.getElementByName("cdrCondition.areaid").getAttribute("value").toString());
    	    param.put("productid", page.getElementByName("cdrCondition.productid").getAttribute("value"));
@@ -424,9 +439,9 @@ public class ZJTelecomService {
      * @throws IOException
      * @throws InterruptedException
      */
-   public List<Map<String, Object>> getDetails(WebClient webClient,HtmlPage page,String phoneNumber,String cdrlevel,String username,String idcard,String randpsw) throws FailingHttpStatusCodeException, IOException, InterruptedException{
+   public  List<String> getDetails(WebClient webClient,HtmlPage page,String phoneNumber,String cdrlevel,String username,String idcard,String randpsw) throws FailingHttpStatusCodeException, IOException, InterruptedException{
 	   Map<String,String> param=new HashMap<String, String>();
-	   List<Map<String, Object>>  datas=new ArrayList<>();
+	   List<String>  datas=new ArrayList<>();
 		//获取发包需要的信息
 		param=getInfo(page,param);
 		   int[] yearAndMonth=GetMonth.nowYearMonth();
@@ -442,18 +457,24 @@ public class ZJTelecomService {
 	 		setParameter(list, param, i+"", cdrlevel, cdrmonth, phoneNumber, username, idcard, randpsw);
 	 		 //获取信息
 	 	     HtmlPage page1=getPages(webClient, getDetailUrl, list, null, HttpMethod.POST);
-	 	     System.out.println(page1.asXml());
+	 	    // System.out.println(page1.asXml());
 	 	     //中国电信网上营业厅·浙江      错误页面
 	 	     if (page1.getTitleText().equals("错误页面")) {
 				break;
 			  }
-	 	    dataMap.put("item", page1.asXml());
-	 	   datas.add(dataMap); 
+	 	   // dataMap.put("item", page1.asXml());
+	 	   datas.add(page1.asXml()); 
 		  }
 	    
-	     System.out.println(cdrmonth+"-----------------");
+	    // System.out.println(cdrmonth+"-----------------");
        } 
        System.out.println(datas.toString()+"-----------------");
+       List<String>  res=new ArrayList<String>();
+      for (int i = 0; i < 3; i++) {
+    	  res.add(datas.get(i));
+    	  System.out.println(res);
+	  }
+      System.out.println(res);
 	return datas;
    }
    
@@ -550,5 +571,6 @@ public class ZJTelecomService {
   			  }
 		return true;
 	}
-   
+    
+    
 }
