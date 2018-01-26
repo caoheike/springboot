@@ -116,9 +116,11 @@ public class PhoneBillsService {
         } else {
             try {
                 //执行官网js对短信验证码进行加密
-                String encrypt = JavaExcuteJs.excuteJs("static/js/phonejs/ydcodeencrypt.js", "encrypt", duanxinCode);
-
                 WebClient webClient = (WebClient) client;
+                HtmlPage page = webClient.getPage("https://login.10086.cn/login.html");
+                Object javaScriptResult = page.executeJavaScript("encrypt(\""+duanxinCode+"\")").getJavaScriptResult();
+                System.out.println(javaScriptResult.toString());
+
                 String loadPath = "https://login.10086.cn/login.htm";
                 //登录
                 URL url = new URL(loadPath);
@@ -128,7 +130,7 @@ public class PhoneBillsService {
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
                 list.add(new NameValuePair("accountType", "01"));
                 list.add(new NameValuePair("account", userNumber));
-                list.add(new NameValuePair("password", encrypt));
+                list.add(new NameValuePair("password", javaScriptResult.toString()));
                 list.add(new NameValuePair("pwdType", "02"));
                 list.add(new NameValuePair("smsPwd", ""));
                 list.add(new NameValuePair("inputCode", ""));
