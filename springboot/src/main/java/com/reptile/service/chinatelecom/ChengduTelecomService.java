@@ -65,10 +65,11 @@ public class ChengduTelecomService {
                 String result = page.getWebResponse().getContentAsString();
                 String flagSuccess="成功";
                 if (!result.contains(flagSuccess)) {
-                    logger.warn("---------------------成都电信短信验证码发送失败---------------------");
+                   
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
+                    logger.warn("---------------------成都电信短信验证码发送失败,失败原因："+jsonObject.get("retMsg").toString()+"---------------------");
                 } else {
                     logger.warn("---------------------成都电信短信验证码发送成功---------------------");
                     map.put("errorCode", "0000");
@@ -124,11 +125,12 @@ public class ChengduTelecomService {
                 if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
                     String resultInfo="没有查询到相应记录";
                     if (!result.contains(resultInfo)) {
-                        logger.warn(phoneNumber+"：---------------------成都电信获取详单时，未能请求到正确数据---------------------");
+                       
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog",200,jsonObject.get("retMsg").toString());  
                         PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString());
+                        logger.warn(phoneNumber+"：---------------------成都电信获取详单时，未能请求到正确数据,原因:"+jsonObject.get("retMsg").toString()+"---------------------");
                         return map;
                     }
                 } else {
@@ -164,7 +166,10 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
+                if (list!=null) {
+                	 logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
+				}
+               
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
                 dataMap.put("UserIphone", phoneNumber);

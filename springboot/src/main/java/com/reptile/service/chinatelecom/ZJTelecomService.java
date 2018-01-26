@@ -39,6 +39,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.analysis.ChinaTelecomAnalysisInterface;
 import com.reptile.analysis.ZJTelecomAnalysisImp;
 import com.reptile.constants.MessageConstamts;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.GetMonth;
 import com.reptile.util.HttpURLConection;
 import com.reptile.util.PushSocket;
@@ -123,15 +124,20 @@ public class ZJTelecomService {
      */
     public Map<String, Object> getDetailNoCode(HttpServletRequest request,String phoneNumber,String servePwd,String longitude,String latitude,String uuid) {
     	Map<String, Object> map = new HashMap<String, Object>(16);
+    	PushSocket.pushnew(map, uuid, "1000","登录中");
+        PushState.state(phoneNumber, "callLog",100);
+        //String signle="1000";
     	// 从session中获得webClient
         Object attribute = request.getSession().getAttribute("judgeIsNeedCode-WebClient");
         Object attribute1 = request.getSession().getAttribute("judgeIsNeedCode-httpClient");
         WebClient webClient = (WebClient) attribute;
         HttpClient httpClient =(HttpClient) attribute1;
 		if (webClient == null||httpClient==null) {
-			logger.warn("-----------------------浙江电信"+phoneNumber+"，操作异常!-----------------");
+			logger.warn("-----------------------浙江电信"+phoneNumber+"，操作异常，请先判断是否需要验证码!-----------------");
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "请先登录!");
+			PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
+            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
 			return map;
 		}
 		HtmlPage page=null;
@@ -139,27 +145,55 @@ public class ZJTelecomService {
 			//进到查询详单ifram
 			page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
 			Thread.sleep(2000);
+		} catch (Exception e) {
+			logger.error("-----------------------浙江电信:"+phoneNumber+"!未能进入详单查询页面-----------------",e);
+			map.clear();
+			map.put("errorCode", "0001");
+			map.put("errorInfo", "网络异常!");
+			PushState.state(phoneNumber, "callLog",200,"登录失败,网络异常!");
+            PushSocket.pushnew(map, uuid, "3000","登录失败,网络异常!");
+			return map;
+		}	
+		PushSocket.pushnew(map, uuid, "2000","登录成功");
+		List<String> data=null;
+		try {
 			//查询详情
 			logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取中!-----------------");
-			//List<Map<String, Object>> data=this.getDetails(webClient, page, phoneNumber);
-			List<String> data=this.getDetails(webClient, page, phoneNumber, "1", "", "", "");
+			 PushSocket.pushnew(map, uuid, "5000","数据 获取中");
+             //signle="5000";
+			 data = this.getDetails(webClient, page, phoneNumber, "1", "", "", "");
 			if (data==null) {
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，暂无数据!-----------------");	
 			}else {
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取完成!数据："+data.toString()+"-----------------");
 			}
-			//解析
-			logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
-			ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
-			map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
-			webClient.close();
-  		    //推送数据
-			map=this.pushData( map, phoneNumber, uuid,logger);
+			
 		} catch (Exception e) {
-			logger.error("-----------------------浙江电信，网络异常!-----------------",e);
+			logger.error("-----------------------浙江电信:"+phoneNumber+"!查询详单时，出现异常-----------------",e);
 			map.clear();
 			map.put("errorCode", "0001");
 			map.put("errorInfo", "网络异常!");
+			 PushState.state(phoneNumber, "callLog",200,"数据获取失败，网络异常");
+             PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常");
+			return map;
+		}
+		//解析
+		 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+         //signle="4000";
+		logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
+		ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
+		map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
+		webClient.close();
+		    //推送数据
+		try {
+			map=this.pushData( map, phoneNumber, uuid,logger);
+		} catch (Exception e) {
+			logger.error("-----------------------浙江电信:"+phoneNumber+"!推送数据过程，出现异常-----------------",e);
+			map.clear();
+			map.put("errorCode", "0001");
+			map.put("errorInfo", "推送失败!");
+			PushSocket.pushnew(map, uuid, "9000","推送失败!");
+			PushState.state(phoneNumber, "callLog",200,"推送失败!");
 			return map;
 		}
 		return map;
@@ -221,6 +255,8 @@ public class ZJTelecomService {
 	 */
 	 public Map<String, Object> getDetailNeedCode(HttpServletRequest request,String phoneNumber,String servePwd,String code,String longitude,String latitude,String uuid) {
 		 Map<String, Object> map = new HashMap<String, Object>(16);
+		 PushSocket.pushnew(map, uuid, "1000","登录中");
+	        PushState.state(phoneNumber, "callLog",100);
 		// 从session中获得webClient
 			Object attribute = request.getSession().getAttribute("getCode-zheJing");
 			WebClient webClient = (WebClient) attribute;
@@ -228,30 +264,61 @@ public class ZJTelecomService {
 				logger.warn("-----------------------浙江电信，"+phoneNumber+"请先获取验证码!-----------------");
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "请先登录!");
+				PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
+	            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
 				return map;
 			} 
 			Object attribute1 = request.getSession().getAttribute("getCode-zheJingHttp");
 			HttpClient httpClient =(HttpClient) attribute1;
+			String idCard="";
+			String name="";
 			//获取个人信息，用于发包
 			try {
 			String personInfo=	this.getInfo(httpClient, judgeUrl, this.getCookies(webClient));
-			String idCard=personInfo.split("cust_reg_nbr</string><string>")[1].split("</string><string>serv_type_id")[0];
-			String name=personInfo.split("cust_name</string><string>")[1].split("</string><string>serv_type_name")[0];
-			
+			idCard=personInfo.split("cust_reg_nbr</string><string>")[1].split("</string><string>serv_type_id")[0];
+			name=personInfo.split("cust_name</string><string>")[1].split("</string><string>serv_type_name")[0];
+			}catch (Exception e) {
+				logger.error("-----------------------浙江电信，"+phoneNumber+"未能进入详单查询页面!-----------------");
+				map.clear();
+				map.put("errorCode", "0001");
+    			map.put("errorInfo", "网络异常!");
+    			PushState.state(phoneNumber, "callLog",200,"登录失败,网络异常!");
+                PushSocket.pushnew(map, uuid, "3000","登录失败,网络异常!");
+    			return map;
+			}
+			HtmlPage page=null;
+			try {
 			//进到查询详单ifram
-			HtmlPage page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
+			page=this.getPages(webClient, iframeUrl, HttpMethod.GET);
 			Thread.sleep(1000);
+			}catch (Exception e) {
+				logger.error("-----------------------浙江电信，"+phoneNumber+"未能进入详单查询页面!-----------------");
+				map.clear();
+				map.put("errorCode", "0001");
+    			map.put("errorInfo", "网络异常!");
+    			PushState.state(phoneNumber, "callLog",200,"登录失败,网络异常!");
+                PushSocket.pushnew(map, uuid, "3000","登录失败,网络异常!");
+    			return map;
+			}
+			String signle="1000";
+			try {
 			//校验验证码
 		    boolean flag=	this.checkCode(webClient, page, phoneNumber, name, idCard, code);
 		    if (flag) {
+		    	PushSocket.pushnew(map, uuid, "2000","登录成功");
 		    	//查询详情
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取中!-----------------");
+				PushSocket.pushnew(map, uuid, "5000","数据 获取中");
+	            signle="5000";
+				 
 				List<String> data=this.getDetails(webClient, page, phoneNumber, "2", name, idCard, code);
 				if (data==null) {
 					logger.warn("-----------------------浙江电信"+phoneNumber+"，暂无数据!-----------------");	
 				}else {
 					logger.warn("-----------------------浙江电信"+phoneNumber+"，数据获取完成!-----------------");
 				}
+				 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+		         signle="4000";
 				//解析
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
 				ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
@@ -262,14 +329,19 @@ public class ZJTelecomService {
 		    	
 			}else {
 				logger.warn("-----------------------浙江电信，"+phoneNumber+"验证码错误!-----------------");
+				map.clear();
 				map.put("errorCode", "0001");
     			map.put("errorInfo", "验证码错误!");
+    			PushState.state(phoneNumber, "callLog",200,"登录失败,验证码错误!");
+                PushSocket.pushnew(map, uuid, "3000","登录失败,验证码错误!");
 			}
 			}catch (Exception e) {
 				logger.error("-----------------------浙江电信，"+phoneNumber+"网络异常!-----------------");
 				map.clear();
 				map.put("errorCode", "0001");
     			map.put("errorInfo", "网络异常!");
+    			PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
 			}
 		 return map; 
 	 }
