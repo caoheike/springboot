@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -102,6 +103,7 @@ public class GZtelecomService {
 		    Map<String, Object>  data=new HashMap<String, Object>();
 		    PushState.state(phoneNumber, "callLog",100);
 		    PushSocket.pushnew(map, uuid, "1000","登录中");
+		    String signle="1000";
 		    List<String> allDatas=new ArrayList<>();
 		    //从session中获得webClient;
 		    WebClient webClient=(WebClient)request.getSession().getAttribute("GTelecomCode");
@@ -110,7 +112,7 @@ public class GZtelecomService {
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "请先获取验证码");	
 			     PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
-			     PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
+			     PushSocket.pushnew(map, uuid, "3000","登陆失败,请先获取验证码");
 				 return map;
 		    }
 		    try {
@@ -123,7 +125,7 @@ public class GZtelecomService {
 			    	 map.put("errorCode", "0001");
 				     map.put("errorInfo", "验证码错误");	
 	 				 PushState.state(phoneNumber, "callLog",200,"验证码错误");
-	 				 PushSocket.pushnew(map, uuid, "3000","验证码错误");
+	 				 PushSocket.pushnew(map, uuid, "3000","登陆失败,验证码错误");
 				     return map;
 				}else if (codeIsTrue.asText().equals("-1")) {
 					//请先获取验证码(官网js返回--)
@@ -131,15 +133,19 @@ public class GZtelecomService {
 			    	 map.put("errorCode", "0001");
 				     map.put("errorInfo", "请先获取验证码");
 				     PushState.state(phoneNumber, "callLog",200,"验证码错误");
-	 				 PushSocket.pushnew(map, uuid, "3000","验证码错误");
+	 				 PushSocket.pushnew(map, uuid, "3000","登陆失败,验证码错误");
 				     return map;
 				}else {
+					PushSocket.pushnew(map, uuid, "2000","登录成功");
 					//验证码正确
 					if (codeIsTrue.asText().contains("CDMA_CALL_CDR")) {
 						 PushSocket.pushnew(map, uuid, "5000","获取数据中");
+						 signle="5000";
 						//所有详单
 						allDatas=this.getAllDetail(webClient, checkCodeUrl, code, 6,phoneNumber, logger);
 						System.out.println(allDatas.toString());
+						PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+		                signle="4000";
 						//解析数据
 						data=this.parseDetails(allDatas, data, phoneNumber, servePwd, longitude, latitude,logger);
 						logger.warn("-------------------贵州电信解析完成----------------------");
@@ -154,12 +160,16 @@ public class GZtelecomService {
 				         
 				           if(data.get(errorCode).equals(sss)){
 				        	   logger.warn("------------贵州电信查询成功-----------------");
+				        	   PushSocket.pushnew(map, uuid, "8000","认证成功");
+							   PushState.state(phoneNumber, "callLog",300);
 				        	   map.put("errorCode", "0000");
 				        	   map.put("errorInfo", "查询成功");
 				           }else {
 				        	   logger.warn("------------贵州电信查询失败-----------------");
 				        	   map.put("errorCode", "0001");
 				        	   map.put("errorInfo", data.get("errorInfo"));
+				        	   PushSocket.pushnew(map, uuid, "9000",data.get("errorInfo").toString());
+							   PushState.state(phoneNumber, "callLog",200,data.get("errorInfo").toString());
 						   }
 					}else {
 						//未存在记录
@@ -176,8 +186,8 @@ public class GZtelecomService {
 		    	 logger.error("---------------------------贵州电信:"+phoneNumber+",请先获取验证码-------------------------",e);
 		    	 map.put("errorCode", "0001");
 			     map.put("errorInfo", "网络异常");
-			     PushState.state(phoneNumber, "callLog",200,"网络连接异常");
-    	         PushSocket.pushnew(map, uuid, "3000","网络连接异常");
+			     PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+	             DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
 				 return map;
 			}
 	       
