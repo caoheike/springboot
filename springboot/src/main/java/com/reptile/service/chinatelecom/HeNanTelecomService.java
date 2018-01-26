@@ -48,16 +48,17 @@ public class HeNanTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000356"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
+                Thread.sleep(1000);
+                System.out.println(page1.asXml());
 
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 Date time = calendar.getTime();
                 String date = sim.format(time);
-
                 WebRequest req = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha"));
                 req.setHttpMethod(HttpMethod.GET);
                 HtmlPage pages=webClient.getPage(req);
-                Thread.sleep(1000);
+                Thread.sleep(3000);
                 req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
