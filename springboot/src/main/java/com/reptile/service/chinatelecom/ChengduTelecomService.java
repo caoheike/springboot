@@ -103,7 +103,7 @@ public class ChengduTelecomService {
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
-
+        PushState.state(phoneNumber, "callLog",100);
         if (attribute == null) {
             logger.warn(phoneNumber+"：---------------------成都电信获取详单未获取手机验证码---------------------");
             map.put("errorCode", "0001");
@@ -190,15 +190,15 @@ public class ChengduTelecomService {
                 Resttemplate resttemplate = new Resttemplate();
                 map=resttemplate.SendMessage(dataMap,ConstantInterface.port+"/HSDC/message/operator");
                 if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-			    	PushState.state(phoneNumber, "savings",300);
-			    	PushSocket.pushnew(map, uuid, "8000","建设银行储蓄卡认证成功");
+			    	PushState.state(phoneNumber, "callLog",300);
+			    	PushSocket.pushnew(map, uuid, "8000","成都电信认证成功");
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
 	                
 	            }else{
-	            	PushState.state(phoneNumber, "savings",200,"建设银行储蓄卡认证失败");
-	            	PushSocket.pushnew(map, uuid, "9000","建设银行储蓄卡认证失败");
-	            	logger.warn("建设银行数据推送失败"+phoneNumber);
+	            	PushState.state(phoneNumber, "callLog",200,"成都电信认证失败");
+	            	PushSocket.pushnew(map, uuid, "9000","成都电信认证失败");
+	            	logger.warn("成都电信数据推送失败"+phoneNumber);
 	                //PushSocket.push(map, UUID, "0001");
 	            	return map;
 	            }
