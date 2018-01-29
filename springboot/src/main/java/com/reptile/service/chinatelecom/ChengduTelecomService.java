@@ -183,7 +183,7 @@ public class ChengduTelecomService {
                 //纬度
                 dataMap.put("latitude", latitude);
                 ChinaTelecomAnalysisInterface chengdu=new ChengduTelecomAnalysisImp();
-    			list=(List) chengdu.analysisHtml(list, phoneNumber);
+    			list=chengdu.analysisHtml(list, phoneNumber);
                 dataMap.put("data", list);
                 webClient.close();
                 JSONObject json=JSONObject.fromObject(dataMap);

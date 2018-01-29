@@ -21,17 +21,17 @@ public class ShanXiTelecomAnalysisImp implements ChinaTelecomAnalysisInterface {
     private Logger logger = LoggerFactory.getLogger(ShanXiTelecomAnalysisImp.class);
 
     @Override
-    public Map<String, Object> analysisXml(List<String> data,String phoneNumber, String... agrs) {
+    public  List<Map<String,String>> analysisXml(List<String> data,String phoneNumber, String... agrs) {
         return null;
     }
 
     @Override
-    public Map<String, Object> analysisJson(List<String> data,String phoneNumber, String... agrs) {
+    public  List<Map<String,String>> analysisJson(List<String> data,String phoneNumber, String... agrs) {
         return null;
     }
 
     @Override
-    public Map<String, Object> analysisHtml(List<String> data,String phoneNumber, String... agrs) {
+    public  List<Map<String,String>> analysisHtml(List<String> data,String phoneNumber, String... agrs) {
 
 //        for (int i = 0; i < data.size(); i++) {
 //            Document parse = Jsoup.parse(new File("f://shanxi.txt"), "gbk");

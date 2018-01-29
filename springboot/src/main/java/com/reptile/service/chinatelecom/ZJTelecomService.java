@@ -182,7 +182,14 @@ public class ZJTelecomService {
          //signle="4000";
 		logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
 		ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
-		map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
+		List<Map<String, String>> maps = analysis.analysisHtml(data, phoneNumber);
+
+		map.put("phone", phoneNumber);//手机号
+		map.put("pwd", servePwd);
+		map.put("longitude", longitude);
+		map.put("latitude", latitude);
+		map.put("data", maps);
+
 		webClient.close();
 		    //推送数据
 		try {
@@ -322,7 +329,13 @@ public class ZJTelecomService {
 				//解析
 				logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析中...-----------------");
 				ChinaTelecomAnalysisInterface analysis=new ZJTelecomAnalysisImp();
-				map=analysis.analysisHtml(data, phoneNumber,servePwd,longitude,latitude);
+				List<Map<String, String>> maps = analysis.analysisHtml(data, phoneNumber);
+
+				map.put("phone", phoneNumber);//手机号
+				map.put("pwd", servePwd);
+				map.put("longitude", longitude);
+				map.put("latitude", latitude);
+				map.put("data", maps);
 				webClient.close();
 	  		    //推送数据
 				map=this.pushData( map, phoneNumber, uuid,logger);

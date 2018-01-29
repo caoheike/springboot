@@ -22,14 +22,14 @@ public class ZJTelecomAnalysisImp implements ChinaTelecomAnalysisInterface{
 	private Logger logger = LoggerFactory.getLogger(ZJTelecomAnalysisImp.class);
 
 	@Override
-	public Map<String, Object> analysisXml(List<String> data,
+	public  List<Map<String,String>> analysisXml(List<String> data,
 			String phoneNumber, String... agrs) {
 				return null;
 		
 	}
 
 	@Override
-	public Map<String, Object> analysisJson(List<String> data,
+	public  List<Map<String,String>> analysisJson(List<String> data,
 			String phoneNumber, String... agrs) {
 		// TODO Auto-generated method stub
 		return null;
@@ -38,7 +38,7 @@ public class ZJTelecomAnalysisImp implements ChinaTelecomAnalysisInterface{
 	 * 浙江电信解析
 	 */
 	@Override
-	public Map<String, Object> analysisHtml(List<String> data,
+	public  List<Map<String,String>> analysisHtml(List<String> data,
 			String phoneNumber, String... agrs) {
 
 		   Map<String, Object> dataMap=new HashMap<String, Object>();
@@ -86,9 +86,9 @@ public class ZJTelecomAnalysisImp implements ChinaTelecomAnalysisInterface{
 			  }
 		   }
 		   //把解析好的数据存入dataMap
-		   dataMap=setValue(dataMap, phoneNumber, agrs[0], agrs[1], agrs[2], list);
+//		   dataMap=setValue(dataMap, phoneNumber, agrs[0], agrs[1], agrs[2], list);
 		   logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析完成,data:"+JSONObject.fromObject(dataMap)+"-----------------");
-		return dataMap;
+		return list;
 	}
 	/**
 	 * 解析好的数据存放在data
