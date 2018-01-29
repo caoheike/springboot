@@ -22,7 +22,7 @@ import com.reptile.util.CustomAnnotation;
  *
  */
 @Controller
-@RequestMapping("guizhouTelecom")
+@RequestMapping("GZtelecomController")
 public class GZtelecomController {
 	@Autowired
 	private GZtelecomService service;
