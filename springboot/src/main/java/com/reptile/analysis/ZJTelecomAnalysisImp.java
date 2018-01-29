@@ -87,7 +87,7 @@ public class ZJTelecomAnalysisImp implements ChinaTelecomAnalysisInterface{
 		   }
 		   //把解析好的数据存入dataMap
 //		   dataMap=setValue(dataMap, phoneNumber, agrs[0], agrs[1], agrs[2], list);
-		   logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析完成,data:"+JSONObject.fromObject(dataMap)+"-----------------");
+		   logger.warn("-----------------------浙江电信"+phoneNumber+"，数据解析完成,data:"+list.toString()+"-----------------");
 		return list;
 	}
 	/**
