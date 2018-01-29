@@ -103,7 +103,7 @@ public class ChengduTelecomService {
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
-
+        PushState.state(phoneNumber, "callLog",100);
         if (attribute == null) {
             logger.warn(phoneNumber+"：---------------------成都电信获取详单未获取手机验证码---------------------");
             map.put("errorCode", "0001");
@@ -176,34 +176,50 @@ public class ChengduTelecomService {
                
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
-                dataMap.put("phone", phoneNumber);
-                dataMap.put("pwd", servePwd);
+                dataMap.put("UserIphone", phoneNumber);
+                dataMap.put("UserPassword", servePwd);
                 //经度
                 dataMap.put("longitude", longitude);
                 //纬度
                 dataMap.put("latitude", latitude);
-                ChinaTelecomAnalysisInterface chengdu=new ChengduTelecomAnalysisImp();
-    			list=chengdu.analysisHtml(list, phoneNumber);
+//                ChinaTelecomAnalysisInterface chengdu=new ChengduTelecomAnalysisImp();
+//    			list=(List) chengdu.analysisHtml(list, phoneNumber);
                 dataMap.put("data", list);
+                dataMap.put("flag", "1");
                 webClient.close();
-                JSONObject json=JSONObject.fromObject(dataMap);
-                Map<String, String> maps=new HashMap<String, String>();
-                maps.put("data", json.toString());
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据中--------------------");
-                String message=HttpURLConection.sendPost(maps, "http://192.168.3.4:8088/HSDC/message/operator");
-                logger.warn("返回====="+message);
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据完成--------------------本次推送返回："+map);
-            	Map<String,Object> results=net.sf.json.JSONObject.fromObject(message);
-       		 if(message.contains("0000")){
-       			 logger.warn("------------------------成都电信"+phoneNumber+"，认证成功----------------------");
-       				PushSocket.pushnew(results, uuid, "8000", "认证成功");
-       				PushState.state(phoneNumber, "callLog", 300);
-       		 }else{
-       			  logger.warn("------------------------成都电信"+phoneNumber+"，认证失败----------------------");
-       				PushSocket.pushnew(results, uuid, "9000", results.get("errorInfo").toString());
-       				PushState.state(phoneNumber, "callLog", 200, results.get("errorInfo").toString());
-       		 }
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单完毕--------------------");
+                Resttemplate resttemplate = new Resttemplate();
+                map=resttemplate.SendMessage(dataMap,ConstantInterface.port+"/HSDC/message/operator");
+                if(map!=null&&"0000".equals(map.get("errorCode").toString())){
+			    	PushState.state(phoneNumber, "callLog",300);
+			    	PushSocket.pushnew(map, uuid, "8000","成都电信认证成功");
+	                map.put("errorInfo","查询成功");
+	                map.put("errorCode","0000");
+
+	            }else{
+	            	PushState.state(phoneNumber, "callLog",200,"成都电信认证失败");
+	            	PushSocket.pushnew(map, uuid, "9000","成都电信认证失败");
+	            	logger.warn("成都电信数据推送失败"+phoneNumber);
+	                //PushSocket.push(map, UUID, "0001");
+	            	return map;
+	            }
+//                JSONObject json=JSONObject.fromObject(dataMap);
+//                Map<String, String> maps=new HashMap<String, String>();
+//                maps.put("data", json.toString());
+//                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据中--------------------");
+//                String message=HttpURLConection.sendPost(maps, "http://192.168.3.4:8088/HSDC/message/operator");
+//                logger.warn("返回====="+message);
+//                logger.warn(phoneNumber+"：---------------------成都电信获取详单推送数据完成--------------------本次推送返回："+map);
+//            	Map<String,Object> results=net.sf.json.JSONObject.fromObject(message);
+//       		 if(message.contains("0000")){
+//       			 logger.warn("------------------------成都电信"+phoneNumber+"，认证成功----------------------");
+//       				PushSocket.pushnew(results, uuid, "8000", "认证成功");
+//       				PushState.state(phoneNumber, "callLog", 300);
+//       		 }else{
+//       			  logger.warn("------------------------成都电信"+phoneNumber+"，认证失败----------------------");
+//       				PushSocket.pushnew(results, uuid, "9000", results.get("errorInfo").toString());
+//       				PushState.state(phoneNumber, "callLog", 200, results.get("errorInfo").toString());
+//       		 }
+//                logger.warn(phoneNumber+"：---------------------成都电信获取详单完毕--------------------");
             } catch (Exception e) {
                 logger.warn(phoneNumber+":---------------------成都获取详情异常--------------------", e);
                 map.put("errorCode", "0002");
