@@ -153,7 +153,7 @@ public class HuBeiProviceService {
                 requests.setRequestParameters(list);
                 HtmlPage back1 = webClient.getPage(requests);
                 String stat = back1.asText();
-                System.out.println(stat);
+
                 Thread.sleep(3000);
                 WebRequest requests2 = new WebRequest(new URL("http://hb.189.cn/feesquery_checkCDMAFindWeb.action"));
                 //提交方式
@@ -164,17 +164,14 @@ public class HuBeiProviceService {
                 requests2.setRequestParameters(list2);
                 HtmlPage back2 = webClient.getPage(requests2);
                 String stat2 = back2.asText();
-                System.out.println(stat2);
+
                 Map<String, Object> hubei = new HashMap<String, Object>(200);
                 List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
 
-                PushSocket.pushnew(map, uuid, "2000", "登录成功");
-                logger.warn("---------------------湖北电信获取账单---“"
-                        + "------------登录成功--2000---" + phoneCode);
+                PushSocket.pushnew(map, uuid, "2000", "登录成功",phoneNume);
+
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, uuid, "5000", "获取数据中");
-                logger.warn("---------------------湖北电信获取账单---“"
-                        + "------------获取数据中--5000---" + phoneCode);
+                PushSocket.pushnew(map, uuid, "5000", "获取数据中",phoneNume);
                 signle = "5000";
                 int num = 3;
                 for (int i = 0; i < num; i++) {
@@ -193,8 +190,6 @@ public class HuBeiProviceService {
                     String phonedetailed = back3.asText();
 
                     if (phonedetailed.indexOf(phoneCode) != -1) {
-                        logger.warn("---------------------湖北电信获取账单---“"
-                                + "------------暂无数据--7000---" + phoneCode);
                         map.put("errorCode", "0002");
                         map.put("errorInfo", "获取数据为空!");
                         PushState.state(phoneNume, "callLog", 200, "暂无数据");
