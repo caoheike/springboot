@@ -1,5 +1,4 @@
-package com.reptile.contorller.chinatelecom;
-
+package com.reptile.contorller.chinatelecom.newpostanalysis;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Map;
@@ -23,7 +22,7 @@ import com.reptile.util.CustomAnnotation;
  *
  */
 @Controller
-@RequestMapping("guizhouTelecom")
+@RequestMapping("GZtelecomController")
 public class GZtelecomController {
 	@Autowired
 	private GZtelecomService service;
