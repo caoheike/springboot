@@ -1,10 +1,9 @@
-package com.reptile.contorller;
+package com.reptile.contorller.chinatelecom.newpostanalysis;
 
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.reptile.service.ChongQingService11;
+import com.reptile.service.chinatelecom.newpostanalysis.ChongQingService11;
 import com.reptile.util.CustomAnnotation;
 
 /**
