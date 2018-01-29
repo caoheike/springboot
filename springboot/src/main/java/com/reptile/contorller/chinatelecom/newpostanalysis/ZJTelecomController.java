@@ -50,7 +50,7 @@ public class ZJTelecomController {
 	@ApiOperation(value = "0.3需要验证码，获取详单", notes = "参数：：手机号，服务密码，验证码，经度，纬度")
 	@ResponseBody
 	@RequestMapping(value = "getDetailNeedCode", method = RequestMethod.POST)
-	public  Map<String,Object> getDetailNeedCode(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("uuid")String uuid){
+	public  Map<String,Object> getDetailNeedCode(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("code")String code,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
 		
 		return service.getDetailNeedCode(request, phoneNumber, servePwd, code, longitude, latitude, uuid);
 	}

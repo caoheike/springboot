@@ -33,6 +33,7 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.analysis.ChinaTelecomAnalysisInterface;
 import com.reptile.analysis.ZJTelecomAnalysisImp;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.GetMonth;
 import com.reptile.util.HttpURLConection;
@@ -189,7 +190,7 @@ public class ZJTelecomService {
 		map.put("latitude", latitude);
 		//map.put("data", maps);新版解析
 		map.put("data", data);
-
+		map.put("flag", "9");
 		webClient.close();
 		    //推送数据
 		try {
@@ -338,6 +339,7 @@ public class ZJTelecomService {
 				map.put("latitude", latitude);
 				//map.put("data", maps);新版解析
 				map.put("data", data);
+				map.put("flag", "9");
 				webClient.close();
 	  		    //推送数据
 				map=this.pushData( map, phoneNumber, uuid,logger);
@@ -380,7 +382,8 @@ public class ZJTelecomService {
 		
 		Map<String, String> pushMap=new HashMap<>();
 		pushMap.put("data", net.sf.json.JSONObject.fromObject(map).toString());
-		String tip=HttpURLConection.sendPost(pushMap, "http://192.168.3.4:8088/HSDC-Oracle/message/operator");
+		//String tip=HttpURLConection.sendPost(pushMap, "http://192.168.3.4:8088/HSDC-Oracle/message/operator");
+		String tip=HttpURLConection.sendPost(pushMap, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
 		Map<String,Object> result=net.sf.json.JSONObject.fromObject(tip);
 		 if(tip.contains("0000")){
 			 logger.warn("------------------------浙江电信"+phoneNumber+"，认证成功----------------------");
