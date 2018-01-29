@@ -193,7 +193,7 @@ public class ChengduTelecomService {
                 dataMap.put("flag", "1");
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
-                map=resttemplate.SendMessage(dataMap,ConstantInterface.port+"/HSDC/message/operator");
+                map=resttemplate.SendMessage(dataMap,ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 if(map!=null&&"0000".equals(map.get("errorCode").toString())){
 			    	PushState.state(phoneNumber, "callLog",300);
 			    	PushSocket.pushnew(map, uuid, "8000","成都电信认证成功",phoneNumber);
