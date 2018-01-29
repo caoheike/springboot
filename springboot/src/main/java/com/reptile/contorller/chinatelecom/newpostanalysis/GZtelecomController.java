@@ -1,5 +1,4 @@
-package com.reptile.contorller.chinatelecom;
-
+package com.reptile.contorller.chinatelecom.newpostanalysis;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Map;

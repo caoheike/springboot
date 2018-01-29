@@ -181,7 +181,7 @@ public class ShDongTelecomService {
 						//获取详单
 						logger.warn("---------------------山东电信:"+phoneNumber+"详单获取中...---------------------");
 						list=this.getDetails(webClient,httpClient, phoneNumber, list);
-						if (list!=null) {
+						if (list.size()!=0) {
 							  PushSocket.pushnew(map, uuid, "6000","获取数据成功");
 				                signle="4000";
 							logger.warn("---------------------山东电信:"+phoneNumber+"详单获取成功,详单："+list+"---------------------");
