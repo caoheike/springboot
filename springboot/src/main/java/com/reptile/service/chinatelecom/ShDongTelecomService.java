@@ -38,6 +38,7 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.gson.JsonObject;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.GetMonth;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -148,13 +149,16 @@ public class ShDongTelecomService {
 	public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String imageCode,
 			String userName, String userCard, String phoneCode, String servePwd, String longitude, String latitude,
 			String uuid) {
+		logger.warn( "---------------------山东电信:"+phoneNumber+"获取详单---------------------");
 		List<String> list=new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>(16);
 		Map<String, Object> dataMap = new HashMap<String, Object>(16);
 		HttpSession session = request.getSession();
 		Object attribute = session.getAttribute("SD-sendCode-webClient");
 		Object attribute1 = session.getAttribute("SD-sendCode-httpClient");
-
+		PushSocket.pushnew(map, uuid, "1000","登录中");
+        PushState.state(phoneNumber, "callLog",100);
+        String signle="1000";
 		if (attribute == null || attribute1 == null) {
 			logger.warn( "---------------------山东电信:"+phoneNumber+"获取详单,未进行前置操作---------------------");
 			map.put("errorCode", "0001");
@@ -170,12 +174,17 @@ public class ShDongTelecomService {
 					//二次校验
 					map=this.checkInfo(webClient, httpClient, checkInfoUrl, phoneNumber, imageCode, phoneCode, userCard, userName, map);	
 					if (map.get("errorCode").equals("0000")) {
+						PushSocket.pushnew(map, uuid, "2000","登录成功");
 						//校验成功
 						logger.warn("---------------------山东电信:"+phoneNumber+"二次身份校验成功！---------------------");
+						PushSocket.pushnew(map, uuid, "5000","数据 获取中");
+		                signle="5000";
 						//获取详单
 						logger.warn("---------------------山东电信:"+phoneNumber+"详单获取中...---------------------");
 						list=this.getDetails(webClient,httpClient, phoneNumber, list);
 						if (list!=null) {
+							  PushSocket.pushnew(map, uuid, "6000","获取数据成功");
+				                signle="4000";
 							logger.warn("---------------------山东电信:"+phoneNumber+"详单获取成功,详单："+list+"---------------------");
 							//解析详单
 							logger.warn("-------------------山东电信:"+phoneNumber+"解析中----------------------");
@@ -192,17 +201,25 @@ public class ShDongTelecomService {
 							logger.warn( "---------------------山东电信:"+phoneNumber+"没有清单---------------------");
 							map.put("errorCode", "0001");
 							map.put("errorInfo", "无清单可查");
+							PushState.state(phoneNumber, "callLog",200,"数据获取失败，无清单可查");
+		                    PushSocket.pushnew(map, uuid, "7000","数据获取失败，无清单可查");
+							return map;
 						}
 					}else {
 						//校验失败
 						logger.warn("---------------------山东电信:"+phoneNumber+"二次身份认证失败，失败原因："+map.get("errorInfo")+"---------------------");
-					    map.put(map.get("errorInfo").toString(), map.get("errorInfo").toString()+"请刷新图行验证码，并重新获取短信验证码");
+					    map.put("errorInfo", map.get("errorInfo").toString()+"请刷新图行验证码，并重新获取短信验证码");
+					    map.put("errorCode", "001");
+					    PushState.state(phoneNumber, "callLog",200,"登录失败,"+map.get("errorInfo").toString());
+			            PushSocket.pushnew(map, uuid, "3000","登录失败,"+map.get("errorInfo").toString());
 						return map;
 					}
 				} catch (Exception e) {
 					logger.error("---------------------山东电信:"+phoneNumber+"---------------------",e);
 					map.put("errorCode", "0001");
 					map.put("errorInfo", "网络异常!");
+					 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+		             DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
 				}
 		}
 		return map;

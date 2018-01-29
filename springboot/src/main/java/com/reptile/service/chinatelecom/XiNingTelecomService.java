@@ -238,9 +238,11 @@ public class XiNingTelecomService {
                     PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常");
                     return map;
                 }
-                logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
+                if (dataList!=null) {
+                	logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
+				}
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
-               signle="4000";
+                signle="4000";
                 map.put("data", dataList);
                 map.put("flag", "2");
                 map.put("UserPassword", serverPwd);

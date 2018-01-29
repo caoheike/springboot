@@ -14,6 +14,9 @@ import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 import com.reptile.util.application;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,14 +41,16 @@ import java.util.Map;
 public class HuBeiProviceService {
 	 @Autowired
 	  private application applications;
+	 private Logger logger = LoggerFactory.getLogger(HuBeiProviceService.class);
 	public  Map<String,Object> hubeicode(HttpServletRequest request,String phoneCode,String passPhone){
+		 logger.warn("---------------------湖北电信发送短信验证码---------------------");
 		  Map<String,Object> map = new HashMap<String,Object>(200);
 	        HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("GBmobile-webclient");
-	        
 	        if (attribute == null) {
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
+	            logger.warn("---------------------湖北电信发送短信验证码---操作异常：因为未登陆------------------"+phoneCode);
 	            return map;
 	        } else {
 	        	try {
@@ -63,6 +68,7 @@ public class HuBeiProviceService {
 		            File file = new File(realPath);
 		            if (!file.exists()) {
 		                file.mkdirs();
+		                logger.warn("---------------------湖北电信发送短信验证码---打码失败-----------------"+phoneCode);
 		            }
 		            String fileName = "loadImageCode" + System.currentTimeMillis() + ".png";
 		            HtmlImage imgCaptcha = (HtmlImage) page1.getElementById("imgCaptcha");
@@ -95,18 +101,22 @@ public class HuBeiProviceService {
 		     		HtmlPage backtrack =webClient.getPage(request2);
 		     		Thread.sleep(4000);
 		     		if(backtrack.asText().indexOf(phoneCode)!=-1){
+		     			  logger.warn("---------------------湖北电信发送短信验证码---“"
+		     					+ backtrack.asText()+ "------------短信验证码发送成功------"+phoneCode);
 		     			System.out.println(backtrack.asText()+"--成功--");
 		     			session.setAttribute("sessionWebClient-HUBEI", webClient);
 		     			map.put("errorCode", "0000");
 		     			map.put("errorInfo", backtrack.asText());
 		     		}else{
+		  			  logger.warn("---------------------湖北电信发送短信验证码---“"
+		     					+ backtrack.asText()+ "------------短信验证码发送失败-----"+phoneCode);
 		     			System.out.println(backtrack.asText()+"-----失败-----");
 		     			map.put("errorCode", "0001");
 		     			map.put("errorInfo", backtrack.asText());
 		     		}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					   e.printStackTrace();
+					 logger.warn("---------------------湖北电信发送短信验证码---“"
+		     					+  e+ "------------短信验证码发送失败-----"+phoneCode);
 		               map.put("errorCode", "0001");
 		               map.put("errorInfo", "请再尝试发送验证码");
 				}
@@ -119,17 +129,19 @@ public class HuBeiProviceService {
 		 WebClient webClient = null;
 		 PushState.state(phoneCode, "callLog",100);
 		 PushSocket.pushnew(map, uuid, "1000","登录中");
+		 logger.warn("---------------------湖北电信获取账单---“"
+					+ "------------登录中--1000---"+phoneCode);
 		 String signle="1000";
 		 try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		 HttpSession session = request.getSession();
 	        Object attribute = session.getAttribute("sessionWebClient-HUBEI");
 	        if (attribute == null) {
-	        	
+	       	 logger.warn("---------------------湖北电信获取账单--“"
+						+ "------------登录失败,操作异常--3000---"+phoneCode);
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	            PushState.state(phoneNume, "callLog",200,"登录失败,操作异常!");
@@ -162,8 +174,12 @@ public class HuBeiProviceService {
 				  List<Map<String,Object>> datalist=new ArrayList<Map<String,Object>>();
 				  
 					PushSocket.pushnew(map, uuid, "2000","登录成功");
+					 logger.warn("---------------------湖北电信获取账单---“"
+								+ "------------登录成功--2000---"+phoneCode);
 					Thread.sleep(2000);
 					PushSocket.pushnew(map, uuid, "5000","获取数据中");
+					 logger.warn("---------------------湖北电信获取账单---“"
+								+ "------------获取数据中--5000---"+phoneCode);
 					signle="5000";
 					int num=3;
 					for (int i = 0; i < num; i++) {
@@ -174,7 +190,6 @@ public class HuBeiProviceService {
 					//提交方式
 					requests3.setHttpMethod(HttpMethod.POST);
 					String month=Dates.beforMonth(i)+"0000";
-					System.out.println(month+"----------------------");
 					list3.add(new NameValuePair("startMonth",month));
 					list3.add(new NameValuePair("type",stat2));
 					list3.add(new NameValuePair("random",phoneCode));
@@ -183,6 +198,8 @@ public class HuBeiProviceService {
 					String phonedetailed=back3.asText();
 					
 					if(phonedetailed.indexOf(phoneCode)!=-1){
+						 logger.warn("---------------------湖北电信获取账单---“"
+									+ "------------暂无数据--7000---"+phoneCode);
 		     			map.put("errorCode", "0002");
 		     			map.put("errorInfo", "获取数据为空!");
 		     			PushState.state(phoneNume, "callLog",200,"暂无数据");
@@ -190,10 +207,12 @@ public class HuBeiProviceService {
 		     			return map;
 		     			
 		     		}
-					System.out.println(phonedetailed+"----------------------");
+					 logger.warn("---------------------湖北电信获取账单---“"
+							+phonedetailed	+ "---------------"+phoneCode);
 					Map<String ,Object> pageMap=new HashMap(200);
 					Thread.sleep(3000);
-					System.out.println("-------------获取下一页的数值------------------");
+					logger.warn("---------------------湖北电信获取账单---“"
+							+ "------------获取下一页的数值---"+phoneCode);
 					int num1=4;
 					for (int j = 1; j < num1; j++) {
 						Map<String ,Object> eachpageMap=new HashMap(200);
@@ -209,12 +228,13 @@ public class HuBeiProviceService {
 						String phonedetailed2=back4.asText();
 						eachpageMap.put("pageData", phonedetailed2);
 						eachMonthList.add(eachpageMap);
-						System.out.println("--------第"+j+"页------------"+phonedetailed2+"----------------------");
+						logger.warn("--------第"+j+"页------------"+phonedetailed2+"--------湖北电信数据获取--------------");
 					}
 					detailed.put("item", eachMonthList);
 					datalist.add(detailed);
 				}
 					PushSocket.pushnew(map, uuid, "6000","数据获取成功");
+					logger.warn("--------"+map+"------------"+phoneNume+"--------湖北电信数据获取------数据获取成功----6000----");
 					signle="4000";
 					hubei.put("data", datalist);
 					hubei.put("UserIphone", phoneNume);
@@ -230,17 +250,19 @@ public class HuBeiProviceService {
 			    	PushState.state(phoneNume, "callLog",300);
 	                map.put("errorInfo","查询成功");
 	                map.put("errorCode","0000");
+	                logger.warn("--------"+map+"------------"+phoneNume+"--------湖北电信数据获取------认证成功----8000----");
 	                PushSocket.pushnew(map, uuid, "8000","认证成功");
 	         }else{
 	            	//--------------------数据中心推送状态----------------------
 	            	PushState.state(phoneNume, "callLog",200,map.get("errorInfo").toString());
 	            	PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
+	                logger.warn("--------"+map+"------------"+phoneNume+"--------湖北电信数据获取-----"+map.get("errorInfo").toString()+"----8000----");
 	            	//---------------------数据中心推送状态----------------------
 	          }
 			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				
+				 logger.warn("------------------"+phoneNume+"--------湖北电信数据获取失败------服务繁忙，请稍后再试-----"+e);
 				e.printStackTrace();
 				PushState.state(phoneNume, "callLog",200,"服务繁忙，请稍后再试");
 				//---------------------------数据中心推送状态----------------------------------
