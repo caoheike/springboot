@@ -170,10 +170,9 @@ public class ChengduTelecomService {
                         list.add(record);
                     }
                 }
-                if (list!=null) {
-                	 logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
-				}
                
+                logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size());
+				      
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
                 dataMap.put("UserIphone", phoneNumber);
