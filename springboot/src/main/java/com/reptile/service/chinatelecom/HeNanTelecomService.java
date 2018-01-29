@@ -1,11 +1,10 @@
 package com.reptile.service.chinatelecom;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.reptile.springboot.Scheduler;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -45,20 +44,37 @@ public class HeNanTelecomService {
         } else {
             try {
                 WebClient webClient = (WebClient) attribute;
+                webClient.getOptions().setJavaScriptEnabled(false);
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000356"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 System.out.println(page1.asXml());
 
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
                 Date time = calendar.getTime();
                 String date = sim.format(time);
-                WebRequest req = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha"));
-                req.setHttpMethod(HttpMethod.GET);
-                HtmlPage pages=webClient.getPage(req);
-                Thread.sleep(3000);
+
+//                WebRequest req=new WebRequest(new URL("http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha"));
+//                req.setHttpMethod(HttpMethod.GET);
+//                HtmlPage pages = webClient.getPage(req);
+
+                WebRequest req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxx.jsp"));
+                req.setHttpMethod(HttpMethod.POST);
+                List<NameValuePair> dataList=new ArrayList<>();
+                dataList.add(new NameValuePair("ACC_NBR",phoneNumber));
+//                dataList.add(new NameValuePair("PROD_TYPE","713055046112"));
+                dataList.add(new NameValuePair("ACCTNBR97",""));
+                req.setRequestParameters(dataList);
+                HtmlPage pages = webClient.getPage(req);
+                Thread.sleep(2000);
+                System.out.println(pages.asXml());
+                if(pages.getElementById("PROD_TYPE")==null){
+                    map.put("errorCode", "0001");
+                    map.put("errorInfo", "当前使用人数过多，请刷新页面后重新发送验证码");
+                    return map;
+                }
                 req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 List<NameValuePair> list = new ArrayList<NameValuePair>();
