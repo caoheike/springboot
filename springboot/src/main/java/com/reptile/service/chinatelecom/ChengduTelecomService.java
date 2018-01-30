@@ -55,7 +55,7 @@ public class ChengduTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/v6/xdcx?fastcode=20000326&cityCode=sc"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
-                String flagPhone="手机验证码";
+                String flagPhone = "手机验证码";
                 if (!page1.asText().contains(flagPhone)) {
                     logger.warn("---------------------成都电信未到达发送短信页面---------------------");
                     map.put("errorCode", "0007");
@@ -67,13 +67,13 @@ public class ChengduTelecomService {
                 String sendPhone = "http://sc.189.cn/service/billDetail/sendSMSAjax.jsp?dateTime1=" + beginTime + "&dateTime2=" + endTime;
                 UnexpectedPage page = webClient.getPage(sendPhone);
                 String result = page.getWebResponse().getContentAsString();
-                String flagSuccess="成功";
+                String flagSuccess = "成功";
                 if (!result.contains(flagSuccess)) {
-                   
+
                     JSONObject jsonObject = JSONObject.fromObject(result);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", jsonObject.get("retMsg").toString());
-                    logger.warn("---------------------成都电信短信验证码发送失败,失败原因："+jsonObject.get("retMsg").toString()+"---------------------");
+                    logger.warn("---------------------成都电信短信验证码发送失败,失败原因：" + jsonObject.get("retMsg").toString() + "---------------------");
                 } else {
                     logger.warn("---------------------成都电信短信验证码发送成功---------------------");
                     map.put("errorCode", "0000");
@@ -94,25 +94,25 @@ public class ChengduTelecomService {
 
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String phoneCode,
                                             String servePwd, String longitude, String latitude, String uuid) {
-        logger.warn(phoneNumber+"：---------------------成都电信获取详单...---------------------");
+        logger.warn(phoneNumber + "：---------------------成都电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
         Map<String, Object> dataMap = new HashMap<String, Object>(16);
-        PushState.state(phoneNumber, "callLog",100);
-        PushSocket.pushnew(map, uuid, "1000","登录中");
-        String signle="1000";
+        PushState.state(phoneNumber, "callLog", 100);
+        PushSocket.pushnew(map, uuid, "1000", "登录中");
+        String signle = "1000";
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
-        PushState.state(phoneNumber, "callLog",100);
+        PushState.state(phoneNumber, "callLog", 100);
         if (attribute == null) {
-            logger.warn(phoneNumber+"：---------------------成都电信获取详单未获取手机验证码---------------------");
+            logger.warn(phoneNumber + "：---------------------成都电信获取详单未获取手机验证码---------------------");
             map.put("errorCode", "0001");
             map.put("errorInfo", "请先获取验证码");
-            PushState.state(phoneNumber, "callLog",200,"请先获取验证码");
-            PushSocket.pushnew(map, uuid, "3000","请先获取验证码");
+            PushState.state(phoneNumber, "callLog", 200, "请先获取验证码");
+            PushSocket.pushnew(map, uuid, "3000", "请先获取验证码");
             return map;
         } else {
-            logger.warn(phoneNumber+"：---------------------成都电信获取详单开始---------------------");
+            logger.warn(phoneNumber + "：---------------------成都电信获取详单开始---------------------");
             WebClient webClient = (WebClient) attribute;
             try {
                 String beginTime = session.getAttribute("SCmobile-benginTime").toString();
@@ -122,35 +122,35 @@ public class ChengduTelecomService {
                 String getMes = "http://sc.189.cn/service/billDetail/detailQuery.jsp?startTime=" + beginTime + "&endTime=" + endTime + "&qryType=21&randomCode=" + secretCode;
                 HtmlPage page = webClient.getPage(getMes);
                 String result = page.asText();
-               //数据logger
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单，第一次请求到的数据:"+result+"---------------------");
+                //数据logger
+                logger.warn(phoneNumber + "：---------------------成都电信获取详单，第一次请求到的数据:" + result + "---------------------");
                 JSONObject jsonObject = JSONObject.fromObject(result);
                 String record = null;
-                String retCode="retCode";
-                String flag0="0";
+                String retCode = "retCode";
+                String flag0 = "0";
                 if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
-                    String resultInfo="没有查询到相应记录";
+                    String resultInfo = "没有查询到相应记录";
                     if (!result.contains(resultInfo)) {
-                       
+
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
-                        PushState.state(phoneNumber, "callLog",200,jsonObject.get("retMsg").toString());  
-                        PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString());
-                        logger.warn(phoneNumber+"：---------------------成都电信获取详单时，未能请求到正确数据,原因:"+jsonObject.get("retMsg").toString()+"---------------------");
+                        PushState.state(phoneNumber, "callLog", 200, jsonObject.get("retMsg").toString());
+                        PushSocket.pushnew(map, uuid, "3000", jsonObject.get("retMsg").toString());
+                        logger.warn(phoneNumber + "：---------------------成都电信获取详单时，未能请求到正确数据,原因:" + jsonObject.get("retMsg").toString() + "---------------------");
                         return map;
                     }
                 } else {
-                	 PushSocket.pushnew(map, uuid, "2000","登录成功");
-                     Thread.sleep(2000);
-                     PushSocket.pushnew(map, uuid, "5000","获取数据中");
-                     signle="5000";
+                    PushSocket.pushnew(map, uuid, "2000", "登录成功");
+                    Thread.sleep(2000);
+                    PushSocket.pushnew(map, uuid, "5000", "获取数据中");
+                    signle = "5000";
                     record = jsonObject.get("json").toString();
                     list.add(record);
                 }
-               
+
                 Calendar calendar = Calendar.getInstance();
                 Calendar calendar1 = Calendar.getInstance();
-                int boundCount=5;
+                int boundCount = 5;
                 for (int i = 0; i < boundCount; i++) {
                     //上月第一天
                     calendar.add(Calendar.MONTH, -1);
@@ -167,20 +167,28 @@ public class ChengduTelecomService {
                     getMes = "http://sc.189.cn/service/billDetail/detailQuery.jsp?startTime=" + startTime + "&endTime=" + lastsTime + "&qryType=21&randomCode=" + secretCode;
                     page = webClient.getPage(getMes);
                     result = page.asText();
-                   //数据logger
-                    logger.warn(phoneNumber+"：---------------------成都电信获取详单，第"+(i+2)+"次请求到的数据:"+result+"---------------------");
-                  
+                    //数据logger
+                    logger.warn(phoneNumber + ":" + startTime + "本次获得的数据为:------" + result);
+
                     if (!result.contains("没有查询到相应记录")) {
                         jsonObject = JSONObject.fromObject(result);
                         record = jsonObject.get("json").toString();
                         list.add(record);
                     }
                 }
-               
-                logger.warn(phoneNumber+"：---------------------成都电信获取详单结束--------------------本次账单数为："+list.size()+"数据清单:"+list.toString());
-				      
-                PushSocket.pushnew(map, uuid, "6000","获取数据成功");
-                signle="4000";
+
+                logger.warn(phoneNumber + "：---------------------成都电信获取详单结束--------------------本次账单数为：" + list.size());
+
+                if (list.size() < 5) {
+                    PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
+                    PushState.state(phoneNumber, "callLog", 200, "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
+                    map.put("errorCode", "0009");
+                    map.put("errorInfo", "数据获取不完全，请重新再次认证！(注：请确认手机号使用时长超过6个月)");
+                    return map;
+                }
+
+                PushSocket.pushnew(map, uuid, "6000", "获取数据成功");
+                signle = "4000";
                 dataMap.put("UserIphone", phoneNumber);
                 dataMap.put("UserPassword", servePwd);
                 //经度
@@ -193,20 +201,19 @@ public class ChengduTelecomService {
                 dataMap.put("flag", "1");
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
-                map=resttemplate.SendMessage(dataMap,ConstantInterface.port+"/HSDC/message/telecomCallRecord");
-                if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-			    	PushState.state(phoneNumber, "callLog",300);
-			    	PushSocket.pushnew(map, uuid, "8000","成都电信认证成功");
-	                map.put("errorInfo","查询成功");
-	                map.put("errorCode","0000");
+                map = resttemplate.SendMessage(dataMap, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
+                if (map != null && "0000".equals(map.get("errorCode").toString())) {
+                    PushState.state(phoneNumber, "callLog", 300);
+                    PushSocket.pushnew(map, uuid, "8000", "成都电信认证成功");
+                    map.put("errorInfo", "查询成功");
+                    map.put("errorCode", "0000");
 
-	            }else{
-	            	PushState.state(phoneNumber, "callLog",200,"成都电信认证失败");
-	            	PushSocket.pushnew(map, uuid, "9000","成都电信认证失败");
-	            	logger.warn("成都电信数据推送失败"+phoneNumber);
-	                //PushSocket.push(map, UUID, "0001");
-	            	return map;
-	            }
+                } else {
+                    PushState.state(phoneNumber, "callLog", 200, "成都电信认证失败");
+                    PushSocket.pushnew(map, uuid, "9000", "成都电信认证失败");
+                    //PushSocket.push(map, UUID, "0001");
+                    return map;
+                }
 //                JSONObject json=JSONObject.fromObject(dataMap);
 //                Map<String, String> maps=new HashMap<String, String>();
 //                maps.put("data", json.toString());
@@ -226,11 +233,11 @@ public class ChengduTelecomService {
 //       		 }
 //                logger.warn(phoneNumber+"：---------------------成都电信获取详单完毕--------------------");
             } catch (Exception e) {
-                logger.warn(phoneNumber+":---------------------成都获取详情异常--------------------", e);
+                logger.warn(phoneNumber + ":---------------------成都获取详情异常--------------------", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
-                DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
+                PushState.state(phoneNumber, "callLog", 200, "网络连接异常!");
+                DealExceptionSocketStatus.pushExceptionSocket(signle, map, uuid);
             }
         }
         return map;
