@@ -22,12 +22,13 @@ public class PushSocket {
      * @param resultCode
      * @param errorInfor 失败原因
      */
-    public static Map<String, Object> pushnew(Map<String, Object> map, String UUID, String resultCode, String errorInfor,String... agrs) {
-        String userIdentify="null";
-        if(agrs!=null&&agrs.length>0){
-            userIdentify=agrs[0];
-        }
-        logger.warn(userIdentify+":   "+UUID + "：本次认证流程，现处于阶段为：" + errorInfor);
+    public static Map<String, Object> pushnew(Map<String, Object> map, String UUID, String resultCode, String errorInfor) {
+//        String userIdentify="null";
+//        if(agrs!=null&&agrs.length>0){
+//            userIdentify=agrs[0];
+//        }
+//        logger.warn(userIdentify+":  "+UUID + "：本次认证流程，现处于阶段为：" + errorInfor);
+        logger.warn(UUID + "：本次认证流程，现处于阶段为：" + errorInfor);
         Map<String, Object> mapData = new HashMap<String, Object>();
         Session se = LongLink.getWsUserMap().get(UUID);
         String seq_id = LongLink.getWsInfoMap().get(UUID);

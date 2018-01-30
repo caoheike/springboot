@@ -126,7 +126,7 @@ public class HuBeiProviceService {
         Map<String, Object> map = new HashMap<String, Object>(200);
         WebClient webClient = null;
         PushState.state(phoneCode, "callLog", 100);
-        PushSocket.pushnew(map, uuid, "1000", "登录中", phoneNume);
+        PushSocket.pushnew(map, uuid, "1000", "登录中");
         String signle = "1000";
 
         try {
@@ -168,10 +168,10 @@ public class HuBeiProviceService {
                 Map<String, Object> hubei = new HashMap<String, Object>(200);
                 List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
 
-                PushSocket.pushnew(map, uuid, "2000", "登录成功",phoneNume);
+                PushSocket.pushnew(map, uuid, "2000", "登录成功");
 
                 Thread.sleep(2000);
-                PushSocket.pushnew(map, uuid, "5000", "获取数据中",phoneNume);
+                PushSocket.pushnew(map, uuid, "5000", "获取数据中");
                 signle = "5000";
                 int num = 3;
                 for (int i = 0; i < num; i++) {
