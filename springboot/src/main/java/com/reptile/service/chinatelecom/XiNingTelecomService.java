@@ -157,7 +157,7 @@ public class XiNingTelecomService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String phoneNumber, String serverPwd,String longitude,String latitude,String uuid){
         logger.warn(phoneNumber+"：---------------------西宁电信获取详单...---------------------");
         Map<String, Object> map = new HashMap<String, Object>(16);
-        PushSocket.pushnew(map, uuid, "1000","登录中",phoneNumber);
+        PushSocket.pushnew(map, uuid, "1000","登录中");
         PushState.state(phoneNumber, "callLog",100);
         String signle="1000";
         
@@ -170,17 +170,17 @@ public class XiNingTelecomService {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
-            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!",phoneNumber);
+            PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
             return map;
         } else {
             logger.warn(phoneNumber+"：---------------------西宁电信获取详单开始---------------------");
-        	PushSocket.pushnew(map, uuid, "2000","登录成功",phoneNumber);
+        	PushSocket.pushnew(map, uuid, "2000","登录成功");
             WebClient webClient = (WebClient) attribute;
             try {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10029&toStUrl=http://qh.189.cn/service/bill/fee.action?type=ticket&fastcode=00920926&cityCode=qh"));
                 requests.setHttpMethod(HttpMethod.GET);
                 webClient.getPage(requests);
-                PushSocket.pushnew(map, uuid, "5000","数据 获取中",phoneNumber);
+                PushSocket.pushnew(map, uuid, "5000","数据 获取中");
                 signle="5000";
 
                 SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd");
@@ -237,13 +237,13 @@ public class XiNingTelecomService {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "数据获取失败，网络异常");
                     PushState.state(phoneNumber, "callLog",200,"数据获取失败，网络异常");
-                    PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常",phoneNumber);
+                    PushSocket.pushnew(map, uuid, "7000","数据获取失败，网络异常");
                     return map;
                 }
              
                 	logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size()+"数据详情："+dataList.toString());
 		
-                PushSocket.pushnew(map, uuid, "6000","获取数据成功",phoneNumber);
+                PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
                 map.put("data", dataList);
                 map.put("flag", "2");
@@ -262,10 +262,10 @@ public class XiNingTelecomService {
                 String validateResult="0000";
                 String errorCode="errorCode";
                 if(validateResult.equals(map.get(errorCode))) {
-					PushSocket.pushnew(map, uuid, "8000","认证成功",phoneNumber);
+					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					 PushState.state(phoneNumber, "callLog",300);
 				}else {
-					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString(),phoneNumber);
+					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
                 logger.warn(phoneNumber+"：---------------------西宁电信获取详单完毕--------------------");
