@@ -135,7 +135,7 @@ public class ChengduTelecomService {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog",200,jsonObject.get("retMsg").toString());  
-                        PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString(),phoneNumber);
+                        PushSocket.pushnew(map, uuid, "3000",jsonObject.get("retMsg").toString());
                         logger.warn(phoneNumber+"：---------------------成都电信获取详单时，未能请求到正确数据,原因:"+jsonObject.get("retMsg").toString()+"---------------------");
                         return map;
                     }
