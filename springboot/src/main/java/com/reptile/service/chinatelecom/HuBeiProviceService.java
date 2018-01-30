@@ -164,7 +164,14 @@ public class HuBeiProviceService {
                 requests2.setRequestParameters(list2);
                 HtmlPage back2 = webClient.getPage(requests2);
                 String stat2 = back2.asText();
-
+                if(stat2=="0"){
+                	 map.put("errorCode", "0002");
+                     map.put("errorInfo", "验证错误");
+                     PushState.state(phoneNume, "callLog", 200, "验证错误");
+                     PushSocket.pushnew(map, uuid, "3000", "验证错误");
+                     return map;
+                }
+                logger.warn("=======短信验证码======="+back2.asText()+"==============back2.asText()================");
                 Map<String, Object> hubei = new HashMap<String, Object>(200);
                 List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
 

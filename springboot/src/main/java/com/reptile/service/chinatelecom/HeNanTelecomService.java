@@ -40,6 +40,7 @@ public class HeNanTelecomService {
         if (attribute == null) {
             map.put("errorCode", "0001");
             map.put("errorInfo", "操作异常!");
+            logger.warn("------河南电信异常操作：0001---------------"+phoneNumber);
             return map;
         } else {
             try {
@@ -48,8 +49,8 @@ public class HeNanTelecomService {
                 WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000356"));
                 requests.setHttpMethod(HttpMethod.GET);
                 HtmlPage page1 = webClient.getPage(requests);
+                logger.warn(phoneNumber+"------河南电信---------------"+page1.asXml());
                 Thread.sleep(2000);
-                System.out.println(page1.asXml());
 
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMM");
                 Calendar calendar = Calendar.getInstance();
@@ -73,6 +74,7 @@ public class HeNanTelecomService {
                 if(pages.getElementById("PROD_TYPE")==null){
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "当前使用人数过多，请刷新页面后重新发送验证码");
+                    logger.warn("河南电信：当前使用人数过多，请刷新页面后重新发送验证码"+phoneNumber+"===发送短信验证码失败===0001");
                     return map;
                 }
                 req=new WebRequest(new URL("http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp"));
@@ -93,7 +95,7 @@ public class HeNanTelecomService {
                 req.setRequestParameters(list);
                 HtmlPage pagess= webClient.getPage(req);
                 Thread.sleep(1000);
-
+                logger.warn("河南电信Post发包第一次：返回的页面"+pagess.asXml()+"========="+phoneNumber);
                 req = new WebRequest(new URL("http://ha.189.cn/service/bill/getRand.jsp"));
                 req.setHttpMethod(HttpMethod.POST);
                 list = new ArrayList<NameValuePair>();
@@ -118,20 +120,24 @@ public class HeNanTelecomService {
 
                 XmlPage page = webClient.getPage(req);
                 Thread.sleep(1000);
+                logger.warn("河南电信Post发包第二次：返回的页面"+pagess.asXml()+"========="+phoneNumber);
                 String result = page.asText();
+                
                 String flagMes="请等待30分钟后在发送";
                 if (result.trim().contains(flagMes)) {
                     String[] arr = result.trim().split("送");
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "请等待" + arr[1].trim() + "分钟后在发送!");
+                    logger.warn("河南电信"+map+"========="+phoneNumber);
                 } else {
                     map.put("errorCode", "0000");
                     map.put("errorInfo", "短信已成功发送，请注意查收！");
                     session.setAttribute("HNwebClient", webClient);
                     session.setAttribute("HeNanHtmlPage", pagess);
+                    logger.warn("河南电信短信发送成功"+map+"========="+phoneNumber);
                 }
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  广西发送手机验证码   mrlu",e);
+                logger.warn(e.getMessage()+"  河南发送手机验证码   mrlu",e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络异常！");
             }
@@ -143,6 +149,7 @@ public class HeNanTelecomService {
         Map<String, Object> map = new HashMap<String, Object>(16);
         PushState.state(phoneNumber, "callLog",100);
         PushSocket.pushnew(map, uuid, "1000","登录中");
+        logger.warn("河南电信登录中========="+"传过来的参数：1=phoneNumber="+phoneNumber+"2=serverPwd="+serverPwd+"3.=phoneCode="+phoneCode);
         try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -158,6 +165,7 @@ public class HeNanTelecomService {
             map.put("errorInfo", "操作异常!");
             PushState.state(phoneNumber, "callLog",200,"登录失败,操作异常!");
             PushSocket.pushnew(map, uuid, "3000","登录失败,操作异常!");
+            logger.warn("河南电信登录中=session 为空========"+map+"-----------"+phoneCode);
             return map;
         } else {
             try {
@@ -193,12 +201,14 @@ public class HeNanTelecomService {
                 HtmlPage page2 = webClient.getPage(req);
                 Thread.sleep(1000);
                 String result = page2.asText();
+                logger.warn("河南电信登录==发包所得页面======="+ page2.asText()+"-----------"+phoneCode);
                 String flagStr="您输入的查询验证码错误或过期";
                 if (result.contains(flagStr)) {
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     PushState.state(phoneNumber, "callLog",200,"您输入的查询验证码错误或过期，请重新核对或再次获取！");
                     PushSocket.pushnew(map, uuid, "3000","您输入的查询验证码错误或过期，请重新核对或再次获取！");
+                    logger.warn("河南电信登录==验证码输入错误======="+ map+"-----------"+phoneCode);
                     return map;
                 }
                 PushSocket.pushnew(map, uuid, "2000","登录成功");
@@ -226,6 +236,7 @@ public class HeNanTelecomService {
                     req.setRequestParameters(list);
                     page2 = webClient.getPage(req);
                     Thread.sleep(1000);
+                    logger.warn("河南电信登录==输入验证后的页面======="+ page2.asXml()+"-----------"+phoneCode+"------------"+i);
                     dataList.add(page2.asXml());
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
@@ -241,20 +252,23 @@ public class HeNanTelecomService {
                 map.put("data", dataList);
                 webClient.close();
                 Resttemplate resttemplate = new Resttemplate();
+                logger.warn("河南电信数据="+map+"=将要推送至数据中心=====-----------"+phoneCode+"------------");
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");
                 String errorCode="errorCode";
                 String resultCode="0000";
 				if(map.get(errorCode).equals(resultCode)) {
+					   logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneCode+"------------");
 					PushSocket.pushnew(map, uuid, "8000","认证成功");
 					PushState.state(phoneNumber, "callLog",300);
 				}else {
+					 logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneCode+"------------");
 					PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 					PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 				}
 				
-                System.out.println("河南电信拿到的数据条数：" + dataList.size());
+				 logger.warn("河南电信拿到的数据条数：" + dataList.size()+phoneCode);
             } catch (Exception e) {
-                logger.warn(e.getMessage()+"  广西获取详单   mrlu",e);
+                logger.warn(e.getMessage()+"河南获取详单   mrlu",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
                 PushState.state(phoneNumber, "callLog",200,"网络连接异常!");

@@ -214,6 +214,8 @@ public class XiNingTelecomService {
                             webRequest.setRequestParameters(list);
                             HtmlPage page = webClient.getPage(webRequest);
                             String result = page.asXml();
+                            //数据logger
+                        	logger.warn(phoneNumber+"：---------------------西宁电信获取详------------本次获取数据详情："+result);
                             if (result.contains("无话单记录！")) {
                                 break;
                             }
@@ -239,7 +241,7 @@ public class XiNingTelecomService {
                     return map;
                 }
              
-                	logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size());
+                	logger.warn(phoneNumber+"：---------------------西宁电信获取详单结束---------------------本次获取账单数目:"+dataList.size()+"数据详情："+dataList.toString());
 		
                 PushSocket.pushnew(map, uuid, "6000","获取数据成功");
                 signle="4000";
