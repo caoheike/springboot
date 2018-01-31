@@ -885,6 +885,7 @@ public class InterfaceController {
 				map.put("errorInfo", "非法操作！请重试");
 				PushSocket.pushnew(map, uuId, "3000", "非法操作！请重试");
 			}
+			logger.warn("淘宝认证已经结束-此次无任何异常");
 		} catch (Exception e) {
 			logger.error("淘宝网络异常",e);
 			if(flag == 1){

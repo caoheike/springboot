@@ -268,6 +268,7 @@ public class CreditAnalysis {
         resultObj.put("credit_chaxun2", personQueryData);
         resultData.put("data", resultObj);
         resultData.put("idcode", userId.toString());
+        resultData.put("html", parse.html());
         System.out.println(resultData);
         try {
             Map<String,Object> postData=new HashMap<>();

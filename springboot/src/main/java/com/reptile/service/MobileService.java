@@ -1204,47 +1204,47 @@ public class MobileService {
 								// dataMap.put("",(words.split("性别:"))[1]);
 							} else if (words.contains("生日期:")) {
 								dataMap.put("birthdayTime",
-										(words.split("生日期:"))[1]);
+										this.judgeStr(words.split("生日期:")));
 							} else if (words.contains("民族:")) {
 								dataMap.put("nationality",
-										(words.split("民族:"))[1]);
+										this.judgeStr(words.split("民族:")));
 							} else if (words.contains("码:")) {
 								dataMap.put("cardNumber",
-										(words.split("码:"))[1]);
+										this.judgeStr(words.split("码:")));
 							} else if (words.contains("称:")) {
 								dataMap.put("schoolName",
-										(words.split("称:"))[1]);
+										this.judgeStr(words.split("称:")));
 							} else if (words.contains("次:")) {
-								dataMap.put("level", (words.split("次:"))[1]);
+								dataMap.put("level", this.judgeStr(words.split("次:")));
 							} else if (words.contains("业:")) {
-								dataMap.put("domain", (words.split("业:"))[1]);
+								dataMap.put("domain", this.judgeStr(words.split("业:")));
 							} else if (words.contains("制:")) {
 								dataMap.put("schoolLength",
-										(words.split("制:"))[1]);
+										this.judgeStr(words.split("制:")));
 							} else if (words.contains("类别:")) {
 								dataMap.put("QualificationsType",
-										(words.split("类别:"))[1]);
+										this.judgeStr(words.split("类别:")));
 							} else if (words.contains("式:")) {
 								dataMap.put("learningType",
-										(words.split("式:"))[1]);
+										this.judgeStr(words.split("式:")));
 							} else if (words.contains("院:")) {
 								dataMap.put("branchCourts",
-										(words.split("院:"))[1]);
+										this.judgeStr(words.split("院:")));
 							} else if (words.contains("级:")) {
 								dataMap.put("classGrade",
-										(words.split("级:"))[1]);
+										this.judgeStr(words.split("级:")));
 							} else if (words.contains("号:")) {
 								dataMap.put("studentNumber",
-										(words.split("号:"))[1]);
+										this.judgeStr(words.split("号:")));
 							} else if (words.contains("学日期:")) {
 								dataMap.put("joinTime",
-										(words.split("学日期:"))[1]);
+										this.judgeStr(words.split("学日期:")));
 							} else if (words.contains("校日期:")) {
 								dataMap.put("graduateTime",
-										(words.split("校日期:"))[1]);
+										this.judgeStr(words.split("校日期:")));
 							} else if (words.contains("态:")) {
 								dataMap.put("schoolStatus",
-										(words.split("态:"))[1]);
+										this.judgeStr(words.split("态:")));
 							}
 						}
 						listData.add(dataMap);
@@ -1307,6 +1307,19 @@ public class MobileService {
 			}
 		}
 		return map;
+	}
+
+
+	/**
+	 * 判断数组长度是否大于1，大于1返回arr[1]否则返回“”;
+	 * @param arr
+	 * @return
+	 */
+	public String judgeStr(String[] arr){
+		if(arr.length>1){
+			return arr[1];
+		}
+		return "";
 	}
 
 	/**

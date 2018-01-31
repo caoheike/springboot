@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.model.NewTelecomBean;
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
 
@@ -50,8 +51,10 @@ public class HuNanTelecomService {
 		Object attribute =  session.getAttribute("GBmobile-webclient");
 		WebClient webClient=(WebClient)attribute;
 		if(webClient==null){
+				
 	    	 map.put("errorCode", "0001");
 			 map.put("errorInfo", "请先登录!");
+			 logger.warn("湖南电信===登录session失效=="+map);
 			 return map;
 	     }else{
 	    	 try{
@@ -72,6 +75,7 @@ public class HuNanTelecomService {
                      map.put("errorInfo","校验错误");
                      map.put("errorCode","0001");
                      map.put("data",data);
+                     logger.warn("湖南电信登录失败==效验失败=="+map);
                      return map;
 	    		 }
 	    		//数据类型select
@@ -97,9 +101,9 @@ public class HuNanTelecomService {
                 }
                 String fileName = "HN" + System.currentTimeMillis() + ".png";
                 HtmlImage imageCode = (HtmlImage) click1.getElementById("validationCode4");
+                
                 BufferedImage read = imageCode.getImageReader().read(0);
                 ImageIO.write(read, "png", new File(file, fileName));
-
                 data.put("CodePath", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/HNimageCode/" + fileName);
                 map.put("data", data);
                 map.put("errorCode", "0000");
@@ -109,9 +113,10 @@ public class HuNanTelecomService {
 				HtmlPage infopage = click1.getElementById("blQueryBtn").click();
 				Thread.sleep(1000);
             	request.getSession().setAttribute("infoPage", infopage);
-
+            	logger.warn("===湖南电信图片获取成功==="+idCard);
 		     }catch (Exception e) {
 	             e.printStackTrace();
+	             logger.warn("=====湖南电信图片获取失败=====网络连接异常====");
 	             map.put("errorCode", "0001");
 	             map.put("errorInfo", "网络连接异常!");
 	         }
@@ -130,9 +135,10 @@ public class HuNanTelecomService {
 			Map<String,Object> map = new HashMap<String,Object>(10);
 	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
-	        Object htmlpage = request.getSession().getAttribute("HNhtmlPage");
+	        Object htmlpage = request.getSession().getAttribute("HNhtmlPage");    
 	        
 	        if (attribute == null || htmlpage == null) {
+	        	 logger.warn("=====湖南电信短信发送失败=====操作异常！=session未找到===");
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	        } else {
@@ -154,11 +160,13 @@ public class HuNanTelecomService {
 	                 if(alertList.size()>0){
 	                	 final String b = "成功";
 	 					if(alertList.get(0).toString().contains(b)){
+	 				    	 logger.warn("=====湖南电信短信发送成功====");
 	 						 map.put("errorCode", "0000");
 	 				         map.put("errorInfo", "短信验证码发送成功!");
 	 					}else{
 	 						map.put("errorCode", "0001");
 	 				        map.put("errorInfo", alertList.get(0).toString());
+	 				       logger.warn("=====湖南电信短信发送失败===="+alertList.get(0).toString());
 	 					}		
 	 				}	
 	            } catch (Exception e) {
@@ -167,7 +175,7 @@ public class HuNanTelecomService {
 	                map.put("errorCode", "0001");
 	                map.put("errorInfo", "网络连接异常!");
 	            }
-	        }
+	        } 
 	        
 	        data.put("imageCode", imageCode);
 	        map.put("data", data);
@@ -186,30 +194,39 @@ public class HuNanTelecomService {
 		 * @return
 		 */
 		@SuppressWarnings({ "rawtypes", "resource", "unused", "unchecked" })
-		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String passCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd){
+		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String passCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd,String uuid){
+			   
 			Map<String,Object> map = new HashMap<String,Object>(10);
 	        Map<String,Object> data=new HashMap<String,Object>(10);
-	        PushState.state(phoneNumber, "callLog",100);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
 	        Object htmlpage = request.getSession().getAttribute("HNsendMesPage");
 	        if (attribute == null || htmlpage == null) {
+	        	  logger.warn("=====湖南电信获取账单session失效===="+phoneNumber);
 	            map.put("errorCode", "0001");
 	            map.put("errorInfo", "操作异常!");
 	        } else {
 	            try {
+	            	PushState.state(phoneNumber, "callLog", 100);
+			        PushSocket.pushnew(map, uuid, "1000", "登录中");
 	            	 WebClient webClient = (WebClient) attribute;
 	                 HtmlPage page = (HtmlPage) htmlpage;
 	                 page.getElementById("blqvalicode").setAttribute("value", passCode);
+	                 
 	                 HtmlPage nextpage = page.getElementById("blQueryBtn").click();
 	                 Thread.sleep(500);
 	                 final String c = "验证码错误!";
-	                 if(page.asText().contains(c)){
+	                 if(nextpage.asText().contains(c)){
 	                	 map.put("errorCode", "0001");
 	                     map.put("errorInfo", "验证码输入错误，重新输入");
+	                     logger.warn("=====湖南电信获取账单认证失败===="+phoneNumber+map);
+	                     PushState.state(phoneNumber, "callLog", 200, "验证码输入错误，重新输");
+	                     PushSocket.pushnew(map, uuid, "3000", "登录失败");
 	                     return map;
 	                 }else{
 	                	 //月份下拉框
+	                	    PushSocket.pushnew(map, uuid, "2000", "登录成功");
 	                	 DomNodeList selectallmonth=(DomNodeList) page.getElementByName("queryMonth").getElementsByTagName("option");
+	                	 PushSocket.pushnew(map, uuid, "5000", "获取中");
 			    		 for(int i=0;i<selectallmonth.size();i++){
 			    			 //月份select
 			    			 HtmlSelect selectmonth=(HtmlSelect) page.getElementById("blqYearMonth");
@@ -229,15 +246,18 @@ public class HuNanTelecomService {
 			    			 SimpleDateFormat sdftoday =  new SimpleDateFormat( "hh:mm:ss" );
 			    			 String today = sdftoday.format(date);	
 			    			 HtmlPage infopage1; 
+			    			 logger.warn(i+"-------------月份---------"+phoneNumber);
 			    			 if(i==0){
 			    				 //第一个月
-			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2035%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode="+passCode+"&code="+passCode+"&accNbr=";					    																									
-					    		 URL url = new URL(loadPath);
+			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2048%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode="+passCode+"&code="+passCode+"&accNbr=";					    																									
+			    				 
+			    				 
+			    				 URL url = new URL(loadPath);
 					    		 WebRequest webRequest = new WebRequest(url);
 					    		 webRequest.setHttpMethod(HttpMethod.GET);
 				                 List<NameValuePair> list = new ArrayList<NameValuePair>();
 				                 			    							    			
-				                 list.add(new NameValuePair("tm", "2035下午"+today));
+				                 list.add(new NameValuePair("tm", "2048下午"+today));
 				                 list.add(new NameValuePair("queryMonth", month1));
 				                 list.add(new NameValuePair("startDay", "1"));
 				                 list.add(new NameValuePair("endDay", lday));
@@ -252,14 +272,15 @@ public class HuNanTelecomService {
 				                 Thread.sleep(1000);
 			    			 }else{
 			    				 //后五个月
-			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2035%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode=&code=undefined&accNbr=";
-					    		 																					
+			    				 String loadPath = "http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2048%E4%B8%8B%E5%8D%88"+today+"&tabIndex=2&queryMonth="+month1+"&patitype=2&startDay=1&endDay="+lday+"&valicode=&code=undefined&accNbr=";
+					    		 							//http://hn.189.cn/webportal-wt/hnselfservice/billquery/bill-query!queryBillx.action?tm=2048%E4%B8%8A%E5%8D%8810:57:43&tabIndex=2&queryMonth=2017-12&patitype=2&startDay=1&endDay=28&valicode=875525&code=875525&accNbr=
+			    				 														
 					    		 URL url = new URL(loadPath);
 					    		 WebRequest webRequest = new WebRequest(url);
 					    		 webRequest.setHttpMethod(HttpMethod.GET);
 				                 List<NameValuePair> list = new ArrayList<NameValuePair>();
 				                 			    							    			
-				                 list.add(new NameValuePair("tm", "2035下午"+today));
+				                 list.add(new NameValuePair("tm", "2048下午"+today));
 				                 list.add(new NameValuePair("queryMonth", month1));
 				                 list.add(new NameValuePair("startDay", "1"));
 				                 list.add(new NameValuePair("endDay", lday));
@@ -280,14 +301,20 @@ public class HuNanTelecomService {
 		                	 temp = (List<Object>) map.get("list");
 		                	 map.remove("list");
 		                	 finallyList.addAll(temp);
-			    		 }	    		 	                	
+			    		 }
+			    		 
 	                 }
 	            } catch (Exception e) {
-	                e.printStackTrace();
+	            	
+	            	logger.warn("===湖南电信获取账单异常"+phoneNumber+e);
 	                map.put("errorCode", "0001");
 	                map.put("errorInfo", "网络连接异常!");
+	                PushState.state(phoneNumber, "callLog", 200, "网络连接异常");
+                    PushSocket.pushnew(map, uuid, "7000", "网络连接异常!获取失败");
+	                logger.warn("===湖南电信获取账单异常"+phoneNumber+map);
 	            }
 	        }
+	     
 	        map.put("data",finallyList);
 	        map.put("pwd", servicepwd);
 	        map.put("phone", phoneNumber);
@@ -297,7 +324,19 @@ public class HuNanTelecomService {
 	        map.put("latitude", latitude);
 	        
 	        Resttemplate resttemplate=new Resttemplate();
+	        PushSocket.pushnew(map, uuid, "6000", "获取中");
             map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/operator");
+            String errorCode="errorCode";
+            String resultCode="0000";
+			if(map.get(errorCode).equals(resultCode)) {
+				   logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
+				PushSocket.pushnew(map, uuid, "8000","认证成功");
+				PushState.state(phoneNumber, "callLog",300);
+			}else {
+				 logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
+				PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
+				PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
+			}
 	        return map;
 	        
 		}
@@ -311,28 +350,42 @@ public class HuNanTelecomService {
 	        try{
 	        	HtmlPage infopage1 = (HtmlPage) request.getSession().getAttribute("infoPage1");
 	        	String info = infopage1.asText();
-	        	final String d = "融合老用户超值大礼包>>速来领取>>";
+	        	final String d = "当前页：";
 		        if(infopage1.asText().indexOf(d)==-1){
+		        	
 	       		 	map.put("errorCode", "0001");
 	                map.put("errorInfo", "操作异常!");
+	                logger.warn("===湖南电信获取账单详情=====异常"+phoneNumber+map);
 	                return map;
 		       	 }else{	   	       		
 		    		int num =  info.indexOf("总页数：");
-		    		int num1 =  info.indexOf(" 当前页：");	    
+		    		int num1 =  info.indexOf(" 当前页：");	  ;  
 		    		//总页数
 		    	    String  phonenum = info.substring(num+4, num1);
 		    	    Date date=new Date();
 		    		SimpleDateFormat sdf =  new SimpleDateFormat( "yyyy" );
 		    		String year = sdf.format(date);
+		    		Integer.valueOf(phonenum);
+		    		int a;
+		    		if(Integer.valueOf(phonenum)<5){
+		    			a=Integer.valueOf(phonenum);
+		    		}else{
+		    			a=4;
+		    		}
 		    		//一个月页数循环
-		    	    for(int i=1;i<=Integer.valueOf(phonenum);i++){
+		    	    for(int i=1;i<a;i++){
 		    	    	HtmlTable table = (HtmlTable) infopage1.getElementById("tab_cont_box").getElementsByTagName("table").get(1);
+		    	    	logger.warn(table.asText());
 		    	    	DomNodeList trlist = table.getElementsByTagName("tr");
 		    	    	for(int tr=2;tr<trlist.size();tr++){
+		    	    		logger.warn(table.getCellAt(tr, 0).asText()+"=======(table.getCellAt(tr, 0).asText()===========");
+		    	    		logger.warn(table.getCellAt(tr, 0).asText().indexOf("-")+"=================");
+		    	    		table.getCellAt(tr, 0).asText().indexOf(Integer.parseInt(year)-1);
 		    	    		//单页每行循环	
-	    	    			if(table.getCellAt(tr,0).asText().indexOf(year)!=-1){
+	    	    			if(table.getCellAt(tr,0).asText().indexOf("-")!=-1){
 	    	    				continue;
-	    	    			}	    	
+	    	    			}
+	    	    			logger.warn(table.getCellAt(tr, 3).asText()+"===========tr==="+tr);
 	    	    			monthNum.setCallNumber(table.getCellAt(tr,3).asText());
 	    	    			monthNum.setCallType(table.getCellAt(tr,7).asText());
 	    	    			monthNum.setCallAddress(table.getCellAt(tr,5).asText());
@@ -362,7 +415,8 @@ public class HuNanTelecomService {
 	                     webRequest.setRequestParameters(list);
 	                     infopage1 = webClient.getPage(webRequest);
 	                     Thread.sleep(1000);
-	                     System.out.println(infopage1.asText());
+	                     logger.warn("==湖南电信=="+infopage1.asText()+phoneNumber);
+	                     logger.warn(i+"=======i====第几页=====");
 		    	    }
 		    	    
 		       	}
@@ -370,9 +424,11 @@ public class HuNanTelecomService {
 		        //一个月        
 		        map.put("list", listData);	
 	        } catch (Exception e) {
+	        	  
                 e.printStackTrace();
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
+                logger.warn("===湖南电信获取账单详情===网络连接异常!"+phoneNumber+map);
             }
 	        return map;        
 		}
