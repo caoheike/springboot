@@ -73,8 +73,8 @@ public class CcbService {
 		try {
 			
 	
-			//输入建设银行储蓄卡卡号
-			driver.findElement(By.id("USERID")).sendKeys(cardNumber);
+			//输入建设银行身份证号
+			driver.findElement(By.id("USERID")).sendKeys(iDNumber);
 			//按下tab
 			Actions action = new Actions(driver);
 	        action.sendKeys(Keys.TAB).build().perform();
@@ -115,11 +115,18 @@ public class CcbService {
 	        }
 	        
 	       //到详情页面获取数据
-	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
+//	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
 	      //获取到户名
-	      WebElement name= driver.findElement(ByClassName.className("msg_welcome"));
-		  String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));
-		  System.out.println(userName);
+	        try {
+				  Thread.sleep(3000);
+			  } catch (InterruptedException e) {
+				  e.printStackTrace();
+			  }
+		      WebElement pToolbar= driver.findElement(By.id("pToolbar"));
+		      WebElement name= pToolbar.findElement(ByClassName.className("msg_welcome"));
+		      logger.warn(name.getText());
+			  String userName = name.getText().substring(0, name.getText().lastIndexOf("，"));
+			  logger.warn(userName);
 		  //点击账户查询
 		  driver.findElement(By.id("per1")).click();
 		  try {
@@ -296,14 +303,15 @@ public class CcbService {
 		                    Collections.reverse(trs);
 		                    Map<String,Object> baseMes=new HashMap<String, Object>(200);
 		                    Map<String,Object> ccb=new HashMap<String, Object>(200);
-		                    ccb.put("dillMes", trs);
+		                    baseMes.put("accountType", accountType);
+		                    baseMes.put("openBranch", openBranch);
+		                    baseMes.put("openTime", openTime);
+		                    ccb.put("billMes", trs);
 		                    ccb.put("IDNumber", iDNumber);
 		                    ccb.put("cardNumber", cardNumber);
 		                    ccb.put("userName", userName);
 		                    ccb.put("baseMes", baseMes);
-		                    baseMes.put("accountType", accountType);
-		                    baseMes.put("openBranch", openBranch);
-		                    baseMes.put("openTime", openTime);
+		                    ccb.put("bankName", "中国建设银行储蓄卡");
 		                	Resttemplate resttemplate = new Resttemplate();
 		                    map=resttemplate.SendMessage(ccb,ConstantInterface.port+"/HSDC/savings/authentication");
 		                   //判断推送是否成功
