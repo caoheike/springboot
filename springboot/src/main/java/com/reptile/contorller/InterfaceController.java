@@ -817,7 +817,7 @@ public class InterfaceController {
 				//JSONArray deal=taobaoanalysis.deal(pageinfosss.asXml());
 				
 				//客户的收获地址数据解析 info  table.asXml()
-				// JSONArray address=taobaoanalysis.address(table.asXml());
+				 JSONArray address=taobaoanalysis.address(table.asXml());
 				//this.getAddress(webClient)报错暂无法解析
 				//--------------数据解析方法结束------------
 				
