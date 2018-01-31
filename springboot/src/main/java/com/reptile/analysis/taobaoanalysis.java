@@ -8,7 +8,7 @@ import org.jsoup.select.Elements;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class taobao {
+public class taobaoanalysis {
 	/**
 	 * 淘宝的收获地址数据解析
 	 * @param string 
@@ -63,14 +63,14 @@ public class taobao {
 			//交易详单
 			JSONObject detailedAddress=new JSONObject();
 			detailedAddress.put("dealDetail", list.get(i).get(2));
-			detailedAddress.put("dealAmount", list.get(i).get(3).replace("-", "").replace("+", ""));
+			detailedAddress.put("dealAmount", list.get(i).get(3).replace("+", ""));
 			detailedAddress.put("dealDate", list.get(i).get(0));
 			System.out.println(detailedAddress);
 			deal.add(detailedAddress);
 		}
 		return deal;
 	}
- 
+	
     /**
 		 * 解析table
 		 * @param xml
