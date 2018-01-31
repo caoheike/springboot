@@ -72,29 +72,29 @@ public class ChongQingService11 {
 				get.setHttpMethod(HttpMethod.GET);
 				HtmlPage choosepage = webClient.getPage(get);
 
-//				 WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_DXYZM"));
-//				 post.setHttpMethod(HttpMethod.POST);
-//				 Page page = webClient.getPage(post);
-////				 System.out.println(page.getWebResponse().getContentAsString());
-//				 if (page.getWebResponse() == null) {
-//				 map.put("errorCode", "0001");
-//				 map.put("errorInfo", "对不起，系统忙，请稍候再试！");
-//				 return map;
-//				 } else {
-//				 JSONObject getJson =JSONObject.fromObject(page.getWebResponse().getContentAsString());
-//				 if (getJson.getString("errorCode").equals("0")) {
+				 WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_DXYZM"));
+				 post.setHttpMethod(HttpMethod.POST);
+				 Page page = webClient.getPage(post);
+//				 System.out.println(page.getWebResponse().getContentAsString());
+				 if (page.getWebResponse() == null) {
+				 map.put("errorCode", "0001");
+				 map.put("errorInfo", "对不起，系统忙，请稍候再试！");
+				 return map;
+				 } else {
+				 JSONObject getJson =JSONObject.fromObject(page.getWebResponse().getContentAsString());
+				 if (getJson.getString("errorCode").equals("0")) {
 				request.getSession().setAttribute("chongqingWebclient", webClient);
 				request.getSession().setAttribute("choosepage-chongqing", choosepage);
 
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "验证码发送成功");
-//					} else {
-//						map.put("errorCode", "0001");
-//						map.put("errorInfo", getJson.getString("errorDescription"));
-//						return map;
-//					}
-//
-//				 }
+					} else {
+						map.put("errorCode", "0001");
+						map.put("errorInfo", getJson.getString("errorDescription"));
+						return map;
+					}
+
+				 }
 			} catch (Exception e) {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络异常!");
