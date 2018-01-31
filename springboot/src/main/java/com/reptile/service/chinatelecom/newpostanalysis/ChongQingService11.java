@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.reptile.util.ConstantInterface;
 import com.reptile.util.DealExceptionSocketStatus;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
@@ -32,7 +33,7 @@ import java.util.*;
  * 重庆电信
  * 
  * @ClassName: ChongQingService11
- * @Description: TODO(描述这个类的作用)
+ * @Description: TODO(重庆电信发包)
  * @author duwei
  * @date 2018年1月30日 下午2:14:55
  *
@@ -55,7 +56,6 @@ public class ChongQingService11 {
 		Map<String, Object> map = new HashMap<String, Object>(16);
 		// 从session中获得webClient
 		Object attr = request.getSession().getAttribute("GBmobile-webclient");
-		// WebClient webClient = (WebClient) attribute;
 		if (attr == null) {
 			logger.warn("重庆电信--请先登录!");
 			map.put("errorCode", "0001");
@@ -72,29 +72,29 @@ public class ChongQingService11 {
 				get.setHttpMethod(HttpMethod.GET);
 				HtmlPage choosepage = webClient.getPage(get);
 
-				 WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_DXYZM"));
-				 post.setHttpMethod(HttpMethod.POST);
-				 Page page = webClient.getPage(post);
-				 System.out.println(page.getWebResponse().getContentAsString());
-				 if (page.getWebResponse() == null) {
-				 map.put("errorCode", "0001");
-				 map.put("errorInfo", "对不起，系统忙，请稍候再试！");
-				 return map;
-				 } else {
-				 JSONObject getJson =JSONObject.fromObject(page.getWebResponse().getContentAsString());
-				 if (getJson.getString("errorCode").equals("0")) {
+//				 WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_DXYZM"));
+//				 post.setHttpMethod(HttpMethod.POST);
+//				 Page page = webClient.getPage(post);
+////				 System.out.println(page.getWebResponse().getContentAsString());
+//				 if (page.getWebResponse() == null) {
+//				 map.put("errorCode", "0001");
+//				 map.put("errorInfo", "对不起，系统忙，请稍候再试！");
+//				 return map;
+//				 } else {
+//				 JSONObject getJson =JSONObject.fromObject(page.getWebResponse().getContentAsString());
+//				 if (getJson.getString("errorCode").equals("0")) {
 				request.getSession().setAttribute("chongqingWebclient", webClient);
 				request.getSession().setAttribute("choosepage-chongqing", choosepage);
 
 				map.put("errorCode", "0000");
 				map.put("errorInfo", "验证码发送成功");
-					} else {
-						map.put("errorCode", "0001");
-						map.put("errorInfo", getJson.getString("errorDescription"));
-						return map;
-					}
-
-				 }
+//					} else {
+//						map.put("errorCode", "0001");
+//						map.put("errorInfo", getJson.getString("errorDescription"));
+//						return map;
+//					}
+//
+//				 }
 			} catch (Exception e) {
 				map.put("errorCode", "0001");
 				map.put("errorInfo", "网络异常!");
@@ -179,7 +179,7 @@ public class ChongQingService11 {
 		PushState.state(phoneNumber, "callLog", 100);
 		PushSocket.pushnew(map, uuid, "1000", "登录中");
 		String signle = "1000";
-		List arrayList = new ArrayList();
+		List<Map<String, Object>> arrayList=new ArrayList<Map<String,Object>>();
 		Object attr = request.getSession().getAttribute("chongqingWebclient");
 		if (attr == null) {
 			logger.warn("请先获取短信验证码!");
@@ -217,7 +217,7 @@ public class ChongQingService11 {
 			Thread.sleep(2000);
 			PushSocket.pushnew(map, uuid, "5000", "数据获取中");
 			signle = "5000";
-			for (int i = 0; i < 7; i++) {
+			for (int i = 0; i < 6; i++) {
 				WebRequest post = new WebRequest(new URL("http://cq.189.cn/new-bill/bill_XDCXNR"));
 				List<NameValuePair> dataList = new ArrayList<>();
 				dataList.add(new NameValuePair("accNbr", phoneNumber));
@@ -265,7 +265,6 @@ public class ChongQingService11 {
 					logger.error("-----------------重庆电信:" + userName + "第" + i + "个月没有详单", e);
 					break;
 				}
-				// JSONObject json = JSONObject.fromObject(result);
 				String tip = (String) json.get("message");
 				Object result1 = json.get("result");
 				if (tip.equals("2333")) {
@@ -288,7 +287,6 @@ public class ChongQingService11 {
 				logger.warn("----------------重庆电信：" + userName + "，正在获取数据...---------------------");
 				// 校验成功
 				// 获取数据
-				Map<String, Object> dataMap = new HashMap<String, Object>(16);
 				HttpClient httpClient = new HttpClient();
 				Set<com.gargoylesoftware.htmlunit.util.Cookie> cookie = webClient.getCookieManager().getCookies();
 				StringBuffer cookies = new StringBuffer();
@@ -309,8 +307,8 @@ public class ChongQingService11 {
 				String html = post1.getResponseBodyAsString();
 				if (html.contains("对方号码") && html.contains("呼叫类型")) {
 					JSONObject test = JSONObject.fromObject(html);
-					dataMap.put("item", test);
-					arrayList.add(dataMap);
+					arrayList.add(test);
+			
 				}
 				Thread.sleep(2000);
 			}
@@ -333,10 +331,9 @@ public class ChongQingService11 {
 			map.put("longitude", longitude);
 			// 纬度
 			map.put("latitude", latitude);
-			map.put("flag", "15");			Resttemplate resttemplate = new Resttemplate();
-			// map = resttemplate.SendMessage(map, ConstantInterface.port +
-			// "/HSDC/message/telecomCallRecord");
-			map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");
+			map.put("flag", "15");			
+			Resttemplate resttemplate = new Resttemplate();   
+			map = resttemplate.SendMessage(map, ConstantInterface.port +"/HSDC/message/telecomCallRecord");
 			String ss = "0000";
 			String errorCode = "errorCode";
 			if (map.get(errorCode).equals(ss)) {
