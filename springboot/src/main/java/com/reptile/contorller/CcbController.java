@@ -30,9 +30,10 @@ public class CcbController {
 	@ApiOperation(value = "建设银行储蓄卡", notes = "参数：用户账号(身份证),银行账号,查询密码,UUID")
 	@ResponseBody
 	@RequestMapping(value="CCBBank",method=RequestMethod.POST)
-	public Map<String,Object> ccbBank(HttpServletRequest request,@RequestParam("IDNumber") String iDNumber,@RequestParam("cardNumber") String cardNumber,@RequestParam("cardPass") String cardPass,@RequestParam("UUID")String uUID) throws Exception{
+	public Map<String,Object> ccbBank(HttpServletRequest request,@RequestParam("IDNumber") String iDNumber,@RequestParam("cardNumber") String cardNumber,@RequestParam("cardPass") String cardPass,@RequestParam("UUID")String uUID,
+			@RequestParam("flag")boolean flag) throws Exception{
 		System.out.println("建设银行储蓄卡");
-		return ccb.ccbInformation(request, iDNumber, cardNumber, cardPass,uUID);
+		return ccb.ccbInformation(request, iDNumber, cardNumber, cardPass,uUID,flag);
 				
 	}
 }

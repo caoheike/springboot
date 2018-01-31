@@ -47,7 +47,7 @@ public class CcbService {
 	   * 建设银行登录页面
 	   */
 	  private final static String CEB_LOGIN="https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1&CUSTYPE=0&TXCODE=CLOGIN&DESKTOP=0&EXIT_PAGE=login.jsp&WANGZHANGLOGIN=&FORMEPAY=2";
-	  public Map<String,Object> ccbInformation(HttpServletRequest request,String iDNumber,String cardNumber,String cardPass,String uuid){
+	  public Map<String,Object> ccbInformation(HttpServletRequest request,String iDNumber,String cardNumber,String cardPass,String uuid,boolean pushFlag){
 			//创建Map进行与app的数据传输
 		  	Map<String, Object> map=new HashMap<String, Object>(70);
 			//创建driver(IE)
@@ -64,7 +64,7 @@ public class CcbService {
 			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			//向app推送登录状态
 			PushSocket.pushnew(map, uuid, "1000","建设银行储蓄卡登录中");
-			PushState.state(iDNumber, "savings",100);
+			PushState.stateByFlag(iDNumber, "savings",100,pushFlag);
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e2) {
@@ -96,7 +96,7 @@ public class CcbService {
 				} catch (Exception e2) {
 				}
 	        	PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的登录密码错误");
-	        	PushState.state(iDNumber, "savings",200,"建设银行储蓄卡输入的登录密码错误");
+	        	PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡输入的登录密码错误",pushFlag);
 	            return map;  
 	        }
 	        state="您输入的信息有误";
@@ -110,7 +110,7 @@ public class CcbService {
 	        	map.put("errorInfo","您输入的信息有误");
 	            map.put("errorCode","0003");
 	            PushSocket.pushnew(map, uuid, "3000","建设银行储蓄卡输入的信息有误");
-	            PushState.state(iDNumber, "savings",200,"建设银行储蓄卡输入的信息有误");
+	            PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡输入的信息有误",pushFlag);
 	        	return map;  
 	        }
 	        
@@ -158,7 +158,7 @@ public class CcbService {
 				 driver.findElement(ByXPath.xpath("/html/body/div/div[2]/table/tbody/tr/td[6]/a")).click();
 				 Thread.sleep(5000);
 				} catch (Exception e) {
-					PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
+					PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡获取失败",pushFlag);
 	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
@@ -308,7 +308,7 @@ public class CcbService {
 		                    map=resttemplate.SendMessage(ccb,ConstantInterface.port+"/HSDC/savings/authentication");
 		                   //判断推送是否成功
 		                    if(map!=null&&"0000".equals(map.get("errorCode").toString())){
-						    	PushState.state(iDNumber, "savings",300);
+		                    	PushState.stateByFlag(iDNumber, "savings",300,pushFlag);
 						    	PushSocket.pushnew(map, uuid, "8000","建设银行储蓄卡认证成功");
 				                map.put("errorInfo","查询成功");
 				                map.put("errorCode","0000");
@@ -318,7 +318,7 @@ public class CcbService {
 								}
 				                
 				            }else{
-				            	PushState.state(iDNumber, "savings",200,"建设银行储蓄卡认证失败");
+				            	PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡认证失败",pushFlag);
 				            	PushSocket.pushnew(map, uuid, "9000","建设银行储蓄卡认证失败");
 				            	logger.warn("建设银行数据推送失败"+iDNumber);
 				                //PushSocket.push(map, UUID, "0001");
@@ -336,7 +336,7 @@ public class CcbService {
 			        }  
 			    } catch (Exception e) { 
 			    	 e.printStackTrace();
-			    	 PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
+			    	 PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡获取失败",pushFlag);
 			    	 map.clear();
 					 logger.warn("建设银行详单获取失败"+iDNumber);
 					 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
@@ -355,19 +355,19 @@ public class CcbService {
 					String state2 = "6000";
 					if (state.equals(flag)) {
 						PushSocket.pushnew(map, uuid, "7000", "建设银行账单获取失败");
-						PushState.state(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败");
+						PushState.stateByFlag(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败",pushFlag);
 					} else if (state1.equals(flag)) {
 						PushSocket.pushnew(map, uuid, "7000", "建设银行账单获取失败");
-						PushState.state(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败");
+						PushState.stateByFlag(iDNumber, "bankBillFlow", 200, "建设银行账单获取失败",pushFlag);
 					} else if (state2.equals(flag)) {
 						PushSocket.pushnew(map, uuid, "9000", "认证失败");
-						PushState.state(iDNumber, "bankBillFlow", 200,"认证失败");
+						PushState.stateByFlag(iDNumber, "bankBillFlow", 200,"认证失败",pushFlag);
 					} else {
 						PushSocket.pushnew(map, uuid, "3000", "登录失败，密码错误");
-						PushState.state(iDNumber, "bankBillFlow", 200, "登录失败，密码错误");
+						PushState.stateByFlag(iDNumber, "bankBillFlow", 200, "登录失败，密码错误",pushFlag);
 					}
 			    	 e.printStackTrace();
-			    	 PushState.state(iDNumber, "savings",200,"建设银行储蓄卡获取失败");
+			    	 PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡获取失败",pushFlag);
 			    	 map.clear();
 					 logger.warn("建设银行详单获取失败"+iDNumber);
 					 map.put("errorInfo","获取账单失败");
