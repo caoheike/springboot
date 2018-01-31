@@ -107,4 +107,35 @@ public class PushState {
         }
         return message;
     }
+    
+    
+    /**
+	 * 状态码为200使用该方法进行推送 
+	 * @param UserCard
+	 * @param approveName
+	 * @param stat
+	 * @param message
+	 * @param flag true或false
+	 */
+	public static void stateByFlag(String userCard,String approveName ,int stat,String message,boolean flag) {
+		if(flag) {
+			PushState.state(userCard, approveName,stat,message);
+		}else{
+			PushState.statenew(userCard, approveName,stat,message);
+		}
+	}
+	
+	/**
+	 * 状态码为100或300使用该方法进行推送 
+	 * @param UserCard
+	 * @param approveName
+	 * @param stat
+	 * @param message
+	 * @param flag true或false
+	 */
+	public static void stateByFlag(String userCard,String approveName ,int stat,boolean flag) {
+		if(flag) {
+			PushState.state(userCard, approveName, stat);
+		}
+	}
 }
