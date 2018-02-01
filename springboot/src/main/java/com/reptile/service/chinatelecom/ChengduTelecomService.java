@@ -103,7 +103,6 @@ public class ChengduTelecomService {
         List list = new ArrayList();
         HttpSession session = request.getSession();
         Object attribute = session.getAttribute("SCmobile-webclient2");
-        PushState.state(phoneNumber, "callLog", 100);
         if (attribute == null) {
             logger.warn(phoneNumber + "：---------------------成都电信获取详单未获取手机验证码---------------------");
             map.put("errorCode", "0001");
@@ -211,7 +210,6 @@ public class ChengduTelecomService {
                 } else {
                     PushState.state(phoneNumber, "callLog", 200, "成都电信认证失败");
                     PushSocket.pushnew(map, uuid, "9000", "成都电信认证失败");
-                    //PushSocket.push(map, UUID, "0001");
                     return map;
                 }
 //                JSONObject json=JSONObject.fromObject(dataMap);
