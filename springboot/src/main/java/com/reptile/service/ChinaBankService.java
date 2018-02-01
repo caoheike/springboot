@@ -2,6 +2,9 @@ package com.reptile.service;
 
 import com.reptile.analysis.ChinaBankanalysis;
 import com.reptile.util.*;
+
+import net.sf.json.JSONObject;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -204,12 +207,13 @@ public class ChinaBankService {
             }
             String count = String.valueOf(driver.executeScript("return $(\"#" + id + " ul li\").length;"));
             List<String> listData = new ArrayList<String>();
+            JSONObject date=new JSONObject();
             for (int i = 1; i < Integer.valueOf(count) + 1; i++) {
                 driver.findElement(By.xpath("//*[@id='" + id + "']/span")).click();
                 Thread.sleep(1000);
                 driver.findElement(By.xpath("//*[@id='" + id + "']/ul/li[" + i + "]/a")).click();
                 Thread.sleep(1000);
-
+                System.out.println("driver.getPageSource()=="+i+","+driver.getPageSource());
                 List<WebElement> btn = driver.findElements(By.className("btn"));
                 for (int j = 0; j < btn.size(); j++) {
                     if ("查询".equals(btn.get(j).getText())) {
@@ -221,18 +225,19 @@ public class ChinaBankService {
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
                 //数据解析
-                ChinaBankanalysis.billanalysis(pageSource);
+                date=ChinaBankanalysis.billanalysis(pageSource);
             }
             PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
             states="4000";
-            Map<String, Object> sendMap = new HashMap<String, Object>(16);
-            sendMap.put("idcard", userCard);
-            sendMap.put("backtype", "BOC");
-            sendMap.put("html", listData);
-            sendMap.put("userAccount",cardNumber);
             
-            map.put("data", sendMap);
-            map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
+            map.put("idcard", userCard);
+            map.put("backtype", "BOC");
+            map.put("userAccount",cardNumber);
+            map.put("bankname", "中国银行信用卡");
+            map.put("date", date);
+            map.put("isok", isok);
+            System.out.println("中国银行信用卡map==="+map);
+            //map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
             driver.quit();
             String ling="0000";
             String codeResult="errorCode";

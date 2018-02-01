@@ -376,7 +376,6 @@ public class ChinaBankDepositCardService {
         try {
             Thread.sleep(2000);
             //第一个发包的参数
-            String str=paramsstr(1,"");
             String url="https://ebsnew.boc.cn/BII/PsnGetUserProfile.do";
             //cookie
             Set<Cookie> ingoCookie = driver.manage().getCookies();
@@ -386,14 +385,25 @@ public class ChinaBankDepositCardService {
             }
             String cookie = cookies.toString();
 
+          //获取账户序列
+            String str=paramsstr(3,"","");
+           String respons=SimpleHttpClient.post1(url,str, cookie);
+            //获取返回结果中的第二次发包参数需要的值 conversationId
+           JSONObject fromObj = JSONObject.fromObject(respons);
+           JSONArray fromObjarr = JSONArray.fromObject(fromObj.get("response"));
+           JSONObject accountSeqarr = (JSONObject) JSONObject.fromObject(fromObjarr.get(0)).get("result");
+            
             //第一次发包
-            String response1=SimpleHttpClient.post1(url,str, cookie);
+             str=paramsstr(1,"","");
+             String response1=SimpleHttpClient.post1(url,str, cookie);
             //获取返回结果中的第二次发包参数需要的值 conversationId
             JSONObject fromObject = JSONObject.fromObject(response1);
             JSONArray fromObject1 = JSONArray.fromObject(fromObject.get("response"));
 
             //第二个发包的参数
-            str=paramsstr(2,JSONObject.fromObject(fromObject1.get(0)).get("result").toString());
+            String accountSeq=accountSeqarr.get("accountSeq").toString();
+            String conversationId=JSONObject.fromObject(fromObject1.get(0)).get("result").toString();
+            str=paramsstr(2,conversationId,accountSeq);
             //第二次发包
             response1=SimpleHttpClient.post1(url,str, cookie);
             JSONObject fromObjects = JSONObject.fromObject(response1);
@@ -415,9 +425,10 @@ public class ChinaBankDepositCardService {
      * 获取交易明细的发包参数
      * @param i  第几次发包
      * @param conversationId 第二次发包的参数值 由第一次发包获取
+     * @param conversationId2 
      * @return
      */
-    private String paramsstr(int i,String conversationId) {
+    private String paramsstr(int i,String conversationId, String accountSeq) {
         SimpleDateFormat sim = new SimpleDateFormat("yyyy/MM/dd");
         Calendar cal = Calendar.getInstance();
         String endTime = sim.format(cal.getTime());
@@ -433,24 +444,14 @@ public class ChinaBankDepositCardService {
         request.put("agent", "WEB15");
         request.put("bfw-ctrl", "json");
         request.put("version", "");
-        request.put("device", "");
-        request.put("platform", "");
+        request.put("device", "Google,Chrome,63.0.3239.132");
+        request.put("platform", "Microsoft,Windows,7");
         request.put("plugins", "");
         request.put("page", "");
         request.put("ext", "");
-
-        JSONObject request1=new JSONObject();
-        request1.put("key", "val");
-        request1.put("local", "zh_CN");
-        request1.put("agent", "WEB15");
-        request1.put("bfw-ctrl", "json");
-        request1.put("version", "");
-        request1.put("device", "");
-        request1.put("platform", "");
-        request1.put("plugins", "");
-        request1.put("page", "");
-        request1.put("ext", "");
-
+        request.put("mac", "");
+        request.put("serial", "");
+        
         JSONObject request3=new JSONObject();
         request3.put("id", "19");
         request3.put("method", "PsnAccBocnetCreateConversation");
@@ -466,12 +467,13 @@ public class ChinaBankDepositCardService {
 
         //第二个发包的参数
         JSONObject params=new JSONObject();
-        params.put("accountSeq", "14317136");
+        
+        params.put("accountSeq", accountSeq);
         params.put("cashRemit", "");
         params.put("currency","001");
         params.put("currentIndex","0");
         params.put("endDate",endTime);
-        params.put("pageSize","500");
+        params.put("pageSize","10");
         params.put("startDate",beginTime);
         params.put("_refresh","true");
 
@@ -488,12 +490,29 @@ public class ChinaBankDepositCardService {
         JSONObject request222=new JSONObject();
         request222.put("header", request);
         request222.put("request", array22);
-
+        //获取账户序列的发包参数
+        JSONObject request33=new JSONObject();
+        request33.put("id", "6");
+        request33.put("method", "PsnAccBocnetQryLoginInfo");
+        request33.put("conversationId",null);
+        request33.put("params",null);
+        
+        JSONArray array33=new JSONArray();
+        array33.add(request33);
+        
+        JSONObject request333=new JSONObject();
+        request333.put("header", request);
+        request333.put("request", array33);
+        
+        
         if(i==1){
             str=request2.toString();
-        }else{
+        }else if(i==2){
             str=request222.toString();
+        }else {
+        	str=request333.toString();
         }
+        System.out.println("str=="+i+str);
         return str;
     }
 
