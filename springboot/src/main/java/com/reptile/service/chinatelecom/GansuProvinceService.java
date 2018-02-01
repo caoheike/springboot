@@ -7,6 +7,7 @@ import com.reptile.util.*;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.CharSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -103,10 +105,12 @@ public class GansuProvinceService {
         WebClient webClientTwo = null;
         PushState.state(userNum, "callLog", 100);
         PushSocket.pushnew(map, uuid, "1000", "登录中");
-        String signle="1000";
+        String signle = "1000";
         HttpSession session = request.getSession();
-        Object attribute = session.getAttribute("sessionWebClient-GANSU");
-        Object pagess = session.getAttribute("sessionHTMLpaget-GANSU");
+
+        Object attribute = session.getAttribute("GBmobile-webclient");
+//        Object attribute = session.getAttribute("sessionWebClient-GANSU");
+//        Object pagess = session.getAttribute("sessionHTMLpaget-GANSU");
         if (attribute == null) {
             PushSocket.pushnew(map, uuid, "3000", "登录失败,操作异常!");
             PushState.state(userNum, "callLog", 200, "登录失败,操作异常!");
@@ -119,69 +123,150 @@ public class GansuProvinceService {
                 PushSocket.pushnew(map, uuid, "2000", "登录成功");
                 Thread.sleep(2000);
                 WebClient webClient = (WebClient) attribute;
-                HtmlPage htmlPage = (HtmlPage) pagess;
-                String busitype = htmlPage.getElementById("busitype").getAttribute("value");
-                //二次身份认证
-                Map<String, Object> stringObjectMap = checkCurrentInfo(webClient, catpy, busitype, userNum, userName, userCard, catpy, HttpMethod.POST);
-                System.out.println(stringObjectMap.toString());
 
-                if(!stringObjectMap.get("errorCode").equals("0000")){
-                    PushState.state(userNum, "callLog", 200);
-                    PushSocket.pushnew(map, uuid, "1000", "登录失败");
-                    return stringObjectMap;
+                WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000600"));
+                requests.setHttpMethod(HttpMethod.GET);
+                HtmlPage page1 = webClient.getPage(requests);
+                String erro = "获取验证码";
+                if (!page1.asText().contains(erro)) {
+                    map.put("errorCode", "0007");
+                    map.put("errorInfo", "操作异常！");
+                    return map;
                 }
+                requests.setUrl(new URL("http://gs.189.cn/service/v7/fycx/xd/index.shtml?fastcode=10000600&cityCode=gs"));
+                requests.setHttpMethod(HttpMethod.POST);
+                HtmlPage page2 = webClient.getPage(requests);
+                System.out.println(page2.asXml());
+
+//
+//                HtmlPage htmlPage = (HtmlPage) pagess;
+//                String busitype = htmlPage.getElementById("busitype").getAttribute("value");
+//                二次身份认证
+//                Map<String, Object> stringObjectMap = checkCurrentInfo(webClient, catpy, busitype, userNum, userName, userCard, catpy, HttpMethod.POST);
+//                System.out.println(stringObjectMap.toString());
+//
+//                if(!stringObjectMap.get("errorCode").equals("0000")){
+//                    PushState.state(userNum, "callLog", 200);
+//                    PushSocket.pushnew(map, uuid, "1000", "登录失败");
+//                    return stringObjectMap;
+//                }
 
                 PushSocket.pushnew(map, uuid, "5000", "数据获取中");
-                signle="5000";
+                signle = "5000";
                 WebRequest request1;
                 Map<String, Object> data = new HashMap<String, Object>(200);
                 Map<String, Object> gansu = new HashMap<String, Object>(200);
                 List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
+//
+//                String clearSession1 = "http://gs.189.cn/web/json/clearSession.action";
+//                WebRequest post123 = new WebRequest(new URL(clearSession1));
+//                post123.setHttpMethod(HttpMethod.POST);
+//                Page page45 = webClient.getPage(post123);
+//                System.out.println(page45.getWebResponse().getContentAsString());
 
                 String num = "4:" + userNum;
-                Date date = new Date();
-                String year = new SimpleDateFormat("yyyyMM").format(date);
-                System.out.println(year + "-------------");
                 int num3 = 3;
                 for (int i = 0; i < num3; i++) {
                     Thread.sleep(3000);
-                    int ye = Integer.parseInt(year);
-                    ;
-                    int month = ye - i;
+
                     String months = Dates.beforMonth(i);
                     UnexpectedPage page = null;
-                    if (i == 0) {
-                        try {
-                            webClientTwo = webClient;
-                            page = webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT=" + catpy + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months);
-                        } catch (java.lang.ClassCastException e) {
-                            map.put("errorCode", "0001");
-                            map.put("errorInfo", "验证码错误!");
-                            return map;
+
+//                    String urls="http://gs.189.cn/web/json/searchDetailedFeeNew.action";
+//                    WebRequest post321=new WebRequest(new URL(urls));
+//                    post321.setHttpMethod(HttpMethod.POST);
+//
+//                    List<NameValuePair> listss=new ArrayList<>();
+//                    listss.add(new NameValuePair("productGroup",num));
+//                    listss.add(new NameValuePair("orderDetailType","6"));
+//                    listss.add(new NameValuePair("queryMonth",months));
+//                    listss.add(new NameValuePair("flag","1"));
+//                    post321.setRequestParameters(listss);
+//                    Page pageF = webClient.getPage(post321);
+//                    System.out.println(pageF.getWebResponse().getContentAsString());
+
+
+
+
+//                    String urlss="http://gs.189.cn/web/json/ifPopWinShow.action";
+//                    WebRequest popWin=new WebRequest(new URL(urlss));
+//                    popWin.setHttpMethod(HttpMethod.POST);
+//                    listss.clear();
+//                    listss.add(new NameValuePair("productType","4"));
+//                    listss.add(new NameValuePair("accessNumber",userNum));
+//                    listss.add(new NameValuePair("rand",catpy));
+//                    popWin.setRequestParameters(listss);
+//                    Page page3 = webClient.getPage(popWin);
+//                    System.out.println(page3.getWebResponse().getContentAsString());
+
+
+//                    String searchFee = "http://gs.189.cn/web/fee/preDetailedFee.action?randT=" + catpy + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months;
+//                    Page pagesss = webClient.getPage(new URL(searchFee));
+//                    System.out.println(pagesss.getWebResponse().getContentAsString());
+//                    Thread.sleep(2000);
+
+
+//                    String sycnUrl = "http://gs.189.cn/web/json/getAncillaryInfo.action?timestamp="+System.currentTimeMillis();
+//                    WebRequest post1 = new WebRequest(new URL(sycnUrl));
+//                    List<NameValuePair> dataList = new ArrayList<>();
+//                    dataList.add(new NameValuePair("productGroup", num));
+//                    post1.setRequestParameters(dataList);
+//                    post1.setHttpMethod(HttpMethod.POST);
+//                    Page page21 = webClient.getPage(post1);
+//                    System.out.println(page21.getWebResponse().getContentAsString());
+
+                    String result = "1234";
+                    do {
+
+                        String url = "http://gs.189.cn/web/json/searchDetailedFee.action?timestamp=" + System.currentTimeMillis() + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months;
+                        WebRequest post = new WebRequest(new URL(url));
+                        post.setHttpMethod(HttpMethod.POST);
+                        Page pages = webClient.getPage(post);
+
+                        Thread.sleep(2000);
+                        System.out.println(pages.getWebResponse().getContentAsString());
+                        if (pages.getWebResponse().getContentAsString().contains("9998")) {
+                            result = "fail";
+                        } else {
+                            result = "success";
                         }
+                    } while (result.equals("fail"));
 
-                    } else {
+                    String clearSession = "http://gs.189.cn/web/json/clearSession.action";
+                    WebRequest post = new WebRequest(new URL(clearSession));
+                    post.setHttpMethod(HttpMethod.POST);
+                    Page page4 = webClient.getPage(post);
+                    System.out.println(page4.getWebResponse().getContentAsString());
 
-                        page = webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT=" + catpy + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months);
-                        if (page.getWebResponse().getContentAsString().contains("9998")) {
-                            List<NameValuePair> list = new ArrayList<NameValuePair>();
-                            list.add(new NameValuePair("timestamp", System.currentTimeMillis() + ""));
-                            list.add(new NameValuePair("productGroup", "4:" + userNum));
-                            list.add(new NameValuePair("orderDetailType", 6 + ""));
-                            list.add(new NameValuePair("queryMonth", months));
-                            page = this.getDetailPages(webClientTwo, "http://gs.189.cn/web/json/searchDetailedFee.action?timestamp=" + System.currentTimeMillis() + "&productGroup=4:" + userNum + "&orderDetailType=6&queryMonth=" + months, list, HttpMethod.POST);
-                        }
+//                    if (i == 0) {
+//                        try {
+//                            webClientTwo = webClient;
+//                            page = webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT=" + catpy + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months);
+//                        } catch (java.lang.ClassCastException e) {
+//                            map.put("errorCode", "0001");
+//                            map.put("errorInfo", "验证码错误!");
+//                            return map;
+//                        }
+//
+//                    } else {
+//
+//                        page = webClientTwo.getPage("http://gs.189.cn/web/json/searchDetailedFee.action?randT=" + catpy + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months);
+//                        if (page.getWebResponse().getContentAsString().contains("9998")) {
+//                            List<NameValuePair> list = new ArrayList<NameValuePair>();
+//                            list.add(new NameValuePair("timestamp", System.currentTimeMillis() + ""));
+//                            list.add(new NameValuePair("productGroup", "4:" + userNum));
+//                            list.add(new NameValuePair("orderDetailType", 6 + ""));
+//                            list.add(new NameValuePair("queryMonth", months));
+//                            page = this.getDetailPages(webClientTwo, "http://gs.189.cn/web/json/searchDetailedFee.action?timestamp=" + System.currentTimeMillis() + "&productGroup=4:" + userNum + "&orderDetailType=6&queryMonth=" + months, list, HttpMethod.POST);
+//                        }
+//                    }
 
-
-                    }
-
-                    Thread.sleep(3000);
                     System.out.println(page + "-------" + i + "-------" + months);
-                    String a = page.getWebResponse().getContentAsString();
+                    String a = page4.getWebResponse().getContentAsString();
                     //result：9998 操作频繁
                     data.put("items", a.replaceAll("\\\"", "\""));
                     datalist.add(data);
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 }
                 PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
                 gansu.put("data", datalist);
@@ -223,7 +308,7 @@ public class GansuProvinceService {
      * 二次身份校验
      *
      * @param webClient
-     * @param 
+     * @param
      * @param validatecode 短信验证码
      * @param busitype     固定3
      * @param mobilenum    电话号码
@@ -245,9 +330,8 @@ public class GansuProvinceService {
         list.add(new NameValuePair("newNameO", newNameO));
         list.add(new NameValuePair("personNoO", personNoO));
         list.add(new NameValuePair("rand", rand));
-
         UnexpectedPage resultPage = this.getPages(webClient, "http://gs.189.cn/web/commonJson/checkSMZ.action", list, method);
-        String result=resultPage.getWebResponse().getContentAsString();
+        String result = resultPage.getWebResponse().getContentAsString();
         System.out.println(result);
         if (result.contains("returnCode\\\":\\\"0\\\"")) {
             map.put("errorCode", "0001");
@@ -285,6 +369,7 @@ public class GansuProvinceService {
 
         WebRequest requests = new WebRequest(new URL(url));
         requests.setRequestParameters(list);
+        requests.setCharset("gbk");
         requests.setHttpMethod(method);
         UnexpectedPage page = webClient.getPage(requests);
         Thread.sleep(2000);

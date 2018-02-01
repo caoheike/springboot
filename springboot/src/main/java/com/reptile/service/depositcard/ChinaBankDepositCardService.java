@@ -51,11 +51,11 @@ public class ChinaBankDepositCardService {
      * @return
      */
     @SuppressWarnings("AlibabaUndefineMagicConstant")
-    public Map<String, Object> getDetailMes(HttpServletRequest request, String idNumber, String cardNumber, String passWord, String userName, String uuid) {
+    public Map<String, Object> getDetailMes(HttpServletRequest request, String idNumber, String cardNumber, String passWord, String userName, String uuid,boolean flag0) {
         Map<String, Object> map = new HashMap<>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         String flag="1000";
-        PushState.state(idNumber, "savings",100);
+        PushState.stateByFlag(idNumber, "savings",100,flag, flag0);
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
         File file = new File(path);
@@ -83,7 +83,7 @@ public class ChinaBankDepositCardService {
             if (msgContent.length() != 0) {
                 map.put("errorCode", "0001");
                 map.put("errorInfo", msgContent);
-                PushState.state(idNumber, "savings",200,msgContent);
+                PushState.stateByFlag(idNumber, "savings",200,msgContent,flag0);
                 PushSocket.pushnew(map, uuid, "3000",msgContent);
                 driver.quit();
                 return map;
@@ -94,7 +94,7 @@ public class ChinaBankDepositCardService {
             } catch (Exception e) {
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "请输入正确的储蓄卡号");
-                PushState.state(idNumber, "savings",200,"请输入正确的储蓄卡号");
+                PushState.stateByFlag(idNumber, "savings",200,"请输入正确的储蓄卡号",flag0);
                 PushSocket.pushnew(map, uuid, "3000","请输入正确的储蓄卡号");
                 driver.quit();
                 return map;
@@ -128,12 +128,12 @@ public class ChinaBankDepositCardService {
                     map.put("errorCode", "0003");
                     map.put("errorInfo", "当前系统繁忙，请刷新页面重新认证！");
                     PushSocket.pushnew(map, uuid, "3000","当前系统繁忙，请刷新页面重新认证！");
-                    PushState.state(idNumber, "savings",200,"当前系统繁忙，请刷新页面重新认证！");
+                    PushState.stateByFlag(idNumber, "savings",200,"当前系统繁忙，请刷新页面重新认证！",flag0);
                 } else {
                     map.put("errorCode", "0004");
                     map.put("errorInfo", msgContent);
                     PushSocket.pushnew(map, uuid, "3000",msgContent);
-                    PushState.state(idNumber, "savings",200,msgContent);
+                    PushState.stateByFlag(idNumber, "savings",200,msgContent,flag0);
                 }
                 driver.quit();
                 return map;
@@ -145,7 +145,7 @@ public class ChinaBankDepositCardService {
                 map.put("errorInfo", "登录失败，系统繁忙");
                 PushSocket.pushnew(map, uuid, "3000","登录失败，系统繁忙");
                 driver.quit();
-                PushState.state(idNumber, "savings",200,"登录失败，系统繁忙");
+                PushState.stateByFlag(idNumber, "savings",200,"登录失败，系统繁忙",flag0);
                 return map;
             }
 
@@ -187,10 +187,10 @@ public class ChinaBankDepositCardService {
             String resultValidate="0000";
             String resultCode="errorCode";
             if(map!=null&&resultValidate.equals(map.get(resultCode).toString())){
-                PushState.state(idNumber, "savings",300);
+                PushState.stateByFlag(idNumber, "savings",300,flag0);
                 PushSocket.pushnew(map, uuid, "8000","认证成功");
             }else {
-                PushState.state(idNumber, "savings",200,"认证失败");
+                PushState.stateByFlag(idNumber, "savings",200,"认证失败",flag0);
                 PushSocket.pushnew(map, uuid, "9000","认证失败");
             }
             logger.warn("中国银行储蓄卡账单信息推送完成");
@@ -201,7 +201,7 @@ public class ChinaBankDepositCardService {
             driver.quit();
             map.put("errorCode", "0003");
             map.put("errorInfo", "系统异常");
-            PushState.state(idNumber, "savings",200, "系统异常");
+            PushState.stateByFlag(idNumber, "savings",200, "系统异常",flag0);
             DealExceptionSocketStatus.pushExceptionSocket(flag,map,uuid);
         }
         return map;
@@ -588,6 +588,7 @@ public class ChinaBankDepositCardService {
         System.out.println("------dataList--fb--"+dataList) ;  // 得到 每个对象中的属性值
         return dataList;
     }
+
 
 }
 
