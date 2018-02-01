@@ -39,9 +39,7 @@ import java.util.*;
 @Service
 public class HuNanTelecomService {
     private Logger logger= LoggerFactory.getLogger(ShanDongTelecomService.class);
-    NewTelecomBean monthNum = new NewTelecomBean();
-    List<Object> finallyList = new ArrayList<Object>();
-    List<Object> temp = new ArrayList<Object>();
+
 	@SuppressWarnings({ "rawtypes", "resource" })
 	public Map<String,Object> hunanimgeCode(HttpServletRequest request,String idCard,String username){
 		Map<String,Object> map = new HashMap<String,Object>(10);
@@ -185,7 +183,7 @@ public class HuNanTelecomService {
 		/**
 		 * 短信验证码以及信息
 		 * @param request
-		 * @param PassCode
+		 * @param passCode
 		 * @param imageCode
 		 * @param longitude
 		 * @param latitude
@@ -195,7 +193,10 @@ public class HuNanTelecomService {
 		 */
 		@SuppressWarnings({ "rawtypes", "resource", "unused", "unchecked" })
 		public Map<String,Object> huNanPhoneDetail(HttpServletRequest request,String passCode,String imageCode,String longitude,String latitude,String phoneNumber,String servicepwd,String uuid){
-			   
+
+			List<Object> finallyList = new ArrayList<Object>();
+			List<Object> temp = new ArrayList<Object>();
+
 			Map<String,Object> map = new HashMap<String,Object>(10);
 	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        Object attribute = request.getSession().getAttribute("HNwebclient");
@@ -342,6 +343,7 @@ public class HuNanTelecomService {
 		}
 		@SuppressWarnings({ "unused", "resource", "rawtypes" })
 		public Map<String,Object> huNanPhoneinfo(HttpServletRequest request,String phoneNumber,String month1,String lday){
+			NewTelecomBean monthNum = new NewTelecomBean();
 			Map<String,Object> map = new HashMap<String,Object>(10);
 	        Map<String,Object> data=new HashMap<String,Object>(10);
 	        List<Object>  listData =new ArrayList<Object>();
