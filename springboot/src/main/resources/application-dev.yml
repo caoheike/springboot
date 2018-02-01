@@ -2,7 +2,7 @@ server:
   port: 8080
 
 manInfo:
-    ip: 117.34.70.209
+    ip: 117.34.70.214
     sendip: http://117.34.70.217:8080
     port: 8080
 #spring:

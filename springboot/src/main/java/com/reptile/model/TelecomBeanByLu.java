@@ -3,13 +3,13 @@ package com.reptile.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value="电信bean")
+//@ApiModel(value="电信bean")
 public class TelecomBeanByLu {
-    @ApiModelProperty(value="手机号" ,required=true)
+//    @ApiModelProperty(value="手机号" ,required=true)
     private String userName;
-    @ApiModelProperty(value="服务密码" ,required=true)
+//    @ApiModelProperty(value="服务密码" ,required=true)
     private String servePwd;
-    @ApiModelProperty(value="省份id" ,required=true)
+//    @ApiModelProperty(value="省份id" ,required=true)
     private String provinceId;
 
     public String getUserName() {
