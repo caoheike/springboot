@@ -60,6 +60,7 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import com.reptile.analysis.taobaoanalysis;
 import com.reptile.constants.MessageConstamts;
 import com.reptile.model.MobileBean;
 import com.reptile.model.TelecomBean;
@@ -606,7 +607,7 @@ public class InterfaceController {
 	}
 
 	/**
-	 * 登陆
+	 * 淘宝登陆
 	 * 
 	 * @param request
 	 * @param response
@@ -813,10 +814,11 @@ public class InterfaceController {
 				// 获取收货地址
 				//--------------数据解析方法开始------------
 				//客户的收获地址数据解析 pageinfosss.asXml() + pageinfoss.asXml()
-				//JSONArray deal=taobao.deal(pageinfosss.asXml());
+				//JSONArray deal=taobaoanalysis.deal(pageinfosss.asXml());
 				
 				//客户的收获地址数据解析 info  table.asXml()
-				//JSONArray address=taobao.address(table.asXml());
+				 JSONArray address=taobaoanalysis.address(table.asXml());
+				//this.getAddress(webClient)报错暂无法解析
 				//--------------数据解析方法结束------------
 				
 				

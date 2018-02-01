@@ -33,7 +33,7 @@ public class ZJTelecomController {
 	@ApiOperation(value = "0.2不需要验证码，获取详单", notes = "参数：手机号，服务密码，经度，纬度")
 	@ResponseBody
 	@RequestMapping(value = "getDetailNoCode", method = RequestMethod.POST)
-	public  Map<String,Object> getDetailNoCode(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("uuid")String uuid){
+	public  Map<String,Object> getDetailNoCode(HttpServletRequest request,@RequestParam("phoneNumber")String phoneNumber,@RequestParam("servePwd")String servePwd,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid){
 		
 		return service.getDetailNoCode(request, phoneNumber, servePwd, longitude, latitude, uuid);
 	}

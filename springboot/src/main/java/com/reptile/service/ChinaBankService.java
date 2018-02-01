@@ -1,5 +1,6 @@
 package com.reptile.service;
 
+import com.reptile.analysis.ChinaBankanalysis;
 import com.reptile.util.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -219,6 +220,8 @@ public class ChinaBankService {
                 Thread.sleep(2000);
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
+                //数据解析
+                ChinaBankanalysis.billanalysis(pageSource);
             }
             PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
             states="4000";

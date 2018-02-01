@@ -47,8 +47,9 @@ public class HuNanTelecomController {
 	
 	@ApiOperation(value = "2.发送短信验证码", notes = "参数：图片验证码")
     @RequestMapping(value = "huNanPhoneCode", method = RequestMethod.POST)
+	@ResponseBody
 	/**
-	 * 湖南电信获取图片验证码
+	 * 湖南电信获取短信验证码
 	 * @param request
 	 * @param imageCode
 	 * @return
@@ -62,7 +63,7 @@ public class HuNanTelecomController {
     @ResponseBody
     @RequestMapping(value = "huNanPhoneDetail", method = RequestMethod.POST)
     /**
-     * 天津电信获取通话详单
+     * 湖南电信获取短信验证码
      * @param request
      * @param phoneNumber
      * @param PassCode
@@ -73,8 +74,8 @@ public class HuNanTelecomController {
      * @return
      */
     
-    public Map<String, Object> huNanPhoneDetail(HttpServletRequest request,@RequestParam("phoneNumber") String phoneNumber,@RequestParam("PassCode") String passCode,@RequestParam("imageCode") String imageCode,@RequestParam("servicepwd") String servicepwd,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude) {
+    public Map<String, Object> huNanPhoneDetail(HttpServletRequest request,@RequestParam("phoneNumber") String phoneNumber,@RequestParam("PassCode") String passCode,@RequestParam("imageCode") String imageCode,@RequestParam("servicepwd") String servicepwd,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid) {
         
-    	return hunan.huNanPhoneDetail(request,passCode,imageCode,longitude,latitude,phoneNumber,servicepwd);
+    	return hunan.huNanPhoneDetail(request,passCode,imageCode,longitude,latitude,phoneNumber,servicepwd,uuid);
     }
 }
