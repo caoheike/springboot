@@ -234,10 +234,22 @@ public class HeNanTelecomService {
                     page2 = webClient.getPage(req);
                     Thread.sleep(1000);
                     logger.warn(phoneNumber+"   "+currentDate+":河南电信本次获得数据：--------------"+ page2.asXml()+"-----------");
-                    dataList.add(page2.asXml());
+                    if(page2.asXml().contains("主叫号码")&&page2.asXml().contains("被叫号码")){
+                        dataList.add(page2.asXml());
+                    }
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
+
+                //判断获取的账单是否有5个月
+                if (dataList.size() < 5) {
+                    PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
+                    PushState.state(phoneNumber, "callLog", 200, "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
+                    map.put("errorCode", "0009");
+                    map.put("errorInfo", "数据获取不完全，请重新再次认证！(注：请确认手机号使用时长超过6个月)");
+                    return map;
+                }
+
                 PushSocket.pushnew(map, uuid, "6000","数据获取成功");
                 flag="4000";
                 map.put("UserIphone", phoneNumber);
