@@ -221,7 +221,7 @@ public class HuNanTelecomService {
 	                     map.put("errorInfo", "验证码输入错误，重新输入");
 	                     logger.warn("=====湖南电信获取账单认证失败===="+phoneNumber+map);
 	                     PushState.state(phoneNumber, "callLog", 200, "验证码输入错误，重新输");
-	                     PushSocket.pushnew(map, uuid, "3000", "登录失败");
+	                     PushSocket.pushnew(map, uuid, "3000", "验证码输入错误，请重新输入");
 	                     return map;
 	                 }else{
 	                	 //月份下拉框
