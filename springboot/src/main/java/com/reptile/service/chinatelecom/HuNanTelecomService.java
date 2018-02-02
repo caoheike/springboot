@@ -38,7 +38,7 @@ import java.util.*;
  */
 @Service
 public class HuNanTelecomService {
-    private Logger logger= LoggerFactory.getLogger(ShanDongTelecomService.class);
+    private Logger logger= LoggerFactory.getLogger(HuNanTelecomService.class);
 
 	@SuppressWarnings({ "rawtypes", "resource" })
 	public Map<String,Object> hunanimgeCode(HttpServletRequest request,String idCard,String username){
@@ -330,11 +330,11 @@ public class HuNanTelecomService {
             String errorCode="errorCode";
             String resultCode="0000";
 			if(map.get(errorCode).equals(resultCode)) {
-				   logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
+				   logger.warn("湖南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
 				PushSocket.pushnew(map, uuid, "8000","认证成功");
 				PushState.state(phoneNumber, "callLog",300);
 			}else {
-				 logger.warn("河南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
+				 logger.warn("湖南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
 				PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
 				PushState.state(phoneNumber, "callLog",200,map.get("errorInfo").toString());
 			}

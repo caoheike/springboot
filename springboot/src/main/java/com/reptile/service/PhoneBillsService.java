@@ -274,8 +274,12 @@ public class PhoneBillsService {
                         String json = results.substring(s);
                         results = json.substring(0, json.length() - 1);
                         JSONObject jsonObject = JSONObject.fromObject(results);
+                        String infoMes=jsonObject.get("retMsg").toString();
+                        if(infoMes.contains("信息为空")){
+                            infoMes="认证过程中出现未知错误，请返回上一页面重新开始认证;";
+                        }
                         map.put("errorCode", "0002");
-                        map.put("errorInfo", jsonObject.get("retMsg").toString());
+                        map.put("errorInfo", infoMes);
                         return map;
                     } catch (Exception e) {
                         map.put("errorCode", "0002");

@@ -133,11 +133,12 @@ public class TelecomLoadVerificationService {
         WebClient webClient = new WebClientFactory().getWebClient();
         try {
             HtmlPage page = webClient.getPage("http://login.189.cn/web/login");
+            Thread.sleep(1000);
             page.getElementById("txtAccount").focus();
             page.getElementById("txtAccount").setAttribute("value", userName);
             page.getElementById("txtAccount").blur();
             page.getElementById("txtPassword").setAttribute("value", servePwd);
-
+            Thread.sleep(1000);
             String realPath = request.getServletContext().getRealPath("/imageFile");
             File file = new File(realPath);
             if (!file.exists()) {

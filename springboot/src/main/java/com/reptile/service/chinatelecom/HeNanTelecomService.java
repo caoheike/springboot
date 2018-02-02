@@ -240,7 +240,7 @@ public class HeNanTelecomService {
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;
                 }
-
+                logger.warn(phoneNumber+"   "+"河南电信拿到的数据条数：" + dataList.size());
                 //判断获取的账单是否有5个月
                 if (dataList.size() < 5) {
                     PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
@@ -261,7 +261,7 @@ public class HeNanTelecomService {
                 map.put("flag", "5");
                 map.put("data", dataList);
                 webClient.close();
-                logger.warn("河南电信拿到的数据条数：" + dataList.size()+phoneCode);
+
 
                 Resttemplate resttemplate = new Resttemplate();
                 map = resttemplate.SendMessage(map, ConstantInterface.port + "/HSDC/message/telecomCallRecord");

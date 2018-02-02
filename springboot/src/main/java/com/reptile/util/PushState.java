@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class PushState {
     private static Logger logger= LoggerFactory.getLogger(PushState.class);
     public static void state(String UserCard, String approveName, int stat) {
-        logger.warn(UserCard+":"+approveName+"   推送状态开始");
+        logger.warn(UserCard+":"+approveName+"   推送状态开始"+stat);
         Map<String, Object> data = new HashMap<String, Object>();
         Map<String, Object> stati = new HashMap<String, Object>();
         String stats = stat + "";
@@ -21,9 +21,9 @@ public class PushState {
         data.put("data", stati);
         System.out.println("-state开始推送-"+data);
         Resttemplate resttemplatestati = new Resttemplate();
-        logger.warn(UserCard+":"+approveName+":   推送状态开始");
+        logger.warn(UserCard+":"+approveName+":   推送状态开始"+stat);
         resttemplatestati.SendMessage(data, ConstantInterface.port + "/HSDC/authcode/Autherized");
-        logger.warn(UserCard+":"+approveName+"   推送状态结束");
+        logger.warn(UserCard+":"+approveName+"   推送状态结束"+stat);
     }
     /**
      * 200
@@ -58,9 +58,9 @@ public class PushState {
         data.put("data", stati);
         System.out.println("-200--state开始推送-"+data);
         Resttemplate resttemplatestati = new Resttemplate();
-        logger.warn(UserCard+":"+approveName+":   "+message+":   推送状态开始");
+        logger.warn(UserCard+":"+approveName+":   "+message+":   推送状态开始"+stat);
         resttemplatestati.SendMessage(data, ConstantInterface.port+"/HSDC/authcode/Autherized");
-        logger.warn(UserCard+":"+approveName+"   推送状态结束");
+        logger.warn(UserCard+":"+approveName+"   推送状态结束"+stat);
     }
     /**
      * 银行的  200
@@ -111,7 +111,7 @@ public class PushState {
     
     /**
 	 * 状态码为200使用该方法进行推送 
-	 * @param UserCard
+	 * @param
 	 * @param approveName
 	 * @param stat
 	 * @param message
@@ -127,10 +127,10 @@ public class PushState {
 	
 	/**
 	 * 状态码为100或300使用该方法进行推送 
-	 * @param UserCard
+	 * @param
 	 * @param approveName
 	 * @param stat
-	 * @param message
+	 * @param
 	 * @param flag true或false
 	 */
 	public static void stateByFlag(String userCard,String approveName ,int stat,boolean flag) {
