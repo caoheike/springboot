@@ -225,19 +225,26 @@ public class ChinaBankService {
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
                 //数据解析
-                date=ChinaBankanalysis.billanalysis(pageSource);
+                //date=ChinaBankanalysis.billanalysis(pageSource);
             }
             PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
             states="4000";
-            
-            map.put("idcard", userCard);
+            //--------------数据解析后的-------
+            /*map.put("idcard", userCard);
             map.put("backtype", "BOC");
             map.put("userAccount",cardNumber);
             map.put("bankname", "中国银行信用卡");
             map.put("date", date);
             map.put("isok", isok);
-            System.out.println("中国银行信用卡map==="+map);
-            //map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
+            System.out.println("中国银行信用卡map==="+map);*/
+            //--------------数据解析后的-------
+            Map<String, Object> sendMap = new HashMap<String, Object>(16);
+            sendMap.put("idcard", userCard);
+            sendMap.put("backtype", "BOC");
+            sendMap.put("html", listData);
+            sendMap.put("userAccount",cardNumber);
+            map.put("data", sendMap);
+            map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
             driver.quit();
             String ling="0000";
             String codeResult="errorCode";

@@ -791,6 +791,7 @@ public class InterfaceController {
 						"web|cert_check|5c7e8f11-ad18-44f0-8187-db1f35c0b835RZ25"));
 				requests.setHttpMethod(HttpMethod.POST);
 				requests.setRequestParameters(lists);
+				
 				WebRequest detailInfo = new WebRequest(
 						new URL(
 								"https://my.alipay.com/portal/i.htm?src=yy_content_jygl&sign_from=3000&sign_account_no=20881124651440950156&src=yy_content_jygl"));
@@ -800,31 +801,131 @@ public class InterfaceController {
 				detailInfo.setAdditionalHeaders(headers);
 				HtmlPage pageinfosss = webClient.getPage(detailInfo);
 				Thread.sleep(2000);
-
+				logger.warn("-----------支付宝花呗额度pageinfosss:" + pageinfosss.asXml());
+				
+				
+				//淘宝支付宝明细获取，（信息）
+//				//查看支付宝全部交易明细（点查看）
+//				WebRequest alldetailInfo = new WebRequest(
+//						new URL(
+//								"https://lab.alipay.com/consume/record/items.htm"));
+//				headers.put("cookie", this.getCookie(webClient));
+//				alldetailInfo.setHttpMethod(HttpMethod.GET);
+//				alldetailInfo.setAdditionalHeaders(headers);
+//				HtmlPage allpageinfo = webClient.getPage(alldetailInfo);
+//				logger.warn("-----------支付宝全部交易明细allpageinfo:" + allpageinfo.asXml());
+//				//UA_InputId
+//				String formtk = allpageinfo.asXml().split("form_tk =")[1].split(";")[0].toString();
+//				System.out.println(allpageinfo.asXml().split("form_tk =")[1].split(";")[0].toString());
+//				String formtoken = allpageinfo.getElementByName("_form_token").getAttribute("value");//UA_InputId
+//				String maxItems = allpageinfo.getElementByName("maxItems").getAttribute("value");
+//				String ua = allpageinfo.getElementById("UA_InputId").getAttribute("value");
+//				int page = 1;
+//				//查看支付宝三个月明细
+//				lists.clear();
+//				WebRequest enddetailInfo = new WebRequest(new URL(
+//						"https://lab.alipay.com/consume/record/items.htm"));
+//				lists.add(new NameValuePair("ua",ua));
+//				lists.add(new NameValuePair("_form_token", formtoken));
+//				lists.add(new NameValuePair("beginTime", "20171101"));
+//				lists.add(new NameValuePair("endTime", "20180131"));
+//				lists.add(new NameValuePair("month", ""));
+//				lists.add(new NameValuePair("time", "chooseDate"));
+//				lists.add(new NameValuePair("cashflow", ""));
+//				lists.add(new NameValuePair("moneyFlowsType", ""));
+//				lists.add(new NameValuePair("page", String.valueOf(page)));
+//				lists.add(new NameValuePair("keywordType", ""));
+//				lists.add(new NameValuePair("keywordValue", ""));
+//				lists.add(new NameValuePair("beginAmount", ""));
+//				lists.add(new NameValuePair("endAmount", ""));
+//				lists.add(new NameValuePair("filter", ""));
+//				lists.add(new NameValuePair("maxItems", maxItems));
+//				lists.add(new NameValuePair("orderBy", ""));
+//				lists.add(new NameValuePair("rdsToken", formtk.substring(1, formtk.length()-1)));
+//				lists.add(new NameValuePair("rdsUa",ua));
+//				
+//				
+//				enddetailInfo.setHttpMethod(HttpMethod.POST);
+//				enddetailInfo.setRequestParameters(lists);
+//				headers.put("Host", "lab.alipay.com");
+//				headers.put("Referer", "https://lab.alipay.com/consume/record/items.htm");
+//				enddetailInfo.setAdditionalHeaders(headers);
+//				HtmlPage endpageinfo = webClient.getPage(enddetailInfo);
+//				logger.warn("-----------支付宝三个月明细enddetailInfo:" + endpageinfo.asXml());
+//				
+//				String allpage = endpageinfo.asXml();
+//				while(endpageinfo.asText().contains("下一页")){
+//					formtk = allpageinfo.asXml().split("form_tk =")[1].split(";")[0].toString();
+//					ua = allpageinfo.getElementById("UA_InputId").getAttribute("value");
+//					formtoken = endpageinfo.getElementByName("_form_token").getAttribute("value");
+//					maxItems = endpageinfo.getElementByName("maxItems").getAttribute("value");
+//					page = page+1;
+//					
+//					lists.clear();
+//					WebRequest nextdetailInfo = new WebRequest(new URL(
+//							"https://lab.alipay.com/consume/record/items.htm"));
+//					lists.add(new NameValuePair("ua",ua));
+//					lists.add(new NameValuePair("_form_token", formtoken));
+//					lists.add(new NameValuePair("beginTime", "20171101"));
+//					lists.add(new NameValuePair("endTime", "20180131"));
+//					lists.add(new NameValuePair("month", ""));
+//					lists.add(new NameValuePair("time", "chooseDate"));
+//					lists.add(new NameValuePair("cashflow", ""));
+//					lists.add(new NameValuePair("moneyFlowsType", ""));
+//					lists.add(new NameValuePair("page", String.valueOf(page)));
+//					lists.add(new NameValuePair("keywordType", ""));
+//					lists.add(new NameValuePair("keywordValue", ""));
+//					lists.add(new NameValuePair("beginAmount", ""));
+//					lists.add(new NameValuePair("endAmount", ""));
+//					lists.add(new NameValuePair("filter", ""));
+//					lists.add(new NameValuePair("maxItems", maxItems));
+//					lists.add(new NameValuePair("orderBy", ""));
+//					lists.add(new NameValuePair("rdsToken", formtk.substring(1, formtk.length()-1)));
+//					lists.add(new NameValuePair("rdsUa",ua));					
+//					
+//					nextdetailInfo.setHttpMethod(HttpMethod.POST);
+//					nextdetailInfo.setRequestParameters(lists);
+//					headers.put("Host", "lab.alipay.com");
+//					headers.put("Referer", "https://lab.alipay.com/consume/record/items.htm");
+//					nextdetailInfo.setAdditionalHeaders(headers);
+//					HtmlPage nextpageinfo = webClient.getPage(nextdetailInfo);
+//					if(nextpageinfo.asText().contains("扫描二维码验证身份")) {
+//						break;
+//					}
+//					logger.warn("-----------支付宝三个月明细下一页页面nextpageinfo:" + nextpageinfo.asXml());
+//					endpageinfo=nextpageinfo;
+//					allpage = allpage+endpageinfo.asXml();
+//				}
+				
+				
 				HtmlPage pageinfoss = webClient
 						.getPage("https://my.alipay.com/tile/service/portal:recent.tile?t=1513677423273&_input_charset=utf-8&ctoken=nZN5I4t_L29w1rOM&_output_charset=utf-8");
 				PushSocket.pushnew(map, uuId, "6000", "获取数据成功");
 				
 				
 				
-				System.out.println("最后的 getAddress(webClient)=="+this.getAddress(webClient));
-				logger.warn("最后的getAddress(webClient)=="+this.getAddress(webClient));
+				
 				
 				
 				// 获取收货地址
 				//--------------数据解析方法开始------------
 				//客户的收获地址数据解析 pageinfosss.asXml() + pageinfoss.asXml()
-				//JSONArray deal=taobaoanalysis.deal(pageinfosss.asXml());
+//				JSONObject deal=taobaoanalysis.deal(pageinfosss.asXml(),allpage,allpageinfo.asXml());
 				
 				//客户的收获地址数据解析 info  table.asXml()
+//				 JSONArray address=taobaoanalysis.address(table.asXml());
+//				this.getAddress(webClient)报错暂无法解析
+
 				 JSONArray address=taobaoanalysis.address(table.asXml());
 				//this.getAddress(webClient)报错暂无法解析
+				//github.com/caoheike/springboot.git
 				//--------------数据解析方法结束------------
 				
 				
+				System.out.println("最后的 getAddress(webClient)=="+this.getAddress(webClient));
+				logger.warn("最后的getAddress(webClient)=="+this.getAddress(webClient));
 				
-				
-				/*data.put("addresses", this.getAddress(webClient));
+				data.put("addresses", this.getAddress(webClient));
 				data.put("info", table.asXml());
 				data.put("page", pageinfosss.asXml() + pageinfoss.asXml());
 				map.put("data", data);
@@ -833,7 +934,7 @@ public class InterfaceController {
 				map.put("userCard", idCard);
 
 				map = resttemplate.SendMessage(map, application.getSendip()
-						+ "/HSDC/authcode/taobaoPush");*/
+						+ "/HSDC/authcode/taobaoPush");
 				if (map != null
 						&& MessageConstamts.STRING_0000.equals(map.get(
 								MessageConstamts.ERRORCODE).toString())) {
