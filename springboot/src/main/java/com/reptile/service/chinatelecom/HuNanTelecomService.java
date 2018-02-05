@@ -326,7 +326,7 @@ public class HuNanTelecomService {
 	        
 	        Resttemplate resttemplate=new Resttemplate();
 	        PushSocket.pushnew(map, uuid, "6000", "获取中");
-            map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/operator");
+            map = resttemplate.SendMessage(map, ConstantInterface.port +"/HSDC/message/operator");
             String errorCode="errorCode";
             String resultCode="0000";
 			if(map.get(errorCode).equals(resultCode)) {
@@ -395,7 +395,15 @@ public class HuNanTelecomService {
 	    	    			monthNum.setCallMoney(Double.valueOf(table.getCellAt(tr,6).asText()));
 	    	    			monthNum.setCallTime(table.getCellAt(tr,1).asText());
 	    	    			monthNum.setCallDuration(table.getCellAt(tr,4).asText());
-	    	    			JSONObject jsonObject = JSONObject.fromObject(monthNum);
+	    	    			Map<String,Object> testmap=new HashMap<String, Object>(200);
+	    	    			testmap.put("CallNumber", table.getCellAt(tr,3).asText());
+	    	    			testmap.put("CallType", table.getCellAt(tr,7).asText());
+	    	    			testmap.put("CallAddress", table.getCellAt(tr,5).asText());
+	    	    			testmap.put("CallWay", table.getCellAt(tr,2).asText());
+	    	    			testmap.put("CallMoney", Double.valueOf(table.getCellAt(tr,6).asText()));
+	    	    			testmap.put("CallTime", table.getCellAt(tr,1).asText());
+	    	    			testmap.put("CallDuration", table.getCellAt(tr,4).asText());
+	    	    			JSONObject jsonObject = JSONObject.fromObject(testmap);
 	    	    			String jsonhuNanBean = jsonObject.toString();
 	    	    			//每一行
 	    	    			listData.add(jsonhuNanBean);   	    			
