@@ -55,7 +55,7 @@ public class ChinaBankDepositCardService {
         Map<String, Object> map = new HashMap<>(16);
         PushSocket.pushnew(map, uuid, "1000","登录中");
         String flag="1000";
-        PushState.stateByFlag(idNumber, "savings",100,flag, flag0);
+        PushState.stateByFlag(idNumber, "savings",100,flag0);
         List<String> dataList = new ArrayList<>();
         String path = request.getServletContext().getRealPath("/vecImageCode");
         File file = new File(path);
