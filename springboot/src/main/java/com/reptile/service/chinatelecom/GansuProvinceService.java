@@ -40,59 +40,59 @@ public class GansuProvinceService {
      * @param userNum
      * @return
      */
-    public Map<String, Object> gansuPhone(HttpServletRequest request, String userNum) {
-        Map<String, Object> map = new HashMap<String, Object>(200);
-        HttpSession session = request.getSession();
-        Object attribute = session.getAttribute("GBmobile-webclient");
-        if (attribute == null) {
-            map.put("errorCode", "0001");
-            map.put("errorInfo", "操作异常!");
-            return map;
-        } else {
-
-            try {
-                WebClient webClient = (WebClient) attribute;
-                WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000600"));
-                requests.setHttpMethod(HttpMethod.GET);
-                HtmlPage page1 = webClient.getPage(requests);
-                String erro = "获取验证码";
-                if (!page1.asText().contains(erro)) {
-                    map.put("errorCode", "0007");
-                    map.put("errorInfo", "操作异常！");
-                    return map;
-                }
-
-                requests.setUrl(new URL("http://gs.189.cn/service/v7/fycx/xd/index.shtml?fastcode=10000600&cityCode=gs"));
-                requests.setHttpMethod(HttpMethod.POST);
-                HtmlPage page2 = webClient.getPage(requests);
-                String value = page2.getElementById("productInfo").getAttribute("value");
-                WebRequest request1 = new WebRequest(new URL("http://gs.189.cn/web/json/sendSMSRandomNumSMZ.action"));
-                //提交方式
-                request1.setHttpMethod(HttpMethod.POST);
-                List<NameValuePair> list = new ArrayList<NameValuePair>();
-                list.add(new NameValuePair("productGroup", value));
-                request1.setRequestParameters(list);
-                UnexpectedPage page = webClient.getPage(request1);
-
-                String one = "1";
-                if (page.getWebResponse().getContentAsString().indexOf(one) != -1) {
-                    session.setAttribute("sessionWebClient-GANSU", webClient);
-                    session.setAttribute("sessionHTMLpaget-GANSU", page2);
-                    map.put("errorCode", "0000");
-                    map.put("errorInfo", "验证码发送成功!");
-                } else {
-                    map.put("errorCode", "0001");
-                    map.put("errorInfo", "电信返回值错误");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                map.put("errorCode", "0002");
-                map.put("errorInfo", "请再次尝试发送验证码");
-            }
-
-        }
-        return map;
-    }
+//    public Map<String, Object> gansuPhone(HttpServletRequest request, String userNum) {
+//        Map<String, Object> map = new HashMap<String, Object>(200);
+//        HttpSession session = request.getSession();
+//        Object attribute = session.getAttribute("GBmobile-webclient");
+//        if (attribute == null) {
+//            map.put("errorCode", "0001");
+//            map.put("errorInfo", "操作异常!");
+//            return map;
+//        } else {
+//
+//            try {
+//                WebClient webClient = (WebClient) attribute;
+//                WebRequest requests = new WebRequest(new URL("http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000600"));
+//                requests.setHttpMethod(HttpMethod.GET);
+//                HtmlPage page1 = webClient.getPage(requests);
+//                String erro = "获取验证码";
+//                if (!page1.asText().contains(erro)) {
+//                    map.put("errorCode", "0007");
+//                    map.put("errorInfo", "操作异常！");
+//                    return map;
+//                }
+//
+//                requests.setUrl(new URL("http://gs.189.cn/service/v7/fycx/xd/index.shtml?fastcode=10000600&cityCode=gs"));
+//                requests.setHttpMethod(HttpMethod.POST);
+//                HtmlPage page2 = webClient.getPage(requests);
+//                String value = page2.getElementById("productInfo").getAttribute("value");
+//                WebRequest request1 = new WebRequest(new URL("http://gs.189.cn/web/json/sendSMSRandomNumSMZ.action"));
+//                //提交方式
+//                request1.setHttpMethod(HttpMethod.POST);
+//                List<NameValuePair> list = new ArrayList<NameValuePair>();
+//                list.add(new NameValuePair("productGroup", value));
+//                request1.setRequestParameters(list);
+//                UnexpectedPage page = webClient.getPage(request1);
+//
+//                String one = "1";
+//                if (page.getWebResponse().getContentAsString().indexOf(one) != -1) {
+//                    session.setAttribute("sessionWebClient-GANSU", webClient);
+//                    session.setAttribute("sessionHTMLpaget-GANSU", page2);
+//                    map.put("errorCode", "0000");
+//                    map.put("errorInfo", "验证码发送成功!");
+//                } else {
+//                    map.put("errorCode", "0001");
+//                    map.put("errorInfo", "电信返回值错误");
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                map.put("errorCode", "0002");
+//                map.put("errorInfo", "请再次尝试发送验证码");
+//            }
+//
+//        }
+//        return map;
+//    }
 
 
     /**
@@ -104,7 +104,7 @@ public class GansuProvinceService {
         logger.warn(userNum+"   "+userPass+"：甘肃电信用户开始认证通话详单..........");
 
 
-        Map<String, Object> data = new HashMap<String, Object>(200);
+
         Map<String, Object> gansu = new HashMap<String, Object>(200);
         List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>(200);
@@ -172,10 +172,10 @@ public class GansuProvinceService {
                 System.out.println(num+"`````````````````````");
                 Thread.sleep(2000);
                 //循环一次 只获取一个月详单（甘肃电信要求两次查询详单间隔必须大于5min）
-                int num3 = 1;
+                int num3 = 3;
                 for (int i = 0; i < num3; i++) {
+                    Map<String, Object> data = new HashMap<String, Object>(200);
                     String months = Dates.beforMonth(i+1);
-
                     //未办结算订单查询  返回值未被使用  认证通过情况下为{result: 1}
 //                    String urls="http://gs.189.cn/web/json/searchDetailedFeeNew.action";
 //                    WebRequest post321=new WebRequest(new URL(urls));
@@ -203,10 +203,10 @@ public class GansuProvinceService {
 //                    System.out.println(page3.getWebResponse().getContentAsString());
 
 
-                    String searchFee = "http://gs.189.cn/web/fee/preDetailedFee.action?randT=" + 546213 + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months;
-                    Page pagesss = webClient.getPage(new URL(searchFee));
-                    System.out.println(pagesss.getWebResponse().getContentAsString());
-                    Thread.sleep(2000);
+//                    String searchFee = "http://gs.189.cn/web/fee/preDetailedFee.action?randT=" + 546213 + "&productGroup=" + num + "&orderDetailType=6&queryMonth=" + months;
+//                    Page pagesss = webClient.getPage(new URL(searchFee));
+//                    System.out.println(pagesss.getWebResponse().getContentAsString());
+//                    Thread.sleep(2000);
 
 
 //                    String sycnUrl = "http://gs.189.cn/web/json/getAncillaryInfo.action?timestamp="+System.currentTimeMillis();
@@ -231,8 +231,8 @@ public class GansuProvinceService {
                         JSONObject jsonObject = JSONObject.fromObject(dataResults);
                         logger.warn(userNum+":该甘肃电信用户"+months+"月数据获取数据为"+dataResults);
                         //result：9998 操作频繁  1数据正常
-                        if(jsonObject.getString("result").equals("1 ")){
-                            data.put("items", dataResults.replaceAll("\\\"", "\""));
+                        if(jsonObject.getString("result").equals("1")){
+                            data.put("items", dataResults);
                             datalist.add(data);
                             result = "success";
                         }else{
@@ -248,6 +248,10 @@ public class GansuProvinceService {
                         post.setHttpMethod(HttpMethod.POST);
                         webClient.getPage(post);
                     } while (result.equals("fail")&&count<3);
+                    if(i<2){
+                        int sleepTime= (int) (1000*60*5*(Math.random()*0.2+1));
+                        Thread.sleep(sleepTime);
+                    }
                 }
 
                 logger.warn(userNum+":该用户-------------获取数据总条数:"+datalist.size());
@@ -262,14 +266,15 @@ public class GansuProvinceService {
                 PushSocket.pushnew(map, uuid, "6000", "数据获取成功");
                 signle="4000";
 
-                gansu.put("data", datalist);
-                gansu.put("UserIphone", userNum);
+                map.put("data", datalist);
+                map.put("UserIphone", userNum);
                 map.put("longitude", longitude);
                 map.put("latitude", latitude);
-                gansu.put("flag", 6);
-                gansu.put("userPassword", userPass);
+                map.put("flag", "6");
+                map.put("UserPassword", userPass);
                 Resttemplate resttemplate = new Resttemplate();
-                map = resttemplate.SendMessage(gansu, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");
+
+                map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");
                 String errorCode = "errorCode";
                 String state0 = "0000";
                 if (map != null && state0.equals(map.get(errorCode).toString())) {

@@ -18,10 +18,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 征信数据解析
@@ -53,7 +52,7 @@ public class CreditAnalysis {
         Document parse = null;
         String userId = "**************271X";
         try {
-            parse = Jsoup.parse(new File("f://danbao.html"), "utf-8");
+            parse = Jsoup.parse(new File("f://xinzhengxin.html"), "utf-8");
 //            parse = Jsoup.parse(reportHtml);
             table = parse.getElementsByTag("table");
             logger.warn(userId.toString() + "此次解析征信页面含有的table数量为:" + table.size());
@@ -218,7 +217,14 @@ public class CreditAnalysis {
                     for (Element item : li) {
                         otherLoan.add(item.text());
                     }
-                    creditLoan = getOtherLoanList(otherLoan, el.text(), creditLoan);
+                    //已结清贷款需要报告时间这个字段
+                    String reportTime = creditBasic.getString("reportTime");
+                    DateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+                    Date parse1 = simpleDateFormat.parse(reportTime);
+                    SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy年MM月dd日");
+                    String reportTimeNew = simpleDateFormat1.format(parse1);
+                    //解析贷款明细
+                    creditLoan = getOtherLoanList(otherLoan, el.text(), creditLoan,reportTimeNew);
                 }
 
                 //为他人担保信息
@@ -433,7 +439,7 @@ public class CreditAnalysis {
      * @param otherLoan
      * @return
      */
-    public static JSONArray getOtherLoanList(List<String> otherLoan, String loanType, JSONArray otherLoanList) {
+    public static JSONArray getOtherLoanList(List<String> otherLoan, String loanType, JSONArray otherLoanList,String reportTimeNew) {
         try {
             for (String loadRecord : otherLoan) {
                 JSONObject oneLoanRecord = new JSONObject();
@@ -459,7 +465,7 @@ public class CreditAnalysis {
                     if (loadRecord.contains("日到期")) {
                         String expireDate = loadRecord.substring(loadRecord.indexOf("，") + 1, loadRecord.indexOf("日到期") + 1);
                         oneLoanRecord.put("expired_date", expireDate);
-                    } else {
+                    } else  {
                         oneLoanRecord.put("expired_date", "");
                     }
                     //截止日期
@@ -485,9 +491,11 @@ public class CreditAnalysis {
                     //贷款状态
                     if (loadRecord.contains("已结清")) {
                         oneLoanRecord.put("loan_state", "已结清");
-
                         String pDateStr = loadRecord.substring(loadRecord.indexOf("，") + 1, loadRecord.indexOf("已结清"));
-                        oneLoanRecord.put("query_date", pDateStr);
+                        //已结清的贷款到期时间为截止日期
+                        oneLoanRecord.put("expired_date", pDateStr);
+                        //已结清贷款截止日期为报告时间
+                        oneLoanRecord.put("query_date", reportTimeNew);
                     } else if (loadRecord.contains("已转出")) {
                         oneLoanRecord.put("loan_state", "已转出");
                     } else if (loadRecord.contains("逾期金额")) {

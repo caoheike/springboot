@@ -24,12 +24,12 @@ import io.swagger.annotations.ApiOperation;
 public class GansuProvinceTelecomController {
 	@Autowired
 	private GansuProvinceService gansu;
-    @ResponseBody
-    @ApiOperation(value = "1.短信验证码", notes = "参数：手机号")
-    @RequestMapping(value = "GansuPhoneCode", method = RequestMethod.POST)
-    public Map<String, Object> gansuPhoneCode(HttpServletRequest request,@RequestParam("UserNum") String userNum) {
-        return gansu.gansuPhone(request,userNum);
-    }
+//    @ResponseBody
+//    @ApiOperation(value = "1.短信验证码", notes = "参数：手机号")
+//    @RequestMapping(value = "GansuPhoneCode", method = RequestMethod.POST)
+//    public Map<String, Object> gansuPhoneCode(HttpServletRequest request,@RequestParam("UserNum") String userNum) {
+//        return gansu.gansuPhone(request,userNum);
+//    }
     @ApiOperation(value = "2.获取详单信息", notes = "参数：身份证,手机号,服务密码")
     @ResponseBody
     @RequestMapping(value = "GansuPhone", method = RequestMethod.POST)
