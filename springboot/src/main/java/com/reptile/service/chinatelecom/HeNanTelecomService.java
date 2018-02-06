@@ -242,7 +242,7 @@ public class HeNanTelecomService {
                 }
                 logger.warn(phoneNumber+"   "+"河南电信拿到的数据条数：" + dataList.size());
                 //判断获取的账单是否有5个月
-                if (dataList.size() < 5) {
+                if (dataList.size() < 4) {
                     PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     PushState.state(phoneNumber, "callLog", 200, "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     map.put("errorCode", "0009");

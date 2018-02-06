@@ -178,7 +178,7 @@ public class ChengduTelecomService {
 
                 logger.warn(phoneNumber + "：---------------------成都电信获取详单结束--------------------本次账单数为：" + list.size());
 
-                if (list.size() < 5) {
+                if (list.size() < 4) {
                     PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     PushState.state(phoneNumber, "callLog", 200, "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     map.put("errorCode", "0009");
