@@ -243,7 +243,8 @@ public class XiNingTelecomService {
                     return map;
                 }
 
-                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.size());
+//                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.size());
+                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.toString());
 
                 if(dataList.size()<1){
                     map.put("errorCode", "0001");
