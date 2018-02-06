@@ -228,6 +228,7 @@ public class HuNanTelecomService {
 	                	    PushSocket.pushnew(map, uuid, "2000", "登录成功");
 	                	 DomNodeList selectallmonth=(DomNodeList) page.getElementByName("queryMonth").getElementsByTagName("option");
 	                	 PushSocket.pushnew(map, uuid, "5000", "获取中");
+	                	 if(selectallmonth.size()>4){
 			    		 for(int i=0;i<selectallmonth.size();i++){
 			    			 //月份select
 			    			 HtmlSelect selectmonth=(HtmlSelect) page.getElementById("blqYearMonth");
@@ -303,7 +304,13 @@ public class HuNanTelecomService {
 		                	 map.remove("list");
 		                	 finallyList.addAll(temp);
 			    		 }
-			    		 
+	                	 }else{
+	                		   PushState.state(phoneNumber, "callLog", 200, "通话详单月份不足");
+	                		   PushSocket.pushnew(map, uuid, "7000", "获取失败");
+	                		 	map.put("errorCode", "0002");
+	     	                	map.put("errorInfo", "通话详单月份不足!");
+	                	     return map;
+	                	 }
 	                 }
 	            } catch (Exception e) {
 	            	
@@ -331,8 +338,8 @@ public class HuNanTelecomService {
             String resultCode="0000";
 			if(map.get(errorCode).equals(resultCode)) {
 				   logger.warn("湖南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
-				PushSocket.pushnew(map, uuid, "8000","认证成功");
-				PushState.state(phoneNumber, "callLog",300);
+				   PushSocket.pushnew(map, uuid, "8000","认证成功");
+				   PushState.state(phoneNumber, "callLog",300);
 			}else {
 				 logger.warn("湖南电信数据==将要推送至数据中心==后的返回值==="+map+"-----------"+phoneNumber+"------------");
 				PushSocket.pushnew(map, uuid, "9000",map.get("errorInfo").toString());
@@ -369,10 +376,10 @@ public class HuNanTelecomService {
 		    		String year = sdf.format(date);
 		    		Integer.valueOf(phonenum);
 		    		int a;
-		    		if(Integer.valueOf(phonenum)<5){
+		    		if(Integer.valueOf(phonenum)<10){
 		    			a=Integer.valueOf(phonenum);
 		    		}else{
-		    			a=4;
+		    			a=9;
 		    		}
 		    		//一个月页数循环
 		    	    for(int i=1;i<a;i++){
