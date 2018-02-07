@@ -233,9 +233,11 @@ public class HeNanTelecomService {
                     req.setRequestParameters(list);
                     page2 = webClient.getPage(req);
                     Thread.sleep(1000);
-                    logger.warn(phoneNumber+"   "+currentDate+":河南电信本次获得数据：--------------"+ page2.asXml()+"-----------");
+
                     if(page2.asXml().contains("主叫号码")&&page2.asXml().contains("被叫号码")){
                         dataList.add(page2.asXml());
+                    }else{
+                        logger.warn(phoneNumber+"   "+currentDate+":河南电信本次获得数据异常：--------------"+ page2.asXml()+"-----------");
                     }
                     calendar.add(Calendar.MONTH, -1);
                     beforeDate = currentDate;

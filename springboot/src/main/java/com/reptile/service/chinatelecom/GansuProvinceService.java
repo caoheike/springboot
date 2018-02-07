@@ -227,9 +227,9 @@ public class GansuProvinceService {
                         Page pages = webClient.getPage(post);
                         Thread.sleep(2000);
                         String dataResults=pages.getWebResponse().getContentAsString();
+                        logger.warn(userNum+":该甘肃电信用户"+months+"月数据获取数据为："+dataResults);
 
                         JSONObject jsonObject = JSONObject.fromObject(dataResults);
-                        logger.warn(userNum+":该甘肃电信用户"+months+"月数据获取数据为"+dataResults);
                         //result：9998 操作频繁  1数据正常
                         if(jsonObject.getString("result").equals("1")){
                             data.put("items", dataResults);
@@ -274,7 +274,7 @@ public class GansuProvinceService {
                 map.put("UserPassword", userPass);
                 Resttemplate resttemplate = new Resttemplate();
 
-                map = resttemplate.SendMessage(map, "http://192.168.3.4:8081/HSDC/message/telecomCallRecord");
+                map = resttemplate.SendMessage(map, ConstantInterface.port+"/HSDC/message/telecomCallRecord");
                 String errorCode = "errorCode";
                 String state0 = "0000";
                 if (map != null && state0.equals(map.get(errorCode).toString())) {

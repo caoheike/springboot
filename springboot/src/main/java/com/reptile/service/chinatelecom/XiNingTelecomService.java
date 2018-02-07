@@ -217,15 +217,19 @@ public class XiNingTelecomService {
                             HtmlPage page = webClient.getPage(webRequest);
                             String result = page.asXml();
                             //数据logger
-                            logger.warn(phoneNumber + "   " + beginTime + "：---------------------西宁电信获取详------------本次获取数据详情：" + result);
-                            if (result.contains("无话单记录！")) {
+
+                            if (result.contains("无话单记录")) {
                                 break;
+                            }
+                            if(result.contains("通话类型")&&result.contains("主叫区号")){
+                                dataList.add(result);
+                            }else{
+                                logger.warn(phoneNumber + "   " + beginTime + "：---------------------西宁电信获取异常------------本次获取数据详情：" + result);
                             }
                             if (i > 8) {
                                 break;
                             }
                             Thread.sleep(1000);
-                            dataList.add(result);
                             i++;
                         }
                         calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -234,7 +238,7 @@ public class XiNingTelecomService {
                         endTime = simple.format(calendar.getTime());
                     }
                 } catch (Exception e) {
-                    logger.error(phoneNumber + "   " + beginTime + "：----------------西宁获取过程中出现异常(循环获取数据过程中)---------------", e);
+                    logger.warn(phoneNumber + "   " + beginTime + "：----------------西宁获取过程中出现异常(循环获取数据过程中)---------------", e);
                     Scheduler.sendGet(Scheduler.getIp);
                     map.put("errorCode", "0001");
                     map.put("errorInfo", "数据获取失败，网络异常");
@@ -243,8 +247,8 @@ public class XiNingTelecomService {
                     return map;
                 }
 
-//                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.size());
-                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.toString());
+                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.size());
+//                logger.warn(phoneNumber + "：---------------------西宁电信获取详单结束---------------------本次获取账单数目:" + dataList.toString());
 
                 if(dataList.size()<1){
                     map.put("errorCode", "0001");

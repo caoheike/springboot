@@ -123,14 +123,14 @@ public class ChengduTelecomService {
                 String result = page.asText();
                 //数据logger
                 logger.warn(phoneNumber + "：---------------------成都电信获取详单，第一次请求到的数据:" + result + "---------------------");
+
                 JSONObject jsonObject = JSONObject.fromObject(result);
                 String record = null;
                 String retCode = "retCode";
                 String flag0 = "0";
-                if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
+                if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.getString(retCode))) {
                     String resultInfo = "没有查询到相应记录";
                     if (!result.contains(resultInfo)) {
-
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog", 200, jsonObject.get("retMsg").toString());
@@ -167,12 +167,18 @@ public class ChengduTelecomService {
                     page = webClient.getPage(getMes);
                     result = page.asText();
                     //数据logger
-                    logger.warn(phoneNumber + ":" + startTime + "本次获得的数据为:------" + result);
+
 
                     if (!result.contains("没有查询到相应记录")) {
                         jsonObject = JSONObject.fromObject(result);
-                        record = jsonObject.get("json").toString();
-                        list.add(record);
+                        if (jsonObject.get(retCode) != null && flag0.equals(jsonObject.getString(retCode))) {
+                            record = jsonObject.get("json").toString();
+                            list.add(record);
+                        }else{
+                            logger.warn(phoneNumber + ":" + startTime + "本次获得的数据异常:------" + result);
+                        }
+                    }else{
+                        logger.warn(phoneNumber + ":" + startTime + "本次没有查询到相应记录:------" + result);
                     }
                 }
 
