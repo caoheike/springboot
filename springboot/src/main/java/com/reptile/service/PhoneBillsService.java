@@ -39,6 +39,16 @@ public class PhoneBillsService {
         Map<String, String> map = new HashMap<String, String>(16);
         HttpSession session = request.getSession();
 
+//        logger.warn("为" + userNumber + "： 用户分配新----------------------------移动");
+//        String result = Scheduler.sendGet(Scheduler.getIp);
+//        if (result.contains("请在1秒后再次请求")) {
+//            logger.warn("为" + userNumber + "： 分配ip时访问过快--------------------移动");
+//            map.put("errorCode", "0001");
+//            map.put("errorInfo", "当前使用系统人数过多，请点击重试！");
+//            return map;
+//        }
+//        logger.warn(userNumber + "： 用户本次分配到的ip为：" + Scheduler.ip + ":" + Scheduler.port + "----------------------------移动");
+
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
         // 开启cookie管理
         webClient.getCookieManager().setCookiesEnabled(true);
@@ -118,7 +128,7 @@ public class PhoneBillsService {
                 //执行官网js对短信验证码进行加密
                 WebClient webClient = (WebClient) client;
                 HtmlPage page = webClient.getPage("https://login.10086.cn/login.html");
-                Object javaScriptResult = page.executeJavaScript("encrypt(\""+duanxinCode+"\")").getJavaScriptResult();
+                Object javaScriptResult = page.executeJavaScript("encrypt(\"" + duanxinCode + "\")").getJavaScriptResult();
                 System.out.println(javaScriptResult.toString());
 
                 String loadPath = "https://login.10086.cn/login.htm";
@@ -274,9 +284,9 @@ public class PhoneBillsService {
                         String json = results.substring(s);
                         results = json.substring(0, json.length() - 1);
                         JSONObject jsonObject = JSONObject.fromObject(results);
-                        String infoMes=jsonObject.get("retMsg").toString();
-                        if(infoMes.contains("信息为空")){
-                            infoMes="认证过程中出现未知错误，请返回上一页面重新开始认证;";
+                        String infoMes = jsonObject.get("retMsg").toString();
+                        if (infoMes.contains("信息为空")) {
+                            infoMes = "认证过程中出现未知错误，请返回上一页面重新开始认证;";
                         }
                         map.put("errorCode", "0002");
                         map.put("errorInfo", infoMes);
@@ -388,23 +398,23 @@ public class PhoneBillsService {
                 int boundCount = 7;
                 loop:
                 for (int i = 1; i < boundCount; i++) {
-                    logger.warn(userNumber+"   "+i + "次开始获取数据   " + sDate);
+                    logger.warn(userNumber + "   " + i + "次开始获取数据   " + sDate);
                     String results = "";
                     Object page9 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                             "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=200&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
                     if (page9 instanceof HtmlPage) {
-                        logger.warn(userNumber+"   "+"第一次请求出错  " + sDate);
+                        logger.warn(userNumber + "   " + "第一次请求出错  " + sDate);
                         for (int j = 0; j < 3; j++) {
-                            logger.warn(userNumber+"   "+"请出错，现在开始第" + j + "次请求  " + sDate);
+                            logger.warn(userNumber + "   " + "请出错，现在开始第" + j + "次请求  " + sDate);
                             Object page10 = webClient.getPage("https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/" + userNumber +
                                     "?callback=jQuery183045411546722870333_" + timeStamp + "&curCuror=1&step=200&qryMonth=" + sDate + "&billType=02&_=" + System.currentTimeMillis());
                             if (page10 instanceof UnexpectedPage) {
-                                logger.warn(userNumber+"   "+j + ":本次请求成功 " + sDate);
+                                logger.warn(userNumber + "   " + j + ":本次请求成功 " + sDate);
                                 UnexpectedPage pages = (UnexpectedPage) page10;
                                 results = pages.getWebResponse().getContentAsString();
                                 break;
                             } else if (j == 2) {
-                                logger.warn(userNumber+"   "+sDate + "：：三次未请求到数据，跳过进行下一月账单读取");
+                                logger.warn(userNumber + "   " + sDate + "：：三次未请求到数据，跳过进行下一月账单读取");
                                 cal.add(Calendar.MONTH, -1);
                                 sDate = simpleDateFormat.format(cal.getTime());
                                 continue loop;
@@ -412,7 +422,7 @@ public class PhoneBillsService {
                             Thread.sleep(2000);
                         }
                     } else {
-                        logger.warn(userNumber+"   "+i + "次请求成功!" + sDate);
+                        logger.warn(userNumber + "   " + i + "次请求成功!" + sDate);
                         UnexpectedPage pages = (UnexpectedPage) page9;
                         results = pages.getWebResponse().getContentAsString();
                     }
@@ -429,17 +439,17 @@ public class PhoneBillsService {
                         if (!listss.contains(startDate)) {
                             dataList.add(results);
                             listss.add(startDate);
-                        }else{
-                            logger.warn(userNumber+":   获取时间:"+sDate+"   "+i+"次请求数据为重复数据,数据为:---------"+results+"---------");
+                        } else {
+                            logger.warn(userNumber + ":   获取时间:" + sDate + "   " + i + "次请求数据为重复数据,数据为:---------" + results + "---------");
                         }
-                    }else{
-                        logger.warn(userNumber+":   获取时间:"+sDate+"   "+i+"次请求数据异常,异常数据为:---------"+results+"---------");
+                    } else {
+                        logger.warn(userNumber + ":   获取时间:" + sDate + "   " + i + "次请求数据异常,异常数据为:---------" + results + "---------");
                     }
                     cal.add(Calendar.MONTH, -1);
                     sDate = simpleDateFormat.format(cal.getTime());
                     Thread.sleep(2000);
                 }
-                logger.warn(userNumber+": 该用户获取的数据总数为："+dataList.size());
+                logger.warn(userNumber + ": 该用户获取的数据总数为：" + dataList.size());
                 int boundCount3 = 4;
                 if (dataList.size() < boundCount3) {
                     PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
@@ -488,13 +498,13 @@ public class PhoneBillsService {
     }
 
     public static void main(String[] args) {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
 
         Calendar cal = Calendar.getInstance();
         String sDate = simpleDateFormat.format(cal.getTime());
-        for(int i=1;i<7;i++){
+        for (int i = 1; i < 7; i++) {
             System.out.println(sDate);
-            cal.add(Calendar.MONTH,-1);
+            cal.add(Calendar.MONTH, -1);
             sDate = simpleDateFormat.format(cal.getTime());
         }
     }
