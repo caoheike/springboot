@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
 #   # Redis配置
 #  redis:
 #   host: 127.0.0.1
