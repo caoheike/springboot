@@ -320,6 +320,7 @@ public class HuNanTelecomService {
 	                PushState.state(phoneNumber, "callLog", 200, "网络连接异常");
                     PushSocket.pushnew(map, uuid, "7000", "网络连接异常!获取失败");
 	                logger.warn("===湖南电信获取账单异常"+phoneNumber+map);
+	                return map;
 	            }
 	        }
 	     
