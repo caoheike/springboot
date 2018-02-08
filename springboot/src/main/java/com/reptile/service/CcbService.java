@@ -1,6 +1,5 @@
 package com.reptile.service;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,14 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByClassName;
 import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
@@ -27,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.reptile.util.ConstantInterface;
+import com.reptile.util.Dates;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -217,7 +223,7 @@ public class CcbService {
 									Map<String,Object> tds=new HashMap<String,Object>(70);
 								for (int n = 0; n< td.size(); n++) {
 									    if(n==1){
-										    tds.put("dealTime", td.get(n).text());
+										    tds.put("dealTime", Dates.dateFormat(td.get(n).text().substring(0, 8)));
 										 }
 										if(n==2){
 											tds.put("expendMoney", td.get(n).text());
@@ -261,11 +267,17 @@ public class CcbService {
 				                    Element tablej = pagej.getElementById("result");
 				                    Elements trj =tablej.getElementsByTag("tr");
 				                    for ( int i=1; i<trj.size(); i++){  
-										Elements tdj =  trj.get(i).select("td");  
+										Elements tdj =  trj.get(i).select("td"); 
+										if(tdj.get(1).text().equals("")) {
+											continue;
+										}
 										Map<String,Object> tdsj=new HashMap<String,Object>(200);
 										for (int n = 0; n< tdj.size(); n++) {
+//											if(tdj.get(1).text().equals("")) {
+//												continue;
+//											}
 											if(n==1){
-												tdsj.put("dealTime", tdj.get(n).text());
+												tdsj.put("dealTime", Dates.dateFormat(tdj.get(n).text().substring(0, 8)));
 											}
 											if(n==2){
 												tdsj.put("expendMoney", tdj.get(n).text());
@@ -388,4 +400,9 @@ public class CcbService {
 				}	
 			    return map;  
 			}
+	  
+	  public static void main(String[] args) {
+		String str = "20180201 14:59:32";
+		System.out.println(str.substring(0, 8));
+	}
 }
