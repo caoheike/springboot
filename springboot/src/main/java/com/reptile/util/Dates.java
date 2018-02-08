@@ -94,4 +94,18 @@ public class Dates {
 		return flag;
 	}
 	
+	 public static String dateFormat(String date) {
+		    
+	    if(date.length() == 8) {
+	      date = date.substring(0, 4) + "/" + date.substring(4,6) + "/" + date.substring(6,8);
+	    }
+	    if(date.contains("-")) {
+	      date = date.replace("-", "/");
+	    }else if(date.contains("年")) {
+	      date = date.replace("年", "/").replace("月", "/").replace("日", "");
+	    }
+	    return date;
+	  }
+	
+	
 }
