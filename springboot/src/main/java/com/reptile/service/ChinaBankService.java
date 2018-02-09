@@ -256,7 +256,7 @@ public class ChinaBankService {
             		
             	}
 			}
-            Map<String, Object> datemap = new HashMap<String, Object>(16);
+     /*       Map<String, Object> datemap = new HashMap<String, Object>(16);
             datemap.put("bankList", datearr);
             map.put("idcard", userCard);
             map.put("backtype", "BOC");
@@ -264,15 +264,15 @@ public class ChinaBankService {
             map.put("bankname", "中国银行信用卡");
             map.put("data", datemap);
             map.put("isok", isok);
-            System.out.println("中国银行信用卡map==="+map);
+            System.out.println("中国银行信用卡map==="+map);*/
            
             //--------------数据解析后的-------
-         /*   Map<String, Object> sendMap = new HashMap<String, Object>(16);
+            Map<String, Object> sendMap = new HashMap<String, Object>(16);
             sendMap.put("idcard", userCard);
             sendMap.put("backtype", "BOC");
             sendMap.put("html", listData);
             sendMap.put("userAccount",cardNumber);
-            map.put("data", sendMap);*/
+            map.put("data", sendMap);
             map = new Resttemplate().sendPostOffline(map, "http://192.168.3.16:8099/HSDC/BillFlow/BillFlowByreditCard");
             driver.quit();
             String ling="0000";
