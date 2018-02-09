@@ -24,18 +24,18 @@ import io.swagger.annotations.ApiOperation;
 public class GansuProvinceTelecomController {
 	@Autowired
 	private GansuProvinceService gansu;
-    @ResponseBody
-    @ApiOperation(value = "1.短信验证码", notes = "参数：手机号")
-    @RequestMapping(value = "GansuPhoneCode", method = RequestMethod.POST)
-    public Map<String, Object> gansuPhoneCode(HttpServletRequest request,@RequestParam("UserNum") String userNum) {
-        return gansu.gansuPhone(request,userNum);
-    }
-    @ApiOperation(value = "2.获取详单信息", notes = "参数：身份证,手机号,服务密码,短信验证码")
+//    @ResponseBody
+//    @ApiOperation(value = "1.短信验证码", notes = "参数：手机号")
+//    @RequestMapping(value = "GansuPhoneCode", method = RequestMethod.POST)
+//    public Map<String, Object> gansuPhoneCode(HttpServletRequest request,@RequestParam("UserNum") String userNum) {
+//        return gansu.gansuPhone(request,userNum);
+//    }
+    @ApiOperation(value = "2.获取详单信息", notes = "参数：身份证,手机号,服务密码")
     @ResponseBody
     @RequestMapping(value = "GansuPhone", method = RequestMethod.POST)
-    public Map<String, Object> gansuPhone(HttpServletRequest request,@RequestParam("Usercard") String usercard,@RequestParam("UserNum") String userNum,@RequestParam("userName") String userName,@RequestParam("UserPass") String userPass,@RequestParam("catph") String catph,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid) {
+    public Map<String, Object> gansuPhone(HttpServletRequest request,@RequestParam("Usercard") String usercard,@RequestParam("UserNum") String userNum,@RequestParam("UserPass") String userPass,@RequestParam("longitude")String longitude,@RequestParam("latitude")String latitude,@RequestParam("UUID")String uuid) {
         
-    	return gansu.gansuPhone1(request,usercard,userNum,userName,userPass,catph,longitude,latitude,uuid);
+    	return gansu.gansuPhone1(request,usercard,userNum,userPass,longitude,latitude,uuid);
     }
 	
 	

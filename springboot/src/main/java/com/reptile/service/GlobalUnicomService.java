@@ -8,6 +8,7 @@ import com.reptile.constants.MessageConstamts;
 import com.reptile.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class GlobalUnicomService {
+    private org.slf4j.Logger logger= LoggerFactory.getLogger(GlobalUnicomService.class);
     @Autowired
     private application application;
 
@@ -486,7 +489,7 @@ public class GlobalUnicomService {
             // if(webClient.getPage(webRequest2).isHtmlPage()){
             //
             // }
-            String flag = "";
+            String flag = "3000";
             try {
                 TextPage newPage = webClient.getPage(webRequest2);
                 Thread.sleep(1000);
@@ -598,7 +601,7 @@ public class GlobalUnicomService {
                     }
                 } else {
                     // ---------------推-------------------
-                    System.out.println(json3.get("error").toString());
+                    logger.warn(userIphone+":---------联通出现异常返回值"+json3.get("error").toString());
                     if (resultCode.equals(MessageConstamts.STRING_01)) {
                         map.put("errorCode", "0001");
                         map.put("errorInfo", "验证码已过期，请从新获取新的验证码");
@@ -628,7 +631,8 @@ public class GlobalUnicomService {
                         PushState.state(userIphone, "callLog", 200, json3.get("error").toString());
                     }
                 }
-            } catch (ClassCastException e) {
+            } catch (Exception e) {
+                logger.warn(userIphone+":---------------联通获取详单出现异常---------------",e);
                 map.put("errorInfo", "验证失败,稍后再试");
                 map.put("errorCode", "0001");
                 if (flag.equals(MessageConstamts.STRING_5000)) {
@@ -637,10 +641,14 @@ public class GlobalUnicomService {
                 } else if (flag.equals(MessageConstamts.STRING_6000)) {
                     PushSocket.pushnew(map, uuId, "9000", "认证失败,网络异常");
                     PushState.state(userIphone, "callLog", 200, "认证失败,网络异常!");
+                }else{
+                    PushSocket.pushnew(map, uuId, "3000", "登录失败!");
+                    PushState.state(userIphone, "callLog", 200, "登录失败！");
                 }
                 return map;
             }
         } catch (Exception e) {
+            logger.warn(userIphone+":---------------联通获取详单出现异常---------------",e);
             map.put("errorCode", "0001");
             map.put("errorInfo", "网络异常");
             PushSocket.pushnew(map, uuId, "3000", "登录失败，网络异常");

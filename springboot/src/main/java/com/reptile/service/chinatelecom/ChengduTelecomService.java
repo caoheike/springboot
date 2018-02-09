@@ -123,14 +123,14 @@ public class ChengduTelecomService {
                 String result = page.asText();
                 //数据logger
                 logger.warn(phoneNumber + "：---------------------成都电信获取详单，第一次请求到的数据:" + result + "---------------------");
+
                 JSONObject jsonObject = JSONObject.fromObject(result);
                 String record = null;
                 String retCode = "retCode";
                 String flag0 = "0";
-                if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.get(retCode).toString())) {
+                if (jsonObject.get(retCode) == null || !flag0.equals(jsonObject.getString(retCode))) {
                     String resultInfo = "没有查询到相应记录";
                     if (!result.contains(resultInfo)) {
-
                         map.put("errorCode", "0001");
                         map.put("errorInfo", jsonObject.get("retMsg").toString());
                         PushState.state(phoneNumber, "callLog", 200, jsonObject.get("retMsg").toString());
@@ -167,18 +167,24 @@ public class ChengduTelecomService {
                     page = webClient.getPage(getMes);
                     result = page.asText();
                     //数据logger
-                    logger.warn(phoneNumber + ":" + startTime + "本次获得的数据为:------" + result);
+
 
                     if (!result.contains("没有查询到相应记录")) {
                         jsonObject = JSONObject.fromObject(result);
-                        record = jsonObject.get("json").toString();
-                        list.add(record);
+                        if (jsonObject.get(retCode) != null && flag0.equals(jsonObject.getString(retCode))) {
+                            record = jsonObject.get("json").toString();
+                            list.add(record);
+                        }else{
+                            logger.warn(phoneNumber + ":" + startTime + "本次获得的数据异常:------" + result);
+                        }
+                    }else{
+                        logger.warn(phoneNumber + ":" + startTime + "本次没有查询到相应记录:------" + result);
                     }
                 }
 
                 logger.warn(phoneNumber + "：---------------------成都电信获取详单结束--------------------本次账单数为：" + list.size());
 
-                if (list.size() < 5) {
+                if (list.size() < 4) {
                     PushSocket.pushnew(map, uuid, "7000", "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     PushState.state(phoneNumber, "callLog", 200, "数据获取不完全，请重新认证！(注：请确认手机号使用时长超过6个月)");
                     map.put("errorCode", "0009");

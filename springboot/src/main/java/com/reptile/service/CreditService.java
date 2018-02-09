@@ -335,6 +335,12 @@ public class CreditService {
                 map.put("data", data);
                 return map;
             }
+            if(bean.getUserName().length()>16){
+                data.put("ResultInfo", "账号格式错误!（允许最大长度16位）");
+                data.put("ResultCode", "0001");
+                map.put("data", data);
+                return map;
+            }
             Object sessionWebClient = request.getSession().getAttribute("sessionWebClient-ZX");
             Object sessionLoginPage = request.getSession().getAttribute("sessionLoginPage-ZX");
             if (sessionWebClient != null && sessionLoginPage != null) {
