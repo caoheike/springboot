@@ -121,7 +121,7 @@ public class CcbService {
 	        }
 	        
 	       //到详情页面获取数据
-	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
+//	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
 	      //获取到户名
 	        try {
 				  Thread.sleep(3000);
@@ -182,7 +182,7 @@ public class CcbService {
 				 Thread.sleep(5000);
 				} catch (Exception e) {
 					PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡获取失败",pushFlag);
-	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
+	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber,e);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
 	    					driver.quit();
