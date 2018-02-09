@@ -121,7 +121,7 @@ public class CcbService {
 	        }
 	        
 	       //到详情页面获取数据
-//	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
+	      driver.get("https://ibsbjstar.ccb.com.cn/CCBIS/B2CMainPlat_06?SERVLET_NAME=B2CMainPlat_06&CCB_IBSVersion=V6&PT_STYLE=1#");
 	      //获取到户名
 	        try {
 				  Thread.sleep(3000);
@@ -153,6 +153,16 @@ public class CcbService {
 			  	 driver.switchTo().frame("txmainfrm");
 			  	//第2级的frame
 				 driver.switchTo().frame("result");
+				
+				 WebElement scrollPic= driver.findElement(By.id("scrollPic"));
+		         List<WebElement> li   =scrollPic.findElements(By.tagName("li"));
+
+		         for (int i = 0; i < li.size(); i++) {
+		           logger.warn(li.get(i).findElement(ByClassName.className("card_menoy")).getText());
+		          if (li.get(i).findElement(ByClassName.className("card_menoy")).getText().contains(cardNumber.substring(cardNumber.length()-3))) {
+		            li.get(i).click();
+		          }
+		        }
 				//第3级的frame,可点击页面元素
 				 driver.switchTo().frame("result");
 				//将页面进行jsoup转换
