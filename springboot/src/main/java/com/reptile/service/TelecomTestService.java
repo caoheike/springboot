@@ -7,9 +7,7 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.reptile.springboot.Scheduler;
-import com.reptile.util.JavaExcuteJs;
-import com.reptile.util.MyCYDMDemo;
-import com.reptile.util.WebClientFactory;
+import com.reptile.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,17 +36,19 @@ public class TelecomTestService {
 
     /**
      * 全国电信登录
+     *
      * @param request
-     * @param userName    用户手机号
-     * @param serverPwd   服务密码
-     * @param provinceId  所属省份id
+     * @param userName   用户手机号
+     * @param serverPwd  服务密码
+     * @param provinceId 所属省份id
      * @return
      * @throws Exception
      */
-    public  Map<String, String> loginTelecom(HttpServletRequest request, String userName, String serverPwd, String provinceId){
+    public Map<String, String> loginTelecom(HttpServletRequest request, String userName, String serverPwd, String provinceId) {
         Map<String, String> map = new HashMap<String, String>(16);
         //创建webclient对象
-        WebClient webClient = new WebClientFactory().getWebClient();
+        WebClientFactoryInterface webClient1 = WebClientMaker.createWebClient(userName, provinceId);
+        WebClient webClient = webClient1.getWebClient();
         try {
             //请求验证码连接
             BufferedImage read = getBufferImageCode(webClient);
@@ -175,6 +175,7 @@ public class TelecomTestService {
 
     /**
      * 关闭webclient
+     *
      * @param webClient
      */
     private static void closeWebClient(WebClient webClient) {

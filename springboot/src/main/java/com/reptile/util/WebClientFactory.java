@@ -11,13 +11,11 @@ import com.reptile.springboot.Scheduler;
  * @author mrlu
  * @date 2016/10/31
  */
-public class WebClientFactory {
+public class WebClientFactory implements WebClientFactoryInterface {
 
-
-//    public WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45, Scheduler.ip, Scheduler.port);
-    public WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
-
+    @Override
     public WebClient getWebClient() {
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
         // 开启cookie管理
         webClient.getCookieManager().setCookiesEnabled(true);
         webClient.getOptions().setCssEnabled(false);
@@ -30,21 +28,24 @@ public class WebClientFactory {
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         return webClient;
     }
+
     /**
      * 获取webClient，不加载js
+     *
      * @return
      */
     public WebClient getWebClientJs() {
-    	webClient.getCookieManager().setCookiesEnabled(true);
-    	webClient.getOptions().setCssEnabled(false);
-    	webClient.getOptions().setTimeout(30000);
-    	webClient.getOptions().setJavaScriptEnabled(true);
-    	webClient.setJavaScriptTimeout(30000);
-    	webClient.getOptions().setRedirectEnabled(true);
-    	webClient.getOptions().setThrowExceptionOnScriptError(false);
-    	webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-    	webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-    	webClient.getOptions().setJavaScriptEnabled(false);  
-    	return webClient;
+        WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45);
+        webClient.getCookieManager().setCookiesEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setTimeout(30000);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.setJavaScriptTimeout(30000);
+        webClient.getOptions().setRedirectEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+        webClient.getOptions().setJavaScriptEnabled(false);
+        return webClient;
     }
 }
