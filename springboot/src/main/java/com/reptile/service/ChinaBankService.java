@@ -1,8 +1,10 @@
 package com.reptile.service;
 
+import com.google.gson.JsonObject;
 import com.reptile.analysis.ChinaBankanalysis;
 import com.reptile.util.*;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.openqa.selenium.By;
@@ -37,7 +39,6 @@ public class ChinaBankService {
     public Map<String, Object> getDetailMes(HttpServletRequest request, String userCard, String cardNumber, String userPwd, String uuid,String timeCnt
     ) throws ParseException {
     	boolean isok = CountTime.getCountTime(timeCnt);
-    	System.out.println("isok===="+isok);
         String path = request.getServletContext().getRealPath("/vecImageCode");
         System.setProperty("java.awt.headless", "true");
         File file = new File(path);
@@ -208,12 +209,12 @@ public class ChinaBankService {
             String count = String.valueOf(driver.executeScript("return $(\"#" + id + " ul li\").length;"));
             List<String> listData = new ArrayList<String>();
             JSONObject date=new JSONObject();
+            JSONArray datearr=new JSONArray();
             for (int i = 1; i < Integer.valueOf(count) + 1; i++) {
                 driver.findElement(By.xpath("//*[@id='" + id + "']/span")).click();
                 Thread.sleep(1000);
                 driver.findElement(By.xpath("//*[@id='" + id + "']/ul/li[" + i + "]/a")).click();
                 Thread.sleep(1000);
-                System.out.println("driver.getPageSource()=="+i+","+driver.getPageSource());
                 List<WebElement> btn = driver.findElements(By.className("btn"));
                 for (int j = 0; j < btn.size(); j++) {
                     if ("查询".equals(btn.get(j).getText())) {
@@ -225,26 +226,54 @@ public class ChinaBankService {
                 String pageSource = driver.getPageSource();
                 listData.add(pageSource);
                 //数据解析
-                //date=ChinaBankanalysis.billanalysis(pageSource);
+                date=ChinaBankanalysis.billanalysis(pageSource);
+                datearr.add(date);
             }
             PushSocket.pushnew(map, uuid, "6000","中国银行信用卡获取成功");
             states="4000";
             //--------------数据解析后的-------
-            /*map.put("idcard", userCard);
+            //获取客户的到期还款日
+            JSONObject AccountSummary=new JSONObject();
+            for (int i = 0; i < datearr.size(); i++) {
+            	JSONObject bankListmap=(JSONObject) datearr.get(i);
+            	AccountSummary=(JSONObject) bankListmap.get("AccountSummary");
+            	String PaymentDueDate=(String) AccountSummary.get("PaymentDueDate");
+            	if(PaymentDueDate.equals("-")) {
+            		String PaymentDue="";
+            		for (int j = 0; j < datearr.size(); i++) {
+                    	bankListmap=(JSONObject) datearr.get(j);
+                    	JSONObject AccountSummary1=(JSONObject) bankListmap.get("AccountSummary");
+                    	PaymentDueDate=(String) AccountSummary1.get("PaymentDueDate");
+                    	if(!PaymentDueDate.equals("-")) {
+                    		PaymentDue=PaymentDueDate;
+                    		break;
+                    	}
+            		}
+            		//替换到期还款日
+            		String StatementDate=(String) AccountSummary.get("StatementDate");
+            		String newPaymentDue=StatementDate.substring(0, 6)+PaymentDue.substring(6);
+            		AccountSummary.put("PaymentDueDate", newPaymentDue);
+            		
+            	}
+			}
+            Map<String, Object> datemap = new HashMap<String, Object>(16);
+            datemap.put("bankList", datearr);
+            map.put("idcard", userCard);
             map.put("backtype", "BOC");
             map.put("userAccount",cardNumber);
             map.put("bankname", "中国银行信用卡");
-            map.put("date", date);
+            map.put("data", datemap);
             map.put("isok", isok);
-            System.out.println("中国银行信用卡map==="+map);*/
+            System.out.println("中国银行信用卡map==="+map);
+           
             //--------------数据解析后的-------
-            Map<String, Object> sendMap = new HashMap<String, Object>(16);
+         /*   Map<String, Object> sendMap = new HashMap<String, Object>(16);
             sendMap.put("idcard", userCard);
             sendMap.put("backtype", "BOC");
             sendMap.put("html", listData);
             sendMap.put("userAccount",cardNumber);
-            map.put("data", sendMap);
-            map = new Resttemplate().SendMessage(map, ConstantInterface.port + "/HSDC/BillFlow/BillFlowByreditCard");
+            map.put("data", sendMap);*/
+            map = new Resttemplate().sendPostOffline(map, "http://192.168.3.16:8099/HSDC/BillFlow/BillFlowByreditCard");
             driver.quit();
             String ling="0000";
             String codeResult="errorCode";

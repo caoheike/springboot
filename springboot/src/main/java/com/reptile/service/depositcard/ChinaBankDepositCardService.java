@@ -559,21 +559,25 @@ public class ChinaBankDepositCardService {
     private List analyBillMethodfb(JSONArray itemMes) throws Exception {
         List<Map<String, Object>> dataList = new ArrayList<>();
         Map<String, Object> detailMap;
-
+        
         JSONArray json = itemMes;
         if(json.size()>0){
             for(int i=0;i<json.size();i++){
                 JSONObject job = json.getJSONObject(i);  // 遍历 jsonarray 数组，把每一个对象转成 json 对象
                 double amount1=Double.parseDouble(job.get("amount").toString());
                 double balance1=Double.parseDouble(job.get("balance").toString());
-                DecimalFormat    df   = new DecimalFormat("######0.00");
-                String amount=df.format(amount1).replace("-", "") ;
+                DecimalFormat  df  = new DecimalFormat("######0.00");
+                String expendMoney="";
+                String incomeMoney="";
+                if((amount1+"").contains("-")) {
+                	expendMoney=df.format(amount1).replace("-", "") ;
+                }else {
+                	incomeMoney=df.format(amount1).replace("-", "") ;
+                }
                 String balance=df.format(balance1);
-
                 detailMap = new HashMap<>(16);
-
-                detailMap.put("incomeMoney", "");//收入金额
-                detailMap.put("expendMoney", amount);//支出金额   数值
+                detailMap.put("incomeMoney", incomeMoney);//收入金额
+                detailMap.put("expendMoney", expendMoney);//支出金额   数值
                 detailMap.put("dealDitch", job.get("transChnl"));//交易渠道
                 detailMap.put("dealTime", job.get("paymentDate"));//交易日期
                 detailMap.put("dealReferral", job.get("businessDigest"));//业务摘要  ok
@@ -582,10 +586,8 @@ public class ChinaBankDepositCardService {
                 detailMap.put("currency", job.get("currency"));//币种
                 detailMap.put("balanceAmount", balance);//余额  数值
                 dataList.add(detailMap);
-                System.out.println();
             }
         }
-        System.out.println("------dataList--fb--"+dataList) ;  // 得到 每个对象中的属性值
         return dataList;
     }
 
