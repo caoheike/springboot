@@ -71,8 +71,18 @@ public class PushState {
      */
     public static void statenew(String UserCard, String approveName, int stat,String message) {
         message = judgePunctuation(message);
-    	if("bankBillFlow".equals(approveName)){
+        if("callLog".equals(approveName)) {
+    		message = "您提交的运营商认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    	}else if("CHSI".equals(approveName)){
+    		message = "您提交的学信网认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    	}else if("TaoBao".equals(approveName)){
+    		message = "您提交的淘宝网认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    	}else if("creditInvestigation".equals(approveName)){
+    		message = "您提交的个人征信认证失败，失败原因："+message+", 您可以重新认证或者选择其他产品。";
+    	}else if("bankBillFlow".equals(approveName)){
     		message = "您提交的信用卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    	}else if("savings".equals(approveName)){
+    		message = "您提交的储蓄卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}
         Map<String, Object> data = new HashMap<String, Object>();
         Map<String, Object> stati = new HashMap<String, Object>();

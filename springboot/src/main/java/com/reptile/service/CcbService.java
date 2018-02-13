@@ -153,6 +153,16 @@ public class CcbService {
 			  	 driver.switchTo().frame("txmainfrm");
 			  	//第2级的frame
 				 driver.switchTo().frame("result");
+				
+				 WebElement scrollPic= driver.findElement(By.id("scrollPic"));
+		         List<WebElement> li   =scrollPic.findElements(By.tagName("li"));
+
+		         for (int i = 0; i < li.size(); i++) {
+		           logger.warn(li.get(i).findElement(ByClassName.className("card_menoy")).getText());
+		          if (li.get(i).findElement(ByClassName.className("card_menoy")).getText().contains(cardNumber.substring(cardNumber.length()-3))) {
+		            li.get(i).click();
+		          }
+		        }
 				//第3级的frame,可点击页面元素
 				 driver.switchTo().frame("result");
 				//将页面进行jsoup转换
@@ -172,7 +182,7 @@ public class CcbService {
 				 Thread.sleep(5000);
 				} catch (Exception e) {
 					PushState.stateByFlag(iDNumber, "savings",200,"建设银行储蓄卡获取失败",pushFlag);
-	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber);
+	            	logger.warn("已登录在获取基本信息时报错！建设银行页面数据加载缓慢"+iDNumber,e);
 	            	 PushSocket.pushnew(map, uuid, "7000","建设银行储蓄卡获取失败");
 	            		try {
 	    					driver.quit();
