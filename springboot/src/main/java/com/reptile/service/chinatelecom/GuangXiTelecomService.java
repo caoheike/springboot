@@ -331,7 +331,7 @@ public class GuangXiTelecomService {
                 logger.error(userCard + "：--------------------广西获取详单信息失败----------------", e);
                 map.put("errorCode", "0005");
                 map.put("errorInfo", "网络异常");
-                PushState.state(phoneNumber, "callLog", 200, "网络异常");
+                PushState.state(phoneNumber, "callLog", 200, "系统繁忙");
                 DealExceptionSocketStatus.pushExceptionSocket(signle, map, uuid);
             }
         }

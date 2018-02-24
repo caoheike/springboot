@@ -293,7 +293,7 @@ public class GansuProvinceService {
                 map.put("errorInfo", "服务繁忙，请稍后再试");
                 map.put("errorCode", "0002");
 
-                PushState.state(userNum, "callLog", 200, "服务繁忙，请稍后再试");
+                PushState.state(userNum, "callLog", 200, "系统繁忙");
                 DealExceptionSocketStatus.pushExceptionSocket(signle, map, uuid);
             }
         }

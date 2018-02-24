@@ -284,7 +284,7 @@ public class HeNanTelecomService {
                 logger.warn(phoneNumber+":河南获取详单异常--------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+                PushState.state(phoneNumber, "callLog",200,"系统繁忙!");
                 DealExceptionSocketStatus.pushExceptionSocket(flag,map,uuid);
             }
         }

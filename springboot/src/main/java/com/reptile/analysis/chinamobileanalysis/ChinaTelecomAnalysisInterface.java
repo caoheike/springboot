@@ -1,4 +1,4 @@
-package com.reptile.analysis;
+package com.reptile.analysis.chinamobileanalysis;
 
 import java.util.List;
 import java.util.Map;

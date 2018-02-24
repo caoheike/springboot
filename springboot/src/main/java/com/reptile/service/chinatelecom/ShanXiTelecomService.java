@@ -122,9 +122,9 @@ public class ShanXiTelecomService {
                 logger.warn(phoneNumber+"：---------------------陕西电信获取账单结束---------------------本次获取账单数量："+dataList.size());
                 if(dataList.size()<3){
                     map.put("errorCode", "0001");
-                    map.put("errorInfo", "数据过程中出现未知错误!请重试！");
-                    PushState.state(phoneNumber, "callLog",200,"数据过程中出现未知错误!请重试！");
-                    PushSocket.pushnew(map, uuid, "7000","数据过程中出现未知错误!请重试！");
+                    map.put("errorInfo", "数据过程中出现未知错误!");
+                    PushState.state(phoneNumber, "callLog",200,"数据过程中出现未知错误!");
+                    PushSocket.pushnew(map, uuid, "7000","数据过程中出现未知错误!");
                     return map;
                 }
                 	PushSocket.pushnew(map, uuid, "6000","获取数据成功");
@@ -157,7 +157,7 @@ public class ShanXiTelecomService {
                 logger.warn(phoneNumber+"：---------------------陕西详单获取异常---------------------",e);
                 map.put("errorCode", "0001");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog",200,"网络连接异常!");
+                PushState.state(phoneNumber, "callLog",200,"系统繁忙!");
                 DealExceptionSocketStatus.pushExceptionSocket(signle,map,uuid);
             }finally {
                 if(webClient!=null){

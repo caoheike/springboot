@@ -1,13 +1,9 @@
-package com.reptile.analysis;
+package com.reptile.analysis.chinamobileanalysis;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

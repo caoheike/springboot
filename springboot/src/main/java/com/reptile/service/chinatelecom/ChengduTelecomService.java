@@ -5,12 +5,8 @@ import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.reptile.analysis.ChengduTelecomAnalysisImp;
-import com.reptile.analysis.ChinaTelecomAnalysisInterface;
-import com.reptile.analysis.ZJTelecomAnalysisImp;
 import com.reptile.util.ConstantInterface;
 import com.reptile.util.DealExceptionSocketStatus;
-import com.reptile.util.HttpURLConection;
 import com.reptile.util.PushSocket;
 import com.reptile.util.PushState;
 import com.reptile.util.Resttemplate;
@@ -240,7 +236,7 @@ public class ChengduTelecomService {
                 logger.warn(phoneNumber + ":---------------------成都获取详情异常--------------------", e);
                 map.put("errorCode", "0002");
                 map.put("errorInfo", "网络连接异常!");
-                PushState.state(phoneNumber, "callLog", 200, "网络连接异常!");
+                PushState.state(phoneNumber, "callLog", 200, "系统繁忙!");
                 DealExceptionSocketStatus.pushExceptionSocket(signle, map, uuid);
             }
         }
