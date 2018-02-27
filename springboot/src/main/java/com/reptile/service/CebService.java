@@ -315,9 +315,10 @@ public class CebService {
 				String errorCode = "errorCode";
 				String state0 = "0000";
 				if (map != null && state0.equals(map.get(errorCode).toString())) {
-					if (isok == true) {
-						PushState.state(userCard, "bankBillFlow", 300);
-					}
+//					if (isok == true) {
+//						PushState.state(userCard, "bankBillFlow", 300);
+//					}
+					PushState.stateByFlag(userCard, "savings",300,isok);
 					map.put("errorInfo", "查询成功");
 					map.put("errorCode", "0000");
 					PushSocket.pushnew(map, uuid, "8000", "光大银行信用卡认证成功");

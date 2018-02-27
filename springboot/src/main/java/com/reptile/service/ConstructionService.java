@@ -139,9 +139,10 @@ public class ConstructionService {
 				String state0 = "0000";
 				
 				if (map != null && state0.equals(map.get(errorCode).toString())){
-						if(isok==true) {
-					    	PushState.state(userCard, "bankBillFlow",300);
-						}
+//						if(isok==true) {
+//					    	PushState.state(userCard, "bankBillFlow",300);
+//						}
+						PushState.stateByFlag(userCard, "savings",300,isok);
 		                map.put("errorInfo","推送成功");
 		                map.put("errorCode","0000");
 		            	PushSocket.pushnew(map, uuid, "8000","建设银行账单认证成功");

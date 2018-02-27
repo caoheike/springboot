@@ -71,6 +71,12 @@ public class PushState {
      */
     public static void statenew(String UserCard, String approveName, int stat,String message) {
         message = judgePunctuation(message);
+        String temp = "失败，失败原因："+message+",您可以重新认证或者选择其他产品";
+		String prefix = "您提交的";
+		if(stat==300) {
+			temp = "成功!";
+			prefix = "";
+		}
         if("callLog".equals(approveName)) {
     		message = "您提交的运营商认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}else if("CHSI".equals(approveName)){
@@ -80,9 +86,11 @@ public class PushState {
     	}else if("creditInvestigation".equals(approveName)){
     		message = "您提交的个人征信认证失败，失败原因："+message+", 您可以重新认证或者选择其他产品。";
     	}else if("bankBillFlow".equals(approveName)){
-    		message = "您提交的信用卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    		message = prefix+"信用卡认证"+temp;
+//    		message = "您提交的信用卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}else if("savings".equals(approveName)){
-    		message = "您提交的储蓄卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
+    		message = prefix+"储蓄卡认证"+temp;
+//    		message = "您提交的储蓄卡认证失败，失败原因："+message+"，您可以重新认证或者选择其他产品。";
     	}
         Map<String, Object> data = new HashMap<String, Object>();
         Map<String, Object> stati = new HashMap<String, Object>();
@@ -146,6 +154,11 @@ public class PushState {
 	public static void stateByFlag(String userCard,String approveName ,int stat,boolean flag) {
 		if(flag) {
 			PushState.state(userCard, approveName, stat);
+		}else {
+			if(stat==300) {
+				PushState.statenew(userCard, approveName, stat,"认证成功");
+			}
+			
 		}
 	}
 }

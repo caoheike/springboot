@@ -278,9 +278,10 @@ public class ChinaBankService {
             String ling="0000";
             String codeResult="errorCode";
             if(map!=null&&ling.equals(map.get(codeResult).toString())){
-		    	if(isok==true) {
-		    		PushState.state(userCard, "bankBillFlow",300);
-		    	}
+//		    	if(isok==true) {
+//		    		PushState.state(userCard, "bankBillFlow",300);
+//		    	}
+		    	PushState.stateByFlag(userCard, "savings",300,isok);
                 map.put("errorInfo","查询成功");
                 map.put("errorCode","0000");
                 PushSocket.pushnew(map, uuid, "8000","中国银行信用卡认证成功");
